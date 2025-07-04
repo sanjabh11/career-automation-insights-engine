@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { BookOpen, Trash2, Edit3, Plus, Tag, FileText, Share2 } from "lucide-react";
-import { useSavedAnalyses } from "@/hooks/useSavedAnalyses";
+import { useSavedAnalysesLocal } from "@/hooks/useSavedAnalysesLocal";
 import { ShareAnalysisModal } from "./ShareAnalysisModal";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ interface SavedAnalysesPanelProps {
 }
 
 export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) {
-  const { savedAnalyses, deleteAnalysis, updateAnalysis, isLoading } = useSavedAnalyses();
+  const { savedAnalyses, deleteAnalysis, updateAnalysis, isLoading } = useSavedAnalysesLocal();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTags, setEditTags] = useState<string>("");
   const [editNotes, setEditNotes] = useState<string>("");

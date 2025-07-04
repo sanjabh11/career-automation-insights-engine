@@ -117,7 +117,7 @@ export const OccupationAnalysis = ({
   const RiskIcon = riskAssessment.icon;
 
   return (
-    <Card className="p-6">
+    <Card className="mb-6 shadow-xl rounded-2xl border-0">
       {/* Enhanced Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex-1">
@@ -187,7 +187,7 @@ export const OccupationAnalysis = ({
 
       {/* Enhanced APO Visualization */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center">
           <BarChart3 className="h-5 w-5 mr-2" />
           Enhanced Analysis Breakdown
         </h3>
@@ -205,14 +205,14 @@ export const OccupationAnalysis = ({
 
       {/* Enhanced Category Details */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Detailed Component Analysis</h3>
-        <Accordion type="single" collapsible className="space-y-2">
+        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Detailed Component Analysis</h3>
+        <Accordion type="single" collapsible className="space-y-2 md:space-y-3">
           {categories.map((category) => (
             <AccordionItem key={category.name} value={category.name}>
               <AccordionTrigger className="hover:no-underline">
-                <div className="flex items-center justify-between w-full mr-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between w-full mr-0 md:mr-4 gap-2 md:gap-0">
                   <span className="font-medium">{category.name}</span>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 md:space-x-3">
                     <Badge className={
                       category.confidence === 'high' ? 'bg-green-100 text-green-800' :
                       category.confidence === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -228,11 +228,11 @@ export const OccupationAnalysis = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3 md:space-y-4 pt-2">
                   {category.data.map((item, index) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-700 font-medium flex-1">{item.description}</p>
+                    <div key={index} className="p-4 md:p-5 bg-gray-50 rounded-xl shadow-sm">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-2 md:gap-0">
+                        <p className="text-sm md:text-base text-gray-700 font-medium flex-1">{item.description}</p>
                         <div className="flex items-center space-x-3 ml-4">
                           <Progress value={item.apo} className="w-16" />
                           <span className="text-sm font-medium text-gray-900 w-12 text-right">

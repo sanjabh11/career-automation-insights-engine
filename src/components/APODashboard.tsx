@@ -14,6 +14,12 @@ import { SelectedCareersPanel } from "./SelectedCareersPanel";
 import { OnboardingTour } from "./OnboardingTour";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { motion } from 'framer-motion';
+
+// Default sectionVariants for fade-in animation
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+};
 import { Button } from './ui/button';
 import { Notebook as Robot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -64,52 +70,31 @@ export const APODashboard = () => {
   };
 
   const handleAddToSelected = () => {
-    if (selectedOccupation && !selectedJobs.find(job => job.code === selectedOccupation.code)) {
+    if (selectedOccupation && !selectedJobs.some(job => job.code === selectedOccupation.code)) {
       setSelectedJobs([...selectedJobs, selectedOccupation]);
+      savedSelections.saveSelection(selectedOccupation);
     }
   };
 
-  const handleRemoveSelected = (code: string) => {
-    setSelectedJobs(selectedJobs.filter(job => job.code !== code));
+  const handleRemoveFromSelected = (jobCode: string) => {
+    setSelectedJobs(selectedJobs.filter(job => job.code !== jobCode));
+    savedSelections.removeSelection(jobCode);
   };
 
-  const handleLoadSelection = (newSelection: SelectedOccupation[]) => {
-    setSelectedJobs(newSelection ?? []);
-    if (!newSelection.find(occ => occ.code === selectedOccupation?.code)) {
-      setSelectedOccupation(null);
-    }
+  const handleExport = () => {
+    setShowExport(true);
   };
 
-  const calculateOverallAPO = (occupation: any) => {
-    if (occupation.overallAPO !== undefined) {
-      return occupation.overallAPO;
-    }
-    const taskAPO = occupation.tasks?.reduce((sum: number, task: any) => sum + task.apo, 0) / (occupation.tasks?.length || 1);
-    const knowledgeAPO = occupation.knowledge?.reduce((sum: number, item: any) => sum + item.apo, 0) / (occupation.knowledge?.length || 1);
-    const skillsAPO = occupation.skills?.reduce((sum: number, skill: any) => sum + skill.apo, 0) / (occupation.skills?.length || 1);
-    const abilitiesAPO = occupation.abilities?.reduce((sum: number, ability: any) => sum + ability.apo, 0) / (occupation.abilities?.length || 1);
-    const techAPO = occupation.technologies?.reduce((sum: number, tech: any) => sum + tech.apo, 0) / (occupation.technologies?.length || 1);
-    return (taskAPO + knowledgeAPO + skillsAPO + abilitiesAPO + techAPO) / 5;
+  const handleExportClose = () => {
+    setShowExport(false);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.4,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
+  const calculateOverallAPO = (occupation: SelectedOccupation) => {
+    if (!occupation) return 0;
+    const { tasks, knowledge, skills, abilities, technologies } = occupation.categoryBreakdown;
+    return Math.round(
+      (tasks.apo + knowledge.apo + skills.apo + abilities.apo + technologies.apo) / 5
+    );
   };
 
   return (
@@ -126,21 +111,18 @@ export const APODashboard = () => {
 
         <motion.div 
           className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
         >
           <ErrorBoundary>
-            <motion.div variants={sectionVariants}>
+            <motion.div>
               <StatsOverview selectedJobsCount={selectedJobs.length} />
             </motion.div>
           </ErrorBoundary>
 
           <ErrorBoundary>
-            <motion.div variants={sectionVariants}>
+            <motion.div>
               <SavedSelectionsPanel
                 selections={selectedJobs}
-                onLoad={handleLoadSelection}
+                onLoad={savedSelections.loadSelections}
               />
             </motion.div>
           </ErrorBoundary>
@@ -148,11 +130,11 @@ export const APODashboard = () => {
           {selectedJobs.length > 1 && (
             <ErrorBoundary>
               <motion.div 
-                variants={sectionVariants}
                 className="mb-6 sm:mb-8"
               >
                 <OccupationComparisonPanel
                   occupations={selectedJobs}
+                  onRemove={handleRemoveFromSelected}
                   onRemove={handleRemoveSelected}
                 />
               </motion.div>

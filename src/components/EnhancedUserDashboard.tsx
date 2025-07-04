@@ -29,7 +29,7 @@ interface EnhancedUserDashboardProps {
 
 function WelcomeBanner() {
   return (
-    <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 mb-6">
+    <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 mb-6 shadow-xl rounded-2xl">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -57,8 +57,8 @@ function QuickStatsCard({ title, value, icon: Icon, trend, color }: {
   color: string;
 }) {
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200">
-      <CardContent className="p-4">
+    <Card className="hover:shadow-2xl shadow-lg transition-shadow duration-200 rounded-2xl border-0">
+      <CardContent className="p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">{title}</p>
@@ -90,15 +90,15 @@ function QuickActions({ onSearchSelect }: { onSearchSelect?: (searchTerm: string
   ];
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="rounded-2xl shadow-md border-0">
+      <CardHeader className="pb-2 md:pb-4">
         <CardTitle className="flex items-center gap-2">
           <Target className="w-5 h-5" />
           Quick Actions
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="space-y-2 md:space-y-4">
+        <div className="space-y-4 md:space-y-6">
           {actions.map((section, index) => (
             <div key={index}>
               <h4 className="text-sm font-medium text-gray-700 mb-2">{section.title}</h4>
@@ -127,7 +127,7 @@ function OnboardingHelpModal({ open, onClose }: { open: boolean; onClose: () => 
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <Card className="max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+      <Card className="max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto rounded-2xl shadow-2xl">
         <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -213,10 +213,10 @@ export function EnhancedUserDashboard({ onLoadAnalysis, onSearchSelect }: Enhanc
     <div className="min-h-screen bg-gray-50">
       <OnboardingHelpModal open={showHelp} onClose={() => setShowHelp(false)} />
       
-      <div className="w-full max-w-7xl mx-auto p-6">
+      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-10">
         <WelcomeBanner />
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
           <QuickStatsCard
             title="Analyses Saved"
             value={12}
@@ -245,11 +245,11 @@ export function EnhancedUserDashboard({ onLoadAnalysis, onSearchSelect }: Enhanc
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+          <div className="lg:col-span-2 space-y-6">
             <Tabs defaultValue="profile" className="w-full">
-              <div className="flex items-center justify-between mb-4">
-                <TabsList className="grid w-full grid-cols-5 bg-white border">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2 md:gap-0">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 bg-white border rounded-xl shadow-sm">
                   <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">Profile</span>
@@ -283,23 +283,23 @@ export function EnhancedUserDashboard({ onLoadAnalysis, onSearchSelect }: Enhanc
                 </Button>
               </div>
 
-              <TabsContent value="profile" className="mt-6">
+              <TabsContent value="profile" className="mt-4 md:mt-6">
                 <UserProfilePanel />
               </TabsContent>
 
-              <TabsContent value="analyses" className="mt-6">
+              <TabsContent value="analyses" className="mt-4 md:mt-6">
                 <SavedAnalysesPanel onLoadAnalysis={onLoadAnalysis} />
               </TabsContent>
 
-              <TabsContent value="history" className="mt-6">
+              <TabsContent value="history" className="mt-4 md:mt-6">
                 <SearchHistoryPanel onSearchSelect={onSearchSelect} />
               </TabsContent>
 
-              <TabsContent value="settings" className="mt-6">
+              <TabsContent value="settings" className="mt-4 md:mt-6">
                 <UserSettingsPanel />
               </TabsContent>
 
-              <TabsContent value="system" className="mt-6">
+              <TabsContent value="system" className="mt-4 md:mt-6">
                 <SystemAdminPanel />
               </TabsContent>
             </Tabs>
