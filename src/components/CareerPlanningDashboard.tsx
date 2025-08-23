@@ -31,6 +31,7 @@ import { ProgressTrackingPanel } from './ProgressTrackingPanel';
 import { UserProfilePanel } from './UserProfilePanel';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
+import SoftSkillBuilderPanel from './SoftSkillBuilderPanel';
 
 interface StatsCardProps {
   title: string;
@@ -188,6 +189,7 @@ export function CareerPlanningDashboard() {
           {activeTab === 'courses' && <CourseRecommendationsPanel />}
           {activeTab === 'paths' && <LearningPathPanel />}
           {activeTab === 'progress' && <ProgressTrackingPanel />}
+          {activeTab === 'softskills' && <SoftSkillBuilderPanel />}
           {activeTab === 'market' && <JobMarketInsightsPanel />}
         </motion.div>
       </div>
@@ -305,5 +307,6 @@ const tabs = [
   { id: 'courses', label: 'Course Recommendations', icon: BookOpenIcon },
   { id: 'paths', label: 'Learning Paths', icon: Target },
   { id: 'progress', label: 'Progress Tracking', icon: TrendingUp },
+  { id: 'softskills', label: 'Soft Skills', icon: Award },
   { id: 'market', label: 'Job Market', icon: BarChart3 },
 ];

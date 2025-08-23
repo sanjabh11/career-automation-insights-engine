@@ -72,17 +72,30 @@ export function AIImpactDashboard() {
     
     setIsSearching(true);
     try {
-      const { data, error } = await supabase.functions.invoke('onet-proxy', {
-        body: { onetPath: `search?keyword=${encodeURIComponent(searchQuery)}&end=10` },
-      });
-
-      if (error) throw error;
+      const path = `search?keyword=${encodeURIComponent(searchQuery)}&end=10`;
+      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
+      console.debug('[AIImpactDashboard] fetching', { url, origin: window.location.origin });
+      const resp = await fetch(url);
+      console.debug('[AIImpactDashboard] response', { status: resp.status, url });
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Search failed (${resp.status}): ${txt}`);
+      }
+      const contentType = resp.headers.get("Content-Type") || "";
+      console.debug('[AIImpactDashboard] response', { status: resp.status, contentType });
+      if (!contentType.toLowerCase().includes("json")) {
+        const txt = await resp.text();
+        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
+      }
+      const data = await resp.json();
       
       let results: Occupation[] = [];
-      if (data.occupation) {
-        results = Array.isArray(data.occupation) 
-          ? data.occupation.map((o: any) => ({ code: o.code, title: o.title, description: o.description }))
-          : [{ code: data.occupation.code, title: data.occupation.title, description: data.occupation.description }];
+      if ((data as any).occupation) {
+        const occ = (data as any).occupation;
+        results = Array.isArray(occ)
+          ? occ.map((o: any) => ({ code: o.code, title: o.title, description: o.description }))
+          : [{ code: occ.code, title: occ.title, description: occ.description }];
       }
       
       setOccupations(results);

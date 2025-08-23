@@ -7,6 +7,9 @@ const corsHeaders = {
 };
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+// Prefer username/password per O*NET Web Services, fallback to legacy ONET_API_KEY if present
+const ONET_USERNAME = Deno.env.get('ONET_USERNAME');
+const ONET_PASSWORD = Deno.env.get('ONET_PASSWORD');
 const ONET_API_KEY = Deno.env.get('ONET_API_KEY');
 
 serve(async (req) => {
@@ -20,8 +23,11 @@ serve(async (req) => {
       throw new Error('Gemini API key is not configured');
     }
 
-    if (!ONET_API_KEY) {
-      throw new Error('ONET API key is not configured');
+    // Validate O*NET credentials (username/password preferred)
+    const hasUserPass = Boolean(ONET_USERNAME && ONET_PASSWORD);
+    const hasApiKey = Boolean(ONET_API_KEY);
+    if (!hasUserPass && !hasApiKey) {
+      throw new Error('O*NET credentials not configured: set ONET_USERNAME/ONET_PASSWORD or ONET_API_KEY');
     }
 
     const { occupation_code, occupation_title } = await req.json();
@@ -60,10 +66,13 @@ serve(async (req) => {
       });
     }
 
-    // Fetch occupation details from O*NET using the proper API key
+    // Build Authorization header for O*NET
+    const basicToken = hasUserPass
+      ? btoa(`${ONET_USERNAME}:${ONET_PASSWORD}`)
+      : btoa(`${ONET_API_KEY}:`);
     const onetResponse = await fetch(`https://services.onetcenter.org/ws/online/occupations/${occupation_code}/details`, {
       headers: {
-        'Authorization': `Basic ${btoa(ONET_API_KEY + ':')}`,
+        'Authorization': `Basic ${basicToken}`,
         'Accept': 'application/json'
       }
     });

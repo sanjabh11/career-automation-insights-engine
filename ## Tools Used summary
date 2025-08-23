@@ -1,0 +1,7 @@
+## Tools Used summary
+
+XML
+JSON
+[Interactive demo](https://services.onetcenter.org/demo?url=online%2Foccupations%2F17-2051.00%2Fsummary%2Ftools_used&g=Go)
+This response returns examples of the tools used by workers, with up to 4 examples in each category. The related attribute on each category links to additional occupations which use these tools; see the [Related occupations for Tools & Technology](https://services.onetcenter.org/reference/online/occupation/related/t2) service.
+Up to 5 categories are returned by default. To see all tool categories for this occupation, set the optional display parameter to long.

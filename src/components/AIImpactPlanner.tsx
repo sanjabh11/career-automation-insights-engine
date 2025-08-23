@@ -135,27 +135,41 @@ export function AIImpactPlanner() {
 
     setIsSearching(true);
     try {
-      const { data, error } = await supabase.functions.invoke('onet-proxy', {
-        body: { onetPath: `search?keyword=${encodeURIComponent(query)}&end=10` },
-      });
-
-      if (error) throw new Error(`Search failed: ${error.message}`);
-      
-      let occs: Occupation[] = [];
-      if (data.occupation) {
-        occs = Array.isArray(data.occupation) 
-          ? data.occupation.map((o: any) => ({ 
-              code: o.code, 
-              title: o.title,
-              description: o.description || `An occupation from the O*NET database.`
-            }))
-          : [{ 
-              code: data.occupation.code, 
-              title: data.occupation.title,
-              description: data.occupation.description || `An occupation from the O*NET database.`
-            }];
+      const path = `search?keyword=${encodeURIComponent(query)}&end=10`;
+      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
+      console.debug('[AIImpactPlanner.search] fetching', { url, origin: window.location.origin });
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Search failed (${resp.status}): ${txt}`);
       }
-      
+      const contentType = resp.headers.get("Content-Type") || "";
+      console.debug('[AIImpactPlanner.search] response', { status: resp.status, contentType });
+      if (!contentType.includes("application/json")) {
+        const txt = await resp.text();
+        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
+      }
+      const data = await resp.json();
+
+      let occs: Occupation[] = [];
+      if ((data as any).occupation) {
+        const occ = (data as any).occupation;
+        occs = Array.isArray(occ)
+          ? occ.map((o: any) => ({
+              code: o.code,
+              title: o.title,
+              description: o.description || `An occupation from the O*NET database.`,
+            }))
+          : [
+              {
+                code: occ.code,
+                title: occ.title,
+                description: occ.description || `An occupation from the O*NET database.`,
+              },
+            ];
+      }
+
       setOccupations(occs);
     } catch (error) {
       console.error('Search failed:', error);
@@ -174,30 +188,42 @@ export function AIImpactPlanner() {
 
     setIsSearchingCustomJob(true);
     try {
-      // In a real implementation, this would call the Gemini API
-      // For now, we'll simulate a response with a search
-      
-      const { data, error } = await supabase.functions.invoke('onet-proxy', {
-        body: { onetPath: `search?keyword=${encodeURIComponent(jobTitle)}&end=5` },
-      });
-
-      if (error) throw new Error(`Search failed: ${error.message}`);
-      
-      let occs: Occupation[] = [];
-      if (data.occupation) {
-        occs = Array.isArray(data.occupation) 
-          ? data.occupation.map((o: any) => ({ 
-              code: o.code, 
-              title: o.title,
-              description: o.description || `An occupation from the O*NET database.`
-            }))
-          : [{ 
-              code: data.occupation.code, 
-              title: data.occupation.title,
-              description: data.occupation.description || `An occupation from the O*NET database.`
-            }];
+      // Simulate via live O*NET search
+      const path = `search?keyword=${encodeURIComponent(jobTitle)}&end=5`;
+      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
+      console.debug('[AIImpactPlanner.findSimilar] fetching', { url, origin: window.location.origin });
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Search failed (${resp.status}): ${txt}`);
       }
-      
+      const contentType = resp.headers.get("Content-Type") || "";
+      console.debug('[AIImpactPlanner.findSimilar] response', { status: resp.status, contentType });
+      if (!contentType.includes("application/json")) {
+        const txt = await resp.text();
+        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
+      }
+      const data = await resp.json();
+
+      let occs: Occupation[] = [];
+      if ((data as any).occupation) {
+        const occ = (data as any).occupation;
+        occs = Array.isArray(occ)
+          ? occ.map((o: any) => ({
+              code: o.code,
+              title: o.title,
+              description: o.description || `An occupation from the O*NET database.`,
+            }))
+          : [
+              {
+                code: occ.code,
+                title: occ.title,
+                description: occ.description || `An occupation from the O*NET database.`,
+              },
+            ];
+      }
+
       setSimilarOccupations(occs);
       
       if (occs.length === 0) {
@@ -217,59 +243,21 @@ export function AIImpactPlanner() {
   const fetchTasks = async (occupationCode: string) => {
     setIsLoading(true);
     try {
-      // In a real implementation, this would fetch from the backend
-      // For now, we'll generate mock data based on the occupation code
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Generate mock tasks with different categories
-      const mockTasks: Task[] = [
-        {
-          id: '1',
-          description: 'Data entry and processing routine information',
-          category: 'Automate',
-          explanation: 'Repetitive task with structured data that can be fully automated',
-          confidence: 0.92
-        },
-        {
-          id: '2',
-          description: 'Generating standard reports from existing data',
-          category: 'Automate',
-          explanation: 'Structured task with clear rules and patterns',
-          confidence: 0.88
-        },
-        {
-          id: '3',
-          description: 'Analyzing complex data and identifying patterns',
-          category: 'Augment',
-          explanation: 'AI can assist with pattern recognition but human judgment is needed for interpretation',
-          confidence: 0.76
-        },
-        {
-          id: '4',
-          description: 'Creating presentations with stakeholder-specific insights',
-          category: 'Augment',
-          explanation: 'AI can help generate content but human expertise needed for customization',
-          confidence: 0.82
-        },
-        {
-          id: '5',
-          description: 'Building relationships with clients and understanding their needs',
-          category: 'Human-only',
-          explanation: 'Requires empathy, emotional intelligence and complex social skills',
-          confidence: 0.95
-        },
-        {
-          id: '6',
-          description: 'Making ethical decisions with incomplete information',
-          category: 'Human-only',
-          explanation: 'Requires human values, judgment and contextual understanding',
-          confidence: 0.91
-        }
-      ];
-      
-      setTasks(mockTasks);
+      const occupationTitle = selectedOccupation?.title || '';
+      const { data, error } = await supabase.functions.invoke('analyze-occupation-tasks', {
+        body: { occupation_code: occupationCode, occupation_title: occupationTitle }
+      });
+      if (error) throw error;
+
+      const incoming = (data?.tasks ?? []) as Array<{ description: string; category: Task['category']; explanation?: string; confidence?: number }>;
+      const parsedTasks: Task[] = incoming.map((t, idx) => ({
+        id: `${occupationCode}-${idx + 1}`,
+        description: t.description,
+        category: t.category,
+        explanation: t.explanation,
+        confidence: t.confidence
+      }));
+      setTasks(parsedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
       toast.error('Failed to load tasks for this occupation');
@@ -287,44 +275,24 @@ export function AIImpactPlanner() {
 
     setIsAssessingTask(true);
     try {
-      // In a production environment, this would call the Supabase Edge Function
-      // For now, we'll simulate a response
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simple logic to categorize tasks
-      let category: 'Automate' | 'Augment' | 'Human-only';
-      let explanation = '';
-      let confidence = 0;
-      
-      const taskLower = customTask.toLowerCase();
-      
-      if (taskLower.includes('data') || taskLower.includes('report') || 
-          taskLower.includes('routine') || taskLower.includes('process')) {
-        category = 'Automate';
-        explanation = 'This appears to be a routine task involving structured data that can be automated.';
-        confidence = 0.85;
-      } else if (taskLower.includes('analyze') || taskLower.includes('review') || 
-                taskLower.includes('assess') || taskLower.includes('evaluate')) {
-        category = 'Augment';
-        explanation = 'This task involves analysis that can be augmented by AI but still requires human judgment.';
-        confidence = 0.78;
-      } else {
-        category = 'Human-only';
-        explanation = 'This task appears to require human creativity, empathy, or complex decision-making.';
-        confidence = 0.82;
-      }
-      
+      const { data, error } = await supabase.functions.invoke('assess-task', {
+        body: {
+          taskDescription: customTask,
+          occupationContext: selectedOccupation?.title || undefined,
+        },
+      });
+      if (error) throw error;
+
+      const assessed = data as { category: Task['category']; explanation: string; confidence: number };
       const newTask: Task = {
         id: `custom-${Date.now()}`,
         description: customTask,
-        category,
-        explanation,
-        confidence,
-        isCustom: true
+        category: assessed.category,
+        explanation: assessed.explanation,
+        confidence: assessed.confidence,
+        isCustom: true,
       };
-      
+
       setTasks([newTask, ...tasks]);
       setCustomTask('');
       toast.success('Task assessed successfully');
@@ -339,40 +307,23 @@ export function AIImpactPlanner() {
   // Generate skill recommendations
   const generateSkillRecommendations = async (occupationTitle: string) => {
     try {
-      // In a real implementation, this would call the Gemini API
-      // For now, we'll use mock data
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockSkills: Skill[] = [
-        {
-          name: 'Complex Problem Solving',
-          explanation: 'The ability to identify complex problems, evaluate options, and implement solutions will remain valuable as AI handles routine problem-solving.'
-        },
-        {
-          name: 'Emotional Intelligence',
-          explanation: 'Understanding others\' emotions, responding appropriately, and building relationships are human strengths that AI cannot replicate.'
-        },
-        {
-          name: 'AI Collaboration Skills',
-          explanation: 'Learning to effectively prompt, direct, and work alongside AI tools will be essential as they become more integrated into workflows.'
-        },
-        {
-          name: 'Ethical Decision Making',
-          explanation: 'The ability to make value-based judgments in ambiguous situations will remain a critical human skill as AI handles more routine decisions.'
-        }
-      ];
-      
-      // Apply any saved progress
-      const skillsWithProgress = mockSkills.map(skill => ({
-        ...skill,
-        inProgress: skillProgress[skill.name] || false
+      const occupationCode = selectedOccupation?.code || '';
+      const { data, error } = await supabase.functions.invoke('skill-recommendations', {
+        body: { occupation_code: occupationCode, occupation_title: occupationTitle },
+      });
+      if (error) throw error;
+
+      const recs = (data ?? []) as Array<{ skill_name: string; explanation: string; priority?: number }>;
+      const skills: Skill[] = recs.map((rec) => ({
+        name: rec.skill_name,
+        explanation: rec.explanation,
+        inProgress: skillProgress[rec.skill_name] || false,
       }));
-      
-      setSkillRecommendations(skillsWithProgress);
+
+      setSkillRecommendations(skills);
     } catch (error) {
       console.error('Error generating skill recommendations:', error);
+      toast.error('Failed to generate skill recommendations');
     }
   };
 

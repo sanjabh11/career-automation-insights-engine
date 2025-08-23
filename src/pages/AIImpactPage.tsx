@@ -1,5 +1,6 @@
 import React from 'react';
 import { AIImpactDashboard } from '@/components/AIImpactDashboard';
+import { SearchHistoryPanel } from '@/components/SearchHistoryPanel';
 import { EnhancedAPODashboardHeader } from '@/components/EnhancedAPODashboardHeader';
 import { useSession } from '@/hooks/useSession';
 import { Button } from '@/components/ui/button';
@@ -33,8 +34,14 @@ export default function AIImpactPage() {
           </Button>
           <h1 className="text-2xl font-bold ml-4">AI Impact Career Planner</h1>
         </div>
-        
-        <AIImpactDashboard />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <AIImpactDashboard />
+          </div>
+          <div className="lg:col-span-1">
+            <SearchHistoryPanel />
+          </div>
+        </div>
       </div>
     </motion.div>
   );

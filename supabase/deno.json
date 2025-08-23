@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.window", "dom"],
+    "types": ["deno.ns"],
+    "strict": true
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-explicit-any"
+      ]
+    }
+  }
+}

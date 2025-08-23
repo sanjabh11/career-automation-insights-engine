@@ -1,5 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serpApiSearch } from "../../lib/SerpApiClient.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,52 +42,14 @@ serve(async (req) => {
     
     console.log('Searching for job:', jobTitle);
 
-    // Check if we have SerpAPI key
-    const serpApiKey = Deno.env.get('SERPAPI_API_KEY') || Deno.env.get('SERPAPI_KEY');
-    
-    if (!serpApiKey) {
-      console.error('SerpAPI key not found');
-      return new Response(JSON.stringify({
-        totalJobs: 0,
-        recentJobs: [],
-        topLocations: [],
-        trending: false,
-        error: 'SerpAPI key not configured'
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Build SerpAPI URL for Google Jobs
-    const serpApiUrl = new URL('https://serpapi.com/search.json');
-    serpApiUrl.searchParams.set('engine', 'google_jobs');
-    serpApiUrl.searchParams.set('q', jobTitle);
-    serpApiUrl.searchParams.set('api_key', serpApiKey);
-    serpApiUrl.searchParams.set('hl', 'en');
-    serpApiUrl.searchParams.set('gl', 'us');
-    serpApiUrl.searchParams.set('num', '10');
-
-    console.log('Making request to SerpAPI:', serpApiUrl.toString().replace(serpApiKey, '[HIDDEN]'));
-
-    const response = await fetch(serpApiUrl.toString());
-    
-    if (!response.ok) {
-      console.error('SerpAPI request failed:', response.status, response.statusText);
-      const errorText = await response.text();
-      console.error('Error response:', errorText);
-      
-      return new Response(JSON.stringify({
-        totalJobs: 0,
-        recentJobs: [],
-        topLocations: [],
-        trending: false,
-        error: `SerpAPI request failed: ${response.status}`
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const data = await response.json();
+    // Use shared SerpApiClient helper
+    const data = await serpApiSearch({
+      engine: 'google_jobs',
+      q: jobTitle,
+      hl: 'en',
+      gl: 'us',
+      num: '10',
+    });
     console.log('SerpAPI response received, jobs found:', data.jobs_results?.length || 0);
 
     if (data.error) {

@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { APODashboard } from '@/components/APODashboard';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { EnhancedAPODashboardHeader } from '@/components/EnhancedAPODashboardHeader';
 import { useSession } from '@/hooks/useSession';
 import { useNavigate } from 'react-router-dom';
@@ -42,6 +44,11 @@ const Index = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button asChild size="lg" className="shadow-lg">
+            <Link to="/gap-analysis">View Gap Analysis</Link>
+          </Button>
+        </div>
         <APODashboard />
       </motion.div>
     </motion.div>

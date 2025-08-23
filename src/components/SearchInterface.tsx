@@ -82,13 +82,24 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       const onetQuery = sanitizedFilter
         ? `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=10&code=${encodeURIComponent(sanitizedFilter)}`
         : `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=10`;
-        
-      const { data, error } = await supabase.functions.invoke('onet-proxy', {
-        body: { onetPath: onetQuery },
-      });
-      
-      if (error) throw new Error(`Search failed: ${error.message}`);
-      if (data.error) throw new Error(`API Error: ${data.error}`);
+      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(onetQuery)}`;
+      console.debug('[SearchInterface] fetching', { url, origin: window.location.origin });
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Search failed (${resp.status}): ${txt}`);
+      }
+      const contentType = resp.headers.get("Content-Type") || "";
+      console.debug('[SearchInterface] response', { status: resp.status, contentType });
+      let data: any;
+      if (contentType.toLowerCase().includes("json")) {
+        data = await resp.json();
+      } else {
+        const txt = await resp.text();
+        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
+      }
+      if ((data as any)?.error) throw new Error(`API Error: ${(data as any).error}`);
 
       let occs: any[] = [];
       if (data.occupation) {

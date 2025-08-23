@@ -1,5 +1,6 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0'
+import { serpApiSearch } from '../../lib/SerpApiClient.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,9 +9,9 @@ const corsHeaders = {
 
 interface CourseSearchRequest {
   skills: string[];
-  level?: 'beginner' | 'intermediate' | 'advanced';
+  level?: 'beginner' | 'intermediate' | 'advanced' | 'any';
   budget?: 'free' | 'paid' | 'any';
-  duration?: 'short' | 'medium' | 'long';
+  duration?: 'short' | 'medium' | 'long' | 'any';
 }
 
 interface CourseResult {
@@ -40,10 +41,7 @@ Deno.serve(async (req) => {
       throw new Error('Skills array is required');
     }
 
-    const SERPAPI_KEY = Deno.env.get('SERPAPI_KEY');
-    if (!SERPAPI_KEY) {
-      throw new Error('SerpAPI key not configured');
-    }
+    // SerpAPI key is managed centrally in SerpApiClient
 
     console.log(`Searching courses for skills: ${skills.join(', ')}`);
 
@@ -55,25 +53,13 @@ Deno.serve(async (req) => {
         // Search on Google for courses
         const searchQuery = `${skill} online course tutorial ${level !== 'any' ? level : ''} ${budget === 'free' ? 'free' : ''}`.trim();
         
-        const searchParams = new URLSearchParams({
+        const data = await serpApiSearch({
           engine: 'google',
           q: searchQuery,
           hl: 'en',
           gl: 'us',
-          api_key: SERPAPI_KEY,
           num: '10',
         });
-
-        const serpApiUrl = `https://serpapi.com/search?${searchParams.toString()}`;
-        
-        const response = await fetch(serpApiUrl);
-        
-        if (!response.ok) {
-          console.error(`SerpAPI request failed for ${skill}: ${response.status}`);
-          continue;
-        }
-
-        const data = await response.json();
         
         if (data.error) {
           console.error(`SerpAPI error for ${skill}:`, data.error);

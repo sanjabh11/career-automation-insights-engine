@@ -142,93 +142,100 @@ export const APODashboard = () => {
           )}
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8">
-            <div className="xl:col-span-2 space-y-4 sm:space-y-6">
-              <motion.div variants={sectionVariants}>
-                <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                  <ErrorBoundary>
-                    <SearchInterface onOccupationSelect={handleOccupationSelect} />
-                  </ErrorBoundary>
-                </Card>
-              </motion.div>
+  {/* Career Search always first */}
+  <div className="space-y-4 sm:space-y-6">
+    <motion.div variants={sectionVariants}>
+      <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
+        <ErrorBoundary>
+          <SearchInterface onOccupationSelect={handleOccupationSelect} />
+        </ErrorBoundary>
+      </Card>
+    </motion.div>
 
-              {selectedOccupation && (
-                <motion.div 
-                  variants={sectionVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                >
-                  <ErrorBoundary>
-                    <OccupationAnalysis
-                      occupation={selectedOccupation}
-                      overallAPO={calculateOverallAPO(selectedOccupation)}
-                      onAddToSelected={handleAddToSelected}
-                      isAlreadySelected={selectedJobs.some(job => job.code === selectedOccupation.code)}
-                    />
-                  </ErrorBoundary>
-                </motion.div>
-              )}
+    {/* Saved Selections always after Career Search */}
+    {selectedJobs.length > 0 && (
+      <ErrorBoundary>
+        <motion.div 
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+        >
+          <SelectedCareersPanel
+            selectedJobs={selectedJobs}
+            calculateOverallAPO={calculateOverallAPO}
+            handleRemoveSelected={handleRemoveSelected}
+          />
+        </motion.div>
+      </ErrorBoundary>
+    )}
 
-              <motion.div variants={sectionVariants}>
-                <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">AI Impact Career Planner</h3>
-                      <Button 
-                        onClick={() => navigate('/ai-impact')}
-                        className="gap-2"
-                      >
-                        <Robot className="w-4 h-4" />
-                        Open Planner
-                      </Button>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Understand how AI might affect your job, which tasks could be automated or augmented, 
-                      and what skills to develop to stay relevant in your field.
-                    </p>
-                  </div>
-                </Card>
-              </motion.div>
-            </div>
+    {/* Career APO Explorer always after Saved Selections */}
+    <ErrorBoundary>
+      <motion.div variants={sectionVariants}>
+        <TopCareersPanel />
+      </motion.div>
+    </ErrorBoundary>
+  </div>
 
-            <div className="space-y-4 sm:space-y-6">
-              <ErrorBoundary>
-                <motion.div variants={sectionVariants}>
-                  <TopCareersPanel />
-                </motion.div>
-              </ErrorBoundary>
-
-              {selectedOccupation && (
-                <ErrorBoundary>
-                  <motion.div 
-                    variants={sectionVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                  >
-                    <JobMarketPanel jobTitle={selectedOccupation.title} />
-                  </motion.div>
-                </ErrorBoundary>
-              )}
-
-              {selectedJobs.length > 0 && (
-                <ErrorBoundary>
-                  <motion.div 
-                    variants={sectionVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                  >
-                    <SelectedCareersPanel
-                      selectedJobs={selectedJobs}
-                      calculateOverallAPO={calculateOverallAPO}
-                      handleRemoveSelected={handleRemoveSelected}
-                    />
-                  </motion.div>
-                </ErrorBoundary>
-              )}
-            </div>
+  {/* Right column: Planner, Occupation Analysis, Job Market Panel */}
+  <div className="space-y-4 sm:space-y-6">
+    {/* AI Impact Career Planner always visible */}
+    <motion.div variants={sectionVariants}>
+      <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">AI Impact Career Planner</h3>
+            <Button 
+              onClick={() => navigate('/ai-impact')}
+              className="gap-2"
+            >
+              <Robot className="w-4 h-4" />
+              Open Planner
+            </Button>
           </div>
+          <p className="text-sm text-gray-600">
+            Understand how AI might affect your job, which tasks could be automated or augmented, 
+            and what skills to develop to stay relevant in your field.
+          </p>
+        </div>
+      </Card>
+    </motion.div>
+
+    {/* Occupation Analysis (if selected) */}
+    {selectedOccupation && (
+      <motion.div 
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+      >
+        <ErrorBoundary>
+          <OccupationAnalysis
+            occupation={selectedOccupation}
+            overallAPO={calculateOverallAPO(selectedOccupation)}
+            onAddToSelected={handleAddToSelected}
+            isAlreadySelected={selectedJobs.some(job => job.code === selectedOccupation.code)}
+          />
+        </ErrorBoundary>
+      </motion.div>
+    )}
+
+    {/* Job Market Panel (if occupation selected) */}
+    {selectedOccupation && (
+      <ErrorBoundary>
+        <motion.div 
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+        >
+          <JobMarketPanel jobTitle={selectedOccupation.title} />
+        </motion.div>
+      </ErrorBoundary>
+    )}
+  </div>
+</div>
         </motion.div>
         
         <ExportCareersModal
