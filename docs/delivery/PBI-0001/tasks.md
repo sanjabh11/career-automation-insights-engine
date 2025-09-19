@@ -23,3 +23,16 @@
 | 0001-16 | [E2E CoS Test](./PBI-0001-16.md) | Agreed | End-to-end test to verify CoS for PBI-0001 APO pipeline.
 | 0001-17 | [DB constraint: one active apo_config](./PBI-0001-17.md) | InProgress | Enforce only one active config via partial unique index on `apo_config(is_active) where is_active`.
 | 0001-18 | [Gap Analysis & Deployment Checklist](./PBI-0001-18.md) | Agreed | Consolidate readiness report and define post-deploy smoke tests.
+| 0001-19 | Local-first Saved Analyses Wrapper | InProgress | Provide unified hook preferring localStorage for guests; optional sync when logged in. |
+| 0001-20 | Local Search History (Guest Mode) | InProgress | LocalStorage-backed search history with DB parity; unified wrapper. |
+| 0001-22 | Course Search – Real Data Only | InProgress | Remove fabricated ratings/prices; gate fallbacks via env. |
+| 0001-23 | Skill Recs – Remove Runtime Sample Inserts | InProgress | No sample resource inserts at runtime; rely on migrations. |
+| 0001-24 | O*NET Auth – Username/Password Only | InProgress | Remove ONET_API_KEY fallback; require ONET_USERNAME/PASSWORD. |
+| 0001-25 | Unify Gemini Model via Env | InProgress | Use `getEnvModel`/`getEnvGenerationDefaults` in all Gemini functions. |
+| 0001-26 | CSV Export (Client-only) | InProgress | Add CSV export utility and button to SavedAnalysesPanel. |
+| 0001-27 | Comparison View | InProgress | Side-by-side compare two saved analyses; add /compare route. |
+| 0001-28 | Guest Search Support (Local-First) | InProgress | Allow guest searches with device-based rate limiting and a sign-in banner. |
+| 0001-29 | PDF Export (Print-friendly) | InProgress | Add print-friendly HTML report and Export PDF button. |
+| 0001-30 | Advanced Filters (Max Results) | InProgress | Add max results selector and wire to O*NET 'end' param. |
+| 0001-31 | A11y & Perf Checklist | InProgress | Create checklist doc (WCAG 2.1 AA, Lighthouse targets). |
+| 0001-32 | Durable Rate Limiting Design | InProgress | Author design doc for durable RL backend (Redis/KV). |

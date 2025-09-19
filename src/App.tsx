@@ -14,6 +14,7 @@ import AIImpactPlannerPage from "./pages/AIImpactPlannerPage";
 import CareerPlanningPage from "./pages/CareerPlanningPage";
 import CrosswalkPage from "./pages/CrosswalkPage";
 import NotFound from "./pages/NotFound";
+import ComparePage from "./pages/ComparePage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/career-planning" element={<CareerPlanningPage />} />
             <Route path="/crosswalk" element={<CrosswalkPage />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
+            <Route path="/compare" element={<ComparePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

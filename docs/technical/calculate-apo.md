@@ -89,7 +89,7 @@ Backward compatibility:
 ```
 { tasks: 0.325, technologies: 0.35, skills: 0.175, abilities: 0.125, knowledge: 0.025 }
 ```
-These reflect the current active row in `public.apo_config` and may change over time.
+Example only. Actual weights are determined by the current active row in `public.apo_config` and may change over time.
 
 ### Default Factor Multipliers
 ```

@@ -14,6 +14,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useSession } from '@/hooks/useSession';
+import { getFunctionsBaseUrl } from '@/lib/utils';
 
 // Types
 interface Occupation {
@@ -136,7 +137,7 @@ export function AIImpactPlanner() {
     setIsSearching(true);
     try {
       const path = `search?keyword=${encodeURIComponent(query)}&end=10`;
-      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const fnBase = getFunctionsBaseUrl();
       const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
       console.debug('[AIImpactPlanner.search] fetching', { url, origin: window.location.origin });
       const resp = await fetch(url);
@@ -190,7 +191,7 @@ export function AIImpactPlanner() {
     try {
       // Simulate via live O*NET search
       const path = `search?keyword=${encodeURIComponent(jobTitle)}&end=5`;
-      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const fnBase = getFunctionsBaseUrl();
       const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
       console.debug('[AIImpactPlanner.findSimilar] fetching', { url, origin: window.location.origin });
       const resp = await fetch(url);

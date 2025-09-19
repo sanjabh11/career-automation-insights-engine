@@ -11,6 +11,17 @@ export interface SearchHistoryItem {
   searched_at: string;
 }
 
+function isMissingRelationOrColumn(error: any): boolean {
+  const msg = String(error?.message || "");
+  const code = String(error?.code || "");
+  return (
+    code === "42P01" || // undefined_table
+    code === "42703" || // undefined_column
+    /relation .* does not exist/i.test(msg) ||
+    /column .* does not exist/i.test(msg)
+  );
+}
+
 export function useSearchHistory() {
   const [user, setUser] = useState<User | null>(null);
   const queryClient = useQueryClient();
@@ -47,6 +58,10 @@ export function useSearchHistory() {
         .limit(50);
 
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('search_history not available yet; returning empty list');
+          return [];
+        }
         console.error('Error fetching search history:', error);
         throw error;
       }
@@ -75,6 +90,10 @@ export function useSearchHistory() {
         });
       
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('search_history not available; skipping addSearch');
+          return;
+        }
         console.error('Error saving search history:', error);
         throw error;
       }
@@ -94,6 +113,10 @@ export function useSearchHistory() {
         .eq('user_id', user.id);
 
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('search_history not available; skipping clearHistory');
+          return;
+        }
         console.error('Error clearing search history:', error);
         throw error;
       }

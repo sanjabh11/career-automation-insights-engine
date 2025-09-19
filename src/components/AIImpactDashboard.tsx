@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { TaskAssessmentPanel } from './TaskAssessmentPanel';
 import { SkillRecommendationsPanel } from './SkillRecommendationsPanel';
 import { motion } from 'framer-motion';
+import { getFunctionsBaseUrl } from '@/lib/utils';
 
 interface Occupation {
   code: string;
@@ -73,7 +74,7 @@ export function AIImpactDashboard() {
     setIsSearching(true);
     try {
       const path = `search?keyword=${encodeURIComponent(searchQuery)}&end=10`;
-      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+      const fnBase = getFunctionsBaseUrl();
       const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
       console.debug('[AIImpactDashboard] fetching', { url, origin: window.location.origin });
       const resp = await fetch(url);

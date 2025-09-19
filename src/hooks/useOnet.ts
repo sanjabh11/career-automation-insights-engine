@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { getFunctionsBaseUrl } from "@/lib/utils";
 
 /**
  * Hook: useOnet
@@ -16,10 +17,8 @@ export function useOnet<T = unknown>(
     if (!path.startsWith("/")) {
       throw new Error("useOnet path must start with / (e.g. /ws/…)");
     }
-    const devBase = typeof window !== 'undefined' && window.location.port === '8080'
-      ? 'http://localhost:8888'
-      : '';
-    const url = `${devBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
+    const fnBase = getFunctionsBaseUrl();
+    const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
     console.debug('[useOnet] fetching', { url, origin: window.location.origin });
     const res = await fetch(url);
     if (!res.ok) {

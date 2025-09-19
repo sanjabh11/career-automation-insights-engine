@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -55,8 +56,11 @@ Output format:
 }
 `;
 
-    // Call Gemini API
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
+    // Call Gemini API using env-driven model and defaults
+    const model = getEnvModel();
+    const envDefaults = getEnvGenerationDefaults();
+    const generationConfig = { ...envDefaults, temperature: 0.2, topK: 1, topP: 0.8, maxOutputTokens: 1024 } as const;
+    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,12 +71,7 @@ Output format:
             text: prompt
           }]
         }],
-        generationConfig: {
-          temperature: 0.2,
-          topK: 1,
-          topP: 0.8,
-          maxOutputTokens: 1024,
-        }
+        generationConfig
       }),
     });
 

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,10 +8,9 @@ const corsHeaders = {
 };
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-// Prefer username/password per O*NET Web Services, fallback to legacy ONET_API_KEY if present
+// Require username/password per O*NET Web Services (no API key fallback)
 const ONET_USERNAME = Deno.env.get('ONET_USERNAME');
 const ONET_PASSWORD = Deno.env.get('ONET_PASSWORD');
-const ONET_API_KEY = Deno.env.get('ONET_API_KEY');
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -23,11 +23,10 @@ serve(async (req) => {
       throw new Error('Gemini API key is not configured');
     }
 
-    // Validate O*NET credentials (username/password preferred)
+    // Validate O*NET credentials (username/password required)
     const hasUserPass = Boolean(ONET_USERNAME && ONET_PASSWORD);
-    const hasApiKey = Boolean(ONET_API_KEY);
-    if (!hasUserPass && !hasApiKey) {
-      throw new Error('O*NET credentials not configured: set ONET_USERNAME/ONET_PASSWORD or ONET_API_KEY');
+    if (!hasUserPass) {
+      throw new Error('O*NET credentials not configured: set ONET_USERNAME and ONET_PASSWORD');
     }
 
     const { occupation_code, occupation_title } = await req.json();
@@ -66,10 +65,8 @@ serve(async (req) => {
       });
     }
 
-    // Build Authorization header for O*NET
-    const basicToken = hasUserPass
-      ? btoa(`${ONET_USERNAME}:${ONET_PASSWORD}`)
-      : btoa(`${ONET_API_KEY}:`);
+    // Build Authorization header for O*NET (Basic auth)
+    const basicToken = btoa(`${ONET_USERNAME}:${ONET_PASSWORD}`);
     const onetResponse = await fetch(`https://services.onetcenter.org/ws/online/occupations/${occupation_code}/details`, {
       headers: {
         'Authorization': `Basic ${basicToken}`,
@@ -146,8 +143,11 @@ Respond in this JSON format:
 }
 `;
 
-    // Call Gemini API
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
+    // Call Gemini API using env-driven model/config
+    const model = getEnvModel();
+    const envDefaults = getEnvGenerationDefaults();
+    const generationConfig = { ...envDefaults, temperature: 0.2, topK: 1, topP: 0.8, maxOutputTokens: 4096 } as const;
+    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,12 +158,7 @@ Respond in this JSON format:
             text: prompt
           }]
         }],
-        generationConfig: {
-          temperature: 0.2,
-          topK: 1,
-          topP: 0.8,
-          maxOutputTokens: 4096,
-        }
+        generationConfig
       }),
     });
 

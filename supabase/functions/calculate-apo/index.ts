@@ -12,7 +12,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, x-api-key, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Expose-Headers': 'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset',
-};
+} as const;
+
+function isOriginPermitted(origin: string): boolean {
+  const raw = (Deno.env.get('APO_ALLOWED_ORIGINS') || '*')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  if (raw.length === 1 && raw[0] === '*') return true;
+  if (!origin) return false;
+  return raw.includes(origin);
+}
+
+function buildCorsHeaders(origin: string): Record<string, string> {
+  const permitted = isOriginPermitted(origin);
+  const allowOrigin = permitted ? (origin || '*') : 'null';
+  return { ...corsHeaders, 'Access-Control-Allow-Origin': allowOrigin } as Record<string, string>;
+}
 
 // Defaults, can be overridden by DB config (apo_config)
 const DEFAULT_CATEGORY_WEIGHTS = {
@@ -197,15 +213,29 @@ serve(async (req) => {
   console.log('Method:', req.method);
   console.log('URL:', req.url);
 
+  const origin = req.headers.get('origin') || '';
+  const baseHeaders = buildCorsHeaders(origin);
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight request');
-    return new Response(null, { headers: corsHeaders });
+    if (!isOriginPermitted(origin)) {
+      return new Response(null, { status: 403, headers: baseHeaders });
+    }
+    return new Response(null, { headers: baseHeaders });
   }
 
   try {
     if (!geminiApiKey) {
       console.error('Gemini API key is not configured');
       throw new Error('Gemini API key is not configured');
+    }
+
+    // Optional API key enforcement (run before rate limiting to avoid leaking rate-limit behavior to unauthenticated callers)
+    const requiredApiKey = Deno.env.get('APO_FUNCTION_API_KEY');
+    if (requiredApiKey) {
+      const providedKey = req.headers.get('x-api-key');
+      if (providedKey !== requiredApiKey) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...baseHeaders, 'Content-Type': 'application/json' } });
+      }
     }
 
     // Lightweight rate limiting (per-minute)
@@ -215,21 +245,13 @@ serve(async (req) => {
     if (!rl.allowed) {
       return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
         status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-RateLimit-Limit': String(rateLimitMax), 'X-RateLimit-Remaining': String(rl.remaining), 'X-RateLimit-Reset': String(rl.resetMs) },
+        headers: { ...baseHeaders, 'Content-Type': 'application/json', 'X-RateLimit-Limit': String(rateLimitMax), 'X-RateLimit-Remaining': String(rl.remaining), 'X-RateLimit-Reset': String(rl.resetMs) },
       });
     }
 
-    // Optional API key enforcement
-    const requiredApiKey = Deno.env.get('APO_FUNCTION_API_KEY');
-    if (requiredApiKey) {
-      const providedKey = req.headers.get('x-api-key');
-      if (providedKey !== requiredApiKey) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      }
-    }
-
     const requestBody = await req.text();
-    console.log('Request body:', requestBody);
+    // Avoid logging full request bodies to reduce risk of sensitive data exposure
+    // console.log('Request body received');
     let parsedBody: any;
     try {
       parsedBody = JSON.parse(requestBody);
@@ -481,7 +503,7 @@ serve(async (req) => {
 
     // Attach rate limit headers on success
     return new Response(JSON.stringify(responseBody), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json', ...(typeof rl !== 'undefined' ? { 'X-RateLimit-Limit': String(rateLimitMax), 'X-RateLimit-Remaining': String(rl.remaining), 'X-RateLimit-Reset': String(rl.resetMs) } : {}) },
+      headers: { ...baseHeaders, 'Content-Type': 'application/json', ...(typeof rl !== 'undefined' ? { 'X-RateLimit-Limit': String(rateLimitMax), 'X-RateLimit-Remaining': String(rl.remaining), 'X-RateLimit-Reset': String(rl.resetMs) } : {}) },
     });
   } catch (error) {
     console.error('Error in enhanced calculate-apo function:', error);
@@ -492,7 +514,7 @@ serve(async (req) => {
       version: '2.0'
     }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...baseHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { APIErrorHandler, withRetry } from "@/utils/apiErrorHandler";
 import { apoRateLimiter, checkRateLimit } from "@/utils/rateLimiting";
+import { getFunctionsBaseUrl } from "@/lib/utils";
 
 export interface APOAnalysis {
   occupation_code: string;
@@ -37,6 +38,17 @@ export function useAPOCalculation() {
   const [isCalculating, setIsCalculating] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  function isMissingRelationOrColumn(error: any): boolean {
+    const msg = String(error?.message || "");
+    const code = String(error?.code || "");
+    return (
+      code === "42P01" || // undefined_table
+      code === "42703" || // undefined_column
+      /relation .* does not exist/i.test(msg) ||
+      /column .* does not exist/i.test(msg)
+    );
+  }
 
   // Health check mutation
   const healthCheckMutation = useMutation({
@@ -88,13 +100,17 @@ export function useAPOCalculation() {
       }
 
       // Check cache first
-      const { data: cached } = await supabase
+      const { data: cached, error: cacheError } = await supabase
         .from('apo_analysis_cache')
         .select('*')
         .eq('occupation_code', occupationCode)
-        .single();
+        .maybeSingle();
 
-      if (cached && cached.analysis_data) {
+      if (cacheError && !isMissingRelationOrColumn(cacheError)) {
+        throw cacheError;
+      }
+
+      if (!cacheError && cached && (cached as any).analysis_data) {
         console.log('Using cached APO analysis');
         setIsCalculating(false);
         
@@ -109,27 +125,36 @@ export function useAPOCalculation() {
         return cached.analysis_data as unknown as APOAnalysis;
       }
 
-      // Calculate new APO analysis with retry logic
+      // Calculate new APO analysis with retry logic (via Netlify apo-proxy to avoid exposing keys client-side)
       const analysis = await withRetry(async () => {
-        const { data, error } = await supabase.functions.invoke('calculate-apo', {
-          body: { 
-            occupation_code: occupationCode, 
-            occupation_title: occupationTitle 
-          }
+        const fnBase = getFunctionsBaseUrl();
+        const url = `${fnBase}/.netlify/functions/apo-proxy`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ occupation: { code: occupationCode, title: occupationTitle } })
         });
-
-        if (error) throw error;
-        return data.analysis;
+        if (!resp.ok) {
+          const txt = await resp.text();
+          throw new Error(`APO proxy failed (${resp.status}): ${txt}`);
+        }
+        const payload = await resp.json();
+        if (payload?.error) throw new Error(payload.error);
+        return payload.analysis;
       }, 'APO calculation');
 
-      // Cache the result
-      await supabase
+      // Cache the result (ignore if cache table doesn't exist yet)
+      const { error: upsertError } = await supabase
         .from('apo_analysis_cache')
         .upsert({
           occupation_code: occupationCode,
           occupation_title: occupationTitle,
           analysis_data: analysis
         });
+
+      if (upsertError && !isMissingRelationOrColumn(upsertError)) {
+        throw upsertError;
+      }
 
       // Send success notification
       await supabase.rpc('create_notification', {

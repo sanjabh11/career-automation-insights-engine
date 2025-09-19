@@ -81,6 +81,9 @@ export const APODashboard = () => {
     savedSelections.removeSelection(jobCode);
   };
 
+  // Alias for components expecting `handleRemoveSelected`
+  const handleRemoveSelected = (code: string) => handleRemoveFromSelected(code);
+
   const handleExport = () => {
     setShowExport(true);
   };
@@ -135,7 +138,6 @@ export const APODashboard = () => {
                 <OccupationComparisonPanel
                   occupations={selectedJobs}
                   onRemove={handleRemoveFromSelected}
-                  onRemove={handleRemoveSelected}
                 />
               </motion.div>
             </ErrorBoundary>

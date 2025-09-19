@@ -9,11 +9,13 @@ import { useToast } from '@/components/ui/use-toast';
 import { sanitizeSearchInput, sanitizeOccupationCode } from '@/utils/inputSanitization';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorBoundary } from './ErrorBoundary';
-import { useSearchHistory } from '@/hooks/useSearchHistory';
+import { useSearchHistoryUnified } from '@/hooks/useSearchHistoryUnified';
 import { RateLimitDisplay } from './RateLimitDisplay';
 import { searchRateLimiter, checkRateLimit, formatTimeUntilReset } from '@/utils/rateLimiting';
 import { useSession } from '@/hooks/useSession';
 import { useNavigate } from 'react-router-dom';
+import { getFunctionsBaseUrl } from '@/lib/utils';
+import { getDeviceId } from '@/utils/device';
 
 interface SearchInterfaceProps {
   onOccupationSelect: (occupation: any) => void;
@@ -27,6 +29,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   const [results, setResults] = useState<any[]>([]);
   const [isCalculatingAPO, setIsCalculatingAPO] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [maxResults, setMaxResults] = useState<number>(10);
   const [rateLimitStatus, setRateLimitStatus] = useState({
     allowed: true,
     remaining: 20,
@@ -36,8 +39,9 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   
   const resultsRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { addSearch } = useSearchHistory();
+  const { addSearch } = useSearchHistoryUnified();
   const { user, loading } = useSession();
+  const isGuest = !user;
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -48,20 +52,18 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
 
   // Update rate limit status
   React.useEffect(() => {
-    if (user) {
-      const status = checkRateLimit(searchRateLimiter, user.id);
-      setRateLimitStatus(status);
-    }
+    const key = user?.id ?? getDeviceId();
+    const status = checkRateLimit(searchRateLimiter, key);
+    setRateLimitStatus(status);
   }, [user]);
 
   const { mutate: searchOccupations, isPending: isLoading } = useMutation({
     mutationFn: async ({ term, filter }: { term: string; filter: string }) => {
-      if (!user) {
-        throw new Error('Please sign in to search for occupations');
-      }
+      // Determine rate limit key (user or device)
+      const rateKey = user?.id ?? getDeviceId();
 
       // Check rate limiting before proceeding
-      const rateCheck = checkRateLimit(searchRateLimiter, user.id);
+      const rateCheck = checkRateLimit(searchRateLimiter, rateKey);
       setRateLimitStatus(rateCheck);
       
       if (!rateCheck.allowed) {
@@ -80,9 +82,9 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       if (cache[cacheKey]) return cache[cacheKey];
       
       const onetQuery = sanitizedFilter
-        ? `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=10&code=${encodeURIComponent(sanitizedFilter)}`
-        : `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=10`;
-      const fnBase = typeof window !== 'undefined' && window.location.port === '8080' ? 'http://localhost:8888' : '';
+        ? `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=${encodeURIComponent(String(maxResults))}&code=${encodeURIComponent(sanitizedFilter)}`
+        : `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=${encodeURIComponent(String(maxResults))}`;
+      const fnBase = getFunctionsBaseUrl();
       const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(onetQuery)}`;
       console.debug('[SearchInterface] fetching', { url, origin: window.location.origin });
       const resp = await fetch(url);
@@ -121,18 +123,16 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       setResults(processedResults);
       
       // Track search in history
-      if (user) {
-        addSearch({
-          search_term: searchTerm,
-          results_count: processedResults.length
-        });
-      }
+      // Track search (unified hook handles guest vs auth storage)
+      addSearch({
+        search_term: searchTerm,
+        results_count: processedResults.length
+      });
 
       // Update rate limit status after successful search
-      if (user) {
-        const status = checkRateLimit(searchRateLimiter, user.id);
-        setRateLimitStatus(status);
-      }
+      const rateKey = user?.id ?? getDeviceId();
+      const status = checkRateLimit(searchRateLimiter, rateKey);
+      setRateLimitStatus(status);
     },
     onError: (error: Error) => {
       console.error('Search failed:', error);
@@ -158,14 +158,20 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
 
     setIsCalculatingAPO(true);
     try {
-      const { data, error } = await supabase.functions.invoke('calculate-apo', {
-        body: { occupation },
+      const fnBase = getFunctionsBaseUrl();
+      const url = `${fnBase}/.netlify/functions/apo-proxy`;
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ occupation: { code: occupation.code, title: occupation.title } })
       });
-      
-      if (error) throw new Error(`APO calculation failed: ${error.message}`);
-      if (data.error) throw new Error(`APO calculation error: ${data.error}`);
-      
-      onOccupationSelect(data);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`APO proxy failed (${resp.status}): ${txt}`);
+      }
+      const payload = await resp.json();
+      if (payload?.error) throw new Error(payload.error);
+      onOccupationSelect(payload);
       toast({
         title: 'APO Analysis Complete',
         description: `Automation potential calculated for ${occupation.title}`,
@@ -244,36 +250,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     );
   }
 
-  if (!user) {
-    return (
-      <ErrorBoundary>
-        <div className="space-y-6" aria-labelledby="career-search-heading">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2" id="career-search-heading">
-              Career Search
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Search for occupations to analyze their automation potential using AI
-            </p>
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <LogIn className="h-12 w-12 mx-auto mb-4 text-blue-600" />
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              Sign In Required
-            </h3>
-            <p className="text-blue-700 mb-4">
-              Please sign in to search for occupations and analyze their automation potential.
-            </p>
-            <Button onClick={() => navigate('/auth')} className="bg-blue-600 hover:bg-blue-700">
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
-          </div>
-        </div>
-      </ErrorBoundary>
-    );
-  }
+  // Note: Guests can search (local-first). Auth is still required for APO calculation below.
 
   return (
     <ErrorBoundary>
@@ -285,6 +262,11 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
           <p className="text-gray-600 text-sm">
             Search for occupations to analyze their automation potential using AI
           </p>
+          {isGuest && (
+            <div className="mt-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded p-2">
+              You are searching in guest mode with device-based limits. <button className="underline" onClick={() => navigate('/auth')}>Sign in</button> for higher limits and cloud sync.
+            </div>
+          )}
         </div>
 
         {/* Rate Limit Display */}
@@ -330,20 +312,38 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
         </div>
         
         {showFilters && (
-          <div className="flex gap-3 items-center mt-2" role="region" aria-label="Advanced Filters">
-            <label htmlFor="filter-code" className="text-sm font-medium text-gray-800">
-              Filter by Code
-            </label>
-            <Input
-              id="filter-code"
-              type="text"
-              aria-label="Filter by Occupation Code (optional)"
-              placeholder="E.g. 11-1011"
-              className="max-w-[180px]"
-              value={filter}
-              onChange={handleFilterChange}
-              maxLength={20}
-            />
+          <div className="flex flex-wrap gap-3 items-center mt-2" role="region" aria-label="Advanced Filters">
+            <div className="flex items-center gap-2">
+              <label htmlFor="filter-code" className="text-sm font-medium text-gray-800">
+                Filter by Code
+              </label>
+              <Input
+                id="filter-code"
+                type="text"
+                aria-label="Filter by Occupation Code (optional)"
+                placeholder="E.g. 11-1011"
+                className="max-w-[180px]"
+                value={filter}
+                onChange={handleFilterChange}
+                maxLength={20}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="max-results" className="text-sm font-medium text-gray-800">
+                Max Results
+              </label>
+              <select
+                id="max-results"
+                aria-label="Maximum results"
+                className="border rounded px-2 py-1 text-sm"
+                value={maxResults}
+                onChange={(e) => setMaxResults(Number(e.target.value) || 10)}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
           </div>
         )}
         

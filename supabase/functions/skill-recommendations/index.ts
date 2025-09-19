@@ -147,60 +147,7 @@ Output format:
       console.error('Error storing skill recommendations:', insertError);
     }
 
-    // Also create some sample learning resources if none exist
-    const { data: existingResources } = await supabase
-      .from('ai_reskilling_resources')
-      .select('count')
-      .limit(1);
-
-    if (!existingResources || existingResources.length === 0) {
-      const sampleResources = [
-        {
-          skill_area: "Data Analysis",
-          title: "Data Science Specialization",
-          url: "https://www.coursera.org/specializations/jhu-data-science",
-          provider: "Coursera",
-          description: "Learn data science fundamentals with R programming",
-          cost_type: "Paid"
-        },
-        {
-          skill_area: "Emotional Intelligence",
-          title: "Emotional Intelligence at Work",
-          url: "https://www.linkedin.com/learning/emotional-intelligence-at-work",
-          provider: "LinkedIn Learning",
-          description: "Develop emotional intelligence skills for workplace success",
-          cost_type: "Paid"
-        },
-        {
-          skill_area: "Critical Thinking",
-          title: "Introduction to Critical Thinking",
-          url: "https://www.edx.org/learn/critical-thinking",
-          provider: "edX",
-          description: "Learn to analyze and evaluate information effectively",
-          cost_type: "Free"
-        },
-        {
-          skill_area: "Project Management",
-          title: "Google Project Management Certificate",
-          url: "https://www.coursera.org/professional-certificates/google-project-management",
-          provider: "Coursera",
-          description: "Gain in-demand project management skills",
-          cost_type: "Paid"
-        },
-        {
-          skill_area: "Communication",
-          title: "Effective Communication in the Workplace",
-          url: "https://www.udemy.com/course/effective-communication-in-the-workplace",
-          provider: "Udemy",
-          description: "Master workplace communication skills",
-          cost_type: "Paid"
-        }
-      ];
-
-      await supabase
-        .from('ai_reskilling_resources')
-        .insert(sampleResources);
-    }
+    // Removed runtime sample inserts — rely on migration seeds and UI empty states
 
     return new Response(JSON.stringify(recommendationsData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -34,6 +34,17 @@ export function useSavedSelections<T = unknown>() {
   const [user, setUser] = useState<User | null>(null);
   const queryClient = useQueryClient();
 
+  function isMissingRelationOrColumn(error: any): boolean {
+    const msg = String(error?.message || "");
+    const code = String(error?.code || "");
+    return (
+      code === "42P01" || // undefined_table
+      code === "42703" || // undefined_column
+      /relation .* does not exist/i.test(msg) ||
+      /column .* does not exist/i.test(msg)
+    );
+  }
+
   useEffect(() => {
     const checkUserSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -67,6 +78,10 @@ export function useSavedSelections<T = unknown>() {
         .order('created_at', { ascending: false });
 
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('user_selections not available; falling back to local selections');
+          return getLocalSelections<T>();
+        }
         console.error('Error fetching selections from Supabase:', error);
         throw error;
       }
@@ -101,6 +116,18 @@ export function useSavedSelections<T = unknown>() {
         .single();
       
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('user_selections not available; saving locally');
+          const currentSelections = getLocalSelections<T>();
+          const newEntry: SavedSelection<T> = {
+            id: `local_${Date.now().toString(36)}`,
+            name: name || "Untitled",
+            data: listData,
+            createdAt: Date.now(),
+          };
+          setLocalSelections([newEntry, ...currentSelections]);
+          return { id: newEntry.id } as any;
+        }
         console.error('Error saving selection to Supabase:', error);
         throw error;
       }
@@ -126,6 +153,13 @@ export function useSavedSelections<T = unknown>() {
         .eq('id', id);
 
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('user_selections not available; updating name locally');
+          const selections = getLocalSelections<T>();
+          const updatedSelections = selections.map(s => s.id === id ? { ...s, name: newName } : s);
+          setLocalSelections(updatedSelections);
+          return;
+        }
         console.error("Error updating selection name in Supabase:", error);
         throw error;
       }
@@ -150,6 +184,13 @@ export function useSavedSelections<T = unknown>() {
         .eq('id', id);
 
       if (error) {
+        if (isMissingRelationOrColumn(error)) {
+          console.warn('user_selections not available; removing locally');
+          const selections = getLocalSelections<T>();
+          const filteredSelections = selections.filter(s => s.id !== id);
+          setLocalSelections(filteredSelections);
+          return;
+        }
         console.error("Error removing selection from Supabase:", error);
         throw error;
       }

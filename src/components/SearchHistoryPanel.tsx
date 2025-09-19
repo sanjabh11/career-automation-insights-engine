@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { History, Trash2, Search } from "lucide-react";
-import { useSearchHistory } from "@/hooks/useSearchHistory";
+import { useSearchHistoryUnified } from "@/hooks/useSearchHistoryUnified";
 import { toast } from "sonner";
 
 interface SearchHistoryPanelProps {
@@ -12,7 +12,7 @@ interface SearchHistoryPanelProps {
 }
 
 export function SearchHistoryPanel({ onSearchSelect }: SearchHistoryPanelProps) {
-  const { searchHistory, clearHistory, isLoading, isClearing } = useSearchHistory();
+  const { searchHistory, clearHistory, isLoading, isClearing } = useSearchHistoryUnified();
 
   const handleClearHistory = async () => {
     if (confirm("Are you sure you want to clear your entire search history?")) {

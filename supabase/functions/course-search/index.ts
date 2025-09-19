@@ -21,7 +21,7 @@ interface CourseResult {
   url: string;
   duration: string;
   level: string;
-  rating: number;
+  rating?: number;
   price: string;
   skills: string[];
   description?: string;
@@ -93,7 +93,8 @@ Deno.serve(async (req) => {
     const sortedCourses = sortCoursesByRelevance(uniqueCourses, skills);
     
     // Add some high-quality fallback courses if we don't have enough results
-    if (sortedCourses.length < 6) {
+    const allowFallbacks = (Deno.env.get('COURSE_SEARCH_ALLOW_FALLBACKS') || '').toLowerCase() === 'true';
+    if (allowFallbacks && sortedCourses.length < 6) {
       const fallbackCourses = generateFallbackCourses(skills);
       sortedCourses.push(...fallbackCourses.slice(0, 6 - sortedCourses.length));
     }
@@ -228,39 +229,30 @@ function extractLevel(snippet: string, title: string): string {
   return 'All Levels';
 }
 
-function extractRating(snippet: string): number {
+function extractRating(snippet: string): number | undefined {
   const ratingMatch = snippet.match(/(\d+\.?\d*)\s*\/\s*5|(\d+\.?\d*)\s*stars?/i);
   if (ratingMatch) {
     const rating = parseFloat(ratingMatch[1] || ratingMatch[2]);
     return Math.min(5, Math.max(0, rating));
   }
-  
-  // Default rating based on provider quality
-  return 4.2 + Math.random() * 0.6; // Random between 4.2-4.8
+  // No reliable rating parse -> omit rating
+  return undefined;
 }
 
 function extractPrice(snippet: string, title: string): string {
   const text = (snippet + ' ' + title).toLowerCase();
-  
+
   if (text.includes('free') || text.includes('no cost')) {
     return 'Free';
   }
-  
+
   const priceMatch = text.match(/\$(\d+(?:,\d{3})*(?:\.\d{2})?)/);
   if (priceMatch) {
     return `$${priceMatch[1]}`;
   }
-  
-  // Default pricing based on common patterns
-  if (text.includes('coursera') || text.includes('edx')) {
-    return 'Free to audit';
-  } else if (text.includes('udemy')) {
-    return '$49.99';
-  } else if (text.includes('pluralsight') || text.includes('linkedin')) {
-    return '$29.99/month';
-  }
-  
-  return 'Varies';
+
+  // Unknown when not explicitly present
+  return 'Unknown';
 }
 
 function removeDuplicateCourses(courses: CourseResult[]): CourseResult[] {
@@ -297,9 +289,9 @@ function sortCoursesByRelevance(courses: CourseResult[], skills: string[]): Cour
     scoreA += providerScores[a.provider] || 2;
     scoreB += providerScores[b.provider] || 2;
     
-    // Rating score
-    scoreA += a.rating;
-    scoreB += b.rating;
+    // Rating score (optional)
+    scoreA += (a.rating ?? 0);
+    scoreB += (b.rating ?? 0);
     
     // Skill relevance score
     const skillsLower = skills.map(s => s.toLowerCase());

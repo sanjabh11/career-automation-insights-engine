@@ -1,3 +1,10 @@
+### Pending Items
+- E2E CoS test for APO (PBI-0001-16)
+- Durable rate limiting backend (design in `PBI-0001-32.md`)
+- Lighthouse CI / a11y checks (checklist in `PBI-0001-31.md`)
+- Advanced filters beyond Max Results
+- Optional: Generate true PDFs (instead of print-friendly HTML)
+
 # 🚀 APO Dashboard - AI-Powered Career Automation Analysis
 
 ![APO Dashboard](https://img.shields.io/badge/Status-Production%20Ready-green)
@@ -435,3 +442,146 @@ MIT License - see LICENSE file for details.
 
 *Last updated: December 2024*
 *Documentation Version: 2.0*
+
+---
+
+## 🧭 APO Edge Function Runbook (calculate-apo)
+
+### What it does
+- Computes Automation Potential (APO) for a given O*NET occupation.
+- Uses Google Gemini for structured JSON of items, then deterministic scoring in-code.
+- Persists telemetry to `public.apo_logs` and loads weights from `public.apo_config` (single active row enforced by a unique partial index).
+
+### Supabase Secrets (required)
+- `GEMINI_API_KEY` — Google AI key
+- `GEMINI_MODEL` — default `gemini-2.5-flash` (optional)
+- `APO_FUNCTION_API_KEY` — required for requests (header `x-api-key`) if set
+- `APO_RATE_LIMIT_PER_MIN` — default `30` (optional)
+- `APO_ALLOWED_ORIGINS` — comma-separated allowlist for CORS (e.g. `https://app.example.com,https://staging.example.com`; `*` to allow all)
+- `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` — required for telemetry writes
+
+### Database Migrations
+Located in `supabase/migrations/`:
+- `20250812135500_create_apo_logs.sql`
+- `20250812142200_create_apo_config.sql`
+- `20250812143500_alter_apo_logs_add_config_and_warnings.sql`
+- `20250823184000_apo_config_one_active.sql` (enforces one active config)
+
+### Deploy Steps (Supabase CLI)
+```bash
+# 1) Apply DB schema
+supabase db push
+
+# 2) Set secrets (repeat per project env)
+supabase secrets set GEMINI_API_KEY=***
+supabase secrets set GEMINI_MODEL=gemini-2.5-flash
+supabase secrets set APO_FUNCTION_API_KEY=***
+supabase secrets set APO_RATE_LIMIT_PER_MIN=30
+supabase secrets set APO_ALLOWED_ORIGINS="https://your.app,https://staging.your.app"
+
+# 3) Deploy function
+supabase functions deploy calculate-apo --project-ref <your-ref>
+
+# 4) Get URL
+supabase functions list --project-ref <your-ref>
+```
+
+### Smoke Test
+```bash
+curl -s -X POST \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: $APO_FUNCTION_API_KEY" \
+  -d '{"occupation":{"code":"11-1021.00","title":"General and Operations Managers"}}' \
+  "https://<your-ref>.functions.supabase.co/calculate-apo" | jq
+```
+Expect:
+- 200 OK JSON including both flattened fields and an `analysis` wrapper.
+- Rate-limit headers on success: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
+- Telemetry row in `public.apo_logs` with `prompt_hash`, `config_id`.
+
+### Security Checklist
+- `.env` and `.env.*` are in `.gitignore` (see repo root).
+- Function requires `x-api-key` when `APO_FUNCTION_API_KEY` is set.
+- API key check runs before rate limiting to avoid leaking quota behavior.
+- CORS allowlist enforced via `APO_ALLOWED_ORIGINS`; disallowed origins receive 403 on preflight and `Access-Control-Allow-Origin: null`.
+
+### Implementation Status
+Done:
+- Unified Gemini model/config via env in `supabase/lib/GeminiClient.ts`.
+- Telemetry logging to `public.apo_logs` with prompt hash, model, tokens, latency.
+- APO weights/multipliers in `public.apo_config` with one-active constraint.
+- Cross-field validation and deterministic APO computation.
+- Hardened function: schema validation, rate limiting + headers, API key, CORS.
+- Technical doc at `docs/technical/calculate-apo.md`.
+
+Pending (post-deploy follow-ups):
+- Durable rate limiting backend (Redis/KV) instead of in-memory per-instance.
+- Optional mock mode for quota-free local smoke tests.
+- E2E CoS task in `docs/delivery/PBI-0001/tasks.md` (0001-16).
+
+### For Developers
+- Edit active weights in `public.apo_config` (ensure only one active row).
+- Review logs in `public.apo_logs` to monitor model output vs computed scores.
+- Avoid committing secrets; keep `.env*` ignored. Use Supabase Secrets for prod.
+
+---
+
+## 📌 Implementation Update (2025-09-19)
+
+### What’s New
+- Local-first mode for guests
+  - Unified hooks for Saved Analyses and Search History (`useSavedAnalysesUnified`, `useSearchHistoryUnified`)
+  - Guests can search; device-based rate limiting; unified local search history
+- Real-data-only course search
+  - No fabricated ratings/prices; optional curated fallbacks gated by `COURSE_SEARCH_ALLOW_FALLBACKS=true`
+- Security hardening
+  - O*NET username/password only; removed API key fallback in `analyze-occupation-tasks`
+  - Env-driven Gemini model (`GEMINI_MODEL`) used across Edge Functions
+  - New Netlify `apo-proxy` function to avoid exposing `x-api-key` client-side
+- Exports & Compare
+  - CSV export utility and button (Saved Analyses)
+  - Print-friendly HTML (Export PDF) and Compare page (`/compare`)
+- UI/UX
+  - Premium hero section (full-width image, glassmorphism, serif headings, fade-in on scroll)
+- Docs
+  - Added tasks and design docs under `docs/delivery/PBI-0001/` (29..32)
+
+### Local-First Behavior
+- Guests: data (history, saves) stored in `localStorage`; can search within device-based limits
+- Signed-in users: remote tables via Supabase; unified hooks automatically switch
+
+### Security Notes
+- `.env` and `.env.*` are `.gitignore`-d (see repo root)
+- Use Supabase and Netlify environment secret stores in deployed environments
+- CSP updated to include `font-src https://fonts.gstatic.com` for Google Fonts
+- APO calls routed via Netlify `apo-proxy` to keep keys server-side
+
+### Quick Start (Updated)
+1) Install & run
+```bash
+npm install
+npm run dev
+```
+2) Local environment
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+ONET_USERNAME=...
+ONET_PASSWORD=...
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-2.5-flash
+# Optional: allow curated course fallbacks
+COURSE_SEARCH_ALLOW_FALLBACKS=false
+```
+3) Netlify Dev (recommended for local functions)
+```bash
+netlify dev
+# UI served at http://localhost:8888 and /.netlify/functions/* proxied to functions
+```
+
+### Tables Overview (Key)
+- Core app: `saved_analyses`, `shared_analyses`, `user_settings`, `notifications`, `analytics_events`, `search_history`
+- APO: `apo_logs`, `apo_config` (+ one-active partial unique index)
+- AI Planner: `ai_task_assessments`, `ai_skill_recommendations`, `ai_reskilling_resources`, `learning_paths`
+- O*NET enrichment: `occupations`, `occupation_classifications`, `descriptor_families`, `descriptors`, `occupation_descriptors`, `crosswalk_sources`, `occupation_crosswalks`, `tools_technology`, `green_apprentice_flags`
+- LLM usage: `llm_logs`

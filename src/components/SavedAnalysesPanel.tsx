@@ -7,16 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { BookOpen, Trash2, Edit3, Plus, Tag, FileText, Share2 } from "lucide-react";
-import { useSavedAnalysesLocal } from "@/hooks/useSavedAnalysesLocal";
+import { useSavedAnalysesUnified } from "@/hooks/useSavedAnalysesUnified";
 import { ShareAnalysisModal } from "./ShareAnalysisModal";
 import { toast } from "sonner";
+import { exportAnalysesToCSV, exportAnalysesToPrintableHTML } from "@/utils/export";
 
 interface SavedAnalysesPanelProps {
   onLoadAnalysis?: (analysis: any) => void;
 }
 
 export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) {
-  const { savedAnalyses, deleteAnalysis, updateAnalysis, isLoading } = useSavedAnalysesLocal();
+  const { savedAnalyses, deleteAnalysis, updateAnalysis, isLoading } = useSavedAnalysesUnified();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTags, setEditTags] = useState<string>("");
   const [editNotes, setEditNotes] = useState<string>("");
@@ -82,6 +83,22 @@ export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) 
           <Badge variant="secondary" className="ml-auto">
             {savedAnalyses.length}
           </Badge>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => exportAnalysesToCSV(savedAnalyses)}
+            title="Export as CSV"
+          >
+            Export CSV
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => exportAnalysesToPrintableHTML(savedAnalyses, 'Saved Analyses Report')}
+            title="Export as PDF"
+          >
+            Export PDF
+          </Button>
         </div>
 
         <div className="space-y-3 max-h-96 overflow-y-auto">
