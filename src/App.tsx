@@ -15,6 +15,7 @@ import CareerPlanningPage from "./pages/CareerPlanningPage";
 import CrosswalkPage from "./pages/CrosswalkPage";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
+import Test from "./pages/Test";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/test" element={<Test />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<UserDashboardPage />} />
             <Route path="/shared/:shareToken" element={<SharedAnalysisPage />} />

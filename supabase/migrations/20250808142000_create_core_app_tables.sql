@@ -25,12 +25,30 @@ create table if not exists public.shared_analyses (
   created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz default now() not null
 );
+
+-- Ensure columns exist when table was created prior to this migration
+alter table public.shared_analyses
+  add column if not exists analysis_id uuid references public.saved_analyses(id) on delete cascade;
+
+alter table public.shared_analyses
+  add column if not exists share_token text;
+
+alter table public.shared_analyses
+  add column if not exists expires_at timestamptz;
+
+alter table public.shared_analyses
+  add column if not exists created_by uuid references auth.users(id) on delete set null;
+
+alter table public.shared_analyses
+  add column if not exists created_at timestamptz default now() not null;
+
+alter table public.shared_analyses
+  add constraint shared_analyses_share_token_unique unique (share_token);
+
 alter table public.shared_analyses enable row level security;
 create policy "Public can read shared analyses via token" on public.shared_analyses for select using (true);
 create policy "Owners can create shares" on public.shared_analyses for insert with check (auth.uid() = created_by);
 create index if not exists idx_shared_analyses_token on public.shared_analyses(share_token);
-
--- User settings
 create table if not exists public.user_settings (
   id uuid primary key default gen_random_uuid(),
   user_id uuid unique references auth.users(id) on delete cascade,

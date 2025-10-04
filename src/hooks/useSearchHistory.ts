@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User } from "@supabase/supabase-js";
@@ -17,14 +17,17 @@ function isMissingRelationOrColumn(error: any): boolean {
   return (
     code === "42P01" || // undefined_table
     code === "42703" || // undefined_column
+    code === "PGRST204" || // PostgREST schema cache column not found
     /relation .* does not exist/i.test(msg) ||
-    /column .* does not exist/i.test(msg)
+    /column .* does not exist/i.test(msg) ||
+    /could not find .* column/i.test(msg)
   );
 }
 
 export function useSearchHistory() {
   const [user, setUser] = useState<User | null>(null);
   const queryClient = useQueryClient();
+  const schemaAvailableRef = useRef(true);
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -48,7 +51,7 @@ export function useSearchHistory() {
   const { data: searchHistory = [], isLoading } = useQuery<SearchHistoryItem[]>({
     queryKey,
     queryFn: async () => {
-      if (!user) return [];
+      if (!user || !schemaAvailableRef.current) return [];
 
       const { data, error } = await supabase
         .from('search_history')
@@ -59,7 +62,8 @@ export function useSearchHistory() {
 
       if (error) {
         if (isMissingRelationOrColumn(error)) {
-          console.warn('search_history not available yet; returning empty list');
+          schemaAvailableRef.current = false;
+          console.warn('search_history schema unavailable; skipping history fetch');
           return [];
         }
         console.error('Error fetching search history:', error);
@@ -79,7 +83,7 @@ export function useSearchHistory() {
       search_term: string;
       results_count: number;
     }) => {
-      if (!user) return;
+      if (!user || !schemaAvailableRef.current) return;
 
       const { error } = await supabase
         .from('search_history')
@@ -91,7 +95,7 @@ export function useSearchHistory() {
       
       if (error) {
         if (isMissingRelationOrColumn(error)) {
-          console.warn('search_history not available; skipping addSearch');
+          schemaAvailableRef.current = false;
           return;
         }
         console.error('Error saving search history:', error);
@@ -106,6 +110,7 @@ export function useSearchHistory() {
   const clearHistoryMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated');
+      if (!schemaAvailableRef.current) return;
 
       const { error } = await supabase
         .from('search_history')

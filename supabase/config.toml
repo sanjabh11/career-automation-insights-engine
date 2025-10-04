@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.serpapi-jobs]
 verify_jwt = false
+
+[functions.search-occupations]
+verify_jwt = false

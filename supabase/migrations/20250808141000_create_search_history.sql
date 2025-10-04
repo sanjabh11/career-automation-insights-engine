@@ -7,6 +7,10 @@ create table if not exists public.search_history (
   searched_at timestamptz default now() not null
 );
 
+-- Ensure searched_at column exists when table was created previously without it
+alter table public.search_history
+  add column if not exists searched_at timestamptz default now() not null;
+
 alter table public.search_history enable row level security;
 
 create policy "Users can view their own search history" on public.search_history

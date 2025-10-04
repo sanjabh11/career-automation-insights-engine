@@ -81,53 +81,49 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       const cacheKey = sanitizedTerm + "_" + sanitizedFilter;
       if (cache[cacheKey]) return cache[cacheKey];
       
-      const onetQuery = sanitizedFilter
-        ? `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=${encodeURIComponent(String(maxResults))}&code=${encodeURIComponent(sanitizedFilter)}`
-        : `search?keyword=${encodeURIComponent(sanitizedTerm)}&end=${encodeURIComponent(String(maxResults))}`;
-      const fnBase = getFunctionsBaseUrl();
-      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(onetQuery)}`;
-      console.debug('[SearchInterface] fetching', { url, origin: window.location.origin });
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        const txt = await resp.text();
-        throw new Error(`Search failed (${resp.status}): ${txt}`);
-      }
-      const contentType = resp.headers.get("Content-Type") || "";
-      console.debug('[SearchInterface] response', { status: resp.status, contentType });
-      let data: any;
-      if (contentType.toLowerCase().includes("json")) {
-        data = await resp.json();
-      } else {
-        const txt = await resp.text();
-        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
-      }
-      if ((data as any)?.error) throw new Error(`API Error: ${(data as any).error}`);
+      const { data, error } = await supabase.functions.invoke('search-occupations', {
+        body: {
+          keyword: sanitizedTerm,
+          limit: Math.max(1, Math.min(100, maxResults)),
+        },
+      });
 
-      let occs: any[] = [];
-      if (data.occupation) {
-        occs = Array.isArray(data.occupation) ? data.occupation : [data.occupation];
-      } else if (data.code && data.title) {
-        occs = [data];
+      if (error) {
+        throw new Error(error.message ?? 'Search function failed');
       }
-      
-      cache[cacheKey] = occs;
-      return occs;
+
+      if (!data || typeof data !== 'object') {
+        throw new Error('Unexpected response from search-occupations function');
+      }
+
+      const occupations = Array.isArray((data as any).occupations)
+        ? (data as any).occupations
+        : [];
+
+      let normalized = occupations.map((item: any) => ({
+        code: item.occupation_code || item.code,
+        title: item.occupation_title || item.title,
+        description: item.description || item.summary || 'An occupation from the O*NET database.',
+      })).filter((item: any) => item.code && item.title);
+
+      if (sanitizedFilter) {
+        normalized = normalized.filter((item: any) => item.code === sanitizedFilter);
+      }
+
+      normalized = normalized.slice(0, maxResults);
+
+      cache[cacheKey] = normalized;
+      return normalized;
     },
     onSuccess: (data) => {
-      const processedResults = data.map((item: any) => ({
-        code: item.code,
-        title: item.title,
-        description: item.description || `An occupation from the O*NET database.`,
-      }));
+      setResults(data);
       
-      setResults(processedResults);
-      
-      // Track search in history
-      // Track search (unified hook handles guest vs auth storage)
-      addSearch({
-        search_term: searchTerm,
-        results_count: processedResults.length
-      });
+      // Track search in history (temporarily disabled until migration applied)
+      // TODO: Re-enable after running: supabase db push
+      // addSearch({
+      //   search_term: searchTerm,
+      //   results_count: data.length
+      // });
 
       // Update rate limit status after successful search
       const rateKey = user?.id ?? getDeviceId();
@@ -158,20 +154,24 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
 
     setIsCalculatingAPO(true);
     try {
-      const fnBase = getFunctionsBaseUrl();
-      const url = `${fnBase}/.netlify/functions/apo-proxy`;
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ occupation: { code: occupation.code, title: occupation.title } })
+      const { data, error } = await supabase.functions.invoke('calculate-apo', {
+        body: {
+          occupation: {
+            code: occupation.code,
+            title: occupation.title,
+          },
+        },
       });
-      if (!resp.ok) {
-        const txt = await resp.text();
-        throw new Error(`APO proxy failed (${resp.status}): ${txt}`);
+
+      if (error) {
+        throw new Error(error.message ?? 'APO calculation failed');
       }
-      const payload = await resp.json();
-      if (payload?.error) throw new Error(payload.error);
-      onOccupationSelect(payload);
+
+      if (!data || typeof data !== 'object') {
+        throw new Error('Unexpected response from calculate-apo function');
+      }
+
+      onOccupationSelect(data);
       toast({
         title: 'APO Analysis Complete',
         description: `Automation potential calculated for ${occupation.title}`,

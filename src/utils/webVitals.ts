@@ -1,37 +1,41 @@
 // Utility to report web-vitals to analytics or logging endpoint
-import { ReportHandler } from 'web-vitals';
+import type { ReportCallback } from 'web-vitals';
 import { supabase } from '@/integrations/supabase/client';
 
-export function reportWebVitals(onPerfEntry?: ReportHandler) {
-  if (onPerfEntry && onPerfEntry instanceof Function) {
-    import('web-vitals').then((mod) => {
-      const getCLS = mod.getCLS || (mod.default && mod.default.getCLS);
-      const getFID = mod.getFID || (mod.default && mod.default.getFID);
-      const getFCP = mod.getFCP || (mod.default && mod.default.getFCP);
-      const getLCP = mod.getLCP || (mod.default && mod.default.getLCP);
-      const getTTFB = mod.getTTFB || (mod.default && mod.default.getTTFB);
-      if (getCLS && getFID && getFCP && getLCP && getTTFB) {
-        getCLS(onPerfEntry);
-        getFID(onPerfEntry);
-        getFCP(onPerfEntry);
-        getLCP(onPerfEntry);
-        getTTFB(onPerfEntry);
-      } else {
-        console.warn('web-vitals functions not found. Please check your web-vitals package version.');
-      }
-    }).catch((err) => {
-      console.error('Failed to load web-vitals:', err);
-    });
+type WebVitalsModule = typeof import('web-vitals');
+
+export function reportWebVitals(onPerfEntry?: ReportCallback) {
+  if (onPerfEntry && typeof onPerfEntry === 'function') {
+    import('web-vitals')
+      .then((mod: WebVitalsModule) => {
+        const anyMod = mod as Record<string, any>;
+        // web-vitals v5: use onINP (replaces deprecated onFID)
+        const onCLS = anyMod.onCLS ?? anyMod.getCLS;
+        const onINP = anyMod.onINP ?? anyMod.onFID ?? anyMod.getFID; // v5 uses INP instead of FID
+        const onFCP = anyMod.onFCP ?? anyMod.getFCP;
+        const onLCP = anyMod.onLCP ?? anyMod.getLCP;
+        const onTTFB = anyMod.onTTFB ?? anyMod.getTTFB;
+
+        // Call available metrics (INP may be undefined in older versions)
+        if (onCLS) onCLS(onPerfEntry);
+        if (onINP) onINP(onPerfEntry);
+        if (onFCP) onFCP(onPerfEntry);
+        if (onLCP) onLCP(onPerfEntry);
+        if (onTTFB) onTTFB(onPerfEntry);
+      })
+      .catch((err) => {
+        console.error('Failed to load web-vitals:', err);
+      });
   }
 }
 
 // Send metrics to Supabase web_vitals table
-export const persistWebVitals: ReportHandler = async (metric) => {
+export const persistWebVitals: ReportCallback = async (metric) => {
   try {
     const session = await supabase.auth.getSession();
     const userId = session.data.session?.user?.id ?? null;
     const navigationType = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
-    const { error } = await supabase.from('web_vitals').insert({
+    const { error } = await (supabase as any).from('web_vitals').insert({
       user_id: userId,
       name: metric.name,
       value: Number(metric.value.toFixed(3)),

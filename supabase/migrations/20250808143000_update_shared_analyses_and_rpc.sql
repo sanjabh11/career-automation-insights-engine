@@ -23,7 +23,8 @@ drop policy if exists "Owners can create shares" on public.shared_analyses;
 create policy "Owners can create shares" on public.shared_analyses
   for insert with check (auth.uid() = coalesce(created_by, user_id));
 
-create policy if not exists "Owners can update shares" on public.shared_analyses
+drop policy if exists "Owners can update shares" on public.shared_analyses;
+create policy "Owners can update shares" on public.shared_analyses
   for update using (auth.uid() = coalesce(created_by, user_id));
 
 -- Token generation trigger

@@ -1,6 +1,7 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { GeminiClient } from "../../lib/GeminiClient.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,8 @@ const corsHeaders = {
 };
 
 interface LearningPathRequest {
+  profileId?: string;
+  targetOccupationCode: string;
   userSkills: Array<{
     name: string;
     currentLevel: number;
@@ -16,9 +19,13 @@ interface LearningPathRequest {
   }>;
   targetRole: string;
   currentRole: string;
+  yearsExperience?: number;
   timeCommitment: string; // hours per week
   learningStyle: string;
   budget: string;
+  currentSalary?: number;
+  targetSalary?: number;
+  saveToDB?: boolean;
 }
 
 interface Milestone {
@@ -47,113 +54,114 @@ serve(async (req) => {
   }
 
   try {
-    const { userSkills, targetRole, currentRole, timeCommitment, learningStyle, budget }: LearningPathRequest = await req.json();
-    
-    console.log('Received request:', { userSkills, targetRole, currentRole, timeCommitment, learningStyle, budget });
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
 
-    // Check if we have the required API key
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      console.error('OpenAI API key not found - generating fallback learning path');
-      
-      // Generate fallback learning path without API call
-      const fallbackPath = createFallbackLearningPath(
-        userSkills.filter(skill => skill.targetLevel > skill.currentLevel), 
-        targetRole, 
-        timeCommitment
+    // Get user from auth header
+    const authHeader = req.headers.get("Authorization");
+    let user = null;
+    if (authHeader) {
+      const result = await supabaseClient.auth.getUser(
+        authHeader.replace("Bearer ", "")
       );
-      
-      return new Response(JSON.stringify({
-        learningPath: fallbackPath,
-        generatedAt: new Date().toISOString(),
-        metadata: {
-          skillGapsAddressed: userSkills.filter(skill => skill.targetLevel > skill.currentLevel).length,
-          estimatedWeeksToComplete: calculateWeeksToComplete(fallbackPath.estimatedDuration, timeCommitment),
-          note: 'Generated using fallback method due to API configuration'
-        }
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      user = result.data?.user;
     }
+
+    const body: LearningPathRequest = await req.json();
+    const { 
+      profileId, 
+      targetOccupationCode,
+      userSkills, 
+      targetRole, 
+      currentRole, 
+      yearsExperience,
+      timeCommitment, 
+      learningStyle, 
+      budget,
+      currentSalary,
+      targetSalary,
+      saveToDB = false
+    } = body;
+    
+    console.log('Received request:', { targetRole, currentRole, skillGaps: userSkills.length });
 
     const skillGaps = userSkills.filter(skill => skill.targetLevel > skill.currentLevel);
     
     console.log('Skill gaps identified:', skillGaps);
     
     const prompt = `
-As an AI career development expert, create a personalized learning path for the following scenario:
+Create a comprehensive, timeline-based learning path for career transition:
 
-Current Role: ${currentRole}
-Target Role: ${targetRole}
-Time Commitment: ${timeCommitment} hours per week
-Learning Style: ${learningStyle}
-Budget: ${budget}
+CURRENT SITUATION:
+- Role: ${currentRole}
+- Years Experience: ${yearsExperience || 'Not specified'}
+- Current Salary: ${currentSalary ? `$${currentSalary}` : 'Not provided'}
 
-Skill Gaps to Address:
-${skillGaps.map(skill => `- ${skill.name}: Current Level ${skill.currentLevel} → Target Level ${skill.targetLevel} (Category: ${skill.category})`).join('\n')}
+TARGET:
+- Role: ${targetRole}
+- Occupation Code: ${targetOccupationCode}
+- Target Salary: ${targetSalary ? `$${targetSalary}` : 'Not provided'}
 
-Please create a comprehensive learning path that includes:
-1. A clear path name and description
-2. Logical skill progression order
-3. Realistic milestones with target dates (considering the time commitment)
-4. Estimated total duration
-5. Prerequisites for each phase
+CONSTRAINTS:
+- Time Commitment: ${timeCommitment} hours/week
+- Learning Style: ${learningStyle}
+- Budget: ${budget}
 
-Format your response as a JSON object with this structure:
+SKILL GAPS:
+${skillGaps.map(skill => `- ${skill.name}: Level ${skill.currentLevel} → ${skill.targetLevel} (${skill.category})`).join('\n')}
+
+Create a detailed learning path with:
+1. Name and description
+2. Ordered milestones with specific skills, duration, resources, and cost
+3. Each milestone should have:
+   - Name (action-oriented)
+   - Skills to acquire
+   - Duration in weeks
+   - Learning resources (courses, certifications, projects)
+   - Estimated cost
+   - Priority (Critical/High/Medium)
+4. Total estimated duration in months
+5. Prerequisites
+
+Return JSON:
 {
-  "name": "Path name",
-  "description": "Detailed description",
-  "skills": ["skill1", "skill2"],
-  "estimatedDuration": "X months",
-  "difficulty": "Beginner/Intermediate/Advanced",
-  "prerequisites": ["prerequisite1"],
-  "milestones": [
-    {
-      "title": "Milestone title",
-      "description": "What to achieve",
-      "targetDate": "YYYY-MM-DD",
-      "skills": ["related skills"],
-      "completed": false
-    }
-  ]
-}
+  "name": string,
+  "description": string,
+  "estimatedDurationMonths": number,
+  "totalCostEstimate": number,
+  "milestones": [{
+    "name": string,
+    "skills": string[],
+    "duration_weeks": number,
+    "resources": [{
+      "name": string,
+      "type": "course"|"certification"|"project"|"book",
+      "url": string,
+      "cost": number
+    }],
+    "cost_estimate": number,
+    "priority": "Critical"|"High"|"Medium"
+  }],
+  "prerequisites": string[]
+}`;
 
-Make the path practical, achievable, and tailored to their specific needs. Consider industry standards and typical career progression patterns.
-`;
+    console.log('Generating learning path with Gemini...');
 
-    console.log('Sending request to OpenAI...');
+    const gemini = new GeminiClient();
+    const startTime = Date.now();
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are an expert career development AI that creates personalized learning paths. Always respond with valid JSON only.' 
-          },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
+    const response = await gemini.generateContent({
+      prompt,
+      systemInstruction: 'You are an expert career development advisor specializing in personalized learning paths with ROI analysis.',
+      temperature: 0.5,
+      responseFormat: { type: "json_object" },
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('OpenAI response received');
-    
-    const generatedContent = data.choices[0].message.content;
-    console.log('Generated content:', generatedContent);
+    const generatedContent = response.text;
+    const duration = Date.now() - startTime;
+    console.log('Gemini response received in', duration, 'ms');
 
     // Parse the JSON response
     let learningPath: LearningPath;
@@ -188,12 +196,73 @@ Make the path practical, achievable, and tailored to their specific needs. Consi
 
     console.log('Final learning path:', learningPath);
 
+    // Calculate ROI
+    const salaryIncrease = (targetSalary && currentSalary) 
+      ? targetSalary - currentSalary 
+      : 0;
+    
+    const lifetimeEarningIncrease = salaryIncrease * 30; // 30 years career
+    
+    const totalCost = JSON.parse(generatedContent).totalCostEstimate || 0;
+    const roiMonths = salaryIncrease > 0 
+      ? Math.ceil((totalCost / salaryIncrease) * 12)
+      : null;
+
+    // Save to database if requested and user is authenticated
+    let savedPathId = null;
+    if (saveToDB && user) {
+      try {
+        const { data: savedPath, error: saveError } = await supabaseClient
+          .from("learning_paths")
+          .insert({
+            user_id: user.id,
+            profile_id: profileId,
+            path_name: learningPath.name,
+            description: learningPath.description,
+            target_occupation_code: targetOccupationCode,
+            target_occupation_title: targetRole,
+            estimated_duration_months: JSON.parse(generatedContent).estimatedDurationMonths || 6,
+            milestones: JSON.parse(generatedContent).milestones || [],
+            total_cost_estimate: totalCost,
+            current_salary_estimate: currentSalary,
+            target_salary_estimate: targetSalary,
+            roi_months: roiMonths,
+            lifetime_earning_increase: lifetimeEarningIncrease,
+            generated_by_model: gemini.getModelName(),
+            status: 'draft',
+          })
+          .select()
+          .single();
+
+        if (saveError) {
+          console.error("Failed to save learning path:", saveError);
+        } else {
+          savedPathId = savedPath.id;
+          console.log("Learning path saved to database:", savedPathId);
+        }
+      } catch (error) {
+        console.error("Error saving to database:", error);
+      }
+    }
+
     return new Response(JSON.stringify({
       learningPath,
+      savedPathId,
+      financials: {
+        totalCost,
+        currentSalary,
+        targetSalary,
+        salaryIncrease,
+        roiMonths,
+        lifetimeEarningIncrease,
+        breakEvenYears: roiMonths ? (roiMonths / 12).toFixed(1) : null,
+      },
       generatedAt: new Date().toISOString(),
       metadata: {
         skillGapsAddressed: skillGaps.length,
-        estimatedWeeksToComplete: calculateWeeksToComplete(learningPath.estimatedDuration, timeCommitment)
+        estimatedWeeksToComplete: calculateWeeksToComplete(learningPath.estimatedDuration, timeCommitment),
+        modelUsed: gemini.getModelName(),
+        generationTimeMs: duration,
       }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

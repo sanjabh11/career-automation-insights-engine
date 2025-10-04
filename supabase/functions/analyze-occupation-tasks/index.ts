@@ -23,9 +23,8 @@ serve(async (req) => {
       throw new Error('Gemini API key is not configured');
     }
 
-    // Validate O*NET credentials (username/password required)
-    const hasUserPass = Boolean(ONET_USERNAME && ONET_PASSWORD);
-    if (!hasUserPass) {
+    // Validate O*NET credentials (username/password required - no API key fallback)
+    if (!ONET_USERNAME || !ONET_PASSWORD) {
       throw new Error('O*NET credentials not configured: set ONET_USERNAME and ONET_PASSWORD');
     }
 
