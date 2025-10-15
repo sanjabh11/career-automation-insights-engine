@@ -201,14 +201,10 @@ ls -la .env.example
 ## 🚀 NEXT STEPS (Priority Order)
 
 ### Immediate (Today - 5 minutes)
-1. **Add O*NET Credentials to Supabase**
+1. **Add required credentials to Supabase**
    ```
    Go to: https://supabase.com/dashboard/project/kvunnankqgfokeufvsrv/settings/functions
-   Add:
-   - ONET_USERNAME=ignite_consulting
-   - ONET_PASSWORD=4675rxg
-   - GEMINI_API_KEY=AIzaSyCseZFXvRDfcBi4fjgS9MTcnOB_Ee3TgXs
-   - GEMINI_MODEL=gemini-1.5-flash
+   Use the placeholders from `.env.example` (ONET_USERNAME, ONET_PASSWORD, GEMINI_API_KEY, GEMINI_MODEL, etc.) and supply your own secure values.
    ```
 
 2. **Test Knowledge/Abilities Sync**
