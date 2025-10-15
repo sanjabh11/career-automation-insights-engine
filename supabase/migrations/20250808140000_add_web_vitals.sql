@@ -14,11 +14,17 @@ create table if not exists public.web_vitals (
 
 alter table public.web_vitals enable row level security;
 
-create policy "Users can insert their own web vitals" on public.web_vitals
-  for insert with check (auth.uid() = user_id or auth.uid() is null);
+do $$ begin
+  create policy "Users can insert their own web vitals" on public.web_vitals
+    for insert with check (auth.uid() = user_id or auth.uid() is null);
+exception when duplicate_object then null;
+end $$;
 
-create policy "Users can read their own web vitals" on public.web_vitals
-  for select using (auth.uid() = user_id);
+do $$ begin
+  create policy "Users can read their own web vitals" on public.web_vitals
+    for select using (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 
 create index if not exists idx_web_vitals_user_created on public.web_vitals(user_id, created_at desc);
 create index if not exists idx_web_vitals_name on public.web_vitals(name);

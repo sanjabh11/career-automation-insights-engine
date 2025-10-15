@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCrosswalk, CrosswalkFrom, CrosswalkTo } from "@/hooks/useCrosswalk";
 import { Loader2 } from "lucide-react";
 
-const FROM_OPTIONS: CrosswalkFrom[] = ["SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT"];
+const FROM_OPTIONS: CrosswalkFrom[] = ["SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT", "OOH"];
 const TO_OPTIONS: (CrosswalkTo | "ALL")[] = ["ALL", "SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT"];
 
 export function CrosswalkWizard() {

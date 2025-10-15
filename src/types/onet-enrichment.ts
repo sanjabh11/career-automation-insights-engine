@@ -89,6 +89,7 @@ export interface JobZone {
 
 export interface SearchFilters {
   brightOutlook?: boolean;
+  brightOutlookCategory?: 'Rapid Growth' | 'Numerous Openings' | 'New & Emerging' | string;
   stem?: boolean;
   green?: boolean;
   careerCluster?: string;

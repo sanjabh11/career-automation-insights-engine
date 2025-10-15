@@ -50,6 +50,7 @@ export const BrightOutlookBadge: React.FC<BrightOutlookBadgeProps> = ({
         border font-semibold flex items-center gap-1.5
         shadow-sm hover:shadow-md transition-shadow
       `}
+      aria-label={`Bright Outlook${category ? ` - ${category}` : ''}`}
     >
       {getIcon()}
       <span>Bright Outlook</span>

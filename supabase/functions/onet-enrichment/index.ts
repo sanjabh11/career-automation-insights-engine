@@ -208,21 +208,16 @@ async function getCareerClusterData(code: string): Promise<any> {
 }
 
 /**
- * Check if occupation is STEM
+ * Check if occupation is STEM using official O*NET membership
  */
-function checkStem(title: string, careerCluster?: string): boolean {
-  const stemKeywords = ["engineer", "scientist", "developer", "programmer", "analyst", "mathematician", "statistician", "researcher"];
-  const titleLower = title.toLowerCase();
+async function checkStem(occupationCode: string, supabase: any): Promise<boolean> {
+  const { data } = await supabase
+    .from("onet_stem_membership")
+    .select("occupation_code")
+    .eq("occupation_code", occupationCode)
+    .maybeSingle();
   
-  if (stemKeywords.some(keyword => titleLower.includes(keyword))) {
-    return true;
-  }
-  
-  if (careerCluster?.includes("Science, Technology, Engineering")) {
-    return true;
-  }
-  
-  return false;
+  return !!data;
 }
 
 /**
@@ -291,6 +286,9 @@ export async function handler(req: Request) {
       getCareerClusterData(occupationCode),
     ]);
 
+    // Check STEM membership
+    const isStem = await checkStem(occupationCode, supabase);
+
     // Combine all data
     const enrichmentData = {
       occupation_code: occupationCode,
@@ -310,7 +308,7 @@ export async function handler(req: Request) {
       career_cluster_id: careerCluster.careerClusterId,
       job_zone: jobZone.jobZone,
       job_zone_description: jobZone.jobZoneDescription,
-      is_stem: checkStem(title, careerCluster.careerCluster),
+      is_stem: isStem,
       cache_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
     };
 

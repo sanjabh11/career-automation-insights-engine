@@ -20,10 +20,13 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Policies: Users can only manage their own profile
-CREATE POLICY "Users manage own profile" ON public.profiles 
-  FOR ALL 
-  USING (auth.uid() = user_id) 
-  WITH CHECK (auth.uid() = user_id);
+DO $$ BEGIN
+  CREATE POLICY "Users manage own profile" ON public.profiles 
+    FOR ALL 
+    USING (auth.uid() = user_id) 
+    WITH CHECK (auth.uid() = user_id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Index for quick user lookups
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON public.profiles(user_id);
@@ -37,6 +40,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS profiles_updated_at_trigger ON public.profiles;
 CREATE TRIGGER profiles_updated_at_trigger
 BEFORE UPDATE ON public.profiles
 FOR EACH ROW

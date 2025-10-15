@@ -13,14 +13,23 @@ alter table public.search_history
 
 alter table public.search_history enable row level security;
 
-create policy "Users can view their own search history" on public.search_history
-  for select using (auth.uid() = user_id);
+do $$ begin
+  create policy "Users can view their own search history" on public.search_history
+    for select using (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 
-create policy "Users can insert their own search history" on public.search_history
-  for insert with check (auth.uid() = user_id);
+do $$ begin
+  create policy "Users can insert their own search history" on public.search_history
+    for insert with check (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 
-create policy "Users can delete their own search history" on public.search_history
-  for delete using (auth.uid() = user_id);
+do $$ begin
+  create policy "Users can delete their own search history" on public.search_history
+    for delete using (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 
 create index if not exists idx_search_history_user_time on public.search_history(user_id, searched_at desc);
 

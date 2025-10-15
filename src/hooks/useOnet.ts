@@ -17,8 +17,8 @@ export function useOnet<T = unknown>(
     if (!path.startsWith("/")) {
       throw new Error("useOnet path must start with / (e.g. /ws/…)");
     }
-    const fnBase = getFunctionsBaseUrl();
-    const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
+    // Use Supabase Edge Function proxy instead of Netlify
+    const url = `/functions/v1/onet-proxy?path=${encodeURIComponent(path)}`;
     console.debug('[useOnet] fetching', { url, origin: window.location.origin });
     const res = await fetch(url);
     if (!res.ok) {

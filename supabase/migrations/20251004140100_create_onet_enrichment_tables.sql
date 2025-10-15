@@ -315,11 +315,33 @@ ALTER TABLE public.onet_career_clusters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.onet_job_zones ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies (data is not user-specific)
-CREATE POLICY "Public read access to enrichment data" ON public.onet_occupation_enrichment FOR SELECT USING (true);
-CREATE POLICY "Public read access to related occupations" ON public.onet_related_occupations FOR SELECT USING (true);
-CREATE POLICY "Public read access to career clusters" ON public.onet_career_clusters FOR SELECT USING (true);
-CREATE POLICY "Public read access to job zones" ON public.onet_job_zones FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Public read access to enrichment data" ON public.onet_occupation_enrichment FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read access to related occupations" ON public.onet_related_occupations FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read access to career clusters" ON public.onet_career_clusters FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read access to job zones" ON public.onet_job_zones FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Service role can insert/update (for Edge Functions)
-CREATE POLICY "Service role can manage enrichment" ON public.onet_occupation_enrichment FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role can manage related" ON public.onet_related_occupations FOR ALL USING (auth.role() = 'service_role');
+DO $$ BEGIN
+  CREATE POLICY "Service role can manage enrichment" ON public.onet_occupation_enrichment FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Service role can manage related" ON public.onet_related_occupations FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;

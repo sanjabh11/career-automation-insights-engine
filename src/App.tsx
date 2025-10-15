@@ -13,6 +13,12 @@ import AIImpactPage from "./pages/AIImpactPage";
 import AIImpactPlannerPage from "./pages/AIImpactPlannerPage";
 import CareerPlanningPage from "./pages/CareerPlanningPage";
 import CrosswalkPage from "./pages/CrosswalkPage";
+import BrowseBrightOutlook from "./pages/BrowseBrightOutlook";
+import BrowseSTEM from "./pages/BrowseSTEM";
+import VeteransPage from "./pages/VeteransPage";
+import TechSkillsPage from "./pages/TechSkillsPage";
+import WorkDimensionsPage from "./pages/WorkDimensionsPage";
+import DemoSandbox from "./pages/DemoSandbox";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
 import Test from "./pages/Test";
@@ -36,6 +42,12 @@ function App() {
             <Route path="/ai-impact-planner" element={<AIImpactPlannerPage />} />
             <Route path="/career-planning" element={<CareerPlanningPage />} />
             <Route path="/crosswalk" element={<CrosswalkPage />} />
+            <Route path="/veterans" element={<VeteransPage />} />
+            <Route path="/tech-skills" element={<TechSkillsPage />} />
+            <Route path="/work-dimensions" element={<WorkDimensionsPage />} />
+            <Route path="/demo" element={<DemoSandbox />} />
+            <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
+            <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
             <Route path="/compare" element={<ComparePage />} />
             <Route path="*" element={<NotFound />} />

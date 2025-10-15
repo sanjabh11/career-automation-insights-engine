@@ -8,7 +8,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-3.0-blue)
 ![AI](https://img.shields.io/badge/AI-Gemini%202.0-orange)
 
-> **Latest Update (Oct 12, 2025)**: 47 improvements implemented, 23 new features added, 4.8/5.0 implementation score achieved. See [IMPROVEMENTS_SUMMARY_TABLE.md](docs/IMPROVEMENTS_SUMMARY_TABLE.md) for details.
+> **Latest Update (Oct 15, 2025)**: Database migration complete! 21 migrations applied, 3 new tables created (STEM membership, Knowledge, Abilities), 4 Edge Functions deployed. Implementation score: 4.8/5.0. See [DEPLOYMENT_STATUS.md](docs/DEPLOYMENT_STATUS.md) and [PENDING_GAPS_ANALYSIS.md](docs/PENDING_GAPS_ANALYSIS.md) for details.
 
 ## 📋 Table of Contents
 - [Overview](#overview)
@@ -104,25 +104,62 @@ npm install
 ```
 
 ### 2. Environment Setup
-Create `.env.local` with your configuration:
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+Copy the example environment file and configure your credentials:
+```bash
+cp .env.example .env
 ```
 
-### 3. Supabase Configuration
-Configure these secrets in your Supabase dashboard:
-- `ONET_API_KEY`: O*NET Web Services API key
-- `GEMINI_API_KEY`: Google AI/Gemini API key  
-- `SERPAPI_KEY`: SerpAPI key for job market data
+Edit `.env` with your actual credentials. See `.env.example` for all required variables.
+
+**Required Environment Variables:**
+- `VITE_SUPABASE_URL` - Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+- `VITE_SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (for admin operations)
+- `VITE_GEMINI_API_KEY` - Google Gemini AI API key
+- `ONET_USERNAME` - O*NET Web Services username
+- `ONET_PASSWORD` - O*NET Web Services password
+- `VITE_SERPAPI_API_KEY` - SerpAPI key for job market data
+
+**Optional Variables:**
+- `APO_FUNCTION_API_KEY` - Custom API key for APO function security
+- `GEMINI_MODEL` - Gemini model to use (default: gemini-1.5-flash)
+
+### 3. Supabase Edge Functions Configuration
+Configure these secrets in your Supabase Dashboard → Settings → Edge Functions:
+```bash
+ONET_USERNAME=your_onet_username
+ONET_PASSWORD=your_onet_password
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-1.5-flash
+```
 
 ### 4. Database Setup
-The application includes comprehensive SQL migrations in `supabase/migrations/`. Key tables:
-- User management and authentication
-- Analysis storage and caching
-- Notification and feedback systems
-- Analytics and engagement tracking
-- AI task assessments and skill recommendations
+The application includes comprehensive SQL migrations in `supabase/migrations/`:
+
+**Core Tables:**
+- `profiles` - User management and authentication
+- `apo_logs` - Analysis storage and telemetry
+- `search_history` - User search tracking
+- `notifications` - Real-time notification system
+- `feedback` - User feedback and bug reports
+
+**O*NET Data Tables:**
+- `onet_occupation_enrichment` - Cached occupation data
+- `onet_stem_membership` - STEM occupation classifications
+- `onet_knowledge` - Knowledge requirements per occupation
+- `onet_abilities` - Ability requirements per occupation
+- `onet_work_context` - Work environment data
+- `onet_detailed_tasks` - 19,000+ occupation tasks
+- `onet_work_activities` - Work activity classifications
+- `onet_technologies` - Technology/tool requirements
+
+**AI Features Tables:**
+- `user_profiles` - Extended user profiles with career data
+- `profile_analyses` - AI-generated profile analyses
+- `learning_paths` - Personalized learning recommendations
+- `conversation_context` - AI chat context management
+
+**Migration Status:** ✅ 21 migrations applied successfully (Oct 15, 2025)
 
 ### 5. Start Development
 ```bash
@@ -292,7 +329,8 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_production_anon_key
 
 # Supabase Secrets (Dashboard)
-ONET_API_KEY=your_onet_api_key
+ONET_USERNAME=your_onet_username
+ONET_PASSWORD=your_onet_password
 GEMINI_API_KEY=your_google_ai_key
 SERPAPI_KEY=your_serpapi_key
 ```
@@ -549,9 +587,9 @@ Pending (post-deploy follow-ups):
 
 ### Security Notes
 - `.env` and `.env.*` are `.gitignore`-d (see repo root)
-- Use Supabase and Netlify environment secret stores in deployed environments
+- Use Supabase environment secret stores in deployed environments
 - CSP updated to include `font-src https://fonts.gstatic.com` for Google Fonts
-- APO calls routed via Netlify `apo-proxy` to keep keys server-side
+- APO security hardening: routed client calls through Supabase Edge Function (server-side `x-api-key`)
 
 ### Quick Start (Updated)
 1) Install & run

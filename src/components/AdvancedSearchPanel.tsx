@@ -126,6 +126,28 @@ export const AdvancedSearchPanel: React.FC = () => {
                       />
                     </div>
 
+                    {/* Bright Outlook Category */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-600" />
+                        Bright Outlook Category
+                      </Label>
+                      <Select
+                        value={filters.brightOutlookCategory || ''}
+                        onValueChange={(value) => updateFilter('brightOutlookCategory', value || undefined)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Any category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Any category</SelectItem>
+                          <SelectItem value="Rapid Growth">Rapid Growth</SelectItem>
+                          <SelectItem value="Numerous Openings">Numerous Openings</SelectItem>
+                          <SelectItem value="New & Emerging">New & Emerging</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     {/* STEM Filter */}
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <Label htmlFor="stem" className="flex items-center gap-2 cursor-pointer">

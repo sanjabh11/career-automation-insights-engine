@@ -16,6 +16,7 @@ const requestSchema = z.object({
   keyword: z.string().optional(),
   filters: z.object({
     brightOutlook: z.boolean().optional(),
+    brightOutlookCategory: z.enum(['Rapid Growth', 'Numerous Openings', 'New & Emerging']).optional(),
     stem: z.boolean().optional(),
     green: z.boolean().optional(),
     careerCluster: z.string().optional(),
@@ -188,6 +189,10 @@ export async function handler(req: Request) {
     // Apply filters
     if (filters.brightOutlook === true) {
       query = query.eq("bright_outlook", true);
+    }
+
+    if (filters.brightOutlookCategory) {
+      query = query.eq("bright_outlook_category", filters.brightOutlookCategory);
     }
 
     if (filters.stem === true) {

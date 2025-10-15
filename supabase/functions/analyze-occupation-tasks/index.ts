@@ -28,6 +28,18 @@ serve(async (req) => {
       throw new Error('O*NET credentials not configured: set ONET_USERNAME and ONET_PASSWORD');
     }
 
+    // Optional API key enforcement
+    const requiredApiKey = Deno.env.get('LLM_FUNCTION_API_KEY');
+    if (requiredApiKey) {
+      const providedKey = req.headers.get('x-api-key') ?? '';
+      if (providedKey !== requiredApiKey) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     const { occupation_code, occupation_title } = await req.json();
     
     if (!occupation_code || !occupation_title) {

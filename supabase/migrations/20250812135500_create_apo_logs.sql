@@ -21,6 +21,19 @@ create table if not exists public.apo_logs (
     error text
 );
 
+-- Add columns if table exists but columns are missing
+alter table public.apo_logs add column if not exists prompt_hash text;
+alter table public.apo_logs add column if not exists model text default 'gemini-2.5-flash';
+alter table public.apo_logs add column if not exists generation_config jsonb;
+alter table public.apo_logs add column if not exists model_json jsonb;
+alter table public.apo_logs add column if not exists computed_items jsonb;
+alter table public.apo_logs add column if not exists category_scores jsonb;
+alter table public.apo_logs add column if not exists overall_apo numeric;
+alter table public.apo_logs add column if not exists weights jsonb;
+alter table public.apo_logs add column if not exists tokens_used int;
+alter table public.apo_logs add column if not exists latency_ms int;
+alter table public.apo_logs add column if not exists error text;
+
 create index if not exists apo_logs_created_at_idx on public.apo_logs (created_at desc);
 create index if not exists apo_logs_occupation_code_idx on public.apo_logs (occupation_code);
 create index if not exists apo_logs_prompt_hash_idx on public.apo_logs (prompt_hash);

@@ -20,9 +20,22 @@ export async function handler(req: Request) {
 
   try {
     const url = new URL(req.url);
-    const technology = url.searchParams.get("technology");
-    const occupationCode = url.searchParams.get("occupationCode");
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    // Defaults from query params
+    let technology = url.searchParams.get("technology");
+    let occupationCode = url.searchParams.get("occupationCode");
+    let limit = parseInt(url.searchParams.get("limit") || "50");
+
+    // Allow POST JSON body overrides
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        if (typeof body?.technology === 'string') technology = body.technology;
+        if (typeof body?.occupationCode === 'string') occupationCode = body.occupationCode;
+        if (typeof body?.limit === 'number') limit = body.limit;
+      } catch (_e) {
+        // ignore body parse errors; fallback to query params
+      }
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";

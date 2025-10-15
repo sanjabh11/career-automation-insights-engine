@@ -44,10 +44,22 @@ serve(async (req: Request): Promise<Response> => {
 
     // Construct O*NET Web-Services path.
     // Docs: https://services.onetcenter.org/reference/
-    // Example: /online/crosswalk?identifier=11B&codes=MOC&to=SOC
-    const qs = new URLSearchParams({ identifier: code, codes: from.toUpperCase() });
-    if (to) qs.set("to", to.toUpperCase());
-    const onetUrl = `https://services.onetcenter.org/ws/online/crosswalk?${qs.toString()}`;
+    // Support both generic crosswalk and specific endpoints (e.g., OOH)
+    let onetUrl: string;
+    const fromUpper = from.toUpperCase();
+    
+    if (fromUpper === "OOH") {
+      // Use dedicated OOH crosswalk endpoint
+      // Reference: https://services.onetcenter.org/reference/online/crosswalk/ooh
+      const qs = new URLSearchParams({ keyword: code });
+      onetUrl = `https://services.onetcenter.org/ws/online/crosswalks/ooh?${qs.toString()}`;
+    } else {
+      // Generic crosswalk endpoint
+      // Example: /online/crosswalk?identifier=11B&codes=MOC&to=SOC
+      const qs = new URLSearchParams({ identifier: code, codes: fromUpper });
+      if (to) qs.set("to", to.toUpperCase());
+      onetUrl = `https://services.onetcenter.org/ws/online/crosswalk?${qs.toString()}`;
+    }
 
     const res = await fetch(onetUrl, {
       headers: {

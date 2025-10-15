@@ -12,8 +12,11 @@ create table if not exists public.saved_analyses (
   created_at timestamptz default now() not null
 );
 alter table public.saved_analyses enable row level security;
-create policy "Users can manage their own analyses" on public.saved_analyses
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+do $$ begin
+  create policy "Users can manage their own analyses" on public.saved_analyses
+    for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 create index if not exists idx_saved_analyses_user_created on public.saved_analyses(user_id, created_at desc);
 
 -- Shared analyses
@@ -42,12 +45,24 @@ alter table public.shared_analyses
 alter table public.shared_analyses
   add column if not exists created_at timestamptz default now() not null;
 
-alter table public.shared_analyses
-  add constraint shared_analyses_share_token_unique unique (share_token);
+do $$ begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'shared_analyses_share_token_unique'
+  ) then
+    alter table public.shared_analyses
+      add constraint shared_analyses_share_token_unique unique (share_token);
+  end if;
+end $$;
 
 alter table public.shared_analyses enable row level security;
-create policy "Public can read shared analyses via token" on public.shared_analyses for select using (true);
-create policy "Owners can create shares" on public.shared_analyses for insert with check (auth.uid() = created_by);
+do $$ begin
+  create policy "Public can read shared analyses via token" on public.shared_analyses for select using (true);
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create policy "Owners can create shares" on public.shared_analyses for insert with check (auth.uid() = created_by);
+exception when duplicate_object then null;
+end $$;
 create index if not exists idx_shared_analyses_token on public.shared_analyses(share_token);
 create table if not exists public.user_settings (
   id uuid primary key default gen_random_uuid(),
@@ -57,7 +72,10 @@ create table if not exists public.user_settings (
   updated_at timestamptz default now() not null
 );
 alter table public.user_settings enable row level security;
-create policy "Users manage own settings" on public.user_settings for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+do $$ begin
+  create policy "Users manage own settings" on public.user_settings for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 
 -- Notifications
 create table if not exists public.notifications (
@@ -69,8 +87,14 @@ create table if not exists public.notifications (
   created_at timestamptz default now() not null
 );
 alter table public.notifications enable row level security;
-create policy "Users read own notifications" on public.notifications for select using (auth.uid() = user_id);
-create policy "System inserts notifications" on public.notifications for insert with check (auth.uid() = user_id);
+do $$ begin
+  create policy "Users read own notifications" on public.notifications for select using (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create policy "System inserts notifications" on public.notifications for insert with check (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
 create index if not exists idx_notifications_user_created on public.notifications(user_id, created_at desc);
 
 -- Analytics events
@@ -82,7 +106,13 @@ create table if not exists public.analytics_events (
   created_at timestamptz default now() not null
 );
 alter table public.analytics_events enable row level security;
-create policy "Users read own events" on public.analytics_events for select using (auth.uid() = user_id);
-create policy "Users insert own events" on public.analytics_events for insert with check (auth.uid() = user_id or auth.uid() is null);
+do $$ begin
+  create policy "Users read own events" on public.analytics_events for select using (auth.uid() = user_id);
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create policy "Users insert own events" on public.analytics_events for insert with check (auth.uid() = user_id or auth.uid() is null);
+exception when duplicate_object then null;
+end $$;
 create index if not exists idx_analytics_events_user_created on public.analytics_events(user_id, created_at desc);
 

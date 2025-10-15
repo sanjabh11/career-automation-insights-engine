@@ -153,18 +153,56 @@ ALTER TABLE public.onet_technologies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.onet_hot_technologies_master ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
-CREATE POLICY "Public read work context" ON public.onet_work_context FOR SELECT USING (true);
-CREATE POLICY "Public read detailed tasks" ON public.onet_detailed_tasks FOR SELECT USING (true);
-CREATE POLICY "Public read work activities" ON public.onet_work_activities FOR SELECT USING (true);
-CREATE POLICY "Public read technologies" ON public.onet_technologies FOR SELECT USING (true);
-CREATE POLICY "Public read hot tech master" ON public.onet_hot_technologies_master FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Public read work context" ON public.onet_work_context FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read detailed tasks" ON public.onet_detailed_tasks FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read work activities" ON public.onet_work_activities FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read technologies" ON public.onet_technologies FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Public read hot tech master" ON public.onet_hot_technologies_master FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Service role can manage
-CREATE POLICY "Service role manage work context" ON public.onet_work_context FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role manage tasks" ON public.onet_detailed_tasks FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role manage activities" ON public.onet_work_activities FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role manage technologies" ON public.onet_technologies FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role manage hot tech" ON public.onet_hot_technologies_master FOR ALL USING (auth.role() = 'service_role');
+DO $$ BEGIN
+  CREATE POLICY "Service role manage work context" ON public.onet_work_context FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Service role manage tasks" ON public.onet_detailed_tasks FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Service role manage activities" ON public.onet_work_activities FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Service role manage technologies" ON public.onet_technologies FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Service role manage hot tech" ON public.onet_hot_technologies_master FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 COMMENT ON TABLE public.onet_work_context IS 'Physical and social work conditions from O*NET';
 COMMENT ON TABLE public.onet_detailed_tasks IS '19,000+ occupation-specific tasks from O*NET';

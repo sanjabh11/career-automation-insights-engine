@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-export type CrosswalkFrom = "MOC" | "CIP" | "RAPIDS" | "ESCO" | "DOT" | "SOC";
+export type CrosswalkFrom = "MOC" | "CIP" | "RAPIDS" | "ESCO" | "DOT" | "SOC" | "OOH";
 export type CrosswalkTo = "MOC" | "CIP" | "RAPIDS" | "ESCO" | "DOT" | "SOC";
 
 export interface CrosswalkParams {
