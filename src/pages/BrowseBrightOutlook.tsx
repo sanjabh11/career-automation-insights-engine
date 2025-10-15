@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles } from "lucide-react";
 import { BrightOutlookBadge } from "@/components/BrightOutlookBadge";
 import { useAdvancedSearch } from "@/hooks/useAdvancedSearch";
@@ -10,10 +11,23 @@ import { formatWage } from "@/types/onet-enrichment";
 
 export default function BrowseBrightOutlook() {
   const { search, results, total, hasMore, loadMore, isSearching } = useAdvancedSearch();
+  const [category, setCategory] = useState<string | undefined>(undefined);
+  const [jobZone, setJobZone] = useState<number | undefined>(undefined);
+  const [minWage, setMinWage] = useState<string>("");
+  const [maxWage, setMaxWage] = useState<string>("");
 
   useEffect(() => {
     search("", { brightOutlook: true });
   }, []);
+
+  const applyFilters = () => {
+    const filters: any = { brightOutlook: true };
+    if (category) filters.brightOutlookCategory = category;
+    if (jobZone) filters.jobZone = jobZone;
+    if (minWage) filters.minWage = Number(minWage);
+    if (maxWage) filters.maxWage = Number(maxWage);
+    search("", filters);
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -23,6 +37,63 @@ export default function BrowseBrightOutlook() {
       </div>
 
       <Card className="p-6 space-y-4">
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Category</div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "All", value: undefined },
+                { label: "Rapid Growth", value: "Rapid Growth" },
+                { label: "Numerous Openings", value: "Numerous Openings" },
+                { label: "New & Emerging", value: "New & Emerging" },
+              ].map((c) => (
+                <Button
+                  key={c.label}
+                  size="sm"
+                  variant={(category ?? "All") === (c.value ?? "All") ? "default" : "outline"}
+                  onClick={() => setCategory(c.value as any)}
+                >
+                  {c.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Job Zone</div>
+            <div className="flex flex-wrap gap-2">
+              {[undefined, 1, 2, 3, 4, 5].map((z) => (
+                <Button
+                  key={String(z ?? "All")}
+                  size="sm"
+                  variant={(jobZone ?? "All") === (z ?? "All") ? "default" : "outline"}
+                  onClick={() => setJobZone(z as number | undefined)}
+                >
+                  {z ?? "All"}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Min Wage (annual)</div>
+            <Input type="number" placeholder="e.g. 60000" value={minWage} onChange={(e) => setMinWage(e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Max Wage (annual)</div>
+            <Input type="number" placeholder="e.g. 150000" value={maxWage} onChange={(e) => setMaxWage(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={applyFilters} disabled={isSearching} variant="outline">
+            {isSearching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Apply Filters
+          </Button>
+        </div>
+
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">{total} results</div>
         </div>

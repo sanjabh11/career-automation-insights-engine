@@ -19,6 +19,12 @@ import VeteransPage from "./pages/VeteransPage";
 import TechSkillsPage from "./pages/TechSkillsPage";
 import WorkDimensionsPage from "./pages/WorkDimensionsPage";
 import DemoSandbox from "./pages/DemoSandbox";
+import OutcomesPage from "./pages/OutcomesPage";
+import ValidationPage from "./pages/ValidationPage";
+import ValidationMethodsPage from "./pages/ValidationMethodsPage";
+import QualityPage from "./pages/QualityPage";
+import ResponsibleAIPage from "./pages/ResponsibleAIPage";
+import SkillsBuilderPage from "./pages/SkillsBuilderPage";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
 import Test from "./pages/Test";
@@ -46,6 +52,12 @@ function App() {
             <Route path="/tech-skills" element={<TechSkillsPage />} />
             <Route path="/work-dimensions" element={<WorkDimensionsPage />} />
             <Route path="/demo" element={<DemoSandbox />} />
+            <Route path="/outcomes" element={<OutcomesPage />} />
+            <Route path="/validation" element={<ValidationPage />} />
+            <Route path="/validation/methods" element={<ValidationMethodsPage />} />
+            <Route path="/quality" element={<QualityPage />} />
+            <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
+            <Route path="/skills-builder" element={<SkillsBuilderPage />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
