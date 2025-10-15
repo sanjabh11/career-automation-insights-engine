@@ -202,6 +202,37 @@ export const OccupationAnalysis = ({
           </div>
         </div>
 
+        {/* Factor Contributions (Explainability) */}
+        <div className="mb-6">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <BarChart3 className="h-5 w-5 mr-2" />
+            Factor Contributions to Overall APO
+          </h3>
+          <div className="space-y-3">
+            {categories.map((cat) => {
+              const contribution = ((cat.apo / 100) * 20); // Each category weighted equally (20% max)
+              const pct = ((contribution / (occupation.overallAPO || overallAPO)) * 100).toFixed(1);
+              return (
+                <div key={cat.name} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{cat.name}</span>
+                    <span className="text-muted-foreground">{cat.apo.toFixed(1)}% × 0.2 = {contribution.toFixed(1)} pts ({pct}% of total)</span>
+                  </div>
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500"
+                      style={{ width: `${Math.min(100, (contribution / 20) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 text-xs text-muted-foreground">
+            Each category contributes up to 20 points to the overall APO (0-100 scale). Bars show relative contribution.
+          </div>
+        </div>
+
         {/* Enhanced APO Visualization */}
         <div className="mb-6">
           <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center">

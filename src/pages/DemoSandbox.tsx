@@ -92,8 +92,8 @@ export default function DemoSandbox() {
   };
 
   const handleExportPDF = () => {
-    // In a real implementation, this would generate a PDF
-    alert("PDF export functionality would generate a comprehensive report including:\n\n• Occupation overview\n• APO analysis\n• Task categorization\n• Learning paths\n• Market intelligence\n• Salary data");
+    // Use browser print dialog to export as PDF
+    window.print();
   };
 
   const handleStartTour = () => {

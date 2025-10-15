@@ -71,7 +71,7 @@ export default function ValidationPage() {
 
       <div className="flex gap-2">
         <Button asChild>
-          <a href="/validation/methods">View Methods & Ablations →</a>
+          <a href="/validation/methods" aria-label="Navigate to validation methods and ablations report">View Methods & Ablations →</a>
         </Button>
       </div>
     </div>

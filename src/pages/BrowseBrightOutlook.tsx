@@ -77,19 +77,19 @@ export default function BrowseBrightOutlook() {
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs text-muted-foreground">Min Wage (annual)</div>
-            <Input type="number" placeholder="e.g. 60000" value={minWage} onChange={(e) => setMinWage(e.target.value)} />
+            <label htmlFor="min-wage" className="text-xs text-muted-foreground">Min Wage (annual)</label>
+            <Input id="min-wage" type="number" placeholder="e.g. 60000" value={minWage} onChange={(e) => setMinWage(e.target.value)} aria-label="Minimum annual wage filter" />
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs text-muted-foreground">Max Wage (annual)</div>
-            <Input type="number" placeholder="e.g. 150000" value={maxWage} onChange={(e) => setMaxWage(e.target.value)} />
+            <label htmlFor="max-wage" className="text-xs text-muted-foreground">Max Wage (annual)</label>
+            <Input id="max-wage" type="number" placeholder="e.g. 150000" value={maxWage} onChange={(e) => setMaxWage(e.target.value)} aria-label="Maximum annual wage filter" />
           </div>
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={applyFilters} disabled={isSearching} variant="outline">
-            {isSearching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          <Button onClick={applyFilters} disabled={isSearching} variant="outline" aria-label="Apply selected filters to Bright Outlook careers">
+            {isSearching ? <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" /> : null}
             Apply Filters
           </Button>
         </div>
