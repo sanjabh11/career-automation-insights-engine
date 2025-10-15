@@ -1,0 +1,123 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+4 0 obj
+<<
+/Length 950
+>>
+stream
+BT
+/F1 18 Tf
+50 750 Td
+(Threat Model) Tj
+0 -30 Td
+/F1 12 Tf
+(System: Career Automation Insights Engine) Tj
+0 -20 Td
+(Version: 1.0) Tj
+0 -20 Td
+(Last Updated: October 2025) Tj
+0 -40 Td
+/F1 14 Tf
+(Assets) Tj
+0 -20 Td
+/F1 10 Tf
+(- User profiles \(profiles table\): subscription tier, preferences) Tj
+0 -15 Td
+(- Saved analyses \(saved_analyses table\): APO results, tags) Tj
+0 -15 Td
+(- Telemetry \(apo_logs, web_vitals\): latency, tokens, user_id) Tj
+0 -15 Td
+(- API keys: GEMINI_API_KEY, ONET_USERNAME/PASSWORD, Supabase keys) Tj
+0 -30 Td
+/F1 14 Tf
+(Threats) Tj
+0 -20 Td
+/F1 10 Tf
+(1. Unauthorized access to user data \(RLS bypass\)) Tj
+0 -15 Td
+(2. API key exposure in client code or logs) Tj
+0 -15 Td
+(3. Injection attacks \(SQL, prompt injection\)) Tj
+0 -15 Td
+(4. Rate limit bypass or DoS) Tj
+0 -15 Td
+(5. Cross-site scripting \(XSS\) via user-generated tags) Tj
+0 -30 Td
+/F1 14 Tf
+(Mitigations) Tj
+0 -20 Td
+/F1 10 Tf
+(- RLS enforced on all user-facing tables) Tj
+0 -15 Td
+(- API keys stored in Supabase project settings; never in repo) Tj
+0 -15 Td
+(- Parameterized queries; input sanitization on tags and user input) Tj
+0 -15 Td
+(- Rate limiting in Edge Functions \(30 req/min default\)) Tj
+0 -15 Td
+(- CSP headers; DOMPurify for user-generated content) Tj
+0 -30 Td
+/F1 14 Tf
+(Residual Risks) Tj
+0 -20 Td
+/F1 10 Tf
+(- Prompt injection: monitor validation_warnings for anomalies) Tj
+0 -15 Td
+(- Third-party API dependencies: O*NET, Gemini, SerpAPI) Tj
+0 -30 Td
+/F1 14 Tf
+(Contact) Tj
+0 -20 Td
+/F1 10 Tf
+(Report security issues via GitHub or /responsible-ai page.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000262 00000 n 
+0000001264 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+1352
+%%EOF

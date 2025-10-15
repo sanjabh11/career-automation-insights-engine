@@ -7,6 +7,8 @@ import { Loader2, Sparkles } from "lucide-react";
 import { BrightOutlookBadge } from "@/components/BrightOutlookBadge";
 import { useAdvancedSearch } from "@/hooks/useAdvancedSearch";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { formatWage } from "@/types/onet-enrichment";
 
 export default function BrowseBrightOutlook() {
@@ -28,6 +30,18 @@ export default function BrowseBrightOutlook() {
     if (maxWage) filters.maxWage = Number(maxWage);
     search("", filters);
   };
+
+  const { data: parity, isLoading: parityLoading } = useQuery({
+    queryKey: ["bright-outlook-parity"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("onet_occupation_enrichment")
+        .select("occupation_code", { count: "exact", head: true })
+        .eq("bright_outlook", true);
+      return count || 0;
+    },
+    staleTime: 60_000,
+  });
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -95,7 +109,9 @@ export default function BrowseBrightOutlook() {
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">{total} results</div>
+          <div className="text-sm text-muted-foreground">
+            {total} results {parity !== undefined && !parityLoading ? (<span className="ml-2">• Parity: {Math.min(total, parity)} of {parity}</span>) : null}
+          </div>
         </div>
 
         <div className="space-y-3">

@@ -25,6 +25,8 @@ import ValidationMethodsPage from "./pages/ValidationMethodsPage";
 import QualityPage from "./pages/QualityPage";
 import ResponsibleAIPage from "./pages/ResponsibleAIPage";
 import SkillsBuilderPage from "./pages/SkillsBuilderPage";
+import OperationsPage from "./pages/OperationsPage";
+import ResourcesPage from "./pages/ResourcesPage";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
 import Test from "./pages/Test";
@@ -58,6 +60,8 @@ function App() {
             <Route path="/quality" element={<QualityPage />} />
             <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
             <Route path="/skills-builder" element={<SkillsBuilderPage />} />
+            <Route path="/operations" element={<OperationsPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />

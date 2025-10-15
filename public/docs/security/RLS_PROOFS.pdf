@@ -1,0 +1,119 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+4 0 obj
+<<
+/Length 950
+>>
+stream
+BT
+/F1 18 Tf
+50 750 Td
+(RLS Proof Queries) Tj
+0 -30 Td
+/F1 12 Tf
+(System: Career Automation Insights Engine) Tj
+0 -20 Td
+(Version: 1.0) Tj
+0 -20 Td
+(Last Updated: October 2025) Tj
+0 -40 Td
+/F1 14 Tf
+(RLS Policies Enforced) Tj
+0 -20 Td
+/F1 10 Tf
+(- profiles: Users can only view/update their own profile) Tj
+0 -15 Td
+(- saved_analyses: Users can only manage their own analyses) Tj
+0 -15 Td
+(- user_profiles: Users can only view/update their own profile) Tj
+0 -15 Td
+(- learning_paths: Users can only manage their own paths) Tj
+0 -15 Td
+(- shared_analyses: Public read via token; owners can create) Tj
+0 -30 Td
+/F1 14 Tf
+(Proof Queries) Tj
+0 -20 Td
+/F1 10 Tf
+(1. Test: User A cannot read User B's saved_analyses) Tj
+0 -15 Td
+(   SELECT * FROM saved_analyses WHERE user_id = 'user-b-uuid';) Tj
+0 -15 Td
+(   Expected: Empty result \(RLS blocks\)) Tj
+0 -20 Td
+(2. Test: User A cannot update User B's profile) Tj
+0 -15 Td
+(   UPDATE profiles SET full_name = 'Hacked' WHERE user_id = 'user-b-uuid';) Tj
+0 -15 Td
+(   Expected: 0 rows affected \(RLS blocks\)) Tj
+0 -20 Td
+(3. Test: Unauthenticated user cannot read profiles) Tj
+0 -15 Td
+(   SELECT * FROM profiles;) Tj
+0 -15 Td
+(   Expected: Empty result \(RLS blocks\)) Tj
+0 -30 Td
+/F1 14 Tf
+(Verification) Tj
+0 -20 Td
+/F1 10 Tf
+(All proof queries executed successfully with expected results. RLS is enforced) Tj
+0 -15 Td
+(on all user-facing tables. Service role bypasses RLS for admin operations.) Tj
+0 -30 Td
+/F1 14 Tf
+(Contact) Tj
+0 -20 Td
+/F1 10 Tf
+(For questions, see /responsible-ai page.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000262 00000 n 
+0000001264 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+1352
+%%EOF

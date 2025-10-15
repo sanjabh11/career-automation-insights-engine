@@ -1,0 +1,135 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+4 0 obj
+<<
+/Length 1200
+>>
+stream
+BT
+/F1 18 Tf
+50 750 Td
+(Research API Guide) Tj
+0 -30 Td
+/F1 12 Tf
+(Career Automation Insights Engine) Tj
+0 -20 Td
+(Version: 1.0) Tj
+0 -20 Td
+(Last Updated: October 2025) Tj
+0 -40 Td
+/F1 14 Tf
+(Overview) Tj
+0 -20 Td
+/F1 10 Tf
+(This guide provides researchers with API endpoints, schemas, and example) Tj
+0 -15 Td
+(queries for accessing occupation data, APO scores, and telemetry.) Tj
+0 -30 Td
+/F1 14 Tf
+(Endpoints) Tj
+0 -20 Td
+/F1 10 Tf
+(1. POST /functions/v1/calculate-apo) Tj
+0 -15 Td
+(   Body: { occupation: { code: "15-1252", title: "Software Developers" } }) Tj
+0 -15 Td
+(   Returns: APO analysis with category breakdowns) Tj
+0 -20 Td
+(2. POST /functions/v1/search-occupations) Tj
+0 -15 Td
+(   Body: { keyword: "nurse", filters: { brightOutlook: true }, limit: 20 }) Tj
+0 -15 Td
+(   Returns: List of occupations with enrichment data) Tj
+0 -20 Td
+(3. GET /functions/v1/crosswalk?from=SOC&code=15-1252) Tj
+0 -15 Td
+(   Returns: Crosswalk mappings \(MOC, CIP, ESCO, etc.\)) Tj
+0 -30 Td
+/F1 14 Tf
+(Authentication) Tj
+0 -20 Td
+/F1 10 Tf
+(- Requires Supabase API key \(anon or service role\)) Tj
+0 -15 Td
+(- Include in Authorization header: Bearer <token>) Tj
+0 -15 Td
+(- Contact us for researcher access credentials) Tj
+0 -30 Td
+/F1 14 Tf
+(Schemas) Tj
+0 -20 Td
+/F1 10 Tf
+(APO Response: { code, title, overallAPO, tasks[], knowledge[], skills[],) Tj
+0 -15 Td
+(  abilities[], technologies[], categoryBreakdown, insights, metadata }) Tj
+0 -20 Td
+(Occupation: { occupation_code, occupation_title, bright_outlook, is_stem,) Tj
+0 -15 Td
+(  median_wage_annual, job_zone, career_cluster, ... }) Tj
+0 -30 Td
+/F1 14 Tf
+(Governance & Privacy) Tj
+0 -20 Td
+/F1 10 Tf
+(- No PII collected; occupation codes and public O*NET data only) Tj
+0 -15 Td
+(- Telemetry anonymized; RLS enforced on user-facing tables) Tj
+0 -15 Td
+(- Rate limits: 30 req/min default; contact for higher limits) Tj
+0 -30 Td
+/F1 14 Tf
+(Contact) Tj
+0 -20 Td
+/F1 10 Tf
+(For API access or questions, visit /resources or GitHub repository.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000262 00000 n 
+0000001514 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+1602
+%%EOF

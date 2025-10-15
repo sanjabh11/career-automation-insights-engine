@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle } from "lucide-react";
+import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function percentile(arr: number[], p: number) {
   if (arr.length === 0) return 0;
@@ -18,9 +19,10 @@ export default function OutcomesPage() {
   const now = new Date();
   const d30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const d90 = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
+  const [cohort, setCohort] = React.useState<string>("all");
 
   const { data: kpis, isLoading } = useQuery({
-    queryKey: ["outcomes-kpis"],
+    queryKey: ["outcomes-kpis", cohort],
     queryFn: async () => {
       // Saved analyses counts (proxy for outcomes created/exports)
       const [sa30, sa90] = await Promise.all([
@@ -29,12 +31,16 @@ export default function OutcomesPage() {
       ]);
 
       // LLM logs (apo_logs) for latency and token metrics
-      const { data: apoLogs } = await supabase
+      let apoQuery = supabase
         .from("apo_logs")
-        .select("latency_ms, tokens_used, created_at, user_id")
+        .select("latency_ms, tokens_used, created_at, user_id, error, cohort")
         .gte("created_at", d90)
         .order("created_at", { ascending: false })
-        .limit(1000);
+        .limit(2000);
+      if (cohort !== "all") {
+        apoQuery = (apoQuery as any).eq("cohort", cohort);
+      }
+      const { data: apoLogs } = await apoQuery;
 
       // Web vitals for performance (last 14 days)
       const d14 = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString();
@@ -49,6 +55,13 @@ export default function OutcomesPage() {
       const latencies = (apoLogs || []).map((l: any) => Number(l.latency_ms || 0)).filter((n) => n > 0);
       const tokens = (apoLogs || []).map((l: any) => Number(l.tokens_used || 0)).filter((n) => n > 0);
       const users90 = new Set((apoLogs || []).map((l: any) => l.user_id).filter(Boolean));
+      const logs30 = (apoLogs || []).filter((l: any) => new Date(l.created_at).toISOString() >= d30);
+      const total30 = logs30.length;
+      const failures30 = logs30.filter((l: any) => l.error && String(l.error).trim().length > 0).length;
+      const uptimePct = total30 > 0 ? Math.round(((total30 - failures30) / total30) * 10000) / 100 : 100;
+      const SLO = 99.5; // percent
+      const allowedErrors = Math.max(1, Math.floor((1 - SLO / 100) * total30));
+      const errorBudgetUsed = Math.min(100, Math.round((failures30 / allowedErrors) * 100));
 
       const lcpValues = (vitals || [])
         .filter((v: any) => (v.name || "").toUpperCase().includes("LCP"))
@@ -62,6 +75,10 @@ export default function OutcomesPage() {
         p95Latency: Math.round(percentile(latencies, 95)),
         p99Latency: Math.round(percentile(latencies, 99)),
         p95LCP: Math.round(percentile(lcpValues, 95)),
+        uptimePct,
+        errorBudgetUsed,
+        totalRequests30: total30,
+        failures30,
       };
 
       return { kpi, apoLogs: apoLogs || [], vitals: vitals || [] };
@@ -81,6 +98,10 @@ export default function OutcomesPage() {
       ["Latency p95 (ms)", kpi.p95Latency],
       ["Latency p99 (ms)", kpi.p99Latency],
       ["LCP p95 (ms)", kpi.p95LCP],
+      ["Uptime (30d) %", kpi.uptimePct],
+      ["Error Budget Used %", kpi.errorBudgetUsed],
+      ["Requests (30d)", kpi.totalRequests30],
+      ["Failures (30d)", kpi.failures30],
     ];
     return rows.map((r) => r.join(",")).join("\n");
   }, [kpis]);
@@ -104,9 +125,21 @@ export default function OutcomesPage() {
           </h1>
           <p className="text-sm text-muted-foreground">30/90-day outcomes and performance. Export-ready for public reporting.</p>
         </div>
-        <Button onClick={downloadCSV} variant="outline" className="gap-2" aria-label="Export outcomes data as CSV">
-          <Download className="h-4 w-4" aria-hidden="true" /> Export CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          <Select value={cohort} onValueChange={setCohort}>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Cohort" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All cohorts</SelectItem>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="basic">Basic</SelectItem>
+              <SelectItem value="premium">Premium</SelectItem>
+              <SelectItem value="enterprise">Enterprise</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button onClick={downloadCSV} variant="outline" className="gap-2" aria-label="Export outcomes data as CSV">
+            <Download className="h-4 w-4" aria-hidden="true" /> Export CSV
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -138,6 +171,21 @@ export default function OutcomesPage() {
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Tokens Used (90d)</div>
           <div className="text-3xl font-bold">{isLoading ? "–" : (kpis as any)?.kpi.tokens90}</div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-4">
+          <div className="text-sm text-muted-foreground">Uptime (30d)</div>
+          <div className="text-3xl font-bold flex items-center gap-2"><ShieldCheck className="h-6 w-6 text-green-600" />{isLoading ? "–" : `${(kpis as any)?.kpi.uptimePct}%`}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-sm text-muted-foreground">Error Budget Used</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : `${(kpis as any)?.kpi.errorBudgetUsed}%`}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-sm text-muted-foreground">Requests/Failures (30d)</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : `${(kpis as any)?.kpi.totalRequests30}/${(kpis as any)?.kpi.failures30}`}</div>
         </Card>
       </div>
 

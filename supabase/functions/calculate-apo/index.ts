@@ -275,6 +275,29 @@ serve(async (req) => {
     const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
     if (!supabase) console.warn('Supabase service client not available; using DEFAULT_* config');
 
+    // Resolve user_id and cohort (subscription tier) from Authorization header when available
+    const authHeader = req.headers.get('Authorization') || '';
+    let userId: string | null = null;
+    let cohort: string | null = null;
+    if (supabase && authHeader) {
+      try {
+        const anonKey = Deno.env.get('SUPABASE_ANON_KEY') || supabaseKey;
+        const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
+        const { data: userRes } = await userClient.auth.getUser();
+        userId = userRes?.user?.id ?? null;
+        if (userId) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('subscription_tier')
+            .eq('user_id', userId)
+            .maybeSingle();
+          cohort = (prof as any)?.subscription_tier ?? null;
+        }
+      } catch (e) {
+        console.warn('User resolution failed:', e);
+      }
+    }
+
     // Fetch active apo_config (T3)
     let configId: string | null = null;
     let weightsUsed = { ...DEFAULT_CATEGORY_WEIGHTS } as Record<string, number>;
@@ -488,6 +511,8 @@ serve(async (req) => {
           validation_warnings: validationWarnings as unknown as string[],
           tokens_used: usageMetadata?.totalTokens ?? null,
           latency_ms: latency,
+          user_id: userId,
+          cohort: cohort,
           error: null,
         } as const;
         await supabase.from('apo_logs').insert(insertPayload as any);

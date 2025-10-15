@@ -2,9 +2,27 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, FileText, ScrollText, Lock, Database, Link as LinkIcon } from "lucide-react";
+import { Shield, FileText, ScrollText, Lock, Database, Link as LinkIcon, Activity } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ResponsibleAIPage() {
+  const { data: gov, isLoading } = useQuery({
+    queryKey: ["governance-metrics"],
+    queryFn: async () => {
+      const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: logs } = await (supabase as any)
+        .from("apo_logs")
+        .select("id, created_at, validation_warnings")
+        .gte("created_at", d30)
+        .limit(5000);
+      const total = logs?.length || 0;
+      const overrides = (logs || []).filter((r: any) => Array.isArray(r.validation_warnings) && r.validation_warnings.length > 0).length;
+      const overrideRate = total > 0 ? Math.round((overrides / total) * 1000) / 10 : 0;
+      return { total, overrides, overrideRate };
+    },
+    staleTime: 60_000,
+  });
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
       <div className="space-y-1">
@@ -67,11 +85,28 @@ export default function ResponsibleAIPage() {
             <h3 className="font-semibold">Governance (last 30 days)</h3>
             <Badge>beta</Badge>
           </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+            <Activity className="h-4 w-4" />
+            <span>Override rate: {isLoading ? "–" : `${gov?.overrideRate ?? 0}%`} ({isLoading ? "–" : `${gov?.overrides ?? 0}`} of {isLoading ? "–" : `${gov?.total ?? 0}`})</span>
+          </div>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-            <li>Override rate: pending</li>
             <li>Incident count: 0 (public)</li>
             <li>Prompt updates: tracked in CHANGELOG</li>
           </ul>
+          <div className="mt-3">
+            <div className="text-sm font-medium mb-1">Security Artifacts</div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <a href="/docs/security/THREAT_MODEL.pdf" target="_blank" rel="noreferrer">Threat Model</a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="/docs/security/PEN_TEST_SUMMARY.pdf" target="_blank" rel="noreferrer">Pen-test Summary</a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="/docs/security/RLS_PROOFS.pdf" target="_blank" rel="noreferrer">RLS Proofs</a>
+              </Button>
+            </div>
+          </div>
           <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
             <LinkIcon className="h-3.5 w-3.5" /> See <a className="underline" href="/validation">Validation</a> for calibration.
           </div>
