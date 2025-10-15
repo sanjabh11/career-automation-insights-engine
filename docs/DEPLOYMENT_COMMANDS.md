@@ -51,7 +51,7 @@ curl -X POST "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/sync-stem-me
 
 **Verify:**
 ```bash
-psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" \
+psql "$SUPABASE_POSTGRES_URI" \
   -c "SELECT COUNT(*) FROM public.onet_stem_membership;"
 ```
 
@@ -103,7 +103,7 @@ curl -X POST "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/sync-knowled
 
 **Verify:**
 ```bash
-psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" \
+psql "$SUPABASE_POSTGRES_URI" \
   -c "SELECT occupation_code, COUNT(*) as knowledge_count FROM public.onet_knowledge GROUP BY occupation_code;"
 ```
 
@@ -148,7 +148,7 @@ open http://localhost:5173/tech-skills
 
 ```bash
 # Check STEM membership
-psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" <<EOF
+psql "$SUPABASE_POSTGRES_URI" <<EOF
 -- STEM membership stats
 SELECT 
   stem_occupation_type, 
@@ -167,7 +167,7 @@ LIMIT 10;
 EOF
 
 # Check knowledge/abilities
-psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" <<EOF
+psql "$SUPABASE_POSTGRES_URI" <<EOF
 -- Knowledge stats
 SELECT 
   occupation_code, 
