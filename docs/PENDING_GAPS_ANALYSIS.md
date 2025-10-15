@@ -42,10 +42,10 @@
 **Action Required:**
 ```bash
 # Go to: https://supabase.com/dashboard/project/kvunnankqgfokeufvsrv/settings/functions
-# Add these secrets:
-ONET_USERNAME=ignite_consulting
-ONET_PASSWORD=4675rxg
-GEMINI_API_KEY=AIzaSyCseZFXvRDfcBi4fjgS9MTcnOB_Ee3TgXs
+# Add these secrets (see `.env.example` for placeholders):
+ONET_USERNAME=<your onet username>
+ONET_PASSWORD=<your onet password>
+GEMINI_API_KEY=<your gemini api key>
 GEMINI_MODEL=gemini-1.5-flash
 ```
 

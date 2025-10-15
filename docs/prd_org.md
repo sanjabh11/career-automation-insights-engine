@@ -625,12 +625,9 @@ This process ensures that the APO calculation is based on the latest data from t
 ### Authentication Setup
 
 ```
-const API_KEY = 'my_onet_api_key';
-
-ONET_USERNAME=ignite_consulting
-ONET_PASSWORD=4675rxg
-
 const BASE_URL = 'https://services.onetcenter.org/ws/';
+
+// Configure ONET_USERNAME/ONET_PASSWORD in environment variables as documented in `.env.example`.
 ```
 
 ### Required Endpoints

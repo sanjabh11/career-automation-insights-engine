@@ -102,9 +102,9 @@
    - Go to: https://supabase.com/dashboard/project/kvunnankqgfokeufvsrv/settings/functions
    - Add these secrets:
      ```
-     ONET_USERNAME=ignite_consulting
-     ONET_PASSWORD=4675rxg
-     GEMINI_API_KEY=AIzaSyCseZFXvRDfcBi4fjgS9MTcnOB_Ee3TgXs
+     ONET_USERNAME=<your onet username>
+     ONET_PASSWORD=<your onet password>
+     GEMINI_API_KEY=${GEMINI_API_KEY}
      GEMINI_MODEL=gemini-1.5-flash
      ```
 
