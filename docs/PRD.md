@@ -364,6 +364,17 @@ COURSE_SEARCH_ALLOW_FALLBACKS=false
 netlify dev
 ```
 
+### Evidence Artifacts (Oct 16, 2025)
+Added comprehensive documentation and evidence artifacts:
+- **Validation & Methods**: Ablations report, calibration methods, signals methods, baselines CSV sample
+- **Quality & Accessibility**: WCAG AA statement, quality checklist
+- **Responsible AI**: Model cards (APO, Task), data sheets (O*NET, Telemetry), security artifacts (Threat model, Pen-test, RLS proofs)
+- **Operations**: Drift runbook with PSI monitoring procedures
+- **Resources**: Veterans transition summary PDF
+
+All artifacts accessible via UI pages: `/validation/methods`, `/quality`, `/responsible-ai`, `/operations`, `/veterans`.
+CSV export added to Crosswalk results and Veterans matches.
+
 ### Pending (post-deploy follow-ups)
 - E2E CoS test for APO (PBI-0001-16)
 - Durable rate limiting backend (see design doc PBI-0001-32)

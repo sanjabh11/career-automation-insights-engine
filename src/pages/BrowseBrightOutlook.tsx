@@ -114,6 +114,10 @@ export default function BrowseBrightOutlook() {
           </div>
         </div>
 
+        <div className="text-xs text-muted-foreground mt-1">
+          Coverage is computed against O*NET Bright Outlook flags. Data version: 2025-09 (sync weekly). Filters narrow coverage by category/job zone.
+        </div>
+
         <div className="space-y-3">
           {results.map((occupation, index) => (
             <motion.div

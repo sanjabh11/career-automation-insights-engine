@@ -1,0 +1,38 @@
+%PDF-1.4
+1 0 obj<<>>endobj
+2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj
+3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>endobj
+4 0 obj<< /Length 900 >>stream
+BT
+/F1 18 Tf 50 750 Td (Drift Runbook) Tj
+0 -30 Td /F1 12 Tf (Purpose: Detect and respond to distribution drift in APO outputs) Tj
+0 -40 Td /F1 14 Tf (Signals) Tj
+0 -20 Td /F1 10 Tf (— PSI > 0.25 significant drift; 0.1–0.25 moderate) Tj
+0 -15 Td (— KS p < 0.05 indicates shift) Tj
+0 -15 Td (— Latency p99 uptrend or error spikes) Tj
+0 -30 Td /F1 14 Tf (Actions) Tj
+0 -20 Td /F1 10 Tf (1. Verify recent deployments/config changes) Tj
+0 -15 Td (2. Compare cohort-specific PSI) Tj
+0 -15 Td (3. Inspect category contributions for shifts) Tj
+0 -15 Td (4. Roll back model/config if regression confirmed) Tj
+0 -15 Td (5. Recalibrate: run ECE jobs and review reliability curves) Tj
+0 -30 Td /F1 14 Tf (Documentation) Tj
+0 -20 Td /F1 10 Tf (— Log alert to ops_alerts table with notes and action_taken) Tj
+0 -15 Td (— Capture screenshots of dashboards and attach to incident) Tj
+0 -15 Td (— Post-mortem for severity >= critical) Tj
+ET
+endstream
+endobj
+5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000038 00000 n 
+0000000120 00000 n 
+0000000339 00000 n 
+0000001241 00000 n 
+trailer<< /Size 6 /Root 1 0 R >>
+startxref
+1318
+%%EOF

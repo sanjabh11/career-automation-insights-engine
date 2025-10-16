@@ -72,6 +72,17 @@ export default function ValidationMethodsPage() {
           <li>CSV of per-occupation metrics for reproducibility.</li>
           <li>Changelog documenting prompt and weight changes.</li>
         </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" asChild>
+            <a href="/docs/reports/ABLATIONS_REPORT.pdf" target="_blank" rel="noreferrer">Download Methods & Ablations (PDF)</a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/docs/methods/CALIBRATION_METHODS.pdf" target="_blank" rel="noreferrer">Calibration Methods (PDF)</a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/docs/examples/baselines_sample.csv" target="_blank" rel="noreferrer">Sample Baselines CSV</a>
+          </Button>
+        </div>
       </Card>
     </div>
   );

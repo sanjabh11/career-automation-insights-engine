@@ -92,6 +92,21 @@ export default function TechSkillsPage() {
         </p>
       </div>
 
+      <Card className="p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Heat Legend:</span>
+            <Badge className="bg-red-100 text-red-800 border-red-300">80–100</Badge>
+            <Badge className="bg-orange-100 text-orange-800 border-orange-300">60–79</Badge>
+            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">40–59</Badge>
+            <Badge className="bg-blue-100 text-blue-800 border-blue-300">0–39</Badge>
+          </div>
+          <div className="text-muted-foreground">
+            Normalization: 0–100 by percentile of occupations using each technology (O*NET Hot Tech + postings).
+          </div>
+        </div>
+      </Card>
+
       {/* Search */}
       <Card className="p-4">
         <div className="relative">

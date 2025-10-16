@@ -87,6 +87,19 @@ export default function OperationsPage() {
     staleTime: 60_000,
   });
 
+  const { data: alerts } = useQuery({
+    queryKey: ["ops-alerts"],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("ops_alerts")
+        .select("created_at, metric, value, threshold, severity, action_taken")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      return data || [];
+    },
+    staleTime: 60_000,
+  });
+
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
       <div className="space-y-2">
@@ -162,7 +175,7 @@ export default function OperationsPage() {
           <Badge variant="secondary">last 14d vs prior 14d</Badge>
         </div>
         <div className="text-sm text-muted-foreground">
-          Population Stability Index (PSI) over overall APO distribution. Values > 0.25 indicate significant drift.
+          Population Stability Index (PSI) over overall APO distribution. Values &gt; 0.25 indicate significant drift.
         </div>
         <div className="mt-2 text-xl font-bold">
           {isLoading ? "–" : `PSI: ${data?.psi}`}
@@ -172,6 +185,43 @@ export default function OperationsPage() {
             <AlertTriangle className="h-4 w-4" /> Significant drift detected. Investigate model/config changes and input distributions.
           </div>
         )}
+        <div className="mt-3">
+          <a className="text-sm underline" href="/docs/operations/DRIFT_RUNBOOK.pdf" target="_blank" rel="noreferrer">View Drift Runbook (PDF)</a>
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <Activity className="h-5 w-5 text-green-600" />
+          <h3 className="font-semibold">Alert History</h3>
+          <Badge variant="secondary">latest 50</Badge>
+        </div>
+        <div className="rounded-md border overflow-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted">
+              <tr>
+                <th className="text-left p-2">Time</th>
+                <th className="text-left p-2">Metric</th>
+                <th className="text-left p-2">Value</th>
+                <th className="text-left p-2">Threshold</th>
+                <th className="text-left p-2">Severity</th>
+                <th className="text-left p-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(alerts as any[])?.map((a, i) => (
+                <tr key={i} className="border-t">
+                  <td className="p-2">{new Date(a.created_at).toLocaleString()}</td>
+                  <td className="p-2">{a.metric}</td>
+                  <td className="p-2">{a.value}</td>
+                  <td className="p-2">{a.threshold}</td>
+                  <td className="p-2 capitalize">{a.severity}</td>
+                  <td className="p-2">{a.action_taken || "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );

@@ -96,6 +96,27 @@ export default function QualityPage() {
           </Button>
         </div>
       </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <ShieldCheck className="h-5 w-5 text-green-600" />
+          <h3 className="font-semibold">WCAG AA Evidence Artifacts</h3>
+        </div>
+        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+          <li>Lighthouse mobile/desktop badges — upload latest screenshots to <code>public/docs/quality/</code>.</li>
+          <li>axe DevTools report screenshots per route.</li>
+          <li>Keyboard navigation map (PNG) and Accessibility Conformance Statement (PDF).</li>
+        </ul>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button variant="outline" asChild>
+            <a href="/docs/quality/AA_STATEMENT.pdf" target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> AA Statement (PDF)</a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/docs/QUALITY_CHECKLIST.pdf" target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> AA Checklist (PDF)</a>
+          </Button>
+        </div>
+      </Card>
+
     </div>
   );
 }

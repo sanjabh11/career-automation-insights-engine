@@ -17,10 +17,10 @@ import { Loader2 } from "lucide-react";
 const FROM_OPTIONS: CrosswalkFrom[] = ["SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT", "OOH"];
 const TO_OPTIONS: (CrosswalkTo | "ALL")[] = ["ALL", "SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT"];
 
-export function CrosswalkWizard() {
-  const [from, setFrom] = useState<CrosswalkFrom>("SOC");
+export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as const }: { defaultFrom?: CrosswalkFrom; defaultTo?: CrosswalkTo | "ALL" }) {
+  const [from, setFrom] = useState<CrosswalkFrom>(defaultFrom);
   const [code, setCode] = useState("");
-  const [to, setTo] = useState<CrosswalkTo | "ALL">("ALL");
+  const [to, setTo] = useState<CrosswalkTo | "ALL">(defaultTo);
   const [submitted, setSubmitted] = useState<{ from: CrosswalkFrom; code: string; to?: CrosswalkTo } | null>(null);
 
   const params = useMemo(() => {
@@ -102,7 +102,9 @@ export function CrosswalkWizard() {
 
       {/* Results */}
       <div className="space-y-2">
-        {query.isIdle && <p className="text-sm text-muted-foreground">Enter a code and click Explore to view mappings.</p>}
+        {!submitted && !query.isFetching && !query.isSuccess && (
+          <p className="text-sm text-muted-foreground">Enter a code and click Explore to view mappings.</p>
+        )}
         {query.isError && (
           <p className="text-sm text-red-600">
             {(query.error as Error)?.message || "Error fetching crosswalk results."}
@@ -141,6 +143,33 @@ function ResultView({ data }: { data: any }) {
   if (entries) {
     return (
       <div className="space-y-2">
+        <div className="flex items-center justify-end">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => {
+              try {
+                const rows = entries.map((item) => {
+                  const code = item.code || item.to_code || item.target || item.id || "";
+                  const title = item.title || item.name || item.desc || item.label || "";
+                  const relate = item.type || item.rel || item.via || item.source || "";
+                  return { code, title, relate };
+                });
+                const header = ["code","title","relate"]; 
+                const csv = [header.join(","), ...rows.map(r => `${JSON.stringify(r.code) },${JSON.stringify(r.title)},${JSON.stringify(r.relate)}`)].join("\n");
+                const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `crosswalk_${Date.now()}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch {}
+            }}
+          >
+            Download CSV
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {entries.map((item, idx) => (
             <Card key={idx} className="p-3">

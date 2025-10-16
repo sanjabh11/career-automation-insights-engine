@@ -763,6 +763,35 @@ All critical features implemented. Minor pending items are post-launch enhanceme
 
 ---
 
+## 📦 Evidence Artifacts
+
+The application includes comprehensive documentation and evidence artifacts accessible via the UI:
+
+### Validation & Methods
+- **Ablations Report** (`public/docs/reports/ABLATIONS_REPORT.pdf`) - Baseline comparisons and sensitivity analyses
+- **Calibration Methods** (`public/docs/methods/CALIBRATION_METHODS.pdf`) - ECE computation and reliability curves
+- **Signals Methods** (`public/docs/methods/SIGNALS_METHODS.pdf`) - Correlation analysis with CI bands
+- **Baselines Sample CSV** (`public/docs/examples/baselines_sample.csv`) - Sample APO metrics per model
+
+### Quality & Accessibility
+- **AA Statement** (`public/docs/quality/AA_STATEMENT.pdf`) - WCAG 2.1 AA conformance statement
+- **Quality Checklist** (`public/docs/QUALITY_CHECKLIST.pdf`) - AA compliance checklist
+
+### Responsible AI
+- **Model Cards** (`public/docs/model_cards/`) - APO and Task classification model documentation
+- **Data Sheets** (`public/docs/data_sheets/`) - O*NET enrichment and telemetry data governance
+- **Security Artifacts** (`public/docs/security/`) - Threat model, pen-test summary, RLS proofs
+
+### Operations
+- **Drift Runbook** (`public/docs/operations/DRIFT_RUNBOOK.pdf`) - PSI monitoring and response procedures
+
+### Resources
+- **Veterans Transition Summary** (`public/docs/resources/VETERANS_TRANSITION_SUMMARY.pdf`) - MOC to civilian occupation mappings
+
+All artifacts are linked from their respective pages: `/validation/methods`, `/quality`, `/responsible-ai`, `/operations`, `/veterans`.
+
+---
+
 ## 🤝 Contributing
 
 See `docs/IMPLEMENTATION_STATUS.md` for detailed feature status and development roadmap.

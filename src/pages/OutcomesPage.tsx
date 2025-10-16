@@ -142,6 +142,20 @@ export default function OutcomesPage() {
         </div>
       </div>
 
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <TrendingUp className="h-5 w-5 text-green-600" />
+          <h3 className="font-semibold">Signals & Methods</h3>
+          <Badge variant="secondary">methods</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground mb-2">
+          Correlations are computed on detrended, normalized series with bootstrapped 95% confidence intervals across lag windows (3/6/12 months). Non-causality and stationarity caveats apply.
+        </p>
+        <Button variant="outline" size="sm" asChild>
+          <a href="/docs/methods/SIGNALS_METHODS.pdf" target="_blank" rel="noreferrer">Methods (PDF)</a>
+        </Button>
+      </Card>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Analyses (30 days)</div>

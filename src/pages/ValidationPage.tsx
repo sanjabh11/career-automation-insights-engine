@@ -7,17 +7,22 @@ import { AlertTriangle, Target, BarChart3 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function ValidationPage() {
-  const { data: run, isLoading: runLoading } = useQuery({
-    queryKey: ["calibration-run-latest"],
+  const [cohort, setCohort] = React.useState<string>("all");
+  const { data: run, isLoading: runLoading, refetch } = useQuery({
+    queryKey: ["calibration-run-latest", cohort],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      let q = (supabase as any)
         .from("calibration_runs")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      if (cohort !== "all") {
+        q = q.eq("cohort", cohort);
+      }
+      const { data } = await q.maybeSingle();
       if (!data) return null;
       const { data: results } = await (supabase as any)
         .from("calibration_results")
@@ -56,13 +61,28 @@ export default function ValidationPage() {
           <h3 className="font-semibold">Reliability Panel (ECE / Calibration)</h3>
           <Badge variant="secondary">beta</Badge>
         </div>
+        <div className="flex items-center gap-2 mb-3">
+          <Select value={cohort} onValueChange={(v)=>{ setCohort(v); refetch(); }}>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Cohort" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All cohorts</SelectItem>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="basic">Basic</SelectItem>
+              <SelectItem value="premium">Premium</SelectItem>
+              <SelectItem value="enterprise">Enterprise</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/methods/CALIBRATION_METHODS.pdf" target="_blank" rel="noreferrer">Calibration Methods (PDF)</a>
+          </Button>
+        </div>
         <div className="mb-3">
           <Button
             variant="outline"
             size="sm"
             onClick={async () => {
               try {
-                await supabase.functions.invoke("calibrate-ece", { body: { days: 90, binCount: 10 } });
+                await supabase.functions.invoke("calibrate-ece", { body: { days: 90, binCount: 10, cohort: cohort === 'all' ? null : cohort } });
                 // Force refetch
                 await (supabase as any); // no-op to keep types quiet
                 window.location.reload();

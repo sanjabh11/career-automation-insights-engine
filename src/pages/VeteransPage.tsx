@@ -202,6 +202,28 @@ export default function VeteransPage() {
                   <h3 className="font-bold text-lg mb-4">
                     Civilian Career Matches ({civilianOccupations.length})
                   </h3>
+                  <div className="flex items-center justify-end gap-2 mb-3">
+                    <Button
+                      variant="outline"
+                      className="gap-2"
+                      onClick={() => {
+                        try {
+                          const header = ["code","title"];
+                          const rows = civilianOccupations.map((o:any)=>({ code: o.code, title: o.title }));
+                          const csv = [header.join(","), ...rows.map(r => `${JSON.stringify(r.code)},${JSON.stringify(r.title)}`)].join("\n");
+                          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url; a.download = `veterans_matches_${mocCode}_${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
+                        } catch {}
+                      }}
+                    >
+                      Download CSV
+                    </Button>
+                    <Button variant="outline" asChild>
+                      <a href="/docs/resources/VETERANS_TRANSITION_SUMMARY.pdf" target="_blank" rel="noreferrer">Download PDF</a>
+                    </Button>
+                  </div>
                   <div className="space-y-3">
                     {civilianOccupations.map((occ, index) => (
                       <CivilianOccupationCard

@@ -30,6 +30,27 @@ export default function ResponsibleAIPage() {
         <p className="text-sm text-muted-foreground">Model cards, data sheets, security posture, and governance metrics.</p>
       </div>
 
+      <Card className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="border rounded-md p-3">
+            <div className="text-xs text-muted-foreground">Security</div>
+            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Lock className="h-4 w-4 text-green-600" /> RLS + Secrets</div>
+          </div>
+          <div className="border rounded-md p-3">
+            <div className="text-xs text-muted-foreground">Data Governance</div>
+            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Database className="h-4 w-4 text-indigo-600" /> 90d retention</div>
+          </div>
+          <div className="border rounded-md p-3">
+            <div className="text-xs text-muted-foreground">Override Rate</div>
+            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Activity className="h-4 w-4 text-green-600" /> {isLoading ? "–" : `${gov?.overrideRate ?? 0}%`}</div>
+          </div>
+          <div className="border rounded-md p-3">
+            <div className="text-xs text-muted-foreground">Model Cards</div>
+            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><FileText className="h-4 w-4 text-indigo-600" /> 2 published</div>
+          </div>
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-6">
           <div className="flex items-center gap-2 mb-2">
