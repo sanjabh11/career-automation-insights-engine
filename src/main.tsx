@@ -1,6 +1,7 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import './setupEnv';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 import { reportWebVitals, persistWebVitals } from './utils/webVitals';
 
 createRoot(document.getElementById("root")!).render(<App />);
