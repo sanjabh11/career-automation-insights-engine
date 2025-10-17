@@ -24,7 +24,6 @@ import { toast } from 'sonner';
 import { TaskAssessmentPanel } from './TaskAssessmentPanel';
 import { SkillRecommendationsPanel } from './SkillRecommendationsPanel';
 import { motion } from 'framer-motion';
-import { getFunctionsBaseUrl } from '@/lib/utils';
 
 interface Occupation {
   code: string;
@@ -70,39 +69,40 @@ export function AIImpactDashboard() {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setIsSearching(true);
     try {
-      const path = `search?keyword=${encodeURIComponent(searchQuery)}&end=10`;
-      const fnBase = getFunctionsBaseUrl();
-      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
-      console.debug('[AIImpactDashboard] fetching', { url, origin: window.location.origin });
-      const resp = await fetch(url);
-      console.debug('[AIImpactDashboard] response', { status: resp.status, url });
-      if (!resp.ok) {
-        const txt = await resp.text();
-        throw new Error(`Search failed (${resp.status}): ${txt}`);
+      const { data, error } = await supabase.functions.invoke('search-occupations', {
+        body: {
+          keyword: searchQuery.trim(),
+          limit: 10,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message ?? 'Search function failed');
       }
-      const contentType = resp.headers.get("Content-Type") || "";
-      console.debug('[AIImpactDashboard] response', { status: resp.status, contentType });
-      if (!contentType.toLowerCase().includes("json")) {
-        const txt = await resp.text();
-        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
+
+      if (!data || typeof data !== 'object') {
+        throw new Error('Unexpected response from search function');
       }
-      const data = await resp.json();
-      
-      let results: Occupation[] = [];
-      if ((data as any).occupation) {
-        const occ = (data as any).occupation;
-        results = Array.isArray(occ)
-          ? occ.map((o: any) => ({ code: o.code, title: o.title, description: o.description }))
-          : [{ code: occ.code, title: occ.title, description: occ.description }];
-      }
-      
+
+      const occupationsPayload = Array.isArray((data as any).occupations)
+        ? (data as any).occupations
+        : [];
+
+      const results: Occupation[] = occupationsPayload
+        .map((o: any) => ({
+          code: o.occupation_code || o.code,
+          title: o.occupation_title || o.title,
+          description: o.description || o.summary,
+        }))
+        .filter((o: Occupation) => o.code && o.title);
+
       setOccupations(results);
     } catch (error) {
       console.error('Search error:', error);
-      toast.error('Failed to search occupations');
+      toast.error(error instanceof Error ? error.message : 'Failed to search occupations');
     } finally {
       setIsSearching(false);
     }

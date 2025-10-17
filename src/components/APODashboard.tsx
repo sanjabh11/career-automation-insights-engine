@@ -172,7 +172,7 @@ export const APODashboard = () => {
       </ErrorBoundary>
     )}
 
-    {/* Career APO Explorer always after Saved Selections */}
+    {/* Top Occupations panel always after Saved Selections */}
     <ErrorBoundary>
       <motion.div variants={sectionVariants}>
         <TopCareersPanel />
@@ -187,9 +187,9 @@ export const APODashboard = () => {
       <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">AI Impact Career Planner</h3>
+            <h3 className="text-lg font-semibold">Career Impact Planner</h3>
             <Button 
-              onClick={() => navigate('/ai-impact')}
+              onClick={() => navigate('/ai-impact-planner')}
               className="gap-2"
             >
               <Robot className="w-4 h-4" />

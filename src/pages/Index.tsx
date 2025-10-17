@@ -1,7 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { APODashboard } from '@/components/APODashboard';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { EnhancedAPODashboardHeader } from '@/components/EnhancedAPODashboardHeader';
 import { useSession } from '@/hooks/useSession';
@@ -9,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { motion } from 'framer-motion';
 import { Hero } from '@/components/Hero';
+import { APODashboard } from '@/components/APODashboard';
 
 const Index = () => {
   const { user, loading } = useSession();
@@ -40,21 +39,13 @@ const Index = () => {
         userEmail={user?.email}
         onCreditsClick={() => setShowCreditsModal(true)}
       />
-      <Hero />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ delay: 0.15, duration: 0.6 }}
-        className="relative z-10"
-      >
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button asChild size="lg" className="shadow-lg">
-            <Link to="/gap-analysis">View Gap Analysis</Link>
-          </Button>
-        </div>
+      {/* Core Dashboard first */}
+      <div className="bg-white">
         <APODashboard />
-      </motion.div>
+      </div>
+
+      {/* Hero below dashboard (secondary) */}
+      <Hero />
     </motion.div>
   );
 };

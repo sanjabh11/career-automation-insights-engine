@@ -17,7 +17,7 @@ export function APODashboardHeader({ selectedJobsCount, onExport }: APODashboard
             <div className="bg-blue-600 rounded-lg p-2">
               <BarChart3 className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Career APO Explorer</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Occupation Explorer</h1>
             <div className="ml-4 px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
               Enhanced AI v2.0
             </div>

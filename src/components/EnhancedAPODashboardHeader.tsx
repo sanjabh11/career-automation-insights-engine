@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { 
   Brain, 
   User, 
@@ -47,20 +48,12 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
   const apoStatus = user ? checkRateLimit(apoRateLimiter, user.id) : { remaining: 0, resetTime: Date.now(), timeUntilReset: 0 };
   const exportStatus = user ? checkRateLimit(exportRateLimiter, user.id) : { remaining: 0, resetTime: Date.now(), timeUntilReset: 0 };
 
-  const navigationItems = [
-    {
-      label: 'User Dashboard',
-      icon: User,
-      onClick: () => navigate('/dashboard'),
-      description: 'Manage your profile and data'
-    },
-    {
-      label: 'AI Impact Planner',
-      icon: Brain,
-      onClick: () => navigate('/ai-impact'),
-      description: 'Explore AI career impact'
-    }
-  ];
+  // Primary navigation destinations
+  const goCareerPlanning = () => navigate('/career-planning');
+  const goPlanner = () => navigate('/ai-impact-planner');
+  const goDashboardHome = () => navigate('/');
+  const goResources = () => navigate('/resources');
+  const goDemo = () => navigate('/demo');
 
   const handleCreditsClick = () => {
     setShowCreditsModal(true);
@@ -98,46 +91,48 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                 </Button>
               </div>
               
-              <div className="space-y-4">
-                <CareerPlanningButton />
-                
-                <div className="space-y-2">
-                  {navigationItems.map((item) => (
-                    <Button
-                      key={item.label}
-                      variant="ghost"
-                      onClick={() => {
-                        item.onClick();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full justify-start text-left p-4 h-auto"
-                    >
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <div>
-                        <div className="font-medium">{item.label}</div>
-                        <div className="text-xs text-gray-500">{item.description}</div>
-                      </div>
-                    </Button>
-                  ))}
+              <div className="space-y-3">
+                <Button variant="ghost" className="w-full justify-start" onClick={() => { goCareerPlanning(); setIsMobileMenuOpen(false); }}>Career Planning</Button>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => { goPlanner(); setIsMobileMenuOpen(false); }}>AI Impact Planner</Button>
+
+                <div className="pt-2">
+                  <div className="text-xs font-semibold text-gray-500 mb-1">Dashboard</div>
+                  <div className="grid grid-cols-1 gap-1">
+                    <Button variant="ghost" className="justify-start" onClick={() => { goDashboardHome(); setIsMobileMenuOpen(false); }}>Dashboard Home</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/outcomes'); setIsMobileMenuOpen(false); }}>Market Signals</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/validation'); setIsMobileMenuOpen(false); }}>Validation</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/validation/methods'); setIsMobileMenuOpen(false); }}>Methods</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/operations'); setIsMobileMenuOpen(false); }}>Operations</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/responsible-ai'); setIsMobileMenuOpen(false); }}>Responsible AI</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/quality'); setIsMobileMenuOpen(false); }}>Quality</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { goResources(); setIsMobileMenuOpen(false); }}>Resources</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/bright-outlook'); setIsMobileMenuOpen(false); }}>Bright Outlook</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/stem'); setIsMobileMenuOpen(false); }}>STEM</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/tech-skills'); setIsMobileMenuOpen(false); }}>Tech Skills</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/crosswalk'); setIsMobileMenuOpen(false); }}>Crosswalk</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/veterans'); setIsMobileMenuOpen(false); }}>Veterans</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { goDemo(); setIsMobileMenuOpen(false); }}>Demo</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/dashboard'); setIsMobileMenuOpen(false); }}>User Dashboard</Button>
+                  </div>
                 </div>
-                
-                <Separator />
-                
-                <div className="space-y-3">
-                  <APICreditsDisplay />
-                  <RateLimitDisplay
-                    remaining={searchStatus.remaining}
-                    total={20}
-                    resetTime={searchStatus.resetTime}
-                    timeUntilReset={searchStatus.timeUntilReset}
-                    label="Search Requests"
-                    variant="search"
-                  />
-                </div>
-                
-                <Separator />
-                
-                {userEmail && <LogoutButton />}
+              
+              <Separator />
+              
+              <div className="space-y-3">
+                <APICreditsDisplay />
+                <RateLimitDisplay
+                  remaining={searchStatus.remaining}
+                  total={20}
+                  resetTime={searchStatus.resetTime}
+                  timeUntilReset={searchStatus.timeUntilReset}
+                  label="Search Requests"
+                  variant="search"
+                />
+              </div>
+              
+              <Separator />
+              
+              {userEmail && <LogoutButton />}
               </div>
             </div>
           </motion.div>
@@ -167,30 +162,41 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
               </div>
               <div className="hidden sm:block">
                 <h1 className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  APO Dashboard
+                  Automation Insights
                 </h1>
-                <p className="text-xs text-gray-500">Automation Potential Oracle</p>
+                <p className="text-xs text-gray-500">Automation Insights</p>
               </div>
             </motion.div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-4">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <CareerPlanningButton />
-              </motion.div>
-              
+            <div className="hidden md:flex items-center gap-3">
+              <Button variant="ghost" onClick={goCareerPlanning} className="hover:bg-blue-50">Career Planning</Button>
               <AIImpactPlannerButton />
-              
-              <Button
-                variant="outline"
-                onClick={() => navigate('/dashboard')}
-                className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Dashboard
-              </Button>
-              
-              <div className="flex items-center gap-3">
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">Dashboard</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-[240px]">
+                  <DropdownMenuItem onClick={() => goDashboardHome()}>Dashboard Home</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/outcomes')}>Market Signals</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/validation')}>Validation</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/validation/methods')}>Methods</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/operations')}>Operations</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/responsible-ai')}>Responsible AI</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/quality')}>Quality</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/resources')}>Resources</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/browse/bright-outlook')}>Bright Outlook</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/browse/stem')}>STEM</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/tech-skills')}>Tech Skills</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/crosswalk')}>Crosswalk</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/veterans')}>Veterans</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/demo')}>Demo</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>User Dashboard</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <div className="flex items-center gap-3 ml-2">
                 <APICreditsDisplay />
                 <RateLimitDisplay
                   remaining={searchStatus.remaining}
@@ -201,7 +207,7 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                   variant="search"
                 />
               </div>
-              
+
               {userEmail && <LogoutButton />}
             </div>
 

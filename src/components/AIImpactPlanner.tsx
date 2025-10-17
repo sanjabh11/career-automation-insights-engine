@@ -14,7 +14,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useSession } from '@/hooks/useSession';
-import { getFunctionsBaseUrl } from '@/lib/utils';
 
 // Types
 interface Occupation {
@@ -45,6 +44,7 @@ interface Resource {
   skillArea: string;
   costType?: string;
 }
+
 
 interface UserPreferences {
   occupation?: Occupation;
@@ -136,49 +136,54 @@ export function AIImpactPlanner() {
 
     setIsSearching(true);
     try {
-      const path = `search?keyword=${encodeURIComponent(query)}&end=10`;
-      const fnBase = getFunctionsBaseUrl();
-      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
-      console.debug('[AIImpactPlanner.search] fetching', { url, origin: window.location.origin });
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        const txt = await resp.text();
-        throw new Error(`Search failed (${resp.status}): ${txt}`);
-      }
-      const contentType = resp.headers.get("Content-Type") || "";
-      console.debug('[AIImpactPlanner.search] response', { status: resp.status, contentType });
-      if (!contentType.includes("application/json")) {
-        const txt = await resp.text();
-        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
-      }
-      const data = await resp.json();
+      const { data, error } = await supabase.functions.invoke('search-occupations', {
+        body: {
+          keyword: query.trim(),
+          limit: 10,
+        },
+      });
 
-      let occs: Occupation[] = [];
-      if ((data as any).occupation) {
-        const occ = (data as any).occupation;
-        occs = Array.isArray(occ)
-          ? occ.map((o: any) => ({
-              code: o.code,
-              title: o.title,
-              description: o.description || `An occupation from the O*NET database.`,
-            }))
-          : [
-              {
-                code: occ.code,
-                title: occ.title,
-                description: occ.description || `An occupation from the O*NET database.`,
-              },
-            ];
+      if (error) {
+        throw new Error(error.message ?? 'Search function failed');
       }
+
+      if (!data || typeof data !== 'object') {
+        throw new Error('Unexpected response from search function');
+      }
+
+      const occupations = Array.isArray((data as any).occupations)
+        ? (data as any).occupations
+        : [];
+
+      const occs: Occupation[] = occupations
+        .map((o: any) => ({
+          code: o.occupation_code || o.code,
+          title: o.occupation_title || o.title,
+          description: o.description || o.summary || 'An occupation from the O*NET database.',
+        }))
+        .filter((o: Occupation) => o.code && o.title);
 
       setOccupations(occs);
     } catch (error) {
       console.error('Search failed:', error);
-      toast.error('Failed to search occupations');
+      toast.error(error instanceof Error ? error.message : 'Failed to search occupations');
     } finally {
       setIsSearching(false);
     }
   };
+
+  // If the homepage hero stored a last search, prefill and fetch results
+  useEffect(() => {
+    try {
+      const last = localStorage.getItem('planner:lastSearch');
+      if (last && last.trim()) {
+        setSearchQuery(last);
+        searchOccupations(last);
+        localStorage.removeItem('planner:lastSearch');
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Find similar occupations for custom job title
   const findSimilarOccupations = async (jobTitle: string) => {
@@ -189,41 +194,32 @@ export function AIImpactPlanner() {
 
     setIsSearchingCustomJob(true);
     try {
-      // Simulate via live O*NET search
-      const path = `search?keyword=${encodeURIComponent(jobTitle)}&end=5`;
-      const fnBase = getFunctionsBaseUrl();
-      const url = `${fnBase}/.netlify/functions/onet-proxy?path=${encodeURIComponent(path)}`;
-      console.debug('[AIImpactPlanner.findSimilar] fetching', { url, origin: window.location.origin });
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        const txt = await resp.text();
-        throw new Error(`Search failed (${resp.status}): ${txt}`);
-      }
-      const contentType = resp.headers.get("Content-Type") || "";
-      console.debug('[AIImpactPlanner.findSimilar] response', { status: resp.status, contentType });
-      if (!contentType.includes("application/json")) {
-        const txt = await resp.text();
-        throw new Error(`O*NET responded with non-JSON (${contentType}): ${txt.slice(0, 200)}`);
-      }
-      const data = await resp.json();
+      const { data, error } = await supabase.functions.invoke('search-occupations', {
+        body: {
+          keyword: jobTitle.trim(),
+          limit: 5,
+        },
+      });
 
-      let occs: Occupation[] = [];
-      if ((data as any).occupation) {
-        const occ = (data as any).occupation;
-        occs = Array.isArray(occ)
-          ? occ.map((o: any) => ({
-              code: o.code,
-              title: o.title,
-              description: o.description || `An occupation from the O*NET database.`,
-            }))
-          : [
-              {
-                code: occ.code,
-                title: occ.title,
-                description: occ.description || `An occupation from the O*NET database.`,
-              },
-            ];
+      if (error) {
+        throw new Error(error.message ?? 'Search function failed');
       }
+
+      if (!data || typeof data !== 'object') {
+        throw new Error('Unexpected response from search function');
+      }
+
+      const occupations = Array.isArray((data as any).occupations)
+        ? (data as any).occupations
+        : [];
+
+      const occs: Occupation[] = occupations
+        .map((o: any) => ({
+          code: o.occupation_code || o.code,
+          title: o.occupation_title || o.title,
+          description: o.description || o.summary || 'An occupation from the O*NET database.',
+        }))
+        .filter((o: Occupation) => o.code && o.title);
 
       setSimilarOccupations(occs);
       
@@ -233,8 +229,8 @@ export function AIImpactPlanner() {
         toast.success(`Found ${occs.length} similar occupations`);
       }
     } catch (error) {
-      console.error('Error finding similar occupations:', error);
-      toast.error('Failed to find similar occupations');
+      console.error('Similar occupations search failed:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to find similar occupations');
     } finally {
       setIsSearchingCustomJob(false);
     }
@@ -506,7 +502,7 @@ export function AIImpactPlanner() {
       >
         <h1 className="text-3xl font-bold mb-2 flex items-center justify-center gap-2">
           <Brain className="h-8 w-8 text-blue-600" />
-          AI Impact Career Planner
+          Career Impact Planner
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Understand how AI will impact your job, which tasks might be automated or augmented, 

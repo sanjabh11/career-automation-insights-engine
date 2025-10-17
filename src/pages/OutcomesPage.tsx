@@ -121,7 +121,7 @@ export default function OutcomesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
-            <BarChart2 className="h-6 w-6 text-green-600" aria-hidden="true" /> Outcomes & KPIs
+            <BarChart2 className="h-6 w-6 text-green-600" aria-hidden="true" /> Market Signals & KPIs
           </h1>
           <p className="text-sm text-muted-foreground">30/90-day outcomes and performance. Export-ready for public reporting.</p>
         </div>

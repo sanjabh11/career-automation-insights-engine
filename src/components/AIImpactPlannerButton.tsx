@@ -18,7 +18,7 @@ export function AIImpactPlannerButton() {
         className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
       >
         <Robot className="mr-2 h-4 w-4" />
-        AI Impact Planner
+        Career Impact Planner
       </Button>
     </motion.div>
   );
