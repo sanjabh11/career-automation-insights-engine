@@ -28,8 +28,12 @@ export interface GeminiResponse {
 
 // Helpers to centralize model and generation defaults from env
 export function getEnvModel(): string {
-  const model = (Deno.env.get("GEMINI_MODEL") || '').trim();
-  return model || 'gemini-2.5-flash';
+  const raw = (Deno.env.get("GEMINI_MODEL") || '').trim();
+  // Fallback: if an older 1.5 model is set, use a supported v1beta model
+  if (/gemini[-_]1\.5/i.test(raw)) {
+    return 'gemini-2.5-flash';
+  }
+  return raw || 'gemini-2.5-flash';
 }
 
 export function getEnvGenerationDefaults(): Partial<GenerationConfig> {
@@ -75,6 +79,7 @@ export class GeminiClient {
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig,
+        responseMimeType: "application/json",
       }),
     });
 

@@ -1,17 +1,14 @@
 
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { EnhancedAPODashboardHeader } from '@/components/EnhancedAPODashboardHeader';
 import { useSession } from '@/hooks/useSession';
-import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { motion } from 'framer-motion';
-import { Hero } from '@/components/Hero';
-import { APODashboard } from '@/components/APODashboard';
+
+const LazyAPODashboard = React.lazy(() => import('@/components/APODashboard').then(m => ({ default: m.APODashboard })));
 
 const Index = () => {
   const { user, loading } = useSession();
-  const navigate = useNavigate();
   const [showCreditsModal, setShowCreditsModal] = useState(false);
 
   if (loading) {
@@ -39,13 +36,17 @@ const Index = () => {
         userEmail={user?.email}
         onCreditsClick={() => setShowCreditsModal(true)}
       />
-      {/* Core Dashboard first */}
+      
+      {/* Pure Dashboard Experience - No Hero */}
       <div className="bg-white">
-        <APODashboard />
+        <React.Suspense fallback={
+          <div className="py-8 flex justify-center">
+            <LoadingSpinner size="md" text="Loading dashboard..." />
+          </div>
+        }>
+          <LazyAPODashboard />
+        </React.Suspense>
       </div>
-
-      {/* Hero below dashboard (secondary) */}
-      <Hero />
     </motion.div>
   );
 };

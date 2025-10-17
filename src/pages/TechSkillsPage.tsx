@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, TrendingUp, Sparkles, Code2 } from "lucide-react";
+import { Loader2, Search, TrendingUp, Sparkles, Code2, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatWage } from "@/types/onet-enrichment";
 
@@ -104,6 +104,31 @@ export default function TechSkillsPage() {
           <div className="text-muted-foreground">
             Normalization: 0–100 by percentile of occupations using each technology (O*NET Hot Tech + postings).
           </div>
+        </div>
+      </Card>
+
+      {/* Exemplar Chips */}
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="h-4 w-4 text-purple-600" />
+          <span className="text-sm font-medium">Popular Technologies:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {['Excel', 'Python', 'Salesforce'].map((tech) => (
+            <Button
+              key={tech}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchTerm(tech);
+                setSelectedTech(tech);
+              }}
+              className="gap-2"
+            >
+              <Code2 className="h-3 w-3" />
+              {tech}
+            </Button>
+          ))}
         </div>
       </Card>
 
@@ -241,11 +266,18 @@ export default function TechSkillsPage() {
                         )}
                       </div>
 
-                      <Button variant="link" className="h-auto p-0 text-xs" asChild>
-                        <a href={`/?search=${encodeURIComponent(occ.onet_occupation_enrichment.occupation_title)}`}>
-                          View Analysis & Learning Paths →
-                        </a>
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="link" className="h-auto p-0 text-xs" asChild>
+                          <a href={`/?search=${encodeURIComponent(occ.onet_occupation_enrichment.occupation_title)}`}>
+                            View Analysis →
+                          </a>
+                        </Button>
+                        <Button variant="link" className="h-auto p-0 text-xs" asChild>
+                          <a href={`/ai-impact-planner`}>
+                            Open in Planner →
+                          </a>
+                        </Button>
+                      </div>
                     </div>
                   </Card>
                 </motion.div>

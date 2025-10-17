@@ -25,20 +25,45 @@ function buildAuthHeaders(): HeadersInit {
   throw new Error("Missing ONET_USERNAME/ONET_PASSWORD");
 }
 
-serve(async (req: Request): Promise<Response> => {
-  try {
-    if (req.method !== "GET") {
-      return new Response("Method Not Allowed", { status: 405 });
-    }
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+};
 
-    const url = new URL(req.url);
-    const from = url.searchParams.get("from");
-    const code = url.searchParams.get("code");
-    const to = url.searchParams.get("to");
+serve(async (req: Request): Promise<Response> => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders, status: 200 });
+  }
+
+  try {
+    let from: string | null = null;
+    let code: string | null = null;
+    let to: string | null = null;
+
+    // Support both GET and POST
+    if (req.method === "GET") {
+      const url = new URL(req.url);
+      from = url.searchParams.get("from");
+      code = url.searchParams.get("code");
+      to = url.searchParams.get("to");
+    } else if (req.method === "POST") {
+      const body = await req.json();
+      from = body.from;
+      code = body.code;
+      to = body.to;
+    } else {
+      return new Response("Method Not Allowed", { 
+        status: 405,
+        headers: corsHeaders 
+      });
+    }
 
     if (!from || !code) {
       return new Response("Missing required parameters: from, code", {
         status: 400,
+        headers: corsHeaders,
       });
     }
 
@@ -46,7 +71,11 @@ serve(async (req: Request): Promise<Response> => {
     // Docs: https://services.onetcenter.org/reference/
     // Support both generic crosswalk and specific endpoints (e.g., OOH)
     let onetUrl: string;
-    const fromUpper = from.toUpperCase();
+    const fromUpper = (from || '').toUpperCase();
+    // Normalize SOC codes like 29-1141.00 -> 29-1141 for generic crosswalk
+    if (fromUpper === "SOC" && code) {
+      code = (code as string).replace(/\.00$/, "");
+    }
     
     if (fromUpper === "OOH") {
       // Use dedicated OOH crosswalk endpoint
@@ -68,9 +97,25 @@ serve(async (req: Request): Promise<Response> => {
       },
     });
 
+    // If O*NET returns 404 (no mapping), respond with an empty result and 200 OK
+    if (res.status === 404) {
+      return new Response(
+        JSON.stringify({ results: [], mappings: [], items: [] }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=60",
+          },
+        }
+      );
+    }
+
     return new Response(res.body, {
       status: res.status,
       headers: {
+        ...corsHeaders,
         "Content-Type": res.headers.get("Content-Type") || "application/json",
         "Cache-Control": "public, max-age=300", // 5-minute cache
       },
@@ -79,6 +124,6 @@ serve(async (req: Request): Promise<Response> => {
     console.error("/crosswalk error", err);
     const message = err instanceof Error ? err.message : "Internal Error";
     const status = message.includes("ONET_USERNAME") ? 500 : 500;
-    return new Response(message, { status });
+    return new Response(message, { status, headers: corsHeaders });
   }
 });

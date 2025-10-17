@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ShieldCheck, Sparkles, Lightbulb } from 'lucide-react';
+import { Search, ShieldCheck, Sparkles, Lightbulb, FileCheck, BadgeCheck } from 'lucide-react';
+import { trackAnalyticsEvent } from '@/hooks/useAnalyticsEvents';
 
 export const Hero: React.FC = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [headline, setHeadline] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('utm_params');
+      if (raw) {
+        const u = JSON.parse(raw) as Record<string, string | undefined>;
+        const term = (u.utm_term || u.utm_content || u.utm_campaign || '').trim();
+        if (term) {
+          setHeadline(`See how AI changes ${term} tasks`);
+        }
+      }
+    } catch {}
+  }, []);
 
   const handleAnalyze = () => {
     const trimmed = query.trim();
@@ -16,6 +31,12 @@ export const Hero: React.FC = () => {
         localStorage.setItem('planner:lastSearch', trimmed);
       } catch {}
     }
+    // Analytics: hero analyze CTA click
+    trackAnalyticsEvent({
+      event_name: 'hero_analyze_click',
+      event_category: 'cta',
+      event_data: { hadQuery: Boolean(trimmed), queryLength: trimmed.length }
+    });
     navigate('/ai-impact-planner');
   };
 
@@ -31,7 +52,7 @@ export const Hero: React.FC = () => {
           {/* Left: Search-first */}
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-              Find your occupation and see how AI changes the tasks
+              {headline ?? 'Find your occupation and see how AI changes the tasks'}
             </h1>
             <p className="mt-2 text-gray-600 text-sm md:text-base">
               Search occupations or skills. Get task-level automation, augmentation guidance, and learning path ROI.
@@ -43,7 +64,10 @@ export const Hero: React.FC = () => {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleAnalyze(); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { 
+                    trackAnalyticsEvent({ event_name: 'hero_enter_submit', event_category: 'cta', event_data: { queryLength: query.trim().length } });
+                    handleAnalyze();
+                  } }}
                   placeholder="e.g., Software Developer, Nursing, Excel, AutoCAD"
                   aria-label="Search occupations or skills"
                   className="pl-10 h-12 text-base"
@@ -68,19 +92,29 @@ export const Hero: React.FC = () => {
                 <Button onClick={handleAnalyze} className="h-12 text-base">
                   Analyze my role
                 </Button>
-                <Button variant="secondary" onClick={() => navigate('/browse/bright-outlook')} className="h-12 text-base">
-                  Explore occupations
+                <Button 
+                  variant="secondary" 
+                  onClick={() => { 
+                    trackAnalyticsEvent({ event_name: 'hero_browse_click', event_category: 'cta' });
+                    navigate('/browse/bright-outlook');
+                  }} 
+                  className="h-12 text-base"
+                >
+                  Show me occupations
                 </Button>
               </div>
 
-              <div className="mt-3 text-xs text-gray-500">
-                Examples: "Registered Nurse", "Data Analyst", "Welding", "Excel"
-              </div>
+              <div className="mt-3 text-xs text-gray-500">Examples: "Registered Nurse", "Data Analyst", "Welding", "Excel"</div>
 
-              <div className="mt-4">
-                <Link to="/quality" className="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-900">
-                  <ShieldCheck className="h-4 w-4 text-green-600" />
-                  Validated, WCAG AA in progress
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-600">
+                <Link to="/responsible-ai" className="inline-flex items-center gap-1 hover:text-gray-900">
+                  <FileCheck className="h-4 w-4 text-green-600" /> Responsible AI
+                </Link>
+                <Link to="/quality" className="inline-flex items-center gap-1 hover:text-gray-900">
+                  <ShieldCheck className="h-4 w-4 text-green-600" /> Quality
+                </Link>
+                <Link to="/validation" className="inline-flex items-center gap-1 hover:text-gray-900">
+                  <BadgeCheck className="h-4 w-4 text-green-600" /> Validation
                 </Link>
               </div>
             </div>

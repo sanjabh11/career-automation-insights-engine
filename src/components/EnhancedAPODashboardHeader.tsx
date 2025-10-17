@@ -109,6 +109,8 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/bright-outlook'); setIsMobileMenuOpen(false); }}>Bright Outlook</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/stem'); setIsMobileMenuOpen(false); }}>STEM</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/tech-skills'); setIsMobileMenuOpen(false); }}>Tech Skills</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/task-search'); setIsMobileMenuOpen(false); }}>Task Search</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/work-dimensions'); setIsMobileMenuOpen(false); }}>Work Dimensions</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/crosswalk'); setIsMobileMenuOpen(false); }}>Crosswalk</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/veterans'); setIsMobileMenuOpen(false); }}>Veterans</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { goDemo(); setIsMobileMenuOpen(false); }}>Demo</Button>
@@ -189,6 +191,8 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                   <DropdownMenuItem onClick={() => navigate('/browse/bright-outlook')}>Bright Outlook</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/browse/stem')}>STEM</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/tech-skills')}>Tech Skills</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/task-search')}>Task Search</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/work-dimensions')}>Work Dimensions</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/crosswalk')}>Crosswalk</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/veterans')}>Veterans</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/demo')}>Demo</DropdownMenuItem>

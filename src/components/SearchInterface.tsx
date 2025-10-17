@@ -16,6 +16,7 @@ import { useSession } from '@/hooks/useSession';
 import { useNavigate } from 'react-router-dom';
 import { getFunctionsBaseUrl } from '@/lib/utils';
 import { getDeviceId } from '@/utils/device';
+import { trackAnalyticsEvent } from '@/hooks/useAnalyticsEvents';
 
 interface SearchInterfaceProps {
   onOccupationSelect: (occupation: any) => void;
@@ -129,6 +130,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       const rateKey = user?.id ?? getDeviceId();
       const status = checkRateLimit(searchRateLimiter, rateKey);
       setRateLimitStatus(status);
+
+      trackAnalyticsEvent({
+        event_name: 'search_success',
+        event_category: 'engagement',
+        event_data: { term: searchTerm, resultsCount: data.length }
+      });
     },
     onError: (error: Error) => {
       console.error('Search failed:', error);
@@ -138,10 +145,21 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
         description: error.message,
       });
       setResults([]);
+
+      trackAnalyticsEvent({
+        event_name: 'search_error',
+        event_category: 'engagement',
+        event_data: { message: error.message, term: searchTerm }
+      });
     },
   });
 
   const handleOccupationClick = async (occupation: any) => {
+    trackAnalyticsEvent({
+      event_name: 'search_result_click',
+      event_category: 'engagement',
+      event_data: { code: occupation.code, title: occupation.title, isGuest }
+    });
     if (!user) {
       toast({
         variant: 'destructive',
@@ -153,6 +171,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     }
 
     setIsCalculatingAPO(true);
+    const start = performance.now();
     try {
       const { data, error } = await supabase.functions.invoke('calculate-apo', {
         body: {
@@ -171,6 +190,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
         throw new Error('Unexpected response from calculate-apo function');
       }
 
+      const latency = Math.round(performance.now() - start);
+      trackAnalyticsEvent({
+        event_name: 'apo_calculate_success',
+        event_category: 'engagement',
+        event_data: { code: occupation.code, title: occupation.title, latency }
+      });
       onOccupationSelect(data);
       toast({
         title: 'APO Analysis Complete',
@@ -178,6 +203,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       });
     } catch (error) {
       console.error('APO calculation failed:', error);
+      const latency = Math.round(performance.now() - start);
+      trackAnalyticsEvent({
+        event_name: 'apo_calculate_error',
+        event_category: 'engagement',
+        event_data: { code: occupation.code, title: occupation.title, latency, message: error instanceof Error ? error.message : 'unknown' }
+      });
       toast({
         variant: 'destructive',
         title: 'APO Calculation Failed',
@@ -189,16 +220,6 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   };
 
   const handleSearch = () => {
-    if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Required',
-        description: 'Please sign in to search for occupations',
-      });
-      navigate('/auth');
-      return;
-    }
-
     if (!rateLimitStatus.allowed) {
       toast({
         variant: 'destructive',
@@ -211,6 +232,11 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     const trimmedTerm = searchTerm.trim();
     if (trimmedTerm) {
       setResults([]);
+      trackAnalyticsEvent({
+        event_name: 'search_submit',
+        event_category: 'engagement',
+        event_data: { term: trimmedTerm, filter: filter.trim(), isGuest, remaining: rateLimitStatus.remaining }
+      });
       searchOccupations({ term: trimmedTerm, filter: filter.trim() });
     } else {
       toast({

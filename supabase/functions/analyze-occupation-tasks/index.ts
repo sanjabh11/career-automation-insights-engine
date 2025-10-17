@@ -78,15 +78,27 @@ serve(async (req) => {
 
     // Build Authorization header for O*NET (Basic auth)
     const basicToken = btoa(`${ONET_USERNAME}:${ONET_PASSWORD}`);
-    const onetResponse = await fetch(`https://services.onetcenter.org/ws/online/occupations/${occupation_code}/details`, {
+    const onetUrl = `https://services.onetcenter.org/ws/online/occupations/${occupation_code}/details`;
+    
+    console.log('Calling O*NET API:', onetUrl);
+    console.log('O*NET credentials configured:', { 
+      username: ONET_USERNAME ? 'set' : 'missing',
+      password: ONET_PASSWORD ? 'set' : 'missing'
+    });
+    
+    const onetResponse = await fetch(onetUrl, {
       headers: {
         'Authorization': `Basic ${basicToken}`,
         'Accept': 'application/json'
       }
     });
 
+    console.log('O*NET response status:', onetResponse.status);
+
     if (!onetResponse.ok) {
-      throw new Error(`O*NET API request failed: ${onetResponse.statusText}`);
+      const errorText = await onetResponse.text();
+      console.error('O*NET API error response:', errorText);
+      throw new Error(`O*NET API request failed: ${onetResponse.status} ${onetResponse.statusText} - ${errorText.substring(0, 200)}`);
     }
 
     const onetData = await onetResponse.json();
@@ -157,29 +169,52 @@ Respond in this JSON format:
     // Call Gemini API using env-driven model/config
     const model = getEnvModel();
     const envDefaults = getEnvGenerationDefaults();
-    const generationConfig = { ...envDefaults, temperature: 0.2, topK: 1, topP: 0.8, maxOutputTokens: 4096 } as const;
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig
-      }),
-    });
+    const generationConfig = { 
+      ...envDefaults, 
+      temperature: 0.2, 
+      topK: 1, 
+      topP: 0.8, 
+      maxOutputTokens: 4096,
+      responseMimeType: "application/json"  // Force JSON mode
+    } as const;
+    
+    // Simple exponential backoff for transient 503s from Gemini
+    async function callGeminiWithRetry(maxAttempts = 3): Promise<any> {
+      let attempt = 0;
+      let lastStatus = 0;
+      let lastText = '';
+      while (attempt < maxAttempts) {
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig
+          }),
+        });
 
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error('Gemini API Error:', errorText);
-      throw new Error(`Gemini API request failed: ${geminiResponse.statusText}`);
+        if (resp.ok) {
+          try {
+            return await resp.json();
+          } catch (e) {
+            const t = await resp.text();
+            console.error('Gemini non-JSON response:', t.slice(0, 300));
+            throw new Error('Gemini returned non-JSON response');
+          }
+        }
+
+        lastStatus = resp.status;
+        lastText = await resp.text();
+        console.error(`Gemini API error (${lastStatus}) attempt ${attempt + 1}:`, lastText.slice(0, 400));
+        if (resp.status !== 503) break; // only retry on overload
+        const delayMs = 5000 * Math.pow(2, attempt); // 5s, 10s
+        await new Promise(r => setTimeout(r, delayMs));
+        attempt++;
+      }
+      throw new Error(`Gemini API request failed: ${lastStatus} ${lastText.slice(0, 200)}`);
     }
 
-    const geminiData = await geminiResponse.json();
+    const geminiData = await callGeminiWithRetry();
     
     if (!geminiData.candidates || !geminiData.candidates[0] || !geminiData.candidates[0].content) {
       throw new Error('Invalid response from Gemini API');
@@ -187,18 +222,37 @@ Respond in this JSON format:
 
     const generatedText = geminiData.candidates[0].content.parts[0].text;
     
-    // Extract JSON from response
+    console.log('Gemini raw response:', generatedText.substring(0, 500));
+    
+    // Extract JSON from response (handle markdown code blocks)
     let analysisData;
     try {
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+      // Remove markdown code blocks if present
+      let cleanedText = generatedText.trim();
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      // Try to find JSON object
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         analysisData = JSON.parse(jsonMatch[0]);
       } else {
+        console.error('No JSON found in cleaned response:', cleanedText.substring(0, 200));
         throw new Error('No JSON found in response');
+      }
+      
+      // Validate structure
+      if (!analysisData.tasks || !Array.isArray(analysisData.tasks)) {
+        console.error('Invalid structure - missing tasks array:', analysisData);
+        throw new Error('Response missing tasks array');
       }
     } catch (parseError) {
       console.error('Failed to parse Gemini response as JSON:', parseError);
-      throw new Error('Failed to parse task analysis from Gemini');
+      console.error('Raw text:', generatedText);
+      throw new Error(`Failed to parse task analysis from Gemini: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
 
     // Store results in Supabase for future use
@@ -224,8 +278,14 @@ Respond in this JSON format:
     });
   } catch (error) {
     console.error('Error in analyze-occupation-tasks function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : '';
+    
+    console.error('Error stack:', errorStack);
+    
     return new Response(JSON.stringify({ 
-      error: error.message,
+      error: errorMessage,
+      details: errorStack?.split('\n').slice(0, 3).join('\n'),
       timestamp: new Date().toISOString(),
       function: 'analyze-occupation-tasks'
     }), {

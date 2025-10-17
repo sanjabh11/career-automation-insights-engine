@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { GeminiClient } from "../../lib/GeminiClient.ts";
+import { GeminiClient, getEnvModel } from "../../lib/GeminiClient.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -233,12 +233,10 @@ Return as JSON: { "skillStrengths": [{"skill": string, "level": string, "marketD
     }
 
     // Call Gemini API
-    const response = await gemini.generateContent({
-      prompt,
-      systemInstruction,
-      temperature: 0.3, // Lower temperature for more consistent analysis
-      responseFormat: { type: "json_object" },
-    });
+    const response = await gemini.generateContent(
+      `${systemInstruction}\n\n${prompt}`,
+      { temperature: 0.3 }
+    );
 
     const analysisResult = JSON.parse(response.text);
     const duration = Date.now() - startTime;
@@ -261,8 +259,8 @@ Return as JSON: { "skillStrengths": [{"skill": string, "level": string, "marketD
         match_score: analysisResult.matchScore,
         match_factors: analysisResult.matchFactors || {},
         estimated_transition_months: analysisResult.estimatedTransitionMonths,
-        model_used: gemini.getModelName(),
-        tokens_used: response.usage?.totalTokens || 0,
+        model_used: getEnvModel(),
+        tokens_used: response.usageMetadata?.totalTokens || 0,
         analysis_duration_ms: duration,
       })
       .select()

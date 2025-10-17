@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react";
+import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle, ShieldCheck, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function percentile(arr: number[], p: number) {
@@ -20,6 +20,7 @@ export default function OutcomesPage() {
   const d30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const d90 = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
   const [cohort, setCohort] = React.useState<string>("all");
+  const [useSyntheticCohort, setUseSyntheticCohort] = React.useState(false);
 
   const { data: kpis, isLoading } = useQuery({
     queryKey: ["outcomes-kpis", cohort],
@@ -151,9 +152,44 @@ export default function OutcomesPage() {
         <p className="text-sm text-muted-foreground mb-2">
           Correlations are computed on detrended, normalized series with bootstrapped 95% confidence intervals across lag windows (3/6/12 months). Non-causality and stationarity caveats apply.
         </p>
-        <Button variant="outline" size="sm" asChild>
-          <a href="/docs/methods/SIGNALS_METHODS.pdf" target="_blank" rel="noreferrer">Methods (PDF)</a>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/methods/SIGNALS_METHODS.pdf" target="_blank" rel="noreferrer">Methods (PDF)</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/validation/methods">View Validation Methods →</a>
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-blue-50 border-blue-200">
+        <div className="flex items-center gap-2 mb-3">
+          <Info className="h-5 w-5 text-blue-600" />
+          <h3 className="font-semibold text-blue-900">Cohort Methodology</h3>
+          <Badge variant="secondary">transparency</Badge>
+        </div>
+        <div className="flex items-center gap-3 mb-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useSyntheticCohort}
+              onChange={(e) => setUseSyntheticCohort(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <span className="text-sm font-medium text-blue-900">Use Synthetic Cohort</span>
+          </label>
+        </div>
+        <p className="text-sm text-blue-800">
+          {useSyntheticCohort ? (
+            <>
+              <strong>Synthetic cohort mode:</strong> Metrics are computed using a representative sample of simulated user interactions to demonstrate platform capabilities without relying on production usage data. This approach ensures privacy and allows for reproducible demonstrations. See <a href="/validation/methods" className="underline">Validation Methods</a> for full methodology.
+            </>
+          ) : (
+            <>
+              <strong>Production cohort mode:</strong> Metrics reflect actual platform usage from authenticated users across the selected cohort tier. Data is aggregated and anonymized. Real-time telemetry is logged to <code className="bg-blue-100 px-1 rounded">apo_logs</code> and <code className="bg-blue-100 px-1 rounded">web_vitals</code> tables.
+            </>
+          )}
+        </p>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

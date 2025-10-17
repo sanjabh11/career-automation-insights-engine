@@ -1,5 +1,6 @@
 
 import { Toaster } from "@/components/ui/sonner";
+import { useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -29,11 +30,28 @@ import OperationsPage from "./pages/OperationsPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
+import TaskSearchPage from "./pages/TaskSearchPage";
 import Test from "./pages/Test";
 
 const queryClient = new QueryClient();
 
 function App() {
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const utm = {
+        utm_source: params.get("utm_source") || undefined,
+        utm_medium: params.get("utm_medium") || undefined,
+        utm_campaign: params.get("utm_campaign") || undefined,
+        utm_term: params.get("utm_term") || undefined,
+        utm_content: params.get("utm_content") || undefined,
+      } as Record<string, string | undefined>;
+      const hasAny = Object.values(utm).some(Boolean);
+      if (hasAny) {
+        sessionStorage.setItem("utm_params", JSON.stringify(utm));
+      }
+    } catch {}
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -53,6 +71,7 @@ function App() {
             <Route path="/veterans" element={<VeteransPage />} />
             <Route path="/tech-skills" element={<TechSkillsPage />} />
             <Route path="/work-dimensions" element={<WorkDimensionsPage />} />
+            <Route path="/task-search" element={<TaskSearchPage />} />
             <Route path="/demo" element={<DemoSandbox />} />
             <Route path="/outcomes" element={<OutcomesPage />} />
             <Route path="/validation" element={<ValidationPage />} />

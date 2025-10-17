@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Notebook as Robot, Brain, User, Zap, BookOpen, Lightbulb, AlertTriangle, CheckCircle, Clock, Save, RefreshCw, Briefcase, GraduationCap, ThumbsUp } from 'lucide-react';
+import { Search, Notebook as Robot, Brain, User, Zap, BookOpen, Lightbulb, AlertTriangle, CheckCircle, Clock, Save, RefreshCw, Briefcase, GraduationCap, ThumbsUp, DollarSign, TrendingUp, Award, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
@@ -21,6 +21,19 @@ interface Occupation {
   title: string;
   description?: string;
 }
+
+const normalizeOccupation = (input: any): Occupation => {
+  return {
+    code: input?.code || input?.occupation_code || '',
+    title: input?.title || input?.occupation_title || '',
+    description:
+      input?.description ||
+      input?.summary ||
+      input?.occupation_description ||
+      input?.short_description ||
+      undefined,
+  };
+};
 
 interface Task {
   id: string;
@@ -43,6 +56,55 @@ interface Resource {
   provider: string;
   skillArea: string;
   costType?: string;
+}
+
+interface LearningPathMilestone {
+  id: string;
+  title: string;
+  skills: string[];
+  duration_weeks?: number;
+  resources?: any[];
+  cost_estimate?: number;
+  priority?: string;
+}
+
+interface LearningPathData {
+  learningPath: {
+    name: string;
+    description: string;
+    estimatedDuration: string;
+    milestones: LearningPathMilestone[];
+  };
+  financials: {
+    totalCost: number;
+    currentSalary?: number;
+    targetSalary?: number;
+    salaryIncrease: number;
+    roiMonths: number | null;
+    lifetimeEarningIncrease: number;
+    breakEvenYears: string | null;
+  };
+  metadata: {
+    skillGapsAddressed: number;
+    estimatedWeeksToComplete: number;
+  };
+}
+
+interface CIPProgram {
+  code: string;
+  title: string;
+  type?: string;
+}
+
+interface CourseResult {
+  id: string;
+  title: string;
+  provider: string;
+  url: string;
+  duration: string;
+  level: string;
+  price: string;
+  rating?: number;
 }
 
 
@@ -80,6 +142,20 @@ export function AIImpactPlanner() {
   const [skillProgress, setSkillProgress] = useState<Record<string, boolean>>({});
   const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
   const [confidenceFilter, setConfidenceFilter] = useState(0);
+  
+  // Education Path state
+  const [timeCommitment, setTimeCommitment] = useState('5');
+  const [learningStyle, setLearningStyle] = useState('self-paced');
+  const [budget, setBudget] = useState('moderate');
+  const [currentSalary, setCurrentSalary] = useState('');
+  const [targetSalary, setTargetSalary] = useState('');
+  const [learningPathData, setLearningPathData] = useState<LearningPathData | null>(null);
+  const [isGeneratingPath, setIsGeneratingPath] = useState(false);
+  const [cipPrograms, setCipPrograms] = useState<CIPProgram[]>([]);
+  const [isLoadingCIP, setIsLoadingCIP] = useState(false);
+  const [selectedSkillForCourses, setSelectedSkillForCourses] = useState<string | null>(null);
+  const [coursesForSkill, setCoursesForSkill] = useState<CourseResult[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false);
 
   // Load user preferences from localStorage on component mount
   useEffect(() => {
@@ -88,7 +164,10 @@ export function AIImpactPlanner() {
       try {
         const preferences: UserPreferences = JSON.parse(savedPreferences);
         if (preferences.occupation) {
-          setSelectedOccupation(preferences.occupation);
+          const normalized = normalizeOccupation(preferences.occupation);
+          if (normalized.code && normalized.title) {
+            setSelectedOccupation(normalized);
+          }
         }
         if (preferences.skillProgress) {
           setSkillProgress(preferences.skillProgress);
@@ -115,7 +194,7 @@ export function AIImpactPlanner() {
   // Load tasks when occupation is selected
   useEffect(() => {
     if (selectedOccupation) {
-      fetchTasks(selectedOccupation.code);
+      fetchTasks(selectedOccupation);
       generateSkillRecommendations(selectedOccupation.title);
     }
   }, [selectedOccupation]);
@@ -156,11 +235,13 @@ export function AIImpactPlanner() {
         : [];
 
       const occs: Occupation[] = occupations
-        .map((o: any) => ({
-          code: o.occupation_code || o.code,
-          title: o.occupation_title || o.title,
-          description: o.description || o.summary || 'An occupation from the O*NET database.',
-        }))
+        .map((o: any) => {
+          const normalized = normalizeOccupation(o);
+          if (!normalized.description) {
+            normalized.description = 'An occupation from the O*NET database.';
+          }
+          return normalized;
+        })
         .filter((o: Occupation) => o.code && o.title);
 
       setOccupations(occs);
@@ -214,11 +295,13 @@ export function AIImpactPlanner() {
         : [];
 
       const occs: Occupation[] = occupations
-        .map((o: any) => ({
-          code: o.occupation_code || o.code,
-          title: o.occupation_title || o.title,
-          description: o.description || o.summary || 'An occupation from the O*NET database.',
-        }))
+        .map((o: any) => {
+          const normalized = normalizeOccupation(o);
+          if (!normalized.description) {
+            normalized.description = 'An occupation from the O*NET database.';
+          }
+          return normalized;
+        })
         .filter((o: Occupation) => o.code && o.title);
 
       setSimilarOccupations(occs);
@@ -237,18 +320,40 @@ export function AIImpactPlanner() {
   };
 
   // Fetch tasks for selected occupation
-  const fetchTasks = async (occupationCode: string) => {
+  const fetchTasks = async (occupation: Occupation) => {
     setIsLoading(true);
     try {
-      const occupationTitle = selectedOccupation?.title || '';
+      const { code, title } = occupation;
+      if (!code || !title) {
+        throw new Error('Occupation code and title are required');
+      }
+
       const { data, error } = await supabase.functions.invoke('analyze-occupation-tasks', {
-        body: { occupation_code: occupationCode, occupation_title: occupationTitle }
+        body: { occupation_code: code, occupation_title: title }
       });
-      if (error) throw error;
+      
+      // Log both data and error for debugging
+      console.log('Function response - data:', data);
+      console.log('Function response - error:', error);
+      
+      if (error) {
+        console.error('Function error details:', error);
+        // Check if data contains error details even when error is set
+        if (data?.error) {
+          console.error('Function returned error in data:', data);
+          throw new Error(`${data.error}${data.details ? '\n' + data.details : ''}`);
+        }
+        throw error;
+      }
+
+      if (data?.error) {
+        console.error('Function returned error:', data);
+        throw new Error(`${data.error}${data.details ? '\n' + data.details : ''}`);
+      }
 
       const incoming = (data?.tasks ?? []) as Array<{ description: string; category: Task['category']; explanation?: string; confidence?: number }>;
       const parsedTasks: Task[] = incoming.map((t, idx) => ({
-        id: `${occupationCode}-${idx + 1}`,
+        id: `${code}-${idx + 1}`,
         description: t.description,
         category: t.category,
         explanation: t.explanation,
@@ -257,7 +362,9 @@ export function AIImpactPlanner() {
       setTasks(parsedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      toast.error('Failed to load tasks for this occupation');
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      const message = error instanceof Error ? error.message : 'Failed to load tasks for this occupation';
+      toast.error(`Task analysis failed: ${message}`);
     } finally {
       setIsLoading(false);
     }
@@ -780,7 +887,7 @@ export function AIImpactPlanner() {
 
           <motion.div variants={itemVariants}>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-3 mb-6">
+              <TabsList className="grid grid-cols-4 mb-6">
                 <TabsTrigger value="tasks" className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
                   <span>Tasks Analysis</span>
@@ -792,6 +899,10 @@ export function AIImpactPlanner() {
                 <TabsTrigger value="resources" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   <span>Reskilling Resources</span>
+                </TabsTrigger>
+                <TabsTrigger value="education" className="flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" />
+                  <span>Education Path</span>
                 </TabsTrigger>
               </TabsList>
               
@@ -1093,6 +1204,339 @@ export function AIImpactPlanner() {
                         Consistent learning over time will help you adapt to AI-driven changes in your field.
                       </p>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="education">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <GraduationCap className="h-5 w-5 text-indigo-600" />
+                      Education Path & ROI
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="mb-6">
+                      <p className="text-gray-600">
+                        Generate a personalized learning path with ROI analysis based on your skill gaps and career goals.
+                      </p>
+                    </div>
+
+                    {/* CIP Programs Section */}
+                    {selectedOccupation && (
+                      <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-medium flex items-center gap-2">
+                            <Award className="h-4 w-4 text-blue-600" />
+                            Accredited Programs (CIP)
+                          </h4>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={async () => {
+                              setIsLoadingCIP(true);
+                              try {
+                                const codeNorm = (selectedOccupation.code || '').replace(/\.00$/, '');
+                                const { data, error } = await supabase.functions.invoke('crosswalk', {
+                                  body: { from: 'SOC', code: codeNorm, to: 'CIP' }
+                                });
+                                if (error) throw error;
+                                const programs = (data?.results || data?.mappings || data?.items || []).map((item: any) => ({
+                                  code: item.code || item.to_code || item.target || '',
+                                  title: item.title || item.name || item.desc || 'Unknown Program',
+                                  type: item.type || item.category || ''
+                                }));
+                                setCipPrograms(programs);
+                                if (programs.length === 0) {
+                                  toast.error('No accredited programs found for this occupation');
+                                }
+                              } catch (e) {
+                                console.error('CIP crosswalk failed:', e);
+                                toast.error('Failed to load CIP programs');
+                              } finally {
+                                setIsLoadingCIP(false);
+                              }
+                            }}
+                            disabled={isLoadingCIP}
+                          >
+                            {isLoadingCIP ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : null}
+                            See Accredited Programs
+                          </Button>
+                        </div>
+                        {cipPrograms.length > 0 && (
+                          <div className="space-y-2 mt-3">
+                            {cipPrograms.slice(0, 5).map((prog, idx) => (
+                              <div key={idx} className="p-3 bg-white rounded border border-blue-200">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <p className="font-medium text-sm">{prog.title}</p>
+                                    <p className="text-xs text-gray-500 font-mono">{prog.code}</p>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">{prog.type || 'Program'}</Badge>
+                                </div>
+                              </div>
+                            ))}
+                            {cipPrograms.length > 5 && (
+                              <p className="text-xs text-gray-500">+{cipPrograms.length - 5} more programs</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Learning Path Form */}
+                    <div className="space-y-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Time Commitment (hrs/week)</label>
+                          <Input 
+                            type="number" 
+                            value={timeCommitment} 
+                            onChange={(e) => setTimeCommitment(e.target.value)}
+                            placeholder="5"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Learning Style</label>
+                          <select 
+                            className="w-full border rounded-md p-2 text-sm"
+                            value={learningStyle}
+                            onChange={(e) => setLearningStyle(e.target.value)}
+                          >
+                            <option value="self-paced">Self-paced</option>
+                            <option value="structured">Structured</option>
+                            <option value="hands-on">Hands-on</option>
+                            <option value="mentored">Mentored</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Budget</label>
+                          <select 
+                            className="w-full border rounded-md p-2 text-sm"
+                            value={budget}
+                            onChange={(e) => setBudget(e.target.value)}
+                          >
+                            <option value="free">Free only</option>
+                            <option value="low">Low ($0-500)</option>
+                            <option value="moderate">Moderate ($500-2000)</option>
+                            <option value="high">High ($2000+)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Current Salary (optional)</label>
+                          <Input 
+                            type="number" 
+                            value={currentSalary} 
+                            onChange={(e) => setCurrentSalary(e.target.value)}
+                            placeholder="60000"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Target Salary (optional)</label>
+                          <Input 
+                            type="number" 
+                            value={targetSalary} 
+                            onChange={(e) => setTargetSalary(e.target.value)}
+                            placeholder="80000"
+                          />
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={async () => {
+                          if (!selectedOccupation || skillRecommendations.length === 0) {
+                            toast.error('Please select an occupation and view skill recommendations first');
+                            return;
+                          }
+                          setIsGeneratingPath(true);
+                          try {
+                            const userSkills = skillRecommendations.map(s => ({
+                              name: s.name,
+                              currentLevel: 1,
+                              targetLevel: 5,
+                              category: 'technical'
+                            }));
+                            const { data, error } = await supabase.functions.invoke('generate-learning-path', {
+                              body: {
+                                targetOccupationCode: selectedOccupation.code,
+                                userSkills,
+                                targetRole: selectedOccupation.title,
+                                currentRole: 'Current Role',
+                                timeCommitment: `${timeCommitment} hours/week`,
+                                learningStyle,
+                                budget,
+                                currentSalary: currentSalary ? Number(currentSalary) : undefined,
+                                targetSalary: targetSalary ? Number(targetSalary) : undefined,
+                                saveToDB: !!user
+                              }
+                            });
+                            if (error) throw error;
+                            setLearningPathData(data);
+                            toast.success('Learning path generated!');
+                          } catch (e: any) {
+                            toast.error(e.message || 'Failed to generate learning path');
+                          } finally {
+                            setIsGeneratingPath(false);
+                          }
+                        }}
+                        disabled={isGeneratingPath || !selectedOccupation || skillRecommendations.length === 0}
+                        className="w-full"
+                      >
+                        {isGeneratingPath ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Generating Path...
+                          </>
+                        ) : (
+                          <>
+                            <TrendingUp className="mr-2 h-4 w-4" />
+                            Generate Learning Path
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Learning Path Results */}
+                    {learningPathData && learningPathData.learningPath && (
+                      <div className="space-y-6">
+                        {/* ROI Summary */}
+                        {learningPathData.financials ? (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Card className="p-4 bg-green-50 border-green-200">
+                              <div className="flex items-center gap-2 mb-2">
+                                <DollarSign className="h-5 w-5 text-green-600" />
+                                <h4 className="font-medium text-sm">Total Investment</h4>
+                              </div>
+                              <p className="text-2xl font-bold text-green-700">
+                                ${(learningPathData.financials?.totalCost ?? 0).toLocaleString()}
+                              </p>
+                            </Card>
+                            <Card className="p-4 bg-blue-50 border-blue-200">
+                              <div className="flex items-center gap-2 mb-2">
+                                <TrendingUp className="h-5 w-5 text-blue-600" />
+                                <h4 className="font-medium text-sm">Salary Increase</h4>
+                              </div>
+                              <p className="text-2xl font-bold text-blue-700">
+                                ${(learningPathData.financials?.salaryIncrease ?? 0).toLocaleString()}
+                              </p>
+                            </Card>
+                            <Card className="p-4 bg-purple-50 border-purple-200">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Clock className="h-5 w-5 text-purple-600" />
+                                <h4 className="font-medium text-sm">Break-even</h4>
+                              </div>
+                              <p className="text-2xl font-bold text-purple-700">
+                                {learningPathData.financials?.breakEvenYears || 'N/A'} years
+                              </p>
+                            </Card>
+                          </div>
+                        ) : (
+                          <div className="p-3 border rounded bg-gray-50 text-gray-600 text-sm">
+                            ROI metrics are not available for this run. You can still review the learning path and milestones below.
+                          </div>
+                        )}
+
+                        {/* Path Details */}
+                        <div>
+                          <h3 className="text-lg font-semibold mb-3">{learningPathData.learningPath.name || 'Learning Path'}</h3>
+                          <p className="text-sm text-gray-600 mb-4">{learningPathData.learningPath.description || ''}</p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                            <span>Duration: {learningPathData.learningPath.estimatedDuration || 'TBD'}</span>
+                            <span>•</span>
+                            <span>Skills: {learningPathData.metadata?.skillGapsAddressed || 0}</span>
+                            <span>•</span>
+                            <span>Weeks: {learningPathData.metadata?.estimatedWeeksToComplete || 0}</span>
+                          </div>
+                        </div>
+
+                        {/* Milestones */}
+                        <div>
+                          <h4 className="font-medium mb-3">Learning Milestones</h4>
+                          <div className="space-y-3">
+                            {(learningPathData.learningPath.milestones || []).map((milestone, idx) => (
+                              <div key={milestone.id} className="p-4 border rounded-lg">
+                                <div className="flex items-start justify-between mb-2">
+                                  <h5 className="font-medium">{milestone.title}</h5>
+                                  {milestone.priority && (
+                                    <Badge variant={milestone.priority === 'Critical' ? 'destructive' : 'secondary'}>
+                                      {milestone.priority}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                  {milestone.skills.map((skill, sidx) => (
+                                    <Badge key={sidx} variant="outline" className="text-xs">{skill}</Badge>
+                                  ))}
+                                </div>
+                                {milestone.duration_weeks && (
+                                  <p className="text-xs text-gray-500">Duration: {milestone.duration_weeks} weeks</p>
+                                )}
+                                {milestone.cost_estimate && (
+                                  <p className="text-xs text-gray-500">Est. Cost: ${milestone.cost_estimate}</p>
+                                )}
+                                {milestone.skills.length > 0 && (
+                                  <Button 
+                                    variant="link" 
+                                    size="sm" 
+                                    className="text-xs p-0 h-auto mt-2"
+                                    onClick={async () => {
+                                      setSelectedSkillForCourses(milestone.skills[0]);
+                                      setIsLoadingCourses(true);
+                                      try {
+                                        const { data, error } = await supabase.functions.invoke('course-search', {
+                                          body: { skills: [milestone.skills[0]], level: 'any', budget: 'any', duration: 'any' }
+                                        });
+                                        if (error) throw error;
+                                        setCoursesForSkill(data?.courses || []);
+                                      } catch (e) {
+                                        toast.error('Failed to load courses');
+                                      } finally {
+                                        setIsLoadingCourses(false);
+                                      }
+                                    }}
+                                  >
+                                    Find courses for {milestone.skills[0]} →
+                                  </Button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Courses for selected skill */}
+                        {selectedSkillForCourses && coursesForSkill.length > 0 && (
+                          <div className="p-4 bg-gray-50 rounded-lg">
+                            <h4 className="font-medium mb-3">Courses for {selectedSkillForCourses}</h4>
+                            <div className="space-y-2">
+                              {coursesForSkill.slice(0, 5).map((course) => (
+                                <div key={course.id} className="p-3 bg-white rounded border">
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <h5 className="font-medium text-sm">{course.title}</h5>
+                                      <p className="text-xs text-gray-500">{course.provider} • {course.duration} • {course.level}</p>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                      <Badge variant="outline" className="text-xs">{course.price}</Badge>
+                                      {course.rating && (
+                                        <span className="text-xs text-yellow-600">★ {course.rating}</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <a 
+                                    href={course.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-blue-600 hover:underline mt-2 inline-flex items-center gap-1"
+                                  >
+                                    View Course <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>

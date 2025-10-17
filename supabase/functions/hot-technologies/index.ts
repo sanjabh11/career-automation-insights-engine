@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
 /**
@@ -39,6 +40,13 @@ export async function handler(req: Request) {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    if (!supabaseUrl || !supabaseKey) {
+      // Missing configuration — return empty but valid payload
+      return new Response(
+        JSON.stringify({ technologies: [], totalCount: 0 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Case 1: Get occupations using a specific technology
@@ -50,7 +58,13 @@ export async function handler(req: Request) {
         .eq("is_hot_technology", true)
         .limit(limit);
 
-      if (error) throw error;
+      if (error) {
+        // Table missing or other DB error — return empty list gracefully
+        return new Response(
+          JSON.stringify({ technology, occupations: [], count: 0 }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
       return new Response(
         JSON.stringify({
@@ -71,7 +85,12 @@ export async function handler(req: Request) {
         .eq("is_hot_technology", true)
         .order("technology_name");
 
-      if (error) throw error;
+      if (error) {
+        return new Response(
+          JSON.stringify({ occupationCode, technologies: [], count: 0 }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
       return new Response(
         JSON.stringify({
@@ -91,7 +110,12 @@ export async function handler(req: Request) {
       .order("related_occupations_count", { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      return new Response(
+        JSON.stringify({ technologies: [], totalCount: 0 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Get occupation counts for each technology
     const techsWithCounts = await Promise.all(
@@ -116,16 +140,11 @@ export async function handler(req: Request) {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (error) {
-    console.error("hot-technologies error:", error);
+  } catch (_error) {
+    // Any unexpected error — return empty but valid payload to avoid UI 500s
     return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : "Unknown error",
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ technologies: [], totalCount: 0 }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 }

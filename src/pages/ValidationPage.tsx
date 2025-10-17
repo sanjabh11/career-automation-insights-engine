@@ -58,6 +58,28 @@ export default function ValidationPage() {
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-3">
           <BarChart3 className="h-5 w-5 text-indigo-600" />
+          <h3 className="font-semibold">Model Cards & Dataset Sheets</h3>
+          <Badge variant="secondary">transparency</Badge>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/APO_MODEL_CARD.pdf" target="_blank" rel="noreferrer">APO Model Card (PDF)</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/TASK_MODEL_CARD.pdf" target="_blank" rel="noreferrer">Task Model Card (PDF)</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/data_sheets/ONET_ENRICHMENT_SHEET.pdf" target="_blank" rel="noreferrer">O*NET Enrichment Sheet (PDF)</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/data_sheets/TELEMETRY_SHEET.pdf" target="_blank" rel="noreferrer">Telemetry Sheet (PDF)</a>
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 className="h-5 w-5 text-indigo-600" />
           <h3 className="font-semibold">Reliability Panel (ECE / Calibration)</h3>
           <Badge variant="secondary">beta</Badge>
         </div>

@@ -71,7 +71,8 @@ Output format:
             text: prompt
           }]
         }],
-        generationConfig
+        generationConfig,
+        responseMimeType: 'application/json'
       }),
     });
 
