@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
+import { SYSTEM_PROMPT_OCCUPATION_TASKS } from "../../lib/prompts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -136,35 +137,13 @@ serve(async (req) => {
       throw new Error('No tasks found for this occupation');
     }
 
-    // Prepare the prompt for Gemini
-    const prompt = `
-You are an expert in AI and automation analysis. Based on the research paper "Future of Work with AI Agents: Auditing Automation and Augmentation Potential across the All Workforce," analyze the following tasks for the occupation "${occupation_title}" (O*NET code: ${occupation_code}).
+    // Build prompt with centralized system instruction + context
+    const prompt = `${SYSTEM_PROMPT_OCCUPATION_TASKS}
 
-For each task, classify it into one of these categories:
-1. Automate: Tasks that can be fully automated by AI (repetitive, rule-based, data-driven)
-2. Augment: Tasks where AI can assist humans but human oversight is needed
-3. Human-only: Tasks requiring uniquely human capabilities (creativity, empathy, complex judgment)
-
-For each task, provide:
-- The category (Automate, Augment, or Human-only)
-- A brief explanation of why it falls into that category
-- A confidence score (0.0 to 1.0) for your assessment
+Occupation: ${occupation_title} (O*NET code: ${occupation_code})
 
 Tasks to analyze:
-${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}
-
-Respond in this JSON format:
-{
-  "tasks": [
-    {
-      "description": "Task description",
-      "category": "Automate/Augment/Human-only",
-      "explanation": "Brief explanation",
-      "confidence": 0.85
-    }
-  ]
-}
-`;
+${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
 
     // Call Gemini API using env-driven model/config
     const model = getEnvModel();

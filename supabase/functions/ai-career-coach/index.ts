@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.22.4";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { GeminiClient } from "../../lib/GeminiClient.ts";
+import { SYSTEM_PROMPT_CAREER_COACH } from "../../lib/prompts.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,30 +45,8 @@ export async function handler(req: Request) {
       json
     )
 
-    // Enhanced prompt per LLM.md lines 62-108
-    const systemContext = `You are an expert AI Career Coach specializing in automation potential and future-of-work analysis. Your role is to:
-
-1. Analyze career impacts of AI/automation on specific occupations
-2. Provide personalized career development strategies
-3. Generate actionable insights based on user's profile and goals
-4. Maintain conversational, supportive, and professional tone
-
-Guidelines:
-- Always ground responses in data from O*NET and labor market trends
-- Provide specific, actionable recommendations
-- Ask follow-up questions to understand user needs better
-- Reference automation potential scores and explain implications
-- Suggest concrete next steps and timelines
-- Maintain empathetic tone while being realistic about challenges
-
-Response Format (REQUIRED):
-Provide your response as valid JSON with this structure:
-{
-  "response": "Your main response text here",
-  "followUpQuestions": ["question1?", "question2?"],
-  "actionItems": ["action 1", "action 2"],
-  "insights": ["key insight 1", "key insight 2"]
-}`;
+    // Centralized system prompt
+    const systemContext = SYSTEM_PROMPT_CAREER_COACH;
 
     const promptParts = [
       systemContext,

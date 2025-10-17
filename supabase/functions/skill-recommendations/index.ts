@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
+import { SYSTEM_PROMPT_SKILL_RECOMMENDATIONS } from "../../lib/prompts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -53,35 +54,14 @@ serve(async (req) => {
       .select('*')
       .eq('occupation_code', occupation_code);
 
-    // Prepare the prompt for Gemini
-    const prompt = `
-You are a career advisor specializing in AI's impact on jobs. Based on the occupation "${occupation_title}" (O*NET code: ${occupation_code}), recommend 5 key skills that workers should develop to stay relevant as AI transforms their field.
+    // Build prompt with centralized system instruction + context
+    const taskContext = taskAssessments && taskAssessments.length > 0
+      ? `\n\nTask analysis for this occupation:\n${taskAssessments.map((task: any) => `- ${task.task_description} (Category: ${task.category})`).join('\n')}`
+      : '';
+    
+    const prompt = `${SYSTEM_PROMPT_SKILL_RECOMMENDATIONS}
 
-${taskAssessments && taskAssessments.length > 0 ? `
-Task analysis for this occupation:
-${taskAssessments.map((task: any) => `- ${task.task_description} (Category: ${task.category})`).join('\n')}
-` : ''}
-
-For each skill:
-1. Provide a specific, actionable skill name (not general categories)
-2. Explain why this skill is important for future-proofing this career
-3. Assign a priority level (1=highest, 3=lowest)
-
-Focus on skills that:
-- Complement AI capabilities rather than compete with them
-- Emphasize uniquely human abilities (creativity, empathy, complex judgment)
-- Have transferability across roles and industries
-- Are in growing demand based on job market trends
-
-Output format:
-[
-  {
-    "skill_name": "Specific skill name",
-    "explanation": "Detailed explanation of why this skill matters",
-    "priority": 1
-  }
-]
-`;
+Occupation: ${occupation_title} (O*NET code: ${occupation_code})${taskContext}`;
 
     // Call Gemini API using env-driven model/config
     const model = getEnvModel();

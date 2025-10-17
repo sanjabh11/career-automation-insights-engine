@@ -70,14 +70,32 @@ const handler = async (req: Request): Promise<Response> => {
       `
     };
 
-    console.log("Email would be sent:", emailData);
+    // Check for email provider configuration
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const sendgridApiKey = Deno.env.get("SENDGRID_API_KEY");
+    
+    if (!resendApiKey && !sendgridApiKey) {
+      console.log("Email provider not configured. Email would be sent:", emailData);
+      return new Response(
+        JSON.stringify({ 
+          error: "Email service not configured",
+          message: "Email sharing is not available. Please configure RESEND_API_KEY or SENDGRID_API_KEY environment variable.",
+          details: "Contact administrator to enable email notifications."
+        }),
+        {
+          status: 501, // Not Implemented
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
-    // TODO: Integrate with actual email service (Resend, SendGrid, etc.)
-    // For now, just return success
+    // TODO: Implement actual email sending with configured provider
+    // For now, return success if provider is configured
+    console.log("Email provider configured. Would send:", emailData);
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: "Email notification prepared",
+        message: "Email notification prepared (provider integration pending)",
         email_data: emailData 
       }),
       {

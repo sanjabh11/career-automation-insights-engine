@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { getFunctionsBaseUrl } from '@/lib/utils';
 import { getDeviceId } from '@/utils/device';
 import { trackAnalyticsEvent } from '@/hooks/useAnalyticsEvents';
+import { getLocalJSON, setLocalJSON } from '@/lib/storage';
 
 interface SearchInterfaceProps {
   onOccupationSelect: (occupation: any) => void;
@@ -31,6 +32,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   const [isCalculatingAPO, setIsCalculatingAPO] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [maxResults, setMaxResults] = useState<number>(10);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [rateLimitStatus, setRateLimitStatus] = useState({
     allowed: true,
     remaining: 20,
@@ -50,6 +52,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       resultsRef.current.focus();
     }
   }, [results.length]);
+
+  // Load recent searches from localStorage on mount
+  React.useEffect(() => {
+    const history = getLocalJSON<string[]>('search:history', []) || [];
+    setRecentSearches(history.slice(0, 5)); // Show max 5 recent
+  }, []);
 
   // Update rate limit status
   React.useEffect(() => {
@@ -125,6 +133,19 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       //   search_term: searchTerm,
       //   results_count: data.length
       // });
+
+      // Local-first: persist last search and maintain a small local history
+      try {
+        const term = (searchTerm || '').trim();
+        if (term) {
+          // Used by other screens to prefill
+          localStorage.setItem('planner:lastSearch', term);
+          // Maintain recent terms (dedup, max 10)
+          const history = getLocalJSON<string[]>('search:history', []) || [];
+          const next = [term, ...history.filter(t => t !== term)].slice(0, 10);
+          setLocalJSON('search:history', next);
+        }
+      } catch {}
 
       // Update rate limit status after successful search
       const rateKey = user?.id ?? getDeviceId();
@@ -253,6 +274,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     }
   };
 
+  const handleRecentSearchClick = (term: string) => {
+    setSearchTerm(term);
+    setResults([]);
+    searchOccupations({ term, filter: filter.trim() });
+  };
+
   const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Basic real-time sanitization for display
@@ -304,6 +331,25 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
           label="Search Requests"
           variant="search"
         />
+
+        {/* Recent Searches */}
+        {recentSearches.length > 0 && !isLoading && results.length === 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Recent Searches</h3>
+            <div className="flex flex-wrap gap-2">
+              {recentSearches.map((term, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleRecentSearchClick(term)}
+                  className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors duration-200"
+                  aria-label={`Search again for ${term}`}
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="flex space-x-2" role="search" aria-label="Occupation Search Bar">
           <div className="flex-1 relative">

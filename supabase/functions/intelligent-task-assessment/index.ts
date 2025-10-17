@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.22.4";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { GeminiClient } from "../../lib/GeminiClient.ts";
+import { SYSTEM_PROMPT_TASK_ASSESSMENT } from "../../lib/prompts.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,10 +46,8 @@ export async function handler(req: Request) {
 
     const assessments: AssessmentResult[] = [];
 
-    // Prompt template
-    const template = (
-      t: string,
-    ) => `You are an AI work-task assessor. Categorise the task below for automation potential using exactly one of the categories: Automate, Augment, Human-only. Provide a short justification and a confidence score (0-1). Return JSON with keys: category, explanation, confidence.\n\nTask: ${t}`;
+    // Prompt template using centralized system instruction
+    const template = (t: string) => `${SYSTEM_PROMPT_TASK_ASSESSMENT}\n\nTask: ${t}`;
 
     for (const task of tasks) {
       const { text } = await gemini.generateContent(template(task));

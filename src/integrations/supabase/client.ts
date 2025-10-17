@@ -2,9 +2,40 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Prefer Vite-provided env vars when available for local overrides
-const SUPABASE_URL = (import.meta as any)?.env?.VITE_SUPABASE_URL || "https://kvunnankqgfokeufvsrv.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = (import.meta as any)?.env?.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODYyMTksImV4cCI6MjA2NTQ2MjIxOX0.eFRKKSAWaXQgCCX7UpU0hF0dnEyJ2IXUnaGsc8MEGOU";
+// Resolve environment variables from multiple compatible sources (Vite, Node, global runtime)
+const envSources: Record<string, string | undefined>[] = [];
+
+const importMetaEnv = (import.meta as any)?.env as Record<string, string | undefined> | undefined;
+if (importMetaEnv) envSources.push(importMetaEnv);
+
+const processEnv = typeof process !== 'undefined' ? (process.env as Record<string, string | undefined>) : undefined;
+if (processEnv) envSources.push(processEnv);
+
+const globalEnv = typeof globalThis !== 'undefined' ? ((globalThis as any).__CAIE_ENV as Record<string, string | undefined> | undefined) : undefined;
+if (globalEnv) envSources.push(globalEnv);
+
+const resolveEnvVar = (...keys: string[]): string | undefined => {
+  for (const source of envSources) {
+    if (!source) continue;
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+  }
+  return undefined;
+};
+
+// Prefer Vite-prefixed vars but support common alternatives used in hosting platforms
+const SUPABASE_URL = resolveEnvVar('VITE_SUPABASE_URL', 'PUBLIC_SUPABASE_URL', 'SUPABASE_URL');
+const SUPABASE_PUBLISHABLE_KEY = resolveEnvVar('VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY');
+
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    'Missing Supabase environment variables. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file. See .env.example for reference.'
+  );
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
