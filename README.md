@@ -8,7 +8,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-3.0-blue)
 ![AI](https://img.shields.io/badge/AI-Gemini%202.0-orange)
 
-> **Latest Update (Oct 15, 2025)**: Database migration complete! 21 migrations applied, 3 new tables created (STEM membership, Knowledge, Abilities), 4 Edge Functions deployed. Implementation score: 4.8/5.0. See [DEPLOYMENT_STATUS.md](docs/DEPLOYMENT_STATUS.md) and [PENDING_GAPS_ANALYSIS.md](docs/PENDING_GAPS_ANALYSIS.md) for details.
+> **Latest Update (Oct 17, 2025)**: All critical issues resolved! Edge functions hardened with JSON-mode enforcement, retry logic, and graceful error handling. CIP crosswalk, hot technologies, and task analysis fully operational. See [DEPLOYMENT_SUCCESS.md](DEPLOYMENT_SUCCESS.md) for details.
 
 ## 📋 Table of Contents
 - [Overview](#overview)
@@ -122,7 +122,7 @@ Edit `.env` with your actual credentials. See `.env.example` for all required va
 
 **Optional Variables:**
 - `APO_FUNCTION_API_KEY` - Custom API key for APO function security
-- `GEMINI_MODEL` - Gemini model to use (default: gemini-1.5-flash)
+- `GEMINI_MODEL` - Gemini model to use (default: gemini-2.5-flash, supports: gemini-2.0-flash-exp)
 
 ### 3. Supabase Edge Functions Configuration
 Configure these secrets in your Supabase Dashboard → Settings → Edge Functions:
@@ -130,8 +130,13 @@ Configure these secrets in your Supabase Dashboard → Settings → Edge Functio
 ONET_USERNAME=your_onet_username
 ONET_PASSWORD=your_onet_password
 GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-1.5-flash
+GEMINI_MODEL=gemini-2.5-flash
 ```
+
+**Important Notes:**
+- Use `gemini-2.5-flash` or `gemini-2.0-flash-exp` (v1beta API supported models)
+- The system automatically falls back from 1.5 models to 2.5
+- All Gemini functions enforce JSON-mode responses for reliability
 
 ### 4. Database Setup
 The application includes comprehensive SQL migrations in `supabase/migrations/`:
@@ -159,7 +164,14 @@ The application includes comprehensive SQL migrations in `supabase/migrations/`:
 - `learning_paths` - Personalized learning recommendations
 - `conversation_context` - AI chat context management
 
-**Migration Status:** ✅ 21 migrations applied successfully (Oct 15, 2025)
+**Migration Status:** ✅ 22 migrations applied successfully (Oct 17, 2025)
+
+**Hot Technologies Seeding:**
+Run the seed script to populate baseline technologies:
+```bash
+node seed-hot-tech.js
+```
+This seeds 6 baseline technologies (Excel, Python, Salesforce, AWS, Tableau, React) for the Tech Skills page.
 
 ### 5. Start Development
 ```bash
@@ -289,10 +301,19 @@ All user data tables implement RLS policies ensuring:
 - **Purpose**: Official occupation data and classifications
 - **Usage**: Career search and baseline occupation information
 - **Rate Limits**: Managed through caching and optimization
+- **Crosswalk Feature**: Maps SOC codes to CIP (education programs), MOC (military), RAPIDS, etc.
+  - Automatically normalizes SOC codes (strips `.00` suffix)
+  - Returns 200 with empty results when no mapping exists (graceful handling)
+  - Example: `29-1141.00` → `29-1141` before O*NET query
 
 ### Google Gemini AI
 - **Purpose**: Advanced automation potential analysis
-- **Features**: 
+- **Reliability Features**:
+  - JSON-mode enforcement (`responseMimeType: "application/json"`)
+  - Exponential backoff retry on 503 errors (5s, 10s)
+  - Robust JSON parsing (strips markdown code blocks)
+  - Model fallback: 1.5 → 2.5 for compatibility
+- **Analysis Features**: 
   - Natural language processing of occupation data
   - Multi-factor automation scoring
   - Confidence level generation
