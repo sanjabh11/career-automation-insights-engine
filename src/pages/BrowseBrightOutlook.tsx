@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatWage } from "@/types/onet-enrichment";
+import { useNavigate } from "react-router-dom";
 
 export default function BrowseBrightOutlook() {
   const { search, results, total, hasMore, loadMore, isSearching } = useAdvancedSearch();
@@ -17,6 +18,7 @@ export default function BrowseBrightOutlook() {
   const [jobZone, setJobZone] = useState<number | undefined>(undefined);
   const [minWage, setMinWage] = useState<string>("");
   const [maxWage, setMaxWage] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     search("", { brightOutlook: true });
@@ -112,6 +114,12 @@ export default function BrowseBrightOutlook() {
           <div className="text-sm text-muted-foreground">
             {total} results {parity !== undefined && !parityLoading ? (<span className="ml-2">• Parity: {Math.min(total, parity)} of {parity}</span>) : null}
           </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center text-xs px-2 py-1 rounded border bg-green-50 text-green-700 border-green-300">🟢 From Database</span>
+            <Badge variant={total > 0 ? "secondary" : "destructive"}>
+              {total > 0 ? `${total} bright outlook careers` : "No careers found"}
+            </Badge>
+          </div>
         </div>
 
         <div className="text-xs text-muted-foreground mt-1">
@@ -126,7 +134,11 @@ export default function BrowseBrightOutlook() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
             >
-              <Card className="p-4 hover:shadow-md transition-shadow">
+              <Card
+                className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(`/?search=${encodeURIComponent(occupation.occupation_title || occupation.occupation_code)}`)}
+                title="Open in Dashboard"
+              >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">

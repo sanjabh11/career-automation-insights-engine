@@ -1,0 +1,101 @@
+occupation_code,occupation_title,is_stem
+11-3021,Computer and Information Systems Managers,true
+11-9041,Architectural and Engineering Managers,true
+11-9121,Natural Sciences Managers,true
+15-1111,Computer and Information Research Scientists,true
+15-1121,Computer Systems Analysts,true
+15-1122,Information Security Analysts,true
+15-1131,Computer Programmers,true
+15-1132,Software Developers,true
+15-1133,Software Developers,true
+15-1134,Web Developers,true
+15-1141,Database Administrators,true
+15-1142,Network and Computer Systems Administrators,true
+15-1143,Computer Network Architects,true
+15-1151,Computer User Support Specialists,true
+15-1152,Computer Network Support Specialists,true
+15-1199,Computer Occupations,true
+15-2011,Actuaries,true
+15-2021,Mathematicians,true
+15-2031,Operations Research Analysts,true
+15-2041,Statisticians,true
+15-2091,Mathematical Technicians,true
+15-2099,Mathematical Science Occupations,true
+17-1011,Architects,true
+17-1012,Landscape Architects,true
+17-1021,Cartographers and Photogrammetrists,true
+17-1022,Surveyors,true
+17-2011,Aerospace Engineers,true
+17-2021,Agricultural Engineers,true
+17-2031,Biomedical Engineers,true
+17-2041,Chemical Engineers,true
+17-2051,Civil Engineers,true
+17-2061,Computer Hardware Engineers,true
+17-2071,Electrical Engineers,true
+17-2072,Electronics Engineers,true
+17-2081,Environmental Engineers,true
+17-2111,Health and Safety Engineers,true
+17-2112,Industrial Engineers,true
+17-2121,Marine Engineers and Naval Architects,true
+17-2131,Materials Engineers,true
+17-2141,Mechanical Engineers,true
+17-2151,Mining and Geological Engineers,true
+17-2161,Nuclear Engineers,true
+17-2171,Petroleum Engineers,true
+17-2199,Engineers,true
+17-3011,Architectural and Civil Drafters,true
+17-3012,Electrical and Electronics Drafters,true
+17-3013,Mechanical Drafters,true
+17-3019,Drafters,true
+17-3021,Aerospace Engineering and Operations Technicians,true
+17-3022,Civil Engineering Technicians,true
+17-3023,Electrical and Electronics Engineering Technicians,true
+17-3024,Electro-Mechanical Technicians,true
+17-3025,Environmental Engineering Technicians,true
+17-3026,Industrial Engineering Technicians,true
+17-3027,Mechanical Engineering Technicians,true
+17-3029,Engineering Technicians,true
+17-3031,Surveying and Mapping Technicians,true
+19-1011,Animal Scientists,true
+19-1012,Food Scientists and Technologists,true
+19-1013,Soil and Plant Scientists,true
+19-1021,Biochemists and Biophysicists,true
+19-1022,Microbiologists,true
+19-1023,Zoologists and Wildlife Biologists,true
+19-1029,Biological Scientists,true
+19-1031,Conservation Scientists,true
+19-1032,Foresters,true
+19-1041,Epidemiologists,true
+19-1042,Medical Scientists,true
+19-1099,Life Scientists,true
+19-2011,Astronomers,true
+19-2012,Physicists,true
+19-2021,Atmospheric and Space Scientists,true
+19-2031,Chemists,true
+19-2032,Materials Scientists,true
+19-2041,Environmental Scientists and Specialists,true
+19-2042,Geoscientists,true
+19-2043,Hydrologists,true
+19-2099,Physical Scientists,true
+19-4011,Agricultural and Food Science Technicians,true
+19-4021,Biological Technicians,true
+19-4031,Chemical Technicians,true
+19-4041,Geological and Petroleum Technicians,true
+19-4051,Nuclear Technicians,true
+19-4091,Environmental Science and Protection Technicians,true
+19-4092,Forensic Science Technicians,true
+19-4093,Forest and Conservation Technicians,true
+19-4099,Life,true
+25-1021,Computer Science Teachers,true
+25-1022,Mathematical Science Teachers,true
+25-1031,Architecture Teachers,true
+25-1032,Engineering Teachers,true
+25-1041,Agricultural Sciences Teachers,true
+25-1042,Biological Science Teachers,true
+25-1043,Forestry and Conservation Science Teachers,true
+25-1051,Atmospheric,true
+25-1052,Chemistry Teachers,true
+25-1053,Environmental Science Teachers,true
+25-1054,Physics Teachers,true
+41-4011,Sales Representatives,true
+41-9031,Sales Engineers,true

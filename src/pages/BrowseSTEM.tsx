@@ -7,10 +7,12 @@ import { useAdvancedSearch } from "@/hooks/useAdvancedSearch";
 import { motion } from "framer-motion";
 import { formatWage } from "@/types/onet-enrichment";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export default function BrowseSTEM() {
   const { search, results, total, hasMore, loadMore, isSearching } = useAdvancedSearch();
   const [stemMeta, setStemMeta] = useState<Record<string, { type?: string; family?: string }>>({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     search("", { stem: true });
@@ -49,6 +51,12 @@ export default function BrowseSTEM() {
       <Card className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">{total} results</div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center text-xs px-2 py-1 rounded border bg-green-50 text-green-700 border-green-300">🟢 From Database</span>
+            <Badge variant={total > 0 ? "secondary" : "destructive"}>
+              {total > 0 ? `${total} STEM occupations` : "No STEM occupations found"}
+            </Badge>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -59,7 +67,11 @@ export default function BrowseSTEM() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
             >
-              <Card className="p-4 hover:shadow-md transition-shadow">
+              <Card
+                className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(`/?search=${encodeURIComponent(occupation.occupation_title || occupation.occupation_code)}`)}
+                title="Open in Dashboard"
+              >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">

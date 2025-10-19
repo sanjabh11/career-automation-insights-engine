@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+const BASE_CORS_HEADERS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+} as const;
 
 /**
  * Browse Job Zones
@@ -15,15 +15,46 @@ const corsHeaders = {
  * - Filter by zone number
  */
 export async function handler(req: Request) {
+  // Build dynamic CORS headers from allowlist
+  const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") || "*")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const origin = req.headers.get("origin") || "";
+  const allowAll = allowedOrigins.includes("*");
+  const cors = {
+    ...BASE_CORS_HEADERS,
+    "Access-Control-Allow-Origin": allowAll
+      ? "*"
+      : (allowedOrigins.includes(origin) ? origin : "null"),
+    Vary: "Origin",
+  } as Record<string, string>;
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    if (!allowAll && origin && !allowedOrigins.includes(origin)) {
+      return new Response("CORS not allowed", { status: 403, headers: cors });
+    }
+    return new Response(null, { headers: cors });
   }
 
   try {
     const url = new URL(req.url);
-    const zoneNumber = url.searchParams.get("zone") ? parseInt(url.searchParams.get("zone")!) : undefined;
-    const includeOccupations = url.searchParams.get("includeOccupations") === "true";
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    let zoneNumber = url.searchParams.get("zone") ? parseInt(url.searchParams.get("zone")!) : undefined;
+    let includeOccupations = url.searchParams.get("includeOccupations") === "true";
+    let limit = parseInt(url.searchParams.get("limit") || "50");
+
+    // Allow POST JSON body overrides
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        if (typeof body?.zone === "number") zoneNumber = body.zone;
+        if (typeof body?.zone === "string") zoneNumber = parseInt(body.zone);
+        if (typeof body?.includeOccupations === "boolean") includeOccupations = body.includeOccupations;
+        if (typeof body?.limit === "number") limit = body.limit;
+      } catch (_e) {
+        // ignore body parse errors; fallback to query params
+      }
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -40,7 +71,7 @@ export async function handler(req: Request) {
       if (!zone) {
         return new Response(JSON.stringify({ error: "Zone not found" }), {
           status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
 
@@ -61,8 +92,9 @@ export async function handler(req: Request) {
           zone,
           occupations,
           occupationCount: occupations.length,
+          source: 'db',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -91,8 +123,9 @@ export async function handler(req: Request) {
       JSON.stringify({
         zones: zonesWithCounts,
         totalZones: zonesWithCounts.length,
+        source: 'db',
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...cors, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Browse job zones error:", error);
@@ -102,7 +135,7 @@ export async function handler(req: Request) {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       }
     );
   }

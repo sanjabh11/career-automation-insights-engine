@@ -101,10 +101,14 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                     <Button variant="ghost" className="justify-start" onClick={() => { goDashboardHome(); setIsMobileMenuOpen(false); }}>Dashboard Home</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/outcomes'); setIsMobileMenuOpen(false); }}>Market Signals</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/validation'); setIsMobileMenuOpen(false); }}>Validation</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/validation/center'); setIsMobileMenuOpen(false); }}>Validation Center</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/validation/methods'); setIsMobileMenuOpen(false); }}>Methods</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/operations'); setIsMobileMenuOpen(false); }}>Operations</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/responsible-ai'); setIsMobileMenuOpen(false); }}>Responsible AI</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/quality'); setIsMobileMenuOpen(false); }}>Quality</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/impact'); setIsMobileMenuOpen(false); }}>Impact Dashboard</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/industry'); setIsMobileMenuOpen(false); }}>Industry (Career Clusters)</Button>
+                    <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/job-zones'); setIsMobileMenuOpen(false); }}>Job Zones</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { goResources(); setIsMobileMenuOpen(false); }}>Resources</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/bright-outlook'); setIsMobileMenuOpen(false); }}>Bright Outlook</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => { navigate('/browse/stem'); setIsMobileMenuOpen(false); }}>STEM</Button>
@@ -183,10 +187,14 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                   <DropdownMenuItem onClick={() => goDashboardHome()}>Dashboard Home</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/outcomes')}>Market Signals</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/validation')}>Validation</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/validation/center')}>Validation Center</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/validation/methods')}>Methods</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/operations')}>Operations</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/responsible-ai')}>Responsible AI</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/quality')}>Quality</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/impact')}>Impact Dashboard</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/industry')}>Industry (Career Clusters)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/browse/job-zones')}>Job Zones</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/resources')}>Resources</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/browse/bright-outlook')}>Bright Outlook</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/browse/stem')}>STEM</DropdownMenuItem>

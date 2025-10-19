@@ -2,10 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.22.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+const BASE_CORS_HEADERS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+} as const;
 
 // O*NET credentials
 const ONET_USERNAME = Deno.env.get("ONET_USERNAME");
@@ -80,8 +80,26 @@ async function searchOnetByKeyword(keyword: string): Promise<any[]> {
  * - Wage range filter
  */
 export async function handler(req: Request) {
+  // Build dynamic CORS headers from allowlist
+  const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") || "*")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const origin = req.headers.get("origin") || "";
+  const allowAll = allowedOrigins.includes("*");
+  const cors = {
+    ...BASE_CORS_HEADERS,
+    "Access-Control-Allow-Origin": allowAll
+      ? "*"
+      : (allowedOrigins.includes(origin) ? origin : "null"),
+    Vary: "Origin",
+  } as Record<string, string>;
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    if (!allowAll && origin && !allowedOrigins.includes(origin)) {
+      return new Response("CORS not allowed", { status: 403, headers: cors });
+    }
+    return new Response(null, { headers: cors });
   }
 
   try {
@@ -111,8 +129,9 @@ export async function handler(req: Request) {
             offset,
             filters,
             hasMore: false,
+            source: 'onet_keyword',
           }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { headers: { ...cors, "Content-Type": "application/json" } }
         );
       }
 
@@ -152,8 +171,9 @@ export async function handler(req: Request) {
           offset,
           filters,
           hasMore: mergedOccupations.length > offset + limit,
+          source: 'onet_keyword+db_enrichment',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     } else {
       // Get all occupation codes from enrichment table
@@ -175,8 +195,9 @@ export async function handler(req: Request) {
           offset,
           filters,
           hasMore: false,
+          source: 'db',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -258,8 +279,9 @@ export async function handler(req: Request) {
         offset,
         filters,
         hasMore: count ? count > offset + limit : false,
+        source: 'db',
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...cors, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Search occupations error:", error);
@@ -269,7 +291,7 @@ export async function handler(req: Request) {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       }
     );
   }

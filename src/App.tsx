@@ -16,6 +16,9 @@ import CareerPlanningPage from "./pages/CareerPlanningPage";
 import CrosswalkPage from "./pages/CrosswalkPage";
 import BrowseBrightOutlook from "./pages/BrowseBrightOutlook";
 import BrowseSTEM from "./pages/BrowseSTEM";
+import BrowseJobZones from "./pages/BrowseJobZones";
+import ImpactDashboard from "./pages/ImpactDashboard";
+import ValidationCenter from "./pages/ValidationCenter";
 import VeteransPage from "./pages/VeteransPage";
 import TechSkillsPage from "./pages/TechSkillsPage";
 import WorkDimensionsPage from "./pages/WorkDimensionsPage";
@@ -25,6 +28,7 @@ import ValidationPage from "./pages/ValidationPage";
 import ValidationMethodsPage from "./pages/ValidationMethodsPage";
 import QualityPage from "./pages/QualityPage";
 import ResponsibleAIPage from "./pages/ResponsibleAIPage";
+import IndustryDashboardPage from "./pages/IndustryDashboardPage";
 import SkillsBuilderPage from "./pages/SkillsBuilderPage";
 import OperationsPage from "./pages/OperationsPage";
 import ResourcesPage from "./pages/ResourcesPage";
@@ -63,6 +67,7 @@ function App() {
             <Route path="/test" element={<Test />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<UserDashboardPage />} />
+            <Route path="/user-dashboard" element={<UserDashboardPage />} />
             <Route path="/shared/:shareToken" element={<SharedAnalysisPage />} />
             <Route path="/ai-impact" element={<AIImpactPage />} />
             <Route path="/ai-impact-planner" element={<AIImpactPlannerPage />} />
@@ -76,13 +81,19 @@ function App() {
             <Route path="/outcomes" element={<OutcomesPage />} />
             <Route path="/validation" element={<ValidationPage />} />
             <Route path="/validation/methods" element={<ValidationMethodsPage />} />
+            <Route path="/validation/center" element={<ValidationCenter />} />
+            <Route path="/validation-center" element={<ValidationCenter />} />
             <Route path="/quality" element={<QualityPage />} />
             <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
+            <Route path="/industry" element={<IndustryDashboardPage />} />
+            <Route path="/impact" element={<ImpactDashboard />} />
+            <Route path="/impact-dashboard" element={<ImpactDashboard />} />
             <Route path="/skills-builder" element={<SkillsBuilderPage />} />
             <Route path="/operations" element={<OperationsPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
+            <Route path="/browse/job-zones" element={<BrowseJobZones />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
             <Route path="/compare" element={<ComparePage />} />
             <Route path="*" element={<NotFound />} />

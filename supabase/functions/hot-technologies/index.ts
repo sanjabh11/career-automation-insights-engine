@@ -1,11 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+const BASE_CORS_HEADERS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-};
+} as const;
 
 /**
  * Hot Technologies
@@ -15,8 +14,26 @@ const corsHeaders = {
  * GET /hot-technologies?occupationCode={code} - Get hot technologies for an occupation
  */
 export async function handler(req: Request) {
+  // Build dynamic CORS headers from allowlist
+  const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") || "*")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const origin = req.headers.get("origin") || "";
+  const allowAll = allowedOrigins.includes("*");
+  const cors = {
+    ...BASE_CORS_HEADERS,
+    "Access-Control-Allow-Origin": allowAll
+      ? "*"
+      : (allowedOrigins.includes(origin) ? origin : "null"),
+    Vary: "Origin",
+  } as Record<string, string>;
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    if (!allowAll && origin && !allowedOrigins.includes(origin)) {
+      return new Response("CORS not allowed", { status: 403, headers: cors });
+    }
+    return new Response(null, { headers: cors });
   }
 
   try {
@@ -43,8 +60,8 @@ export async function handler(req: Request) {
     if (!supabaseUrl || !supabaseKey) {
       // Missing configuration — return empty but valid payload
       return new Response(
-        JSON.stringify({ technologies: [], totalCount: 0 }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ technologies: [], totalCount: 0, source: 'db' }),
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -61,8 +78,8 @@ export async function handler(req: Request) {
       if (error) {
         // Table missing or other DB error — return empty list gracefully
         return new Response(
-          JSON.stringify({ technology, occupations: [], count: 0 }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ technology, occupations: [], count: 0, source: 'db' }),
+          { headers: { ...cors, "Content-Type": "application/json" } }
         );
       }
 
@@ -71,8 +88,9 @@ export async function handler(req: Request) {
           technology,
           occupations: occupations || [],
           count: occupations?.length || 0,
+          source: 'db',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -87,8 +105,8 @@ export async function handler(req: Request) {
 
       if (error) {
         return new Response(
-          JSON.stringify({ occupationCode, technologies: [], count: 0 }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ occupationCode, technologies: [], count: 0, source: 'db' }),
+          { headers: { ...cors, "Content-Type": "application/json" } }
         );
       }
 
@@ -97,8 +115,9 @@ export async function handler(req: Request) {
           occupationCode,
           technologies: technologies || [],
           count: technologies?.length || 0,
+          source: 'db',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -112,8 +131,8 @@ export async function handler(req: Request) {
 
     if (error) {
       return new Response(
-        JSON.stringify({ technologies: [], totalCount: 0 }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ technologies: [], totalCount: 0, source: 'db' }),
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -133,18 +152,24 @@ export async function handler(req: Request) {
       })
     );
 
+    // Total count across entire table (ignores limit)
+    const { count: totalAll } = await supabase
+      .from("onet_hot_technologies_master")
+      .select("*", { count: "exact", head: true });
+
     return new Response(
       JSON.stringify({
         technologies: techsWithCounts,
-        totalCount: techsWithCounts.length,
+        totalCount: totalAll ?? techsWithCounts.length,
+        source: 'db',
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...cors, "Content-Type": "application/json" } }
     );
   } catch (_error) {
     // Any unexpected error — return empty but valid payload to avoid UI 500s
     return new Response(
-      JSON.stringify({ technologies: [], totalCount: 0 }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ technologies: [], totalCount: 0, source: 'db' }),
+      { headers: { ...cors, "Content-Type": "application/json" } }
     );
   }
 }

@@ -8,7 +8,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-3.0-blue)
 ![AI](https://img.shields.io/badge/AI-Gemini%202.0-orange)
 
-> **Latest Update (Oct 17, 2025)**: All critical issues resolved! Edge functions hardened with JSON-mode enforcement, retry logic, and graceful error handling. CIP crosswalk, hot technologies, and task analysis fully operational. See [DEPLOYMENT_SUCCESS.md](DEPLOYMENT_SUCCESS.md) for details.
+> **Latest Update (Oct 19, 2025)**: Browse & Discovery features fully operational! STEM (102), Career Clusters (16), Job Zones (5), Bright Outlook (41), and Hot Technologies (40) all working with second-level drill-downs. All endpoints returning data from database. Status indicators added to all pages. See [docs/IMPLEMENTATION_PLAN_FINAL.md](docs/IMPLEMENTATION_PLAN_FINAL.md) for details.
 
 ## 📋 Table of Contents
 - [Overview](#overview)
@@ -166,12 +166,23 @@ The application includes comprehensive SQL migrations in `supabase/migrations/`:
 
 **Migration Status:** ✅ 22 migrations applied successfully (Oct 17, 2025)
 
-**Hot Technologies Seeding:**
-Run the seed script to populate baseline technologies:
+**Data Seeding:**
+All core data has been seeded via SQL scripts in `supabase/data/imports/`:
+- Job Zones: 5 zones with descriptions (`02_seed_job_zones_FINAL.sql`)
+- Hot Technologies: 40 trending technologies (`03_seed_hot_technologies_FINAL.sql`)
+- Career Clusters: 16 clusters from O*NET taxonomy
+- Enrichment: 109 occupations tagged (`05_enrichment_backfill_demo.sql`)
+
+To verify seeding:
 ```bash
-node seed-hot-tech.js
+./test_endpoints.sh
 ```
-This seeds 6 baseline technologies (Excel, Python, Salesforce, AWS, Tableau, React) for the Tech Skills page.
+
+Expected output:
+- STEM: "db", 102
+- Job Zones: "db", 5
+- Hot Tech: "db", 40
+- Clusters: "db", 16
 
 ### 5. Start Development
 ```bash

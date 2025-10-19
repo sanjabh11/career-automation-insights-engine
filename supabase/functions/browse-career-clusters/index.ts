@@ -2,10 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.22.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+const BASE_CORS_HEADERS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+} as const;
 
 const requestSchema = z.object({
   clusterId: z.string().optional(),
@@ -22,15 +22,45 @@ const requestSchema = z.object({
  * - Filter by cluster ID
  */
 export async function handler(req: Request) {
+  // Build dynamic CORS headers from allowlist
+  const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") || "*")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const origin = req.headers.get("origin") || "";
+  const allowAll = allowedOrigins.includes("*");
+  const cors = {
+    ...BASE_CORS_HEADERS,
+    "Access-Control-Allow-Origin": allowAll
+      ? "*"
+      : (allowedOrigins.includes(origin) ? origin : "null"),
+    Vary: "Origin",
+  } as Record<string, string>;
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    if (!allowAll && origin && !allowedOrigins.includes(origin)) {
+      return new Response("CORS not allowed", { status: 403, headers: cors });
+    }
+    return new Response(null, { headers: cors });
   }
 
   try {
     const url = new URL(req.url);
-    const clusterId = url.searchParams.get("clusterId") || undefined;
-    const includeOccupations = url.searchParams.get("includeOccupations") === "true";
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    let clusterId: string | undefined = url.searchParams.get("clusterId") || undefined;
+    let includeOccupations = url.searchParams.get("includeOccupations") === "true";
+    let limit = parseInt(url.searchParams.get("limit") || "50");
+
+    // Allow POST JSON body overrides
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        if (typeof body?.clusterId === "string") clusterId = body.clusterId;
+        if (typeof body?.includeOccupations === "boolean") includeOccupations = body.includeOccupations;
+        if (typeof body?.limit === "number") limit = body.limit;
+      } catch (_e) {
+        // Ignore JSON parse errors and continue with query params
+      }
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -47,7 +77,7 @@ export async function handler(req: Request) {
       if (!cluster) {
         return new Response(JSON.stringify({ error: "Cluster not found" }), {
           status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
 
@@ -68,8 +98,9 @@ export async function handler(req: Request) {
           cluster,
           occupations,
           occupationCount: occupations.length,
+          source: 'db',
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -98,8 +129,9 @@ export async function handler(req: Request) {
       JSON.stringify({
         clusters: clustersWithCounts,
         totalClusters: clustersWithCounts.length,
+        source: 'db',
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...cors, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Browse career clusters error:", error);
@@ -109,7 +141,7 @@ export async function handler(req: Request) {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       }
     );
   }

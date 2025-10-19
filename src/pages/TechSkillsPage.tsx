@@ -38,7 +38,7 @@ export default function TechSkillsPage() {
         body: { limit: 100 },
       });
       if (error) throw error;
-      return data as { technologies: HotTechnology[]; totalCount: number };
+      return data as { technologies: HotTechnology[]; totalCount: number; source?: string };
     },
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -77,6 +77,9 @@ export default function TechSkillsPage() {
     return "bg-blue-100 text-blue-800 border-blue-300";
   };
 
+  const totalTechs = techsData?.totalCount || 0;
+  const source = (techsData as any)?.source || "db";
+
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
       {/* Header */}
@@ -101,8 +104,15 @@ export default function TechSkillsPage() {
             <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">40–59</Badge>
             <Badge className="bg-blue-100 text-blue-800 border-blue-300">0–39</Badge>
           </div>
-          <div className="text-muted-foreground">
-            Normalization: 0–100 by percentile of occupations using each technology (O*NET Hot Tech + postings).
+          <div className="flex items-center gap-2">
+            {source === "db" ? (
+              <span className="inline-flex items-center text-xs px-2 py-1 rounded border bg-green-50 text-green-700 border-green-300">🟢 From Database</span>
+            ) : (
+              <span className="inline-flex items-center text-xs px-2 py-1 rounded border bg-yellow-50 text-yellow-700 border-yellow-300">🟡 {source}</span>
+            )}
+            <Badge variant={totalTechs > 0 ? "secondary" : "destructive"}>
+              {totalTechs > 0 ? `${totalTechs} technologies` : "No technologies found"}
+            </Badge>
           </div>
         </div>
       </Card>

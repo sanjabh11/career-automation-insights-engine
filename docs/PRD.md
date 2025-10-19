@@ -323,9 +323,9 @@ Output format:
 
 ---
 
-**Document Version:** 2.0  
-**Last Updated:** 2025-06-17  
-**Next Review:** 2025-07-17  
+**Document Version:** 2.1  
+**Last Updated:** 2025-10-19  
+**Next Review:** 2025-11-19  
 **Owner:** Product Team  
 **Stakeholders:** Engineering, Design, Security, Business
 
@@ -375,9 +375,37 @@ Added comprehensive documentation and evidence artifacts:
 All artifacts accessible via UI pages: `/validation/methods`, `/quality`, `/responsible-ai`, `/operations`, `/veterans`.
 CSV export added to Crosswalk results and Veterans matches.
 
+### Browse & Discovery Features (Oct 19, 2025)
+
+#### Implemented
+- **STEM Browse** (`/browse/stem`): 102 STEM occupations with drill-down
+- **Career Clusters** (`/industry`): 16 clusters with occupation drill-down
+- **Job Zones** (`/browse/job-zones`): 5 zones with occupation drill-down
+- **Bright Outlook** (`/browse/bright-outlook`): 41 high-growth occupations
+- **Hot Technologies** (`/tech-skills`): 40 trending technologies with occupation mapping
+
+#### Edge Functions
+- `search-occupations`: Advanced search with STEM/Bright Outlook/Cluster/Zone filters
+- `browse-career-clusters`: List clusters + drill-down to occupations
+- `browse-job-zones`: List zones + drill-down to occupations
+- `hot-technologies`: List trending tech + related occupations
+
+#### Data Seeding
+- Job Zones: 5 zones seeded with descriptions
+- Hot Technologies: 40 technologies seeded with categories and trending scores
+- Career Clusters: 16 clusters from O*NET taxonomy
+- Enrichment: 109 occupations tagged with cluster_id, job_zone, bright_outlook
+
+#### Status Indicators
+- All browse pages show "🟢 From Database" badge
+- Pass/fail badges for data sync status
+- Total counts visible on all pages
+
 ### Pending (post-deploy follow-ups)
 - E2E CoS test for APO (PBI-0001-16)
 - Durable rate limiting backend (see design doc PBI-0001-32)
 - Lighthouse CI / a11y checks (see checklist PBI-0001-31)
 - Advanced filters beyond Max Results
 - Optional: true PDF generation (server-side) in addition to print-friendly HTML
+- LLM prompt library and versioning system
+- RAG-based grounding for occupation analysis

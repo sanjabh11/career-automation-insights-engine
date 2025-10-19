@@ -1,0 +1,105 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+4 0 obj
+<<
+/Length 780
+>>
+stream
+BT
+/F1 18 Tf
+50 750 Td
+(Task Classification Model Card) Tj
+0 -30 Td
+/F1 12 Tf
+(Model Name: Task Automation Classifier) Tj
+0 -20 Td
+(Version: 1.0) Tj
+0 -20 Td
+(Last Updated: October 2025) Tj
+0 -40 Td
+/F1 14 Tf
+(Intended Use) Tj
+0 -20 Td
+/F1 10 Tf
+(Classifies occupation tasks into Automate, Augment, or Human-only categories) Tj
+0 -15 Td
+(using Gemini 1.5 Flash with standardized prompts. For educational and planning) Tj
+0 -15 Td
+(purposes; not for hiring or employment decisions.) Tj
+0 -30 Td
+/F1 14 Tf
+(Limitations) Tj
+0 -20 Td
+/F1 10 Tf
+(- Classification depends on prompt quality and model updates) Tj
+0 -15 Td
+(- May not capture industry-specific nuances without fine-tuning) Tj
+0 -15 Td
+(- Confidence scores are indicative, not probabilistic guarantees) Tj
+0 -30 Td
+/F1 14 Tf
+(Methodology) Tj
+0 -20 Td
+/F1 10 Tf
+(LLM-based classification with temperature=0.2 for consistency. Tasks analyzed) Tj
+0 -15 Td
+(against automation criteria: repetitive, rule-based, data-driven vs. creative,) Tj
+0 -15 Td
+(empathetic, complex judgment.) Tj
+0 -30 Td
+/F1 14 Tf
+(Contact) Tj
+0 -20 Td
+/F1 10 Tf
+(See /responsible-ai for governance and reporting.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000262 00000 n 
+0000001094 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+1182
+%%EOF
