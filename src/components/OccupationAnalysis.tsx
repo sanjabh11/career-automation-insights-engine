@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -42,6 +43,14 @@ interface EnhancedOccupationData {
     calculation_method: string;
     timestamp: string;
   };
+  ci?: { lower: number; upper: number; iterations?: number };
+  externalSignals?: {
+    blsTrendPct?: number;
+    blsAdjustmentPts?: number;
+    industrySector?: string;
+    sectorDelayMonths?: number;
+    econViabilityDiscount?: number;
+  };
 }
 
 interface OccupationAnalysisProps {
@@ -58,6 +67,22 @@ export const OccupationAnalysis = ({
   isAlreadySelected 
 }: OccupationAnalysisProps) => {
   const { hasBrightOutlook, brightOutlookCategory } = useBrightOutlook(occupation.code);
+  const [econ, setEcon] = React.useState<any | null>(null);
+
+  React.useEffect(() => {
+    const sector = occupation?.externalSignals?.industrySector;
+    if (!sector) { setEcon(null); return; }
+    (async () => {
+      const { data } = await (supabase as any)
+        .from('automation_economics')
+        .select('task_category,industry_sector,implementation_cost_low,implementation_cost_high,roi_timeline_months,technology_maturity,wef_adoption_score,regulatory_friction,min_org_size,annual_labor_cost_threshold')
+        .eq('industry_sector', sector)
+        .order('wef_adoption_score', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      setEcon(data || null);
+    })();
+  }, [occupation?.externalSignals?.industrySector]);
   
   const getAPOColor = (apo: number) => {
     if (apo >= 70) return 'text-red-600 bg-red-50 border-red-200';
@@ -170,7 +195,24 @@ export const OccupationAnalysis = ({
                   {occupation.confidence} confidence
                 </Badge>
               )}
+              {typeof occupation.externalSignals?.blsTrendPct === 'number' && (
+                <Badge variant="outline" className="text-xs">
+                  BLS: {occupation.externalSignals.blsTrendPct >= 0 ? '📈' : '📉'} {occupation.externalSignals.blsTrendPct}%
+                </Badge>
+              )}
             </div>
+
+            {(occupation.externalSignals?.blsTrendPct !== undefined || occupation.externalSignals?.industrySector) && (
+              <div className="text-xs text-gray-600 mt-1 flex items-center gap-2">
+                <span className="opacity-80">Provenance:</span>
+                {occupation.externalSignals?.blsTrendPct !== undefined && (
+                  <Badge variant="outline" className="text-[10px]">BLS</Badge>
+                )}
+                {occupation.externalSignals?.industrySector && (
+                  <Badge variant="outline" className="text-[10px]">Economics</Badge>
+                )}
+              </div>
+            )}
 
             <Button
               onClick={onAddToSelected}
@@ -200,7 +242,67 @@ export const OccupationAnalysis = ({
               </div>
             </div>
           </div>
+          {occupation.ci && (
+            <div className="mt-2 text-xs text-gray-700">
+              Confidence Interval: {occupation.ci.lower.toFixed(1)}% – {occupation.ci.upper.toFixed(1)}%
+              {occupation.ci.iterations ? ` (${occupation.ci.iterations} sims)` : ''}
+            </div>
+          )}
+          {occupation.externalSignals && (
+            <div className="mt-2 text-xs text-gray-700 flex flex-wrap gap-2">
+              {occupation.externalSignals.industrySector && (
+                <Badge variant="secondary" className="text-xs">Sector: {occupation.externalSignals.industrySector}</Badge>
+              )}
+              {typeof occupation.externalSignals.sectorDelayMonths === 'number' && occupation.externalSignals.sectorDelayMonths > 0 && (
+                <Badge variant="outline" className="text-xs">Sector Delay: {occupation.externalSignals.sectorDelayMonths} mo</Badge>
+              )}
+              {typeof occupation.externalSignals.econViabilityDiscount === 'number' && occupation.externalSignals.econViabilityDiscount > 0 && (
+                <Badge variant="destructive" className="text-xs">Econ Discount: -{occupation.externalSignals.econViabilityDiscount} pts</Badge>
+              )}
+            </div>
+          )}
         </div>
+
+        {econ && (
+          <div className="mb-6">
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2" />
+              Economic Viability
+            </h3>
+            <Card className="p-4">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                {typeof econ.roi_timeline_months === 'number' && (
+                  <Badge variant="secondary" className="text-xs">ROI: {econ.roi_timeline_months} mo</Badge>
+                )}
+                {econ.technology_maturity && (
+                  <Badge variant="outline" className="text-xs">Maturity: {String(econ.technology_maturity)}</Badge>
+                )}
+                {typeof econ.wef_adoption_score === 'number' && (
+                  <Badge variant="outline" className="text-xs">WEF adoption: {Number(econ.wef_adoption_score).toFixed(1)}</Badge>
+                )}
+                {econ.regulatory_friction && (
+                  <Badge variant="outline" className="text-xs">Regulatory: {String(econ.regulatory_friction)}</Badge>
+                )}
+              </div>
+              <div className="text-sm text-gray-700 flex flex-wrap gap-4">
+                {(typeof econ.implementation_cost_low === 'number' || typeof econ.implementation_cost_high === 'number') && (
+                  <div>
+                    <span className="font-medium">Implementation cost:</span>{' '}
+                    {typeof econ.implementation_cost_low === 'number' ? `$${Math.round(econ.implementation_cost_low).toLocaleString()}` : '—'}
+                    {' – '}
+                    {typeof econ.implementation_cost_high === 'number' ? `$${Math.round(econ.implementation_cost_high).toLocaleString()}` : '—'}
+                  </div>
+                )}
+                {typeof econ.min_org_size === 'number' && (
+                  <div><span className="font-medium">Min org size:</span> {econ.min_org_size}+ employees</div>
+                )}
+                {typeof econ.annual_labor_cost_threshold === 'number' && (
+                  <div><span className="font-medium">Annual labor cost ≥</span> ${Math.round(econ.annual_labor_cost_threshold).toLocaleString()}</div>
+                )}
+              </div>
+            </Card>
+          </div>
+        )}
 
         {/* Factor Contributions (Explainability) */}
         <div className="mb-6">

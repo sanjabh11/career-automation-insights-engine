@@ -17,6 +17,8 @@ import CrosswalkPage from "./pages/CrosswalkPage";
 import BrowseBrightOutlook from "./pages/BrowseBrightOutlook";
 import BrowseSTEM from "./pages/BrowseSTEM";
 import BrowseJobZones from "./pages/BrowseJobZones";
+import OccupationDetailPage from "./pages/OccupationDetailPage";
+import JobZoneLaddersPage from "./pages/JobZoneLaddersPage";
 import ImpactDashboard from "./pages/ImpactDashboard";
 import ValidationCenter from "./pages/ValidationCenter";
 import VeteransPage from "./pages/VeteransPage";
@@ -94,6 +96,10 @@ function App() {
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/browse/job-zones" element={<BrowseJobZones />} />
+            <Route path="/occupation/:code" element={<OccupationDetailPage />} />
+            <Route path="/ladders" element={<JobZoneLaddersPage />} />
+            <Route path="/job-zone-ladders" element={<JobZoneLaddersPage />} />
+            <Route path="/job-zone-ladder" element={<JobZoneLaddersPage />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
             <Route path="/compare" element={<ComparePage />} />
             <Route path="*" element={<NotFound />} />

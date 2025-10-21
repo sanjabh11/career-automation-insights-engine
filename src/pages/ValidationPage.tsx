@@ -34,6 +34,21 @@ export default function ValidationPage() {
     staleTime: 60_000,
   });
 
+  const { data: corrMetric } = useQuery({
+    queryKey: ["validation-metric-pearson-r"],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("validation_metrics")
+        .select("metric_name, value, sample_size, created_at")
+        .eq("metric_name", "apo_vs_academic_pearson_r")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data as any;
+    },
+    staleTime: 60_000,
+  });
+
   const ece = React.useMemo(() => {
     const rows = (run as any)?.results || [];
     const total = rows.reduce((a: number, r: any) => a + (r.count || 0), 0) || 1;
@@ -53,6 +68,14 @@ export default function ValidationPage() {
       <div className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Validation & Reliability</h1>
         <p className="text-sm text-muted-foreground">Calibration, confidence, and reliability diagnostics for APO and task categorization.</p>
+        {corrMetric && (
+          <div className="mt-2 text-xs">
+            <Badge variant="outline" className="mr-2">Academic corr r={(Number(corrMetric.value)).toFixed(2)}</Badge>
+            {typeof corrMetric.sample_size === 'number' && (
+              <Badge variant="secondary">n={corrMetric.sample_size}</Badge>
+            )}
+          </div>
+        )}
       </div>
 
       <Card className="p-6">

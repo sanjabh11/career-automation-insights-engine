@@ -30,29 +30,89 @@ export default function TechSkillsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
-  // Fetch all hot technologies
+  // Fetch all hot technologies directly from database
   const { data: techsData, isLoading: techsLoading } = useQuery({
     queryKey: ["hot-technologies"],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("hot-technologies", {
-        body: { limit: 100 },
-      });
+      const { data, error } = await supabase
+        .from("onet_hot_technologies_master")
+        .select("technology_name, category, trending_score, related_occupations_count")
+        .order("related_occupations_count", { ascending: false })
+        .limit(100);
       if (error) throw error;
-      return data as { technologies: HotTechnology[]; totalCount: number; source?: string };
+      return {
+        technologies: (data || []).map((t) => ({
+          ...t,
+          occupation_count: t.related_occupations_count,
+        })),
+        totalCount: data?.length || 0,
+        source: "db",
+      };
     },
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 
-  // Fetch occupations for selected technology
+  // Fetch skill demand signals for selected technology (budget-friendly pipeline)
+  const { data: skillDemand } = useQuery({
+    queryKey: ["skill-demand", selectedTech],
+    queryFn: async () => {
+      if (!selectedTech) return null;
+      const { data, error } = await supabase
+        .from("skill_demand_signals")
+        .select("posting_count_30d, median_salary, growth_rate_yoy, last_updated")
+        .eq("skill_name", selectedTech)
+        .eq("occupation_code", "ALL")
+        .order("last_updated", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) return null;
+      return data as any;
+    },
+    enabled: !!selectedTech,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Fetch top SOC codes/titles from aggregated view for the selected technology
+  const { data: techViewData, isLoading: techViewLoading } = useQuery({
+    queryKey: ["v_technology_demand", selectedTech],
+    queryFn: async () => {
+      if (!selectedTech) return null;
+      const { data, error } = await supabase
+        .from("v_technology_demand")
+        .select("technology_name, top_occupation_codes, occupation_titles, occupation_count, avg_demand_score")
+        .eq("technology_name", selectedTech)
+        .maybeSingle();
+      if (error) return null;
+      return data as any;
+    },
+    enabled: !!selectedTech,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Fetch occupations for selected technology directly from database
   const { data: occupationsData, isLoading: occupationsLoading } = useQuery({
     queryKey: ["tech-occupations", selectedTech],
     queryFn: async () => {
       if (!selectedTech) return null;
-      const { data, error } = await supabase.functions.invoke("hot-technologies", {
-        body: { technology: selectedTech },
-      });
+      const { data, error } = await supabase
+        .from("onet_occupation_technologies")
+        .select(`
+          occupation_code,
+          onet_occupation_enrichment (
+            occupation_title,
+            bright_outlook,
+            median_wage_annual
+          )
+        `)
+        .eq("technology_name", selectedTech)
+        .order("demand_score", { ascending: false })
+        .limit(50);
       if (error) throw error;
-      return data as { technology: string; occupations: TechOccupation[]; count: number };
+      return {
+        technology: selectedTech,
+        occupations: data || [],
+        count: data?.length || 0,
+      };
     },
     enabled: !!selectedTech,
     staleTime: 1000 * 60 * 5,
@@ -243,6 +303,28 @@ export default function TechSkillsPage() {
                 <p className="text-xs text-purple-700 mt-1">
                   {occupationsData.count} occupations use this technology
                 </p>
+                {techViewLoading && (
+                  <div className="text-xs text-purple-600 mt-1">Loading insights…</div>
+                )}
+                {techViewData && (
+                  <div className="text-xs text-purple-900 mt-2">
+                    <div className="mb-1"><span className="font-semibold">Top SOC codes:</span> {Array.isArray(techViewData.top_occupation_codes) ? techViewData.top_occupation_codes.join(", ") : "N/A"}</div>
+                    <div className=""><span className="font-semibold">Sample titles:</span> {Array.isArray(techViewData.occupation_titles) ? techViewData.occupation_titles.slice(0, 6).join(", ") : "N/A"}</div>
+                  </div>
+                )}
+                {skillDemand && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {typeof skillDemand.posting_count_30d === 'number' && (
+                      <Badge variant="outline" className="text-xs">Postings (30d): {skillDemand.posting_count_30d.toLocaleString()}</Badge>
+                    )}
+                    {typeof skillDemand.growth_rate_yoy === 'number' && (
+                      <Badge variant="outline" className="text-xs">YoY: {skillDemand.growth_rate_yoy.toFixed(1)}%</Badge>
+                    )}
+                    {typeof skillDemand.median_salary === 'number' && (
+                      <Badge variant="outline" className="text-xs">Median Salary: ${Math.round(skillDemand.median_salary).toLocaleString()}</Badge>
+                    )}
+                  </div>
+                )}
               </div>
 
               {occupationsData.occupations.map((occ, index) => (
@@ -285,6 +367,11 @@ export default function TechSkillsPage() {
                         <Button variant="link" className="h-auto p-0 text-xs" asChild>
                           <a href={`/ai-impact-planner`}>
                             Open in Planner →
+                          </a>
+                        </Button>
+                        <Button variant="link" className="h-auto p-0 text-xs" asChild>
+                          <a href={`/occupation/${occ.occupation_code}`}>
+                            View Details →
                           </a>
                         </Button>
                       </div>

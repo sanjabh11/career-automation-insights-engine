@@ -11,7 +11,7 @@ export interface CrosswalkParams {
   enabled?: boolean;
 }
 
-export function useCrosswalk<T = unknown>({ from, code, to, enabled = true }: CrosswalkParams) {
+export const useCrosswalk = <T = unknown>({ from, code, to, enabled = true }: CrosswalkParams) => {
   const key = ["crosswalk", from, code, to ?? "ALL"] as const;
 
   const fetcher = async (): Promise<T> => {
@@ -30,4 +30,4 @@ export function useCrosswalk<T = unknown>({ from, code, to, enabled = true }: Cr
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });
-}
+};

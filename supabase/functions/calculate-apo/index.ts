@@ -4,6 +4,9 @@ import { GeminiClient, getEnvModel, getEnvGenerationDefaults } from "../../lib/G
 import { z } from "https://esm.sh/zod@3.22.4";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { rateLimit } from "../../lib/RateLimiter.ts";
+import { jsonrepair } from "https://esm.sh/jsonrepair@3.0.2";
+
+declare const Deno: any;
 
 const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
@@ -345,7 +348,18 @@ serve(async (req) => {
     } catch (_e) {
       const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('No JSON found in model response');
-      parsed = JSON.parse(jsonMatch[0]);
+      const rawJson = jsonMatch[0];
+      try {
+        parsed = JSON.parse(rawJson);
+      } catch (innerErr) {
+        try {
+          const repaired = jsonrepair(rawJson);
+          parsed = JSON.parse(repaired);
+        } catch (repairErr) {
+          console.error('Failed to repair Gemini JSON output', { generatedText: generatedText.slice(0, 2000) });
+          throw repairErr;
+        }
+      }
     }
 
     const apo = ApoSchema.parse(parsed);
@@ -400,6 +414,165 @@ serve(async (req) => {
     );
     console.log('Deterministic overall APO:', overallApo);
 
+    // External adjustments (BLS trend + Economics) and Confidence Intervals (Monte Carlo)
+    let finalApo = overallApo;
+    let ciLower: number | null = null;
+    let ciUpper: number | null = null;
+    let ciIterations: number | null = null;
+    let blsTrendPct: number | null = null;
+    let blsAdjustmentPts: number | null = null;
+    let industrySector: string | null = null;
+    let sectorDelayMonths: number | null = null;
+    let econViabilityDiscount: number | null = null;
+
+    // Helper: convert SOC-8 to SOC-6 (e.g., 15-1252.00 -> 15-1252)
+    const toSoc6 = (soc8: string): string => {
+      const m = soc8.match(/^(\d{2}-\d{4})/);
+      return m ? m[1] : soc8;
+    };
+
+    // Helper: simple gaussian noise (Box-Muller) centered at 0 with std dev
+    const randn = (std = 1): number => {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v) * std;
+    };
+
+    // Fetch BLS trend and sector economics if service client is available
+    try {
+      if (supabase) {
+        // BLS trend
+        const soc6 = toSoc6(occupation.code);
+        const { data: blsRows } = await supabase
+          .from('bls_employment_data')
+          .select('year, employment_level, projected_growth_10y, median_wage_annual')
+          .eq('occupation_code_6', soc6)
+          .order('year', { ascending: true });
+        if (blsRows && blsRows.length) {
+          // Prefer projected_growth_10y if present on latest year
+          const latest = blsRows[blsRows.length - 1];
+          if (typeof latest.projected_growth_10y === 'number') {
+            blsTrendPct = latest.projected_growth_10y;
+          } else {
+            // Compute CAGR from first and last employment_level if available
+            const firstEmp = blsRows.find(r => typeof r.employment_level === 'number')?.employment_level ?? null;
+            const lastEmp = [...blsRows].reverse().find(r => typeof r.employment_level === 'number')?.employment_level ?? null;
+            const yearsSpan = blsRows[blsRows.length - 1].year - blsRows[0].year;
+            if (firstEmp && lastEmp && yearsSpan > 0) {
+              const cagr = Math.pow(lastEmp / firstEmp, 1 / yearsSpan) - 1;
+              blsTrendPct = Math.round(cagr * 10000) / 100; // percent with 2 decimals
+            }
+          }
+          if (typeof blsTrendPct === 'number') {
+            // Map trend to conservative adjustment in [-5, +5] points
+            if (blsTrendPct <= -3) blsAdjustmentPts = 3;
+            else if (blsTrendPct >= 5) blsAdjustmentPts = -3;
+            else blsAdjustmentPts = 0;
+            finalApo = clamp100(finalApo + (blsAdjustmentPts || 0));
+          }
+        }
+
+        // Sector mapping via enrichment (career_cluster -> sector)
+        const { data: enr } = await supabase
+          .from('onet_occupation_enrichment')
+          .select('career_cluster, median_wage_annual')
+          .eq('occupation_code', occupation.code)
+          .maybeSingle();
+        const cluster = (enr as any)?.career_cluster as string | undefined;
+        const wageFromEnrichment = (enr as any)?.median_wage_annual as number | undefined;
+        const clusterToSector: Record<string, string> = {
+          'Health Science': 'Healthcare',
+          'Finance': 'Finance',
+          'Manufacturing': 'Manufacturing',
+          'Information Technology': 'Technology',
+          'Education & Training': 'Education',
+          'Marketing': 'Retail',
+          'Transportation, Distribution & Logistics': 'Transportation',
+          'Law, Public Safety, Corrections & Security': 'Government',
+          'Government & Public Administration': 'Government',
+          'Business Management & Administration': 'Business',
+          'Architecture & Construction': 'Construction',
+          'Hospitality & Tourism': 'Hospitality',
+          'Human Services': 'Services',
+          'Science, Technology, Engineering & Mathematics': 'Technology',
+          'Agriculture, Food & Natural Resources': 'Agriculture',
+          'Arts, Audio/Video Technology & Communications': 'Media'
+        };
+        industrySector = cluster ? (clusterToSector[cluster] || cluster) : null;
+
+        // Economics lookup (aggregate for sector if detailed task categories not mapped yet)
+        if (industrySector) {
+          const { data: econRows } = await supabase
+            .from('automation_economics')
+            .select('implementation_cost_low, implementation_cost_high, roi_timeline_months, technology_maturity, wef_adoption_score, regulatory_friction, min_org_size, annual_labor_cost_threshold')
+            .eq('industry_sector', industrySector);
+          if (econRows && econRows.length) {
+            // Average cost band across rows (placeholder until task_category mapping is added)
+            const lowAvg = econRows.map(r => Number(r.implementation_cost_low || 0)).filter(n => n > 0);
+            const highAvg = econRows.map(r => Number(r.implementation_cost_high || 0)).filter(n => n > 0);
+            const avgCost = (lowAvg.length && highAvg.length) ? ((lowAvg.reduce((a,b)=>a+b,0)/lowAvg.length + highAvg.reduce((a,b)=>a+b,0)/highAvg.length) / 2) : null;
+            const frictionValues = econRows.map(r => String(r.regulatory_friction || 'medium'));
+            const frictionRank = (s: string) => s === 'high' ? 3 : s === 'low' ? 1 : 2;
+            const avgFriction = frictionValues.length ? frictionValues.sort((a,b)=>frictionRank(a)-frictionRank(b))[Math.floor(frictionValues.length/2)] : 'medium';
+            sectorDelayMonths = avgFriction === 'high' ? 24 : avgFriction === 'medium' ? 12 : 0;
+
+            // Labor cost proxy from BLS wage or enrichment
+            let annualWage = wageFromEnrichment ?? null;
+            if (!annualWage && blsRows && blsRows.length) {
+              const lastWithWage = [...blsRows].reverse().find(r => typeof r.median_wage_annual === 'number');
+              annualWage = lastWithWage?.median_wage_annual ?? null;
+            }
+            if (avgCost && annualWage) {
+              const threshold = 3 * annualWage;
+              if (avgCost > threshold) {
+                econViabilityDiscount = 10; // subtract up to 10 points for poor ROI
+                finalApo = clamp100(finalApo - econViabilityDiscount);
+              } else {
+                econViabilityDiscount = 0;
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('External adjustments failed (non-fatal):', e);
+    }
+
+    // Confidence Intervals via Monte Carlo sampling (fast, light-touch)
+    try {
+      const N = Number(Deno.env.get('APO_CI_ITERATIONS') ?? '200');
+      const sims: number[] = [];
+      for (let i = 0; i < N; i++) {
+        // Apply small noise to each category score and external adjustments
+        const jitter = (x: number) => clamp100(x * (1 + randn(0.03)));
+        const cs = {
+          tasks: jitter(categoryScores.tasks?.apo ?? 0),
+          knowledge: jitter(categoryScores.knowledge?.apo ?? 0),
+          skills: jitter(categoryScores.skills?.apo ?? 0),
+          abilities: jitter(categoryScores.abilities?.apo ?? 0),
+          technologies: jitter(categoryScores.technologies?.apo ?? 0),
+        };
+        let sim = clamp100(
+          cs.tasks * weights.tasks +
+          cs.knowledge * weights.knowledge +
+          cs.skills * weights.skills +
+          cs.abilities * weights.abilities +
+          cs.technologies * weights.technologies
+        );
+        if (typeof blsAdjustmentPts === 'number') sim = clamp100(sim + blsAdjustmentPts * (1 + randn(0.2)));
+        if (typeof econViabilityDiscount === 'number') sim = clamp100(sim - econViabilityDiscount * (1 + randn(0.2)));
+        sims.push(sim);
+      }
+      sims.sort((a,b)=>a-b);
+      const q = (p: number) => sims[Math.max(0, Math.min(sims.length - 1, Math.floor(p * (sims.length - 1))))];
+      ciLower = Math.round(q(0.05) * 100) / 100;
+      ciUpper = Math.round(q(0.95) * 100) / 100;
+      ciIterations = sims.length;
+    } catch (e) {
+      console.warn('CI computation failed (non-fatal):', e);
+    }
+
     // Cross-field validation (T4): compare model category_apos with computed aggregates
     const validationWarnings: string[] = [];
     for (const cat of ["tasks","knowledge","skills","abilities","technologies"] as const) {
@@ -416,7 +589,7 @@ serve(async (req) => {
       code: occupation.code,
       title: occupation.title,
       description: `AI-analyzed occupation with deterministic APO assessment using research-driven methodology.`,
-      overallAPO: validateAPOScore(overallApo, 'deterministic overall APO'),
+      overallAPO: validateAPOScore(finalApo, 'final APO with external adjustments'),
       confidence: (() => {
         // overall confidence from mean of category confidences
         const map = { low: 0.3, medium: 0.6, high: 0.85 } as const;
@@ -485,6 +658,14 @@ serve(async (req) => {
         calculation_method: 'deterministic_formula',
         weights_used: weights,
         timestamp: new Date().toISOString()
+      },
+      ci: (ciLower != null && ciUpper != null) ? { lower: ciLower, upper: ciUpper, iterations: ciIterations } : undefined,
+      externalSignals: {
+        blsTrendPct: blsTrendPct ?? undefined,
+        blsAdjustmentPts: blsAdjustmentPts ?? undefined,
+        industrySector: industrySector ?? undefined,
+        sectorDelayMonths: sectorDelayMonths ?? undefined,
+        econViabilityDiscount: econViabilityDiscount ?? undefined
       }
     };
 
@@ -504,7 +685,7 @@ serve(async (req) => {
           model_json: modelJson as unknown as Record<string, unknown>,
           computed_items: computedItems as unknown as Record<string, unknown>,
           category_scores: categoryScores as unknown as Record<string, unknown>,
-          overall_apo: overallApo,
+          overall_apo: finalApo,
           weights: weights as unknown as Record<string, unknown>,
           config_id: configId,
           factor_multipliers: factorMultipliersUsed as unknown as Record<string, unknown>,
@@ -513,6 +694,18 @@ serve(async (req) => {
           latency_ms: latency,
           user_id: userId,
           cohort: cohort,
+          ci_lower: ciLower,
+          ci_upper: ciUpper,
+          ci_iterations: ciIterations,
+          bls_trend_pct: blsTrendPct,
+          bls_adjustment_pts: blsAdjustmentPts,
+          econ_viability_discount: econViabilityDiscount,
+          sector_delay_months: sectorDelayMonths,
+          industry_sector: industrySector,
+          data_provenance: {
+            bls: typeof blsTrendPct === 'number',
+            economics: typeof industrySector === 'string'
+          } as unknown as Record<string, unknown>,
           error: null,
         } as const;
         await supabase.from('apo_logs').insert(insertPayload as any);

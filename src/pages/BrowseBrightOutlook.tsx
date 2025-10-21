@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles } from "lucide-react";
 import { BrightOutlookBadge } from "@/components/BrightOutlookBadge";
-import { useAdvancedSearch } from "@/hooks/useAdvancedSearch";
+import type { OnetEnrichmentData } from "@/types/onet-enrichment";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,24 +13,64 @@ import { formatWage } from "@/types/onet-enrichment";
 import { useNavigate } from "react-router-dom";
 
 export default function BrowseBrightOutlook() {
-  const { search, results, total, hasMore, loadMore, isSearching } = useAdvancedSearch();
+  const PAGE_SIZE = 20;
+  const [results, setResults] = useState<OnetEnrichmentData[]>([]);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [jobZone, setJobZone] = useState<number | undefined>(undefined);
   const [minWage, setMinWage] = useState<string>("");
   const [maxWage, setMaxWage] = useState<string>("");
   const navigate = useNavigate();
 
+  const buildQuery = () => {
+    let query = supabase
+      .from("onet_occupation_enrichment")
+      .select(
+        "occupation_code, occupation_title, bright_outlook_category, is_stem, job_zone, median_wage_annual",
+        { count: "exact" }
+      )
+      .eq("bright_outlook", true);
+
+    if (category) query = query.eq("bright_outlook_category", category);
+    if (jobZone) query = query.eq("job_zone", jobZone);
+    if (minWage) query = query.gte("median_wage_annual", Number(minWage));
+    if (maxWage) query = query.lte("median_wage_annual", Number(maxWage));
+    return query;
+  };
+
+  const fetchPage = async (reset: boolean) => {
+    setIsSearching(true);
+    try {
+      const base = buildQuery();
+      const currentOffset = reset ? 0 : offset;
+      const rangeEnd = currentOffset + PAGE_SIZE - 1;
+      const { data, count, error } = await base
+        .order("median_wage_annual", { ascending: false, nullsFirst: false })
+        .range(currentOffset, rangeEnd);
+      if (error) throw error;
+      setResults((prev) => (reset ? data || [] : [...prev, ...(data || [])]));
+      const newOffset = currentOffset + (data?.length || 0);
+      setOffset(newOffset);
+      setTotal(count || 0);
+      setHasMore(newOffset < (count || 0));
+    } catch (e) {
+      console.error("Fetch error:", e);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   useEffect(() => {
-    search("", { brightOutlook: true });
+    fetchPage(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyFilters = () => {
-    const filters: any = { brightOutlook: true };
-    if (category) filters.brightOutlookCategory = category;
-    if (jobZone) filters.jobZone = jobZone;
-    if (minWage) filters.minWage = Number(minWage);
-    if (maxWage) filters.maxWage = Number(maxWage);
-    search("", filters);
+    setOffset(0);
+    fetchPage(true);
   };
 
   const { data: parity, isLoading: parityLoading } = useQuery({
@@ -136,7 +176,7 @@ export default function BrowseBrightOutlook() {
             >
               <Card
                 className="p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigate(`/?search=${encodeURIComponent(occupation.occupation_title || occupation.occupation_code)}`)}
+                onClick={() => navigate(`/occupation/${occupation.occupation_code}`)}
                 title="Open in Dashboard"
               >
                 <div className="space-y-2">
@@ -172,7 +212,7 @@ export default function BrowseBrightOutlook() {
         </div>
 
         {hasMore && (
-          <Button onClick={loadMore} disabled={isSearching} variant="outline" className="w-full">
+          <Button onClick={() => fetchPage(false)} disabled={isSearching} variant="outline" className="w-full">
             {isSearching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
             Load More
           </Button>
