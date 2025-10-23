@@ -409,3 +409,15 @@ CSV export added to Crosswalk results and Veterans matches.
 - Optional: true PDF generation (server-side) in addition to print-friendly HTML
 - LLM prompt library and versioning system
 - RAG-based grounding for occupation analysis
+
+### Implementation Update (2025-10-22)
+
+#### What changed
+- Validator now records Pearson r ≈ 0.7827 with sample size = 6 in `public.validation_metrics`.
+- Edge Functions: `calculate-apo` (redeployed with env/header fallback), `calculate-apo-with-ci` (new), `bls-sync` (secured with `x-api-key`).
+- ROI capability: SQL function `public.calculate_roi(p_soc8 text)` added; ROI badge integrated in `OccupationAnalysis.tsx`.
+- Seeds: BLS samples for `15-1252`, `29-1141`; economics rows for Technology, Healthcare, Finance, Manufacturing, Retail.
+- Security: RLS enabled with public read policies for `bls_employment_data`, `automation_economics`, `skill_demand_signals`.
+
+#### Notes
+- Further function deployments are currently limited by Supabase plan (402). Consider removing unused functions or upgrading plan to redeploy remaining updates (e.g., `skill-demand-scraper` security patch).

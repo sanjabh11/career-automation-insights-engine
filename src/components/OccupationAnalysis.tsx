@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
 import { Plus, BarChart3, TrendingUp, TrendingDown, Clock, Target, AlertTriangle } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line } from 'recharts';
 import { EnhancedAPOVisualization } from './EnhancedAPOVisualization';
 import { BrightOutlookBadge } from './BrightOutlookBadge';
 import { EmploymentOutlookCard } from './EmploymentOutlookCard';
@@ -68,9 +69,49 @@ export const OccupationAnalysis = ({
 }: OccupationAnalysisProps) => {
   const { hasBrightOutlook, brightOutlookCategory } = useBrightOutlook(occupation.code);
   const [econ, setEcon] = React.useState<any | null>(null);
+  const [blsSeries, setBlsSeries] = React.useState<Array<{ x: number; y: number }>>([]);
+  const [roi, setRoi] = React.useState<{ roi_months?: number; industry_sector?: string; annual_wage?: number; avg_cost?: number } | null>(null);
+  const [econProv, setEconProv] = React.useState<{ source?: string | null; source_url?: string | null; as_of_year?: number | null } | null>(null);
+
+  const toSoc6 = (code: string) => {
+    const m = (code || '').match(/^(\d{2}-\d{4})/);
+    return m ? m[1] : code;
+  };
+
+  // Fallback: derive sector from SOC major group when not provided by the function
+  const deriveSector = (soc8: string): string | null => {
+    const major = (soc8 || '').slice(0, 2);
+    switch (major) {
+      case '11': return 'Business';
+      case '13': return 'Finance';
+      case '15': return 'Technology';
+      case '17': return 'Technology';
+      case '19': return 'Technology';
+      case '21': return 'Services';
+      case '25': return 'Education';
+      case '27': return 'Media';
+      case '29': return 'Healthcare';
+      case '31': return 'Services';
+      case '33': return 'Government';
+      case '35': return 'Hospitality';
+      case '37': return 'Services';
+      case '39': return 'Services';
+      case '41': return 'Retail';
+      case '43': return 'Business';
+      case '45': return 'Agriculture';
+      case '47': return 'Construction';
+      case '49': return 'Manufacturing';
+      case '51': return 'Manufacturing';
+      case '53': return 'Transportation';
+      default: return null;
+    }
+  };
+
+  const sector = React.useMemo(() => {
+    return occupation?.externalSignals?.industrySector ?? deriveSector(occupation?.code);
+  }, [occupation?.externalSignals?.industrySector, occupation?.code]);
 
   React.useEffect(() => {
-    const sector = occupation?.externalSignals?.industrySector;
     if (!sector) { setEcon(null); return; }
     (async () => {
       const { data } = await (supabase as any)
@@ -82,7 +123,42 @@ export const OccupationAnalysis = ({
         .maybeSingle();
       setEcon(data || null);
     })();
-  }, [occupation?.externalSignals?.industrySector]);
+  }, [sector]);
+
+  React.useEffect(() => {
+    const soc6 = toSoc6(occupation.code);
+    if (!soc6) { setBlsSeries([]); return; }
+    (async () => {
+      const { data } = await (supabase as any)
+        .from('bls_employment_data')
+        .select('year, employment_level')
+        .eq('occupation_code_6', soc6)
+        .order('year', { ascending: true });
+      const series = (data || [])
+        .filter((r: any) => typeof r.employment_level === 'number' && typeof r.year === 'number')
+        .map((r: any) => ({ x: r.year, y: r.employment_level }));
+      setBlsSeries(series);
+    })();
+  }, [occupation?.code]);
+
+  React.useEffect(() => {
+    if (!occupation?.code) { setRoi(null); return; }
+    (async () => {
+      const { data } = await (supabase as any).rpc('calculate_roi', { p_soc8: occupation.code }).single();
+      setRoi(data || null);
+      if (data?.industry_sector) {
+        const { data: prov } = await (supabase as any)
+          .from('automation_economics')
+          .select('source, source_url, as_of_year')
+          .eq('industry_sector', data.industry_sector)
+          .limit(1)
+          .maybeSingle();
+        setEconProv((prov as any) || null);
+      } else {
+        setEconProv(null);
+      }
+    })();
+  }, [occupation?.code]);
   
   const getAPOColor = (apo: number) => {
     if (apo >= 70) return 'text-red-600 bg-red-50 border-red-200';
@@ -195,6 +271,9 @@ export const OccupationAnalysis = ({
                   {occupation.confidence} confidence
                 </Badge>
               )}
+              {typeof roi?.roi_months === 'number' && (
+                <Badge variant="secondary" className="text-xs">ROI: {roi.roi_months} mo</Badge>
+              )}
               {typeof occupation.externalSignals?.blsTrendPct === 'number' && (
                 <Badge variant="outline" className="text-xs">
                   BLS: {occupation.externalSignals.blsTrendPct >= 0 ? '📈' : '📉'} {occupation.externalSignals.blsTrendPct}%
@@ -202,13 +281,61 @@ export const OccupationAnalysis = ({
               )}
             </div>
 
-            {(occupation.externalSignals?.blsTrendPct !== undefined || occupation.externalSignals?.industrySector) && (
+            {(roi || occupation?.externalSignals?.blsTrendPct != null || occupation?.ci) && (
+              <div className="mt-2 grid gap-2 rounded-md border p-2 sm:grid-cols-3">
+                <div className="text-xs">
+                  <div className="font-medium">Evidence</div>
+                  {typeof (occupation as any)?.ci?.lower === 'number' && typeof (occupation as any)?.ci?.upper === 'number' && (
+                    <div>CI: {(occupation as any).ci.lower}–{(occupation as any).ci.upper}{(occupation as any)?.ci?.iterations ? ` (n=${(occupation as any).ci.iterations})` : ''}</div>
+                  )}
+                </div>
+                <div className="text-xs">
+                  {typeof roi?.roi_months === 'number' && (
+                    <div>ROI: {roi?.roi_months} mo{roi?.annual_wage ? ` • wage ~$${Math.round((roi.annual_wage as number)).toLocaleString()}` : ''}{roi?.avg_cost ? ` • cost ~$${Math.round((roi.avg_cost as number)).toLocaleString()}` : ''}</div>
+                  )}
+                  {roi?.industry_sector && (
+                    <div>Sector: {roi.industry_sector}</div>
+                  )}
+                </div>
+                <div className="text-xs">
+                  {blsSeries && blsSeries.length > 0 && (
+                    <div>BLS year: {blsSeries[blsSeries.length - 1]?.x}</div>
+                  )}
+                  {econProv?.source && (
+                    <div>
+                      Econ: {econProv.source}
+                      {econProv?.as_of_year ? ` (${econProv.as_of_year})` : ''}
+                      {econProv?.source_url ? (
+                        <a href={econProv.source_url as string} target="_blank" rel="noreferrer" className="ml-1 underline">link</a>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {blsSeries && blsSeries.length > 1 && (
+              <div className="mt-2">
+                <div className="h-10 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={blsSeries} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+                      <Line type="monotone" dataKey="y" stroke="#2563eb" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="text-[10px] text-gray-500">
+                  Employment trend {blsSeries[0].x}–{blsSeries[blsSeries.length - 1].x}
+                </div>
+              </div>
+            )}
+
+            {(occupation.externalSignals?.blsTrendPct !== undefined || sector) && (
               <div className="text-xs text-gray-600 mt-1 flex items-center gap-2">
                 <span className="opacity-80">Provenance:</span>
                 {occupation.externalSignals?.blsTrendPct !== undefined && (
                   <Badge variant="outline" className="text-[10px]">BLS</Badge>
                 )}
-                {occupation.externalSignals?.industrySector && (
+                {sector && (
                   <Badge variant="outline" className="text-[10px]">Economics</Badge>
                 )}
               </div>
@@ -263,43 +390,54 @@ export const OccupationAnalysis = ({
           )}
         </div>
 
-        {econ && (
+        {(econ || sector) && (
           <div className="mb-6">
             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
               Economic Viability
             </h3>
             <Card className="p-4">
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                {typeof econ.roi_timeline_months === 'number' && (
-                  <Badge variant="secondary" className="text-xs">ROI: {econ.roi_timeline_months} mo</Badge>
-                )}
-                {econ.technology_maturity && (
-                  <Badge variant="outline" className="text-xs">Maturity: {String(econ.technology_maturity)}</Badge>
-                )}
-                {typeof econ.wef_adoption_score === 'number' && (
-                  <Badge variant="outline" className="text-xs">WEF adoption: {Number(econ.wef_adoption_score).toFixed(1)}</Badge>
-                )}
-                {econ.regulatory_friction && (
-                  <Badge variant="outline" className="text-xs">Regulatory: {String(econ.regulatory_friction)}</Badge>
-                )}
-              </div>
-              <div className="text-sm text-gray-700 flex flex-wrap gap-4">
-                {(typeof econ.implementation_cost_low === 'number' || typeof econ.implementation_cost_high === 'number') && (
-                  <div>
-                    <span className="font-medium">Implementation cost:</span>{' '}
-                    {typeof econ.implementation_cost_low === 'number' ? `$${Math.round(econ.implementation_cost_low).toLocaleString()}` : '—'}
-                    {' – '}
-                    {typeof econ.implementation_cost_high === 'number' ? `$${Math.round(econ.implementation_cost_high).toLocaleString()}` : '—'}
+              {econ ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {typeof econ.roi_timeline_months === 'number' && (
+                      <Badge variant="secondary" className="text-xs">ROI: {econ.roi_timeline_months} mo</Badge>
+                    )}
+                    {econ.technology_maturity && (
+                      <Badge variant="outline" className="text-xs">Maturity: {String(econ.technology_maturity)}</Badge>
+                    )}
+                    {typeof econ.wef_adoption_score === 'number' && (
+                      <Badge variant="outline" className="text-xs">WEF adoption: {Number(econ.wef_adoption_score).toFixed(1)}</Badge>
+                    )}
+                    {econ.regulatory_friction && (
+                      <Badge variant="outline" className="text-xs">Regulatory: {String(econ.regulatory_friction)}</Badge>
+                    )}
                   </div>
-                )}
-                {typeof econ.min_org_size === 'number' && (
-                  <div><span className="font-medium">Min org size:</span> {econ.min_org_size}+ employees</div>
-                )}
-                {typeof econ.annual_labor_cost_threshold === 'number' && (
-                  <div><span className="font-medium">Annual labor cost ≥</span> ${Math.round(econ.annual_labor_cost_threshold).toLocaleString()}</div>
-                )}
-              </div>
+                  <div className="text-sm text-gray-700 flex flex-wrap gap-4">
+                    {(typeof econ.implementation_cost_low === 'number' || typeof econ.implementation_cost_high === 'number') && (
+                      <div>
+                        <span className="font-medium">Implementation cost:</span>{' '}
+                        {typeof econ.implementation_cost_low === 'number' ? `$${Math.round(econ.implementation_cost_low).toLocaleString()}` : '—'}
+                        {' – '}
+                        {typeof econ.implementation_cost_high === 'number' ? `$${Math.round(econ.implementation_cost_high).toLocaleString()}` : '—'}
+                      </div>
+                    )}
+                    {typeof econ.min_org_size === 'number' && (
+                      <div><span className="font-medium">Min org size:</span> {econ.min_org_size}+ employees</div>
+                    )}
+                    {typeof econ.annual_labor_cost_threshold === 'number' && (
+                      <div><span className="font-medium">Annual labor cost ≥</span> ${Math.round(econ.annual_labor_cost_threshold).toLocaleString()}</div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="text-sm text-gray-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="outline" className="text-xs">Sector: {sector}</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground">Economic references are not available for this sector yet.</div>
+                </div>
+              )}
             </Card>
           </div>
         )}

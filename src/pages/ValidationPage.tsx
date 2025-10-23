@@ -86,6 +86,12 @@ export default function ValidationPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
+            <a href="/docs/validation/VALIDATION_PROTOCOL.md" target="_blank" rel="noreferrer">📋 Validation Protocol</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/validation/ACADEMIC_CORRELATION_REPORT.md" target="_blank" rel="noreferrer">🎓 Academic Correlation Report</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
             <a href="/docs/model_cards/APO_MODEL_CARD.pdf" target="_blank" rel="noreferrer">APO Model Card (PDF)</a>
           </Button>
           <Button variant="outline" size="sm" asChild>

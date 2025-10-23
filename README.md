@@ -10,6 +10,14 @@
 
 > **Latest Update (Oct 19, 2025)**: Browse & Discovery features fully operational! STEM (102), Career Clusters (16), Job Zones (5), Bright Outlook (41), and Hot Technologies (40) all working with second-level drill-downs. All endpoints returning data from database. Status indicators added to all pages. See [docs/IMPLEMENTATION_PLAN_FINAL.md](docs/IMPLEMENTATION_PLAN_FINAL.md) for details.
 
+### Implementation Snapshot (Oct 22, 2025)
+- Validator now recording Pearson r ≈ 0.7827 (n=6) in `public.validation_metrics`.
+- Deployed Edge Functions: `calculate-apo`, `calculate-apo-with-ci`, `bls-sync` (API-key protected).
+- ROI estimation available via SQL function `public.calculate_roi(p_soc8 text)`; UI badge on Occupation page.
+- Seeded BLS samples for `15-1252`, `29-1141` and exemplar `automation_economics` rows (Technology, Healthcare, Finance, Manufacturing, Retail).
+- RLS enabled with public read for `bls_employment_data`, `automation_economics`, `skill_demand_signals`.
+- Note: Further function deploys are currently limited by Supabase plan (402). Redeploys may require deleting unused functions or disabling spend cap.
+
 ## 📋 Table of Contents
 - [Overview](#overview)
 - [Features](#features)

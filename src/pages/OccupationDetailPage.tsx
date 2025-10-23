@@ -7,9 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, Sparkles } from "lucide-react";
 import { formatWage } from "@/types/onet-enrichment";
+import { OccupationAnalysis } from "@/components/OccupationAnalysis";
 
 export default function OccupationDetailPage() {
   const { code } = useParams<{ code: string }>();
+  const apoFunctionApiKey = import.meta.env.VITE_APO_FUNCTION_API_KEY as string | undefined;
+  const [aiData, setAiData] = React.useState<any | null>(null);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const [aiError, setAiError] = React.useState<string | null>(null);
 
   const { data: occupation, isLoading: loadingOcc, error: occError } = useQuery({
     queryKey: ["occupation", code],
@@ -26,6 +31,30 @@ export default function OccupationDetailPage() {
     },
     enabled: !!code,
   });
+
+  React.useEffect(() => {
+    (async () => {
+      if (!occupation?.occupation_code || !occupation?.occupation_title) return;
+      if (!apoFunctionApiKey) { setAiError("APO configuration missing"); return; }
+      setAiLoading(true);
+      setAiError(null);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const headers: Record<string, string> = { 'x-api-key': apoFunctionApiKey };
+        if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+        const { data, error } = await supabase.functions.invoke('calculate-apo', {
+          body: { occupation: { code: occupation.occupation_code, title: occupation.occupation_title } },
+          headers,
+        });
+        if (error) throw new Error(error.message || 'APO calculation failed');
+        if (data && typeof data === 'object') setAiData(data);
+      } catch (e: any) {
+        setAiError(e?.message || 'Failed to load AI analysis');
+      } finally {
+        setAiLoading(false);
+      }
+    })();
+  }, [occupation?.occupation_code, occupation?.occupation_title, apoFunctionApiKey]);
 
   const { data: zoneInfo } = useQuery({
     queryKey: ["job-zone", occupation?.job_zone],
@@ -133,6 +162,25 @@ export default function OccupationDetailPage() {
           )}
           {occupation.median_wage_annual && (
             <Badge variant="outline" className="text-xs text-green-700">{formatWage(occupation.median_wage_annual)}</Badge>
+          )}
+        </div>
+
+        <div className="mt-4">
+          {aiLoading && (
+            <div className="flex items-center text-muted-foreground text-sm"><Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading AI analysis…</div>
+          )}
+          {aiError && (
+            <div className="text-xs text-red-600">{aiError}</div>
+          )}
+          {aiData && (
+            <div className="mt-4">
+              <OccupationAnalysis 
+                occupation={aiData}
+                overallAPO={aiData.overallAPO}
+                onAddToSelected={() => {}}
+                isAlreadySelected={false}
+              />
+            </div>
           )}
         </div>
 

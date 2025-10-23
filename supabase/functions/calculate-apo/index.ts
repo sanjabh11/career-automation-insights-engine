@@ -17,6 +17,8 @@ const corsHeaders = {
   'Access-Control-Expose-Headers': 'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset',
 } as const;
 
+const LOCAL_DEV_PREFIXES = ['http://localhost:', 'http://127.0.0.1:', 'https://localhost:', 'https://127.0.0.1:'];
+
 function isOriginPermitted(origin: string): boolean {
   const raw = (Deno.env.get('APO_ALLOWED_ORIGINS') || '*')
     .split(',')
@@ -24,6 +26,8 @@ function isOriginPermitted(origin: string): boolean {
     .filter(Boolean);
   if (raw.length === 1 && raw[0] === '*') return true;
   if (!origin) return false;
+  // Always allow common localhost origins for local development
+  if (LOCAL_DEV_PREFIXES.some(prefix => origin.startsWith(prefix))) return true;
   return raw.includes(origin);
 }
 
@@ -273,8 +277,17 @@ serve(async (req) => {
     console.log(`Calculating enhanced APO for occupation: ${occupation.title} (${occupation.code})`);
 
     // Create service client (used for config and telemetry)
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    // Fallback to header-provided service key and derive URL from request when env is missing.
+    const rawUrl = new URL(req.url);
+    const host = rawUrl.hostname;
+    const derivedBaseUrl = host.endsWith('.functions.supabase.co')
+      ? `https://${host.replace('.functions.supabase.co', '.supabase.co')}`
+      : `${rawUrl.protocol}//${host}`;
+    const headerApiKey = req.headers.get('apikey')
+      || req.headers.get('x-service-key')
+      || (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('PROJECT_URL') || derivedBaseUrl;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY') || headerApiKey || '';
     const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
     if (!supabase) console.warn('Supabase service client not available; using DEFAULT_* config');
 

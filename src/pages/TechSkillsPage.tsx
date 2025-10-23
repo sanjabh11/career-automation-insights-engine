@@ -294,14 +294,14 @@ export default function TechSkillsPage() {
             </div>
           )}
 
-          {selectedTech && !occupationsLoading && occupationsData && (
+          {selectedTech && !occupationsLoading && (
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
                 <p className="text-sm font-semibold text-purple-900">
                   {selectedTech}
                 </p>
                 <p className="text-xs text-purple-700 mt-1">
-                  {occupationsData.count} occupations use this technology
+                  {(occupationsData?.count ?? 0)} occupations use this technology
                 </p>
                 {techViewLoading && (
                   <div className="text-xs text-purple-600 mt-1">Loading insights…</div>
@@ -327,7 +327,7 @@ export default function TechSkillsPage() {
                 )}
               </div>
 
-              {occupationsData.occupations.map((occ, index) => (
+              {(occupationsData?.occupations || []).map((occ, index) => (
                 <motion.div
                   key={occ.occupation_code}
                   initial={{ opacity: 0, y: 20 }}

@@ -30,6 +30,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSession } from '@/hooks/useSession';
 import { searchRateLimiter, apoRateLimiter, exportRateLimiter, checkRateLimit } from '@/utils/rateLimiting';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface EnhancedAPODashboardHeaderProps {
   userEmail?: string | null;
@@ -47,6 +49,21 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
   const searchStatus = user ? checkRateLimit(searchRateLimiter, user.id) : { remaining: 0, resetTime: Date.now(), timeUntilReset: 0 };
   const apoStatus = user ? checkRateLimit(apoRateLimiter, user.id) : { remaining: 0, resetTime: Date.now(), timeUntilReset: 0 };
   const exportStatus = user ? checkRateLimit(exportRateLimiter, user.id) : { remaining: 0, resetTime: Date.now(), timeUntilReset: 0 };
+
+  const { data: corrMetric } = useQuery({
+    queryKey: ['validation-metric-pearson-r-header'],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from('validation_metrics')
+        .select('metric_name, value, sample_size, created_at')
+        .eq('metric_name', 'apo_vs_academic_pearson_r')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data as any;
+    },
+    staleTime: 60_000,
+  });
 
   // Primary navigation destinations
   const goCareerPlanning = () => navigate('/career-planning');
@@ -218,6 +235,11 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                   label="Search Requests"
                   variant="search"
                 />
+                {corrMetric && (
+                  <Badge variant="outline" className="text-[10px]">
+                    Acad r={(Number(corrMetric.value)).toFixed(2)}{typeof corrMetric.sample_size === 'number' ? ` n=${corrMetric.sample_size}` : ''}
+                  </Badge>
+                )}
               </div>
 
               {userEmail && <LogoutButton />}

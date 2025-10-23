@@ -38,6 +38,7 @@ import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
 import TaskSearchPage from "./pages/TaskSearchPage";
 import Test from "./pages/Test";
+import EconImporter from "./pages/EconImporter";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ function App() {
             <Route path="/skills-builder" element={<SkillsBuilderPage />} />
             <Route path="/operations" element={<OperationsPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/econ-importer" element={<EconImporter />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/browse/job-zones" element={<BrowseJobZones />} />

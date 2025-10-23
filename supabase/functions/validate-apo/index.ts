@@ -48,7 +48,22 @@ serve(async (req: Request) => {
 
     // Optional filter from request
     const body = await req.json().catch(() => ({}));
-    const sinceDays = typeof body?.sinceDays === "number" ? Math.max(0, Math.floor(body.sinceDays)) : null;
+    const rawSince = body?.sinceDays;
+    const defaultSince = Number(Deno.env.get("VALIDATION_DEFAULT_SINCE_DAYS") ?? "90");
+
+    let sinceDays: number | null;
+    if (rawSince === undefined) {
+      sinceDays = Number.isFinite(defaultSince) && defaultSince > 0 ? Math.floor(defaultSince) : null;
+    } else if (rawSince === null || rawSince === "all" || rawSince === "full") {
+      sinceDays = null;
+    } else if (typeof rawSince === "number" && Number.isFinite(rawSince)) {
+      sinceDays = rawSince > 0 ? Math.floor(rawSince) : null;
+    } else if (typeof rawSince === "string" && rawSince.trim() !== "") {
+      const parsed = Number(rawSince);
+      sinceDays = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : null;
+    } else {
+      sinceDays = null;
+    }
 
     // Fetch expert assessments
     const { data: expertRows, error: expertErr } = await supabase
@@ -63,7 +78,7 @@ serve(async (req: Request) => {
       .select("occupation_code, overall_apo, created_at")
       .not("overall_apo", "is", null);
 
-    if (sinceDays && sinceDays > 0) {
+    if (sinceDays !== null && sinceDays > 0) {
       const from = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000).toISOString();
       apoQuery = apoQuery.gte("created_at", from);
     }
