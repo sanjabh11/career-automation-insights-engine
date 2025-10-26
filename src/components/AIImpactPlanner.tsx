@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,13 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useSession } from '@/hooks/useSession';
+import { occupationDefaults } from '@/content/templates/occupationDefaults';
+import { HelpTrigger } from '@/components/help/HelpTrigger';
+import { PortfolioHedgingCard } from '@/components/PortfolioHedgingCard';
+import { PortfolioFrontierCard } from '@/components/PortfolioFrontierCard';
+import { SkillFreshnessAlerts } from '@/components/SkillFreshnessAlerts';
+import { OutcomeSurvey } from '@/components/outcomes/OutcomeSurvey';
+import { OutcomesList } from '@/components/outcomes/OutcomesList';
 
 // Types
 interface Occupation {
@@ -156,6 +163,123 @@ export function AIImpactPlanner() {
   const [selectedSkillForCourses, setSelectedSkillForCourses] = useState<string | null>(null);
   const [coursesForSkill, setCoursesForSkill] = useState<CourseResult[]>([]);
   const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+
+  const [resistanceResult, setResistanceResult] = useState<any | null>(null);
+  const [isComputingResistance, setIsComputingResistance] = useState(false);
+  const [sfSkill, setSfSkill] = useState('');
+  const [sfAcquiredYear, setSfAcquiredYear] = useState('');
+  const [isLoadingFreshness, setIsLoadingFreshness] = useState(false);
+  const [freshnessResult, setFreshnessResult] = useState<any | null>(null);
+  const [compASkill, setCompASkill] = useState('');
+  const [compAYear, setCompAYear] = useState('');
+  const [compAHalfLife, setCompAHalfLife] = useState('');
+  const [compBSkill, setCompBSkill] = useState('');
+  const [compBYear, setCompBYear] = useState('');
+  const [compBHalfLife, setCompBHalfLife] = useState('');
+  const [isComparing, setIsComparing] = useState(false);
+  const [compResult, setCompResult] = useState<any | null>(null);
+  const [simHoursPerWeek, setSimHoursPerWeek] = useState(10);
+  const [simRiskTolerance, setSimRiskTolerance] = useState<'conservative' | 'balanced' | 'aggressive'>('balanced');
+  const [simCurrentSalary, setSimCurrentSalary] = useState('');
+  const [simTargetSalary, setSimTargetSalary] = useState('');
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simResult, setSimResult] = useState<any | null>(null);
+
+  const [cascadePayload, setCascadePayload] = useState('');
+  const [cascadeResult, setCascadeResult] = useState<any | null>(null);
+  const [isCascadeLoading, setIsCascadeLoading] = useState(false);
+  const [pfItems, setPfItems] = useState<Array<{skill:string; expected:string; risk:string}>>([
+    { skill: '', expected: '', risk: '' },
+    { skill: '', expected: '', risk: '' },
+    { skill: '', expected: '', risk: '' },
+  ]);
+  const [pfCorrelation, setPfCorrelation] = useState('0.2');
+  const [pfResult, setPfResult] = useState<any | null>(null);
+  const [isPfLoading, setIsPfLoading] = useState(false);
+  const [scenario, setScenario] = useState<'none' | 'recession' | 'ai'>('none');
+
+  const addPfRow = () => setPfItems(prev => [...prev, { skill: '', expected: '', risk: '' }]);
+  const updatePfItem = (idx: number, field: 'skill' | 'expected' | 'risk', value: string) => {
+    setPfItems(prev => prev.map((it, i) => i === idx ? { ...it, [field]: value } : it));
+  };
+  const removePfRow = (idx: number) => setPfItems(prev => prev.filter((_, i) => i !== idx));
+
+  const currentAlloc = useMemo(() => {
+    const valid = pfItems.filter(r => r.skill.trim());
+    const n = valid.length || 1;
+    const w = 1 / n;
+    return valid.map(v => ({ skill: v.skill.trim(), weight: Math.round(w * 10000) / 10000 }));
+  }, [pfItems]);
+
+  const optimizedSuggestion = useMemo(() => {
+    if (!pfResult || !pfResult.weights || pfResult.weights.length === 0) return null;
+    const cap = 0.4;
+    const raw = pfResult.weights.map((w: any) => w.weight as number);
+    const capped = raw.map(w => Math.min(w, cap));
+    const deficit = 1 - capped.reduce((a, b) => a + b, 0);
+    let adjusted = [...capped];
+    if (deficit > 0) {
+      const underIdx = adjusted.map((w, i) => (w < cap ? i : -1)).filter(i => i >= 0);
+      const underTotal = underIdx.reduce((acc, i) => acc + (cap - adjusted[i]), 0);
+      underIdx.forEach(i => {
+        const room = cap - adjusted[i];
+        const add = underTotal > 0 ? deficit * (room / underTotal) : 0;
+        adjusted[i] += add;
+      });
+    }
+    // Heuristic low-correlation boost
+    const rho = parseFloat(pfCorrelation || '0.2');
+    if (rho <= 0.2 && adjusted.length >= 2) {
+      let maxI = 0, minI = 0;
+      adjusted.forEach((w, i) => { if (w > adjusted[maxI]) maxI = i; if (w < adjusted[minI]) minI = i; });
+      const delta = Math.max(0, Math.min(0.05, adjusted[maxI] - 0.05, cap - adjusted[minI]));
+      if (delta > 0) {
+        adjusted[maxI] = adjusted[maxI] - delta;
+        adjusted[minI] = adjusted[minI] + delta;
+      }
+    }
+    const weights = pfResult.weights.map((w: any, i: number) => ({ skill: w.skill, weight: Math.round(adjusted[i] * 10000) / 10000 }));
+    const concentration = Math.max(...weights.map((w: any) => w.weight)) * 100;
+    return { weights, concentration: Math.round(concentration * 10) / 10 };
+  }, [pfResult, pfCorrelation]);
+
+  const scenarioMetrics = useMemo(() => {
+    if (!pfResult) return null;
+    let expected = pfResult.expected_return as number;
+    let risk = pfResult.risk as number;
+    let divers = pfResult.diversification_score as number;
+    if (scenario === 'recession') {
+      expected = expected * 0.85;
+      risk = risk * 1.2;
+      divers = Math.max(0, Math.round(divers * 0.8));
+    } else if (scenario === 'ai') {
+      expected = expected * 1.1;
+      risk = risk * 1.05;
+      divers = Math.min(100, Math.round(divers * 1.1));
+    }
+    return {
+      baseline: { expected_return: pfResult.expected_return, risk: pfResult.risk, diversification_score: pfResult.diversification_score },
+      scenario: { expected_return: Math.round(expected * 10000) / 10000, risk: Math.round(risk * 10000) / 10000, diversification_score: divers }
+    };
+  }, [pfResult, scenario]);
+
+  const freshnessDerived = useMemo(() => {
+    if (!freshnessResult) return null;
+    const halfLife = Number(freshnessResult.assumptions?.half_life_years) || 0;
+    const recommendedHours = halfLife ? Math.round((Math.max(1, Math.min(12, 20 / halfLife))) * 10) / 10 : null;
+    const lambda = Number(freshnessResult.decay_lambda) || 0;
+    const curr = Number(freshnessResult.freshness_score) || 0;
+    const remaining = curr / 100;
+    const critical = Number(freshnessResult.critical_threshold) || 80;
+    let monthsToCritical: number | null = null;
+    let belowCritical = false;
+    if (remaining > 0 && lambda > 0) {
+      const yrs = Math.log((critical / 100) / remaining) / (-lambda);
+      monthsToCritical = Math.max(0, Math.round(yrs * 12));
+      belowCritical = curr <= critical;
+    }
+    return { recommendedHours, monthsToCritical, belowCritical, critical };
+  }, [freshnessResult]);
 
   // Load user preferences from localStorage on component mount
   useEffect(() => {
@@ -405,6 +529,206 @@ export function AIImpactPlanner() {
       toast.error('Failed to assess task');
     } finally {
       setIsAssessingTask(false);
+    }
+  };
+
+  const computeResistance = async () => {
+    if (!customTask.trim()) {
+      toast.error('Please enter a task description');
+      return;
+    }
+    setIsComputingResistance(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('automation-resistance-score', {
+        body: { task: customTask },
+      });
+      if (error) throw error;
+      setResistanceResult(data);
+      toast.success('Resistance scored');
+    } catch (_error) {
+      toast.error('Failed to score resistance');
+    } finally {
+      setIsComputingResistance(false);
+    }
+  };
+
+  const estimateFreshness = async () => {
+    if (!sfSkill.trim()) {
+      toast.error('Enter a skill');
+      return;
+    }
+    const year = sfAcquiredYear.trim() ? parseInt(sfAcquiredYear.trim()) : undefined;
+    setIsLoadingFreshness(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('estimate-skill-half-life', {
+        body: { skill: sfSkill.trim(), acquired_year: year },
+      });
+      if (error) throw error;
+      setFreshnessResult(data);
+      toast.success('Estimated skill freshness');
+    } catch (_error) {
+      toast.error('Failed to estimate freshness');
+    } finally {
+      setIsLoadingFreshness(false);
+    }
+  };
+
+  const compareLongevity = async () => {
+    if (!compASkill.trim() || !compBSkill.trim()) {
+      toast.error('Enter two skills to compare');
+      return;
+    }
+    setIsComparing(true);
+    setCompResult(null);
+    try {
+      const parseHL = (v: string) => {
+        const n = parseFloat(v);
+        return Number.isFinite(n) && n > 0.1 && n <= 50 ? n : null;
+      };
+      const aYear = compAYear.trim() ? parseInt(compAYear.trim()) : undefined;
+      const bYear = compBYear.trim() ? parseInt(compBYear.trim()) : undefined;
+      const aManual = parseHL(compAHalfLife);
+      const bManual = parseHL(compBHalfLife);
+
+      const invokeHL = async (skill: string, year?: number) => {
+        const { data, error } = await supabase.functions.invoke('estimate-skill-half-life', {
+          body: { skill: skill.trim(), acquired_year: year },
+        });
+        if (error) throw error;
+        return data;
+      };
+
+      let aData: any;
+      let bData: any;
+      if (aManual !== null) {
+        const hl = aManual;
+        const lambda = Math.log(2) / hl;
+        aData = {
+          skill: compASkill.trim(),
+          assumptions: { half_life_years: hl },
+          decay_lambda: Math.round(lambda * 1000) / 1000,
+          recommended_hours_per_month: Math.round((Math.max(1, Math.min(12, 20 / hl))) * 10) / 10,
+        };
+      } else {
+        aData = await invokeHL(compASkill, aYear);
+      }
+      if (bManual !== null) {
+        const hl = bManual;
+        const lambda = Math.log(2) / hl;
+        bData = {
+          skill: compBSkill.trim(),
+          assumptions: { half_life_years: hl },
+          decay_lambda: Math.round(lambda * 1000) / 1000,
+          recommended_hours_per_month: Math.round((Math.max(1, Math.min(12, 20 / hl))) * 10) / 10,
+        };
+      } else {
+        bData = await invokeHL(compBSkill, bYear);
+      }
+
+      const aHL = Number(aData?.assumptions?.half_life_years) || 0;
+      const bHL = Number(bData?.assumptions?.half_life_years) || 0;
+      const aMaint = Number(aData?.recommended_hours_per_month) || (aHL ? Math.round((Math.max(1, Math.min(12, 20 / aHL))) * 10) / 10 : 0);
+      const bMaint = Number(bData?.recommended_hours_per_month) || (bHL ? Math.round((Math.max(1, Math.min(12, 20 / bHL))) * 10) / 10 : 0);
+
+      let top = compASkill.trim();
+      const reasons: string[] = [];
+      if (bHL > aHL || (bHL === aHL && bMaint < aMaint)) top = compBSkill.trim();
+      if (aHL !== bHL) reasons.push(`${(aHL > bHL ? compASkill : compBSkill)} has ${(Math.max(aHL, bHL) / Math.max(0.0001, Math.min(aHL, bHL))).toFixed(2)}x longer half-life`);
+      reasons.push(`${top} requires ~${top === compASkill.trim() ? aMaint : bMaint} hrs/mo vs ${top === compASkill.trim() ? bMaint : aMaint}`);
+
+      setCompResult({
+        skills: [
+          { name: compASkill.trim(), half_life_years: aHL, maint_hours: aMaint },
+          { name: compBSkill.trim(), half_life_years: bHL, maint_hours: bMaint },
+        ],
+        recommendation: { top_choice: top, reasoning: reasons },
+      });
+      toast.success('Comparison ready');
+    } catch (e) {
+      toast.error('Failed to compare skills');
+    } finally {
+      setIsComparing(false);
+    }
+  };
+
+  const runSimulator = async () => {
+    setIsSimulating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('simulate-career-trajectory', {
+        body: {
+          hours_per_week: simHoursPerWeek,
+          risk_tolerance: simRiskTolerance,
+          current_salary: simCurrentSalary ? parseFloat(simCurrentSalary) : undefined,
+          target_salary: simTargetSalary ? parseFloat(simTargetSalary) : undefined,
+        },
+      });
+      if (error) throw error;
+      setSimResult(data);
+      toast.success('Simulation complete');
+    } catch (_error) {
+      toast.error('Failed to simulate');
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
+  const runCascade = async () => {
+    setIsCascadeLoading(true);
+    try {
+      let upstream: any[] = [];
+      try {
+        const parsed = JSON.parse(cascadePayload || '[]');
+        upstream = Array.isArray(parsed) ? parsed : [];
+      } catch {}
+      if (upstream.length === 0) {
+        toast.error('Provide upstream array JSON');
+        setIsCascadeLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke('cascade-risk', { body: { upstream } });
+      if (error) throw error;
+      setCascadeResult(data);
+      toast.success('Cascade computed');
+    } catch (_e) {
+      toast.error('Failed to compute cascade');
+    } finally {
+      setIsCascadeLoading(false);
+    }
+  };
+
+  const runPortfolio = async () => {
+    setIsPfLoading(true);
+    try {
+      const cleaned = pfItems.map((r, i) => {
+        const skill = (r.skill || '').trim();
+        const expected = (r.expected || '').trim();
+        const risk = (r.risk || '').trim();
+        const expNum = expected === '' ? NaN : Number(expected);
+        const riskNum = risk === '' ? NaN : Number(risk);
+        return { i, skill, expNum, riskNum };
+      });
+      const valid = cleaned.filter(c => c.skill && Number.isFinite(c.expNum) && Number.isFinite(c.riskNum));
+      const skillOnly = cleaned.filter(c => c.skill);
+      if (valid.length < 2) {
+        if (skillOnly.length >= 2) {
+          toast.error('Add expected return and risk for at least 2 skills');
+        } else {
+          toast.error('Enter at least 2 skill names');
+        }
+        setIsPfLoading(false);
+        return;
+      }
+      const items = valid.map(v => ({ skill: v.skill, expected_return: v.expNum, risk: v.riskNum }));
+      const rhoParsed = parseFloat(pfCorrelation || '0.2');
+      const rho = Number.isFinite(rhoParsed) ? rhoParsed : 0.2;
+      const { data, error } = await supabase.functions.invoke('portfolio-basics', { body: { items, correlation: rho } });
+      if (error) throw error;
+      setPfResult(data);
+      toast.success('Portfolio computed');
+    } catch (_e) {
+      toast.error('Failed to compute portfolio');
+    } finally {
+      setIsPfLoading(false);
     }
   };
 
@@ -746,6 +1070,29 @@ export function AIImpactPlanner() {
             </Card>
           </motion.div>
 
+          {/* Quick Start Templates */}
+          <motion.div variants={itemVariants}>
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-yellow-500" />
+                  Quick Start Templates
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-3">Start faster by picking a popular role:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {Object.values(occupationDefaults).slice(0,5).map((tpl) => (
+                    <Button key={tpl.code} variant="outline" className="justify-between" onClick={() => setSelectedOccupation({ code: tpl.code, title: tpl.title, description: 'Quick start template' })}>
+                      <span className="font-medium">{tpl.title}</span>
+                      <span className="text-xs text-gray-500">{tpl.code}</span>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           <motion.div variants={itemVariants}>
             <Card>
               <CardHeader>
@@ -938,7 +1285,30 @@ export function AIImpactPlanner() {
                             'Assess Task'
                           )}
                         </Button>
+                        <Button 
+                          onClick={computeResistance}
+                          disabled={isComputingResistance || !customTask.trim()}
+                          className="md:self-end"
+                          variant="outline"
+                        >
+                          {isComputingResistance ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Scoring...
+                            </>
+                          ) : (
+                            'Resistance Score'
+                          )}
+                        </Button>
                       </div>
+                      {resistanceResult && (
+                        <div className="mt-3 p-3 bg-green-50 rounded-md text-sm text-green-800">
+                          <div className="flex items-center justify-between">
+                            <span>Resistance: {typeof resistanceResult.resistance_score === 'number' ? resistanceResult.resistance_score.toFixed(2) : resistanceResult.resistance_score} ({resistanceResult.category})</span>
+                            <Badge variant="outline">{resistanceResult.timeline_years} yrs</Badge>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     <Separator className="my-6" />
@@ -1034,6 +1404,16 @@ export function AIImpactPlanner() {
                           'No tasks available for this occupation.'}
                       </div>
                     )}
+
+                    {/* Outcomes */}
+                    <div className="mt-8 space-y-4">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <ThumbsUp className="h-4 w-4 text-green-600" />
+                        Track Outcomes
+                      </h4>
+                      <OutcomeSurvey />
+                      <OutcomesList />
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -1052,6 +1432,92 @@ export function AIImpactPlanner() {
                         Based on the AI impact analysis of your occupation, here are key skills to develop 
                         to enhance your career resilience in the age of AI.
                       </p>
+                    </div>
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-lg font-semibold">Skill Freshness</h3>
+                        <HelpTrigger entryKey="skill_half_life" variant="tip" />
+                      </div>
+                      <div className="flex flex-col md:flex-row gap-2">
+                        <Input placeholder="Enter a skill (e.g., Python)" value={sfSkill} onChange={(e)=>setSfSkill(e.target.value)} />
+                        <Input placeholder="Acquired year (e.g., 2021)" value={sfAcquiredYear} onChange={(e)=>setSfAcquiredYear(e.target.value.replace(/[^0-9]/g,''))} className="md:max-w-[160px]" />
+                        <Button onClick={estimateFreshness} disabled={isLoadingFreshness || !sfSkill.trim()}>
+                          {isLoadingFreshness ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Estimating...
+                            </>
+                          ) : (
+                            'Estimate'
+                          )}
+                        </Button>
+                      </div>
+                      {freshnessResult && (
+                        <div className="mt-3 p-3 bg-blue-50 rounded-md text-sm text-blue-800">
+                          <div className="flex items-center justify-between">
+                            <span>{freshnessResult.skill}: {freshnessResult.freshness_score}% current</span>
+                            <Badge variant="outline">t½ {freshnessResult.assumptions?.half_life_years}y</Badge>
+                          </div>
+                          <div className="mt-1 text-xs">To 80%: {freshnessResult.months_to_80} mo • To 60%: {freshnessResult.months_to_60} mo</div>
+                          <div className="mt-1 text-xs">Maintenance: {freshnessDerived?.recommendedHours ?? '—'} hrs/mo</div>
+                          {freshnessDerived && (
+                            <div className="mt-1 text-xs">
+                              {freshnessDerived.belowCritical ? 'Below critical now' : `Critical in ~${freshnessDerived.monthsToCritical ?? '—'} mo (≤${freshnessDerived.critical}%)`}
+                            </div>
+                          )}
+                          <div className="mt-2">
+                            <SkillFreshnessAlerts skill={freshnessResult.skill} derived={freshnessDerived as any} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-6 p-4 bg-purple-50 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-2">Skill Longevity Comparator</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Input placeholder="Skill A (e.g., Python)" value={compASkill} onChange={(e)=>setCompASkill(e.target.value)} />
+                          <div className="flex gap-2">
+                            <Input placeholder="Acquired year (opt)" value={compAYear} onChange={(e)=>setCompAYear(e.target.value.replace(/[^0-9]/g,''))} />
+                            <Input placeholder="Manual t½ years (opt)" value={compAHalfLife} onChange={(e)=>setCompAHalfLife(e.target.value.replace(/[^0-9.]/g,''))} />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Input placeholder="Skill B (e.g., React)" value={compBSkill} onChange={(e)=>setCompBSkill(e.target.value)} />
+                          <div className="flex gap-2">
+                            <Input placeholder="Acquired year (opt)" value={compBYear} onChange={(e)=>setCompBYear(e.target.value.replace(/[^0-9]/g,''))} />
+                            <Input placeholder="Manual t½ years (opt)" value={compBHalfLife} onChange={(e)=>setCompBHalfLife(e.target.value.replace(/[^0-9.]/g,''))} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <Button onClick={compareLongevity} disabled={isComparing || !compASkill.trim() || !compBSkill.trim()}>
+                          {isComparing ? (<><RefreshCw className="mr-2 h-4 w-4 animate-spin" />Comparing...</>) : 'Compare Longevity'}
+                        </Button>
+                      </div>
+                      {compResult && (
+                        <div className="mt-3 p-3 bg-purple-100 rounded-md text-sm text-purple-900">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {compResult.skills.map((s: any) => (
+                              <div key={s.name} className="p-2 bg-white/70 rounded border border-purple-200">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium">{s.name}</span>
+                                  <Badge variant="outline">t½ {s.half_life_years || '—'}y</Badge>
+                                </div>
+                                <div className="mt-1 text-xs">Maintenance ~{s.maint_hours || '—'} hrs/mo</div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-3">
+                            <div className="text-sm font-semibold">Recommendation: {compResult.recommendation.top_choice}</div>
+                            <ul className="list-disc list-inside text-xs mt-1">
+                              {compResult.recommendation.reasoning.map((r: string, i: number) => (
+                                <li key={i}>{r}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     {skillRecommendations.length > 0 ? (
@@ -1223,6 +1689,298 @@ export function AIImpactPlanner() {
                       </p>
                     </div>
 
+                    <div className="mb-6 p-4 bg-purple-50 rounded-lg">
+                      <h4 className="font-medium flex items-center gap-2 mb-3">
+                        <TrendingUp className="h-4 w-4 text-purple-600" />
+                        Career Trajectory Simulator
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
+                        <div className="md:col-span-1">
+                          <Input placeholder="Hours/week" value={String(simHoursPerWeek)} onChange={(e)=>setSimHoursPerWeek(Math.max(1, Math.min(60, parseInt(e.target.value || '0'))))} />
+                        </div>
+                        <div className="md:col-span-1">
+                          <select className="border rounded px-2 py-2 w-full" value={simRiskTolerance} onChange={(e)=>setSimRiskTolerance(e.target.value as any)}>
+                            <option value="conservative">Conservative</option>
+                            <option value="balanced">Balanced</option>
+                            <option value="aggressive">Aggressive</option>
+                          </select>
+                        </div>
+                        <div className="md:col-span-1">
+                          <Input placeholder="Current salary" value={simCurrentSalary} onChange={(e)=>setSimCurrentSalary(e.target.value.replace(/[^0-9.]/g,''))} />
+                        </div>
+                        <div className="md:col-span-1">
+                          <Input placeholder="Target salary" value={simTargetSalary} onChange={(e)=>setSimTargetSalary(e.target.value.replace(/[^0-9.]/g,''))} />
+                        </div>
+                        <div className="md:col-span-1">
+                          <Button onClick={runSimulator} disabled={isSimulating} className="w-full">
+                            {isSimulating ? (
+                              <>
+                                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                                Simulating...
+                              </>
+                            ) : (
+                              'Run Simulation'
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                      {simResult && (
+                        <div className="mt-3 p-3 bg-purple-100 rounded-md text-sm text-purple-900">
+                          <div className="flex flex-wrap gap-4">
+                            <span>Success 12m: {(simResult.p_success_12m*100).toFixed(1)}%</span>
+                            <span>18m: {(simResult.p_success_18m*100).toFixed(1)}%</span>
+                            <span>24m: {(simResult.p_success_24m*100).toFixed(1)}%</span>
+                            <span>P50: {simResult.months_p50} mo</span>
+                            <span>P90: {simResult.months_p90} mo</span>
+                            {simResult.median_salary_at_completion != null && (
+                              <span>Median salary: ${'{'}simResult.median_salary_at_completion{'}'}</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Portfolio Basics */}
+                    <div className="mb-6 space-y-4">
+                      <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                          <h4 className="font-medium flex items-center gap-2 text-slate-800">
+                            <Briefcase className="h-4 w-4 text-slate-600" />
+                            Portfolio Basics (Beta)
+                          </h4>
+                          <span className="text-xs text-slate-500">Enter at least two skills to model your skill portfolio</span>
+                        </div>
+
+                        <div className="space-y-3">
+                          {pfItems.map((row, idx) => (
+                            <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+                              <div className="md:col-span-2">
+                                <label className="text-xs font-semibold text-slate-600 block mb-1">Skill</label>
+                                <Input
+                                  placeholder="e.g. Python"
+                                  value={row.skill}
+                                  onChange={(e) => updatePfItem(idx, 'skill', e.target.value)}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs font-semibold text-slate-600 block mb-1">Expected return</label>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="0.10"
+                                  value={row.expected}
+                                  onChange={(e) => updatePfItem(idx, 'expected', e.target.value)}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs font-semibold text-slate-600 block mb-1">Risk</label>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="0.25"
+                                  value={row.risk}
+                                  onChange={(e) => updatePfItem(idx, 'risk', e.target.value)}
+                                />
+                              </div>
+                              <div className="md:col-span-4 flex justify-end">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removePfRow(idx)}
+                                  disabled={pfItems.length <= 2}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+
+                          <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-dashed border-slate-200 mt-2">
+                            <Button variant="outline" size="sm" onClick={addPfRow}>
+                              Add Skill
+                            </Button>
+                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                              <span>Correlation (ρ):</span>
+                              <Input
+                                type="number"
+                                step="0.05"
+                                min="-1"
+                                max="1"
+                                value={pfCorrelation}
+                                onChange={(e) => setPfCorrelation(e.target.value)}
+                                className="w-24"
+                              />
+                            </div>
+                            <Button onClick={runPortfolio} disabled={isPfLoading}>
+                              {isPfLoading ? (
+                                <>
+                                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                  Calculating...
+                                </>
+                              ) : (
+                                'Compute Portfolio'
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {pfResult && (
+                        <div className="space-y-4">
+                          <div className="p-4 bg-white border rounded-lg">
+                            <h5 className="font-semibold text-slate-800 mb-3">Portfolio Summary</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                              <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Expected Return</p>
+                                <p className="text-lg font-semibold text-slate-800">{(pfResult.expected_return * 100).toFixed(1)}%</p>
+                              </div>
+                              <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Portfolio Risk</p>
+                                <p className="text-lg font-semibold text-slate-800">{(pfResult.risk * 100).toFixed(1)}%</p>
+                              </div>
+                              <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Diversification</p>
+                                <p className="text-lg font-semibold text-slate-800">{pfResult.diversification_score}/100</p>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <p className="text-xs uppercase tracking-wide text-slate-500 mb-2">Current Allocation (Equal weight)</p>
+                                <div className="space-y-1">
+                                  {currentAlloc.length > 0 ? currentAlloc.map((item) => (
+                                    <div key={item.skill} className="flex justify-between bg-slate-50 px-3 py-2 rounded border border-slate-200">
+                                      <span>{item.skill || 'Unnamed skill'}</span>
+                                      <span>{(item.weight * 100).toFixed(1)}%</span>
+                                    </div>
+                                  )) : (
+                                    <p className="text-slate-500">Add skill names above to view allocations.</p>
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-xs uppercase tracking-wide text-slate-500 mb-2">Baseline Weights (Model)</p>
+                                <div className="space-y-1">
+                                  {(pfResult.weights || []).map((item: any) => (
+                                    <div key={item.skill} className="flex justify-between bg-white px-3 py-2 rounded border border-slate-200">
+                                      <span>{item.skill}</span>
+                                      <span>{(item.weight * 100).toFixed(1)}%</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            {pfResult.rationale && (
+                              <ul className="mt-3 text-xs text-slate-500 list-disc list-inside">
+                                {pfResult.rationale.map((line: string, idx: number) => (
+                                  <li key={idx}>{line}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+
+                          {optimizedSuggestion && (
+                            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg space-y-4">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <h5 className="font-semibold text-indigo-900">Portfolio Optimizer (MVP)</h5>
+                                <Badge className="bg-white text-indigo-700 border-indigo-200">
+                                  Concentration Risk: {optimizedSuggestion.concentration.toFixed(1)}%
+                                </Badge>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-indigo-600 mb-2">Optimized Allocation (≤40%)</p>
+                                  <div className="space-y-1">
+                                    {optimizedSuggestion.weights.map((item: any) => (
+                                      <div key={item.skill} className="flex justify-between bg-white/60 px-3 py-2 rounded border border-indigo-200">
+                                        <span>{item.skill}</span>
+                                        <span>{(item.weight * 100).toFixed(1)}%</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-indigo-600 mb-2">Suggested Actions</p>
+                                  <ul className="space-y-2 text-indigo-900">
+                                    <li>• Rebalance positions above 40% back toward the cap.</li>
+                                    <li>• Reallocate freed weight to underrepresented, lower-risk skills.</li>
+                                    <li>• Revisit correlation assumptions quarterly as market signals shift.</li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Hedging Card */}
+                          {pfResult?.weights && pfResult.weights.length > 1 && (
+                            <PortfolioHedgingCard
+                              weights={(pfResult.weights as any[]).map(w => ({ skill: w.skill, weight: Number(w.weight) }))}
+                              onApply={(next) => {
+                                setPfResult((prev:any) => prev ? { ...prev, weights: next } : prev);
+                                toast.success('Applied hedging suggestions');
+                              }}
+                            />
+                          )}
+
+                          {scenarioMetrics && (
+                            <div className="p-4 bg-slate-900 text-slate-100 rounded-lg space-y-4">
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <h5 className="font-semibold">Scenario Planning</h5>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant={scenario === 'none' ? 'default' : 'outline'}
+                                    onClick={() => setScenario('none')}
+                                  >
+                                    None
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant={scenario === 'recession' ? 'default' : 'outline'}
+                                    onClick={() => setScenario('recession')}
+                                  >
+                                    Recession
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant={scenario === 'ai' ? 'default' : 'outline'}
+                                    onClick={() => setScenario('ai')}
+                                  >
+                                    AI Disruption
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                <div className="bg-slate-800 border border-slate-700 rounded-md p-3">
+                                  <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Baseline</p>
+                                  <p>Return: {(scenarioMetrics.baseline.expected_return * 100).toFixed(1)}%</p>
+                                  <p>Risk: {(scenarioMetrics.baseline.risk * 100).toFixed(1)}%</p>
+                                  <p>Diversification: {scenarioMetrics.baseline.diversification_score}/100</p>
+                                </div>
+                                <div className="bg-slate-800 border border-slate-700 rounded-md p-3">
+                                  <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Scenario</p>
+                                  <p>Return: {(scenarioMetrics.scenario.expected_return * 100).toFixed(1)}%</p>
+                                  <p>Risk: {(scenarioMetrics.scenario.risk * 100).toFixed(1)}%</p>
+                                  <p>Diversification: {scenarioMetrics.scenario.diversification_score}/100</p>
+                                </div>
+                              </div>
+                              <p className="text-xs text-slate-400">
+                                Heuristics: Recession reduces returns and increases correlation; AI Disruption amplifies both upside and volatility.
+                              </p>
+                            </div>
+                          )}
+                          {/* Efficient Frontier (stub) */}
+                          <PortfolioFrontierCard
+                            items={pfItems}
+                            correlation={parseFloat(pfCorrelation || '0.2')}
+                            baseline={{ expected: pfResult.expected_return, risk: pfResult.risk }}
+                            optimized={optimizedSuggestion?.weights || []}
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     {/* CIP Programs Section */}
                     {selectedOccupation && (
                       <div className="mb-6 p-4 bg-blue-50 rounded-lg">
@@ -1238,9 +1996,12 @@ export function AIImpactPlanner() {
                               setIsLoadingCIP(true);
                               try {
                                 const codeNorm = (selectedOccupation.code || '').replace(/\.00$/, '');
-                                const { data, error } = await supabase.functions.invoke('crosswalk', {
-                                  body: { from: 'SOC', code: codeNorm, to: 'CIP' }
+                                const invoke = supabase.functions.invoke('crosswalk', { body: { from: 'SOC', code: codeNorm, to: 'CIP' } });
+                                const withTimeout = <T,>(p: Promise<T>, ms: number) => new Promise<T>((resolve, reject) => {
+                                  const t = setTimeout(() => reject(new Error('Request timed out')), ms);
+                                  p.then((v) => { clearTimeout(t); resolve(v); }).catch((e) => { clearTimeout(t); reject(e); });
                                 });
+                                const { data, error } = await withTimeout(invoke as any, 8000) as any;
                                 if (error) throw error;
                                 const programs = (data?.results || data?.mappings || data?.items || []).map((item: any) => ({
                                   code: item.code || item.to_code || item.target || '',
@@ -1253,7 +2014,8 @@ export function AIImpactPlanner() {
                                 }
                               } catch (e) {
                                 console.error('CIP crosswalk failed:', e);
-                                toast.error('Failed to load CIP programs');
+                                const msg = e instanceof Error ? e.message : 'Failed to load CIP programs';
+                                toast.error(msg.includes('timed out') ? 'CIP lookup timed out. Please try again.' : 'Failed to load CIP programs');
                               } finally {
                                 setIsLoadingCIP(false);
                               }

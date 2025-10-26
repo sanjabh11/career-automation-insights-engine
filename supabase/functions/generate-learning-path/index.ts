@@ -49,21 +49,29 @@ interface LearningPath {
   prerequisites: string[];
 }
 
+const resolveEnv = (...keys: string[]): string | undefined => {
+  for (const k of keys) {
+    const v = Deno.env.get(k);
+    if (v && v.trim().length > 0) return v.trim();
+  }
+  return undefined;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    const supabaseUrl = resolveEnv('SUPABASE_URL', 'PROJECT_URL', 'VITE_SUPABASE_URL', 'PUBLIC_SUPABASE_URL') || '';
+    const supabaseKey = resolveEnv('SUPABASE_SERVICE_ROLE_KEY', 'SERVICE_ROLE_KEY') || '';
+    const canDb = !!supabaseUrl && !!supabaseKey;
+    const supabaseClient = canDb ? createClient(supabaseUrl, supabaseKey) : null as any;
 
     // Get user from auth header
     const authHeader = req.headers.get("Authorization");
     let user = null;
-    if (authHeader) {
+    if (authHeader && canDb) {
       const result = await supabaseClient.auth.getUser(
         authHeader.replace("Bearer ", "")
       );
@@ -212,7 +220,7 @@ Return JSON:
 
     // Save to database if requested and user is authenticated
     let savedPathId = null;
-    if (saveToDB && user) {
+    if (saveToDB && user && canDb) {
       try {
         const { data: savedPath, error: saveError } = await supabaseClient
           .from("learning_paths")

@@ -9,6 +9,7 @@ import { UserSettingsPanel } from "./UserSettingsPanel";
 import { SavedAnalysesPanel } from "./SavedAnalysesPanel";
 import { SearchHistoryPanel } from "./SearchHistoryPanel";
 import { SystemAdminPanel } from "./SystemAdminPanel";
+import { ProgressWidget } from "@/components/ProgressWidget";
 import { 
   User, 
   Settings, 
@@ -307,6 +308,7 @@ export function EnhancedUserDashboard({ onLoadAnalysis, onSearchSelect }: Enhanc
           
           <div className="space-y-6">
             <QuickActions onSearchSelect={onSearchSelect} />
+            <ProgressWidget />
           </div>
         </div>
       </div>

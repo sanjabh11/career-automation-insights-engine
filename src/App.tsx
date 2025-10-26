@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SecurityHeaders } from "@/components/SecurityHeaders";
 import Index from "./pages/Index";
 import GapAnalysis from "./pages/GapAnalysis";
@@ -34,11 +34,15 @@ import IndustryDashboardPage from "./pages/IndustryDashboardPage";
 import SkillsBuilderPage from "./pages/SkillsBuilderPage";
 import OperationsPage from "./pages/OperationsPage";
 import ResourcesPage from "./pages/ResourcesPage";
+import HelpPage from "./pages/HelpPage";
+import GlobalShortcuts from "./components/GlobalShortcuts";
+import { AIAssistant } from "./components/assistant/AIAssistant";
 import NotFound from "./pages/NotFound";
 import ComparePage from "./pages/ComparePage";
 import TaskSearchPage from "./pages/TaskSearchPage";
 import Test from "./pages/Test";
 import EconImporter from "./pages/EconImporter";
+import EconomicsBrowser from "./pages/EconomicsBrowser";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +69,8 @@ function App() {
         <SecurityHeaders />
         <Toaster />
         <BrowserRouter>
+          <GlobalShortcuts />
+          <AIAssistant />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/test" element={<Test />} />
@@ -84,6 +90,7 @@ function App() {
             <Route path="/outcomes" element={<OutcomesPage />} />
             <Route path="/validation" element={<ValidationPage />} />
             <Route path="/validation/methods" element={<ValidationMethodsPage />} />
+            <Route path="/docs/methods" element={<Navigate to="/validation/methods" replace />} />
             <Route path="/validation/center" element={<ValidationCenter />} />
             <Route path="/validation-center" element={<ValidationCenter />} />
             <Route path="/quality" element={<QualityPage />} />
@@ -94,7 +101,9 @@ function App() {
             <Route path="/skills-builder" element={<SkillsBuilderPage />} />
             <Route path="/operations" element={<OperationsPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/help" element={<HelpPage />} />
             <Route path="/econ-importer" element={<EconImporter />} />
+            <Route path="/economics" element={<EconomicsBrowser />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/browse/job-zones" element={<BrowseJobZones />} />

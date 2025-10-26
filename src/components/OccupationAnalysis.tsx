@@ -9,10 +9,19 @@ import { Progress } from '@/components/ui/progress';
 import { Plus, BarChart3, TrendingUp, TrendingDown, Clock, Target, AlertTriangle } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line } from 'recharts';
 import { EnhancedAPOVisualization } from './EnhancedAPOVisualization';
+import APOExplanation from './APOExplanation';
 import { BrightOutlookBadge } from './BrightOutlookBadge';
+import PremiumReportSummary from './PremiumReportSummary';
+import PremiumCategoryGrid from './PremiumCategoryGrid';
 import { EmploymentOutlookCard } from './EmploymentOutlookCard';
 import { RelatedOccupationsPanel } from './RelatedOccupationsPanel';
+import { ROICalculator } from '@/components/ROICalculator';
+import { CareerSimulatorCard } from '@/components/CareerSimulatorCard';
+import { EcosystemRiskCard } from '@/components/EcosystemRiskCard';
 import { useBrightOutlook } from '@/hooks/useOnetEnrichment';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ExampleModal } from '@/components/help/ExampleModal';
+import { HelpTrigger } from '@/components/help/HelpTrigger';
 
 interface EnhancedOccupationData {
   code: string;
@@ -72,6 +81,8 @@ export const OccupationAnalysis = ({
   const [blsSeries, setBlsSeries] = React.useState<Array<{ x: number; y: number }>>([]);
   const [roi, setRoi] = React.useState<{ roi_months?: number; industry_sector?: string; annual_wage?: number; avg_cost?: number } | null>(null);
   const [econProv, setEconProv] = React.useState<{ source?: string | null; source_url?: string | null; as_of_year?: number | null } | null>(null);
+  const [showExplain, setShowExplain] = React.useState(false);
+  const [showExample, setShowExample] = React.useState<false | 'apo' | 'portfolio'>(false);
 
   const toSoc6 = (code: string) => {
     const m = (code || '').match(/^(\d{2}-\d{4})/);
@@ -225,7 +236,7 @@ export const OccupationAnalysis = ({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Card className="p-4 sm:p-6 shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+      <Card className="p-4 sm:p-6 rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex-1">
@@ -257,27 +268,65 @@ export const OccupationAnalysis = ({
               {occupation.timeline && (
                 <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4 text-gray-500" />
-                  <Badge className={getTimelineColor(occupation.timeline)}>
-                    {occupation.timeline}
-                  </Badge>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className={getTimelineColor(occupation.timeline)}>
+                        {occupation.timeline}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Estimated period when automation impact is likely
+                    </TooltipContent>
+                  </Tooltip>
+                  <HelpTrigger entryKey="timeline" />
                 </div>
               )}
               {occupation.confidence && (
-                <Badge className={
-                  occupation.confidence === 'high' ? 'bg-green-100 text-green-800' :
-                  occupation.confidence === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }>
-                  {occupation.confidence} confidence
-                </Badge>
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge className={
+                        occupation.confidence === 'high' ? 'bg-green-100 text-green-800' :
+                        occupation.confidence === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }>
+                        {occupation.confidence} confidence
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Evidence strength for this estimate
+                    </TooltipContent>
+                  </Tooltip>
+                  <HelpTrigger entryKey="confidence" />
+                </div>
               )}
               {typeof roi?.roi_months === 'number' && (
-                <Badge variant="secondary" className="text-xs">ROI: {roi.roi_months} mo</Badge>
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="secondary" className="text-xs">ROI: {roi.roi_months} mo</Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Months to break even on upskilling/automation investment
+                    </TooltipContent>
+                  </Tooltip>
+                  <HelpTrigger entryKey="roi_months" />
+                </div>
               )}
               {typeof occupation.externalSignals?.blsTrendPct === 'number' && (
-                <Badge variant="outline" className="text-xs">
-                  BLS: {occupation.externalSignals.blsTrendPct >= 0 ? '📈' : '📉'} {occupation.externalSignals.blsTrendPct}%
-                </Badge>
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="outline" className="text-xs">
+                        BLS: {occupation.externalSignals.blsTrendPct >= 0 ? '📈' : '📉'} {occupation.externalSignals.blsTrendPct}%
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Latest employment trend for this occupation
+                    </TooltipContent>
+                  </Tooltip>
+                  <HelpTrigger entryKey="bls_trend" />
+                </div>
               )}
             </div>
 
@@ -341,6 +390,12 @@ export const OccupationAnalysis = ({
               </div>
             )}
 
+            {/* Methods & Evidence strip */}
+            <div className="text-[11px] text-gray-500 mt-2">
+              Methods & Evidence: <a href="/docs/methods/" target="_blank" rel="noreferrer" className="underline">Read methodology</a>
+            </div>
+
+            <div className="flex gap-2">
             <Button
               onClick={onAddToSelected}
               disabled={isAlreadySelected}
@@ -349,45 +404,19 @@ export const OccupationAnalysis = ({
               <Plus className="h-4 w-4 mr-2" />
               {isAlreadySelected ? 'Added' : 'Add to List'}
             </Button>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowExplain(true)}>
+              Explain APO
+            </Button>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowExample('apo')}>
+              Show Example
+            </Button>
+            </div>
           </div>
         </div>
 
-        {/* Enhanced Overall APO Score */}
-        <div className={`p-6 rounded-lg border-2 mb-6 ${getAPOColor(occupation.overallAPO || overallAPO)}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center space-x-2 mb-1">
-                <RiskIcon className="h-5 w-5" />
-                <h3 className="text-lg font-semibold">{riskAssessment.level}</h3>
-              </div>
-              <p className="text-sm opacity-75">Enhanced AI analysis with weighted scoring</p>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center space-x-2">
-                {getAPOIcon(occupation.overallAPO || overallAPO)}
-                <span className="text-3xl font-bold">{(occupation.overallAPO || overallAPO).toFixed(1)}%</span>
-              </div>
-            </div>
-          </div>
-          {occupation.ci && (
-            <div className="mt-2 text-xs text-gray-700">
-              Confidence Interval: {occupation.ci.lower.toFixed(1)}% – {occupation.ci.upper.toFixed(1)}%
-              {occupation.ci.iterations ? ` (${occupation.ci.iterations} sims)` : ''}
-            </div>
-          )}
-          {occupation.externalSignals && (
-            <div className="mt-2 text-xs text-gray-700 flex flex-wrap gap-2">
-              {occupation.externalSignals.industrySector && (
-                <Badge variant="secondary" className="text-xs">Sector: {occupation.externalSignals.industrySector}</Badge>
-              )}
-              {typeof occupation.externalSignals.sectorDelayMonths === 'number' && occupation.externalSignals.sectorDelayMonths > 0 && (
-                <Badge variant="outline" className="text-xs">Sector Delay: {occupation.externalSignals.sectorDelayMonths} mo</Badge>
-              )}
-              {typeof occupation.externalSignals.econViabilityDiscount === 'number' && occupation.externalSignals.econViabilityDiscount > 0 && (
-                <Badge variant="destructive" className="text-xs">Econ Discount: -{occupation.externalSignals.econViabilityDiscount} pts</Badge>
-              )}
-            </div>
-          )}
+        <PremiumReportSummary occupation={occupation as any} overallAPO={overallAPO} />
+        <div className="mt-4">
+          <PremiumCategoryGrid categories={categories.map(c => ({ name: c.name, apo: c.apo, confidence: c.confidence }))} />
         </div>
 
         {(econ || sector) && (
@@ -441,6 +470,19 @@ export const OccupationAnalysis = ({
             </Card>
           </div>
         )}
+
+        {/* Planning & Forecasts */}
+        <div className="mb-6">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 flex items-center">
+            <BarChart3 className="h-5 w-5 mr-2" />
+            Planning & Forecasts
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ROICalculator roi={roi || {}} />
+            <CareerSimulatorCard currentSalary={typeof roi?.annual_wage === 'number' ? roi.annual_wage : undefined} />
+            <EcosystemRiskCard occupationCode={occupation.code} occupationTitle={occupation.title} />
+          </div>
+        </div>
 
         {/* Factor Contributions (Explainability) */}
         <div className="mb-6">
@@ -563,6 +605,8 @@ export const OccupationAnalysis = ({
           </div>
         )}
       </Card>
+      <ExampleModal open={!!showExample} onClose={() => setShowExample(false)} exampleKey={(showExample || 'apo') as any} />
+      <APOExplanation open={showExplain} onOpenChange={setShowExplain} occupation={occupation as any} />
     </div>
   );
 };

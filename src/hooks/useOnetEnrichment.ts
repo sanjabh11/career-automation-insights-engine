@@ -75,12 +75,39 @@ export function useOnetEnrichment(occupationCode?: string) {
  * Hook to fetch related occupations
  */
 export function useRelatedOccupations(occupationCode?: string) {
-  const { data: enrichmentData } = useOnetEnrichment(occupationCode);
-  
+  const { enrichmentData, isLoading, error } = useOnetEnrichment(occupationCode);
+
+  const {
+    data: fallbackRelated,
+    isLoading: isFallbackLoading,
+    error: fallbackError,
+  } = useQuery({
+    queryKey: ["onet-related-fallback", occupationCode],
+    enabled: !!occupationCode && (!enrichmentData || !Array.isArray((enrichmentData as any).relatedOccupations) || ((enrichmentData as any).relatedOccupations as any[]).length === 0),
+    staleTime: 24 * 60 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("onet_related_occupations")
+        .select("related_occupation_code, related_occupation_title, similarity_score")
+        .eq("source_occupation_code", occupationCode)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data || []).map((r: any) => ({
+        code: r.related_occupation_code,
+        title: r.related_occupation_title,
+        similarity_score: r.similarity_score,
+      }));
+    },
+  });
+
+  const related = (enrichmentData as any)?.relatedOccupations;
+  const hasRelated = Array.isArray(related) && related.length > 0;
+
   return {
-    relatedOccupations: enrichmentData?.relatedOccupations || [],
-    isLoading: !enrichmentData && !!occupationCode,
-  };
+    relatedOccupations: hasRelated ? related : (fallbackRelated || []),
+    isLoading: isLoading || isFallbackLoading,
+    error: error || fallbackError || null,
+  } as const;
 }
 
 /**

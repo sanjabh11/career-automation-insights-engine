@@ -20,15 +20,17 @@ const corsHeaders = {
 const LOCAL_DEV_PREFIXES = ['http://localhost:', 'http://127.0.0.1:', 'https://localhost:', 'https://127.0.0.1:'];
 
 function isOriginPermitted(origin: string): boolean {
+  const normalize = (s: string) => s.replace(/\/$/, '').toLowerCase();
   const raw = (Deno.env.get('APO_ALLOWED_ORIGINS') || '*')
     .split(',')
     .map(s => s.trim())
     .filter(Boolean);
   if (raw.length === 1 && raw[0] === '*') return true;
   if (!origin) return false;
-  // Always allow common localhost origins for local development
   if (LOCAL_DEV_PREFIXES.some(prefix => origin.startsWith(prefix))) return true;
-  return raw.includes(origin);
+  const allow = raw.map(normalize);
+  const o = normalize(origin);
+  return allow.includes(o);
 }
 
 function buildCorsHeaders(origin: string): Record<string, string> {
@@ -283,9 +285,9 @@ serve(async (req) => {
     const derivedBaseUrl = host.endsWith('.functions.supabase.co')
       ? `https://${host.replace('.functions.supabase.co', '.supabase.co')}`
       : `${rawUrl.protocol}//${host}`;
-    const headerApiKey = req.headers.get('apikey')
-      || req.headers.get('x-service-key')
-      || (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    const headerApiKey = (req.headers.get('x-service-key') || '').trim()
+      || ((req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim())
+      || (req.headers.get('apikey') || '').trim();
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('PROJECT_URL') || derivedBaseUrl;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY') || headerApiKey || '';
     const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;

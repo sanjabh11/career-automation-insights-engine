@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
+import { GeminiClient, getEnvModel, getEnvGenerationDefaults } from "../../lib/GeminiClient.ts";
+import { jsonrepair } from "https://esm.sh/jsonrepair@3.0.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,16 @@ const corsHeaders = {
 };
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+
+const resolveEnv = (...keys: string[]): string | undefined => {
+  for (const key of keys) {
+    const value = Deno.env.get(key);
+    if (value && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+  return undefined;
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -17,7 +28,7 @@ serve(async (req) => {
 
   try {
     if (!GEMINI_API_KEY) {
-      throw new Error('Gemini API key is not configured');
+      return new Response(JSON.stringify({ error: 'Gemini API key is not configured', function: 'assess-task' }), { status: 501, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const { taskDescription, occupationContext } = await req.json();
@@ -32,76 +43,28 @@ serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    const supabaseUrl = resolveEnv('SUPABASE_URL', 'PROJECT_URL', 'VITE_SUPABASE_URL', 'PUBLIC_SUPABASE_URL') || '';
+    const supabaseKey = resolveEnv('SUPABASE_SERVICE_ROLE_KEY', 'SERVICE_ROLE_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Prepare the prompt for Gemini
-    const prompt = `
-You are an AI assistant assessing task automation potential. Based on the task description${occupationContext ? ` for the occupation "${occupationContext}"` : ''}, classify it as:
+    const prompt = `You are an AI assistant assessing task automation potential. Based on the task description${occupationContext ? ` for the occupation "${occupationContext}"` : ''}, classify it as one of: Automate, Augment, Human-only. Provide a brief explanation and a confidence score (0-1). Output ONLY JSON with keys category, explanation, confidence.\nTask description: ${taskDescription}`;
 
-1. Automate (repetitive, low-value, stressful tasks that can be fully automated)
-2. Augment (tasks that benefit from AI assistance but need human oversight)
-3. Human-only (tasks requiring creativity, interpersonal skills, or domain expertise)
-
-Provide a brief explanation and a confidence score (0-1).
-
-Task description: ${taskDescription}
-
-Output format: 
-{
-  "category": "Automate/Augment/Human-only",
-  "explanation": "Brief explanation of why this task falls into this category",
-  "confidence": 0.85
-}
-`;
-
-    // Call Gemini API using env-driven model and defaults
-    const model = getEnvModel();
+    const client = new GeminiClient(GEMINI_API_KEY);
     const envDefaults = getEnvGenerationDefaults();
     const generationConfig = { ...envDefaults, temperature: 0.2, topK: 1, topP: 0.8, maxOutputTokens: 1024 } as const;
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig,
-        responseMimeType: 'application/json'
-      }),
-    });
+    const { text } = await client.generateContent(prompt, generationConfig);
 
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error('Gemini API Error:', errorText);
-      throw new Error(`Gemini API request failed: ${geminiResponse.statusText}`);
-    }
-
-    const geminiData = await geminiResponse.json();
-    
-    if (!geminiData.candidates || !geminiData.candidates[0] || !geminiData.candidates[0].content) {
-      throw new Error('Invalid response from Gemini API');
-    }
-
-    const generatedText = geminiData.candidates[0].content.parts[0].text;
-    
-    // Extract JSON from response
-    let assessmentData;
+    let assessmentData: any;
     try {
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        assessmentData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+      assessmentData = JSON.parse(text);
+    } catch (_e) {
+      const match = text.match(/\{[\s\S]*\}/);
+      const raw = match ? match[0] : text;
+      try {
+        assessmentData = JSON.parse(raw);
+      } catch (_e2) {
+        assessmentData = JSON.parse(jsonrepair(raw));
       }
-    } catch (parseError) {
-      console.error('Failed to parse Gemini response as JSON:', parseError);
-      throw new Error('Failed to parse task assessment from Gemini');
     }
 
     // Get user ID from auth if available

@@ -122,14 +122,17 @@ Edit `.env` with your actual credentials. See `.env.example` for all required va
 **Required Environment Variables:**
 - `VITE_SUPABASE_URL` - Your Supabase project URL
 - `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `VITE_SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (for admin operations)
+- `VITE_SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (used by admin tooling and server-side functions)
 - `VITE_GEMINI_API_KEY` - Google Gemini AI API key
 - `ONET_USERNAME` - O*NET Web Services username
 - `ONET_PASSWORD` - O*NET Web Services password
 - `VITE_SERPAPI_API_KEY` - SerpAPI key for job market data
+- `APO_FUNCTION_API_KEY` - API key enforced by the `calculate-apo` Edge Function
+- `VITE_APO_FUNCTION_API_KEY` - Same APO key exposed to the browser client
+- `VITE_ECON_SYNC_API_KEY` - API key required by the `/econ-importer` tool and `econ-sync` function
 
 **Optional Variables:**
-- `APO_FUNCTION_API_KEY` - Custom API key for APO function security
+- `BLS_API_KEY` - Bureau of Labor Statistics API token for extended labor metrics
 - `GEMINI_MODEL` - Gemini model to use (default: gemini-2.5-flash, supports: gemini-2.0-flash-exp)
 
 ### 3. Supabase Edge Functions Configuration
@@ -835,3 +838,80 @@ All artifacts are linked from their respective pages: `/validation/methods`, `/q
 ## 🤝 Contributing
 
 See `docs/IMPLEMENTATION_STATUS.md` for detailed feature status and development roadmap.
+
+---
+
+## 🔔 Implementation Update (2025-10-26)
+
+### APO & Planner Reliability
+- Switched all client APO requests to the deployed `calculate-apo` function; the `calculate-apo-with-ci` wrapper is no longer called from the UI, eliminating 404/546 loops.
+- Confidence interval band in Premium Report Summary now clamps values to 0-100, guarantees visible band/marker, and includes aria labels for accessibility.
+- Ecosystem Risk card fetches upstream APO scores via the same `calculate-apo` path; requires O*NET credentials (`ONET_USERNAME`, `ONET_PASSWORD`) for related-occupation discovery.
+
+### Portfolio & Outcomes Expansion
+- Added hedging advice, optimizer stub, efficient frontier preview, and scenario planning to the Portfolio insights section (real data only).
+- Introduced skill freshness alerts with maintenance guidance and local-first reminders.
+- Created `user_outcomes` table migration with RLS plus `record-outcome` edge function; UI survey and listing now persist real outcomes (no mock data).
+
+### Documentation & Ops
+- Updated planner docs link strip to surface detailed methodology files under `/docs/methods/`.
+- Security: reaffirmed API key enforcement (`x-api-key`) and origin allowlist secrets (`APO_ALLOWED_ORIGINS`, `ECON_ALLOWED_ORIGINS`).
+- Reminder: cascading risk, ROI, and outcomes all rely on seeded economics and O*NET enrichment tables—verify data imports post deploy.
+
+### Quick Run Checklist (Local/Netlify)
+1. Ensure `.env` contains: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_APO_FUNCTION_API_KEY`, `VITE_GEMINI_API_KEY`, `ONET_USERNAME`, `ONET_PASSWORD`.
+2. Supabase secrets: `GEMINI_API_KEY`, `APO_FUNCTION_API_KEY`, `ONET_USERNAME`, `ONET_PASSWORD`, optional `APO_ALLOWED_ORIGINS`, `ECON_ALLOWED_ORIGINS`.
+3. Apply latest migration: `supabase db push` (includes `20251026135300_user_outcomes.sql`).
+4. Deploy/verify functions: `calculate-apo`, `record-outcome`, `cascade-risk`, portfolio helpers, simulator.
+5. Seed/check economics and enrichment tables before testing ROI/cascade cards.
+
+### Pending Follow-ups (Post-Deployment)
+- Configure production CORS allowlists for APO/econ functions.
+- Populate additional economics rows for sectors lacking ROI outputs.
+- Add inline validation messaging to Career Simulator for edge inputs.
+
+---
+
+## 🔔 Implementation Update (2025-10-23)
+
+### Economics Streaming Ingest + OEWS
+- **WEF PDF → CSV bootstrap** via `scripts/econ_from_pdfs.py` produced `data/econ_wef.csv` (provenance fields included).
+- **Economics importer page** at `/econ-importer` streams large CSVs from browser using PapaParse worker/chunk mode.
+- **Edge Function `econ-sync`** (`supabase/functions/econ-sync/index.ts`) accepts batched rows, enforces `x-api-key`, adds Supabase auth headers from client, deduplicates by `(task_category,industry_sector)`, upserts in one call, and enforces an origin allowlist (`ECON_ALLOWED_ORIGINS`).
+- **Schema extended** via `supabase/migrations/20251023173000_automation_economics_extend_adoption.sql` to include adoption/payback/provenance/context fields.
+- **OEWS 2019–2024** ingested via `bls-sync` batch path; verified in `public.bls_employment_data`.
+
+### Quick Use: Economics Importer (Dev)
+1. Start dev: `npm run dev` → open `http://localhost:8080/econ-importer`.
+2. Function URL: `https://<ref>.functions.supabase.co/econ-sync` (or `https://<ref>.supabase.co/functions/v1/econ-sync`).
+3. x-api-key: value of `ECON_SYNC_API_KEY` secret.
+4. CSV URL: `http://localhost:8080/data/econ_wef.csv` (copy CSV to `public/data/` to expose).
+5. Metadata: set Source, Source URL (provenance), Region/Country, Override Year; choose Batch Size (200–500).
+6. Click Start. Progress shows rows parsed, batches, upserts, errors.
+
+Note: In production, `/econ-importer` is disabled by default. Enable via `VITE_ENABLE_ECON_IMPORTER=true` if needed for admin-only ingestion.
+
+### Function & Env
+- Set in Supabase secrets:
+  - `ECON_SYNC_API_KEY` (required) – server-side API key.
+  - `ECON_ALLOWED_ORIGINS` (optional) – comma-separated allowlist; localhost is always allowed for dev.
+- Client env (Netlify/Vite):
+  - `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (required for auth headers).
+  - `VITE_ECON_SYNC_FUNCTION_URL` (optional convenience default).
+
+### Post-Import Hygiene
+- Remove any mock `test_seed` BLS rows and exemplar economics rows with `source IS NULL` once real data is loaded.
+- Verify counts:
+```sql
+SELECT COUNT(*) FROM public.automation_economics;
+SELECT COUNT(*) FROM public.apo_logs WHERE created_at > now() - interval '2 hours';
+```
+
+### Security
+- Econ importer gated in production (`VITE_ENABLE_ECON_IMPORTER`).
+- `econ-sync` enforces `x-api-key` and origin allowlist; client auto-sends Supabase auth headers.
+- Do not expose service-role keys client-side; use Supabase Secrets for backend keys.
+
+### Deployment Notes
+- Netlify: host frontend; configure `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and optionally `VITE_ECON_SYNC_FUNCTION_URL`.
+- Supabase: deploy `econ-sync` and data functions; set secrets; apply migrations in `supabase/migrations/`.

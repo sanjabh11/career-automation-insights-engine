@@ -5,6 +5,11 @@ import { getFunctionsBaseUrl } from "@/lib/utils";
  * Hook: useOnet
  * Fetches live data from the O*NET Web-Services via the onetProxy edge function.
  *
+ * NOTE: The onet-proxy Supabase function was retired in Oct 2025 to stay within
+ * plan quotas. Keep this hook around for historical reference; new features
+ * should rely on Supabase-backed data (e.g. search-occupations / onet-enrichment)
+ * until a consolidated proxy is reintroduced.
+ *
  * @param path  The O*NET Web Service path starting with a leading `/`,
  *              e.g. `/ws/online/present/taxonomy/occupation/11-1011.00`.
  * @param options Optional React-Query options (staleTime, cacheTime, enabled …)

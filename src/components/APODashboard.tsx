@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { SearchInterface } from './SearchInterface';
+import SearchInterfacePremium from './SearchInterfacePremium';
 import { OccupationAnalysis } from './OccupationAnalysis';
 import { TopCareersPanel } from './TopCareersPanel';
 import { StatsOverview } from './StatsOverview';
@@ -16,6 +18,7 @@ import { motion, Variants } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
+import { GuidedTour } from '@/components/help/GuidedTour';
 
 export interface SelectedOccupation {
   code: string;
@@ -108,6 +111,14 @@ export const APODashboard = () => {
           initial="hidden"
           animate="visible"
         >
+          <GuidedTour
+            storageKey="tour:dashboard:v1"
+            steps={[
+              { title: 'Search & analyze', description: 'Use the search panel to pick an occupation and see automation analysis.' },
+              { title: 'Save & compare', description: 'Add occupations to your list and compare side-by-side.' },
+              { title: 'Plan next steps', description: 'Open the Career Impact Planner to explore skills and learning paths.' },
+            ]}
+          />
           <div className="mb-4">
             <OnboardingTour />
           </div>
@@ -145,9 +156,9 @@ export const APODashboard = () => {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8">
             <div className="space-y-4 sm:space-y-6">
               <motion.div variants={cardVariants}>
-                <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <Card className="p-4 sm:p-6 rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300">
                   <ErrorBoundary>
-                    <SearchInterface onOccupationSelect={handleOccupationSelect} />
+                    <SearchInterfacePremium onOccupationSelect={handleOccupationSelect} />
                   </ErrorBoundary>
                 </Card>
               </motion.div>
@@ -173,7 +184,7 @@ export const APODashboard = () => {
 
             <div className="space-y-4 sm:space-y-6">
               <motion.div variants={cardVariants}>
-                <Card className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <Card className="p-4 sm:p-6 rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex flex-col space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold">Career Impact Planner</h3>

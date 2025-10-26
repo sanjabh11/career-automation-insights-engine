@@ -421,3 +421,82 @@ CSV export added to Crosswalk results and Veterans matches.
 
 #### Notes
 - Further function deployments are currently limited by Supabase plan (402). Consider removing unused functions or upgrading plan to redeploy remaining updates (e.g., `skill-demand-scraper` security patch).
+
+---
+
+## 18. Implementation Update (2025-10-23)
+
+### Summary
+- Added a browser-based streaming importer at `/econ-importer` to ingest economics CSVs with provenance (source, URL, year, region/country).
+- Added `econ-sync` Edge Function to upsert batches into `public.automation_economics`, with API-key enforcement and origin allowlist.
+- Extended economics schema (staging and main) with adoption/payback/maturity and context fields via migration `20251023173000_automation_economics_extend_adoption.sql`.
+- Backfilled OEWS 2019–2024 into `public.bls_employment_data`; removed mock `test_seed` rows.
+
+### Admin Import Flow (Product)
+1) Prepare or generate CSV with required columns (provenance included). A bootstrap script is available to scaffold from WEF/MGI/Deloitte PDFs.
+2) Visit `/econ-importer` (admin-only in production), provide Function URL and API key, and stream CSV from a URL or local file.
+3) Data is deduplicated by `(task_category, industry_sector)` per batch and upserted.
+
+### Security & Governance
+- `econ-sync` requires `x-api-key` and restricts CORS via allowlist (`ECON_ALLOWED_ORIGINS`); localhost allowed for dev.
+- Frontend importer disabled in production by default; enable via `VITE_ENABLE_ECON_IMPORTER=true` when needed.
+- Ensure Supabase anon key is never replaced with service-role keys on the client.
+
+### Pending Items (Non-blocking)
+- Add simple read-only “Economics Browser” UI to review imported rows.
+- Configure production allowlist domains for `ECON_ALLOWED_ORIGINS` and re-deploy.
+- Import additional CSVs derived from MGI/Deloitte PDFs for broader sector/task coverage.
+
+---
+
+## 19. Implementation Update (2025-10-26)
+
+### Reliability & Planner Enhancements
+- Frontend now targets the deployed `calculate-apo` function directly, retiring the recursive `calculate-apo-with-ci` fallback that produced 404/546 responses.
+- Confidence interval visualization clamps values to 0–100, guarantees a visible confidence band with a point marker, and exposes accessible labels.
+- Ecosystem Risk card sources upstream APO data via the same function; requires valid O*NET credentials to surface related occupations.
+
+### Portfolio & Outcomes Modules
+- Portfolio insights expanded with hedging guidance, optimizer/efficient-frontier previews, and scenario planning cards (no mock data).
+- Skill freshness component delivers maintenance alerts and recommended reinforcement hours based on half-life modeling.
+- Added `user_outcomes` table and `record-outcome` Edge Function; outcomes survey and history list now persist real submissions under RLS.
+
+### Docs & Security
+- Planner surfaces direct links to methods/evidence documentation for transparency.
+- Reinforced API key enforcement and origin-allowlist guidance (`APO_ALLOWED_ORIGINS`, `ECON_ALLOWED_ORIGINS`).
+- Reminder: ROI, cascade risk, and outcomes rely on seeded economics and enrichment tables—verify data imports post deployment.
+
+### Operational Checklist
+1. Update `.env` with: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_APO_FUNCTION_API_KEY`, `VITE_GEMINI_API_KEY`, `ONET_USERNAME`, `ONET_PASSWORD`.
+2. Supabase secrets: `GEMINI_API_KEY`, `APO_FUNCTION_API_KEY`, `ONET_USERNAME`, `ONET_PASSWORD`, optional `APO_ALLOWED_ORIGINS`, `ECON_ALLOWED_ORIGINS`.
+3. Apply migrations (`supabase db push`) including `20251026135300_user_outcomes.sql`.
+4. Deploy functions: `calculate-apo`, `record-outcome`, `cascade-risk`, simulator/portfolio helpers.
+5. Seed/confirm economics + enrichment datasets before validating ROI/cascade experiences.
+
+### Pending Follow-ups
+- Configure production CORS allowlists for APO/econ functions.
+- Expand economics coverage for sectors lacking ROI data.
+- Add inline validation messaging for the career simulator edge cases.
+
+---
+
+## 18. Implementation Update (2025-10-24)
+
+### What changed
+- Stabilized economics ingest and integrity
+  - `econ-sync` derives non-empty `task_category` (Adoption/Payback/Maturity/General) and defaults `region/country` for reliable upserts
+  - Backfilled and deduplicated `automation_economics` on `(task_category, industry_sector, as_of_year, region, country)`; idempotent unique-key migration applied
+- CORS/auth checks verified end-to-end
+  - Allowed origin OPTIONS → 200
+  - Disallowed POST without valid JWT rejected by Supabase gateway (401); function-level checks preserved
+- Evidence in UI
+  - CI bands displayed in Occupation Analysis when present
+  - ROI badge wired to `public.calculate_roi()` with economics provenance
+- Documentation & env hygiene
+  - `.gitignore` env rules restored; `.env.example` sanitized and expanded
+  - README updated with APO/econ keys
+
+### Status
+- Importer and Economics Browser now show clean, deduplicated rows with meaningful categories.
+- CORS and APO telemetry re-verified.
+- Remaining award-oriented enhancements proceed per 20–80 plan in ET_nomination.

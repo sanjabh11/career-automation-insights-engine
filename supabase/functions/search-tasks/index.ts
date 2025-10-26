@@ -35,17 +35,34 @@ export async function handler(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Full-text search on task descriptions
-    const { data: tasks, error, count } = await supabase
-      .from("onet_detailed_tasks")
-      .select("*, onet_occupation_enrichment!inner(occupation_title, bright_outlook, job_zone)", { count: "exact" })
-      .textSearch("task_description", query, {
-        type: "websearch",
-        config: "english",
-      })
-      .order("importance", { ascending: false, nullsLast: true })
-      .range(offset, offset + limit - 1);
+    let tasks: any[] | null = null;
+    let count: number | null = null;
+    {
+      const { data, error, count: c } = await supabase
+        .from("onet_detailed_tasks")
+        .select("*, onet_occupation_enrichment!inner(occupation_title, bright_outlook, job_zone)", { count: "exact" })
+        .textSearch("task_description", query, {
+          type: "websearch",
+          config: "english",
+        })
+        .order("importance", { ascending: false, nullsLast: true })
+        .range(offset, offset + limit - 1);
 
-    if (error) throw error;
+      if (!error) {
+        tasks = data as any[];
+        count = c ?? null;
+      } else {
+        const { data: data2, error: error2, count: c2 } = await supabase
+          .from("onet_detailed_tasks")
+          .select("*, onet_occupation_enrichment!inner(occupation_title, bright_outlook, job_zone)", { count: "exact" })
+          .ilike("task_description", `%${query}%`)
+          .order("importance", { ascending: false, nullsLast: true })
+          .range(offset, offset + limit - 1);
+        if (error2) throw error2;
+        tasks = data2 as any[];
+        count = c2 ?? null;
+      }
+    }
 
     // Group tasks by occupation
     const tasksByOccupation = (tasks || []).reduce((acc: any, task: any) => {

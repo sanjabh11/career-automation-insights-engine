@@ -26,14 +26,25 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Provide occupation: { code, title }" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const host = new URL(req.url).hostname;
-    const calcBase = host.endsWith('.functions.supabase.co') ? `https://${host}` : `${new URL(req.url).origin}`;
+    const requestUrl = new URL(req.url);
+    const host = requestUrl.hostname;
+    let projectRef = host;
+    if (host.endsWith('.functions.supabase.co')) {
+      projectRef = host.replace('.functions.supabase.co', '');
+    } else if (host.endsWith('.supabase.co')) {
+      projectRef = host.replace('.supabase.co', '');
+    }
+    const projectBase = Deno.env.get('SUPABASE_URL')
+      || `https://${projectRef}.supabase.co`;
+    const functionsBase = `https://${projectRef}.functions.supabase.co`;
 
     const svc = req.headers.get("Authorization") || "";
     const apikey = req.headers.get("apikey") || svc.replace(/^Bearer\s+/i, "");
     const apoKey = requiredKey || req.headers.get("x-api-key") || "";
 
-    const resp = await fetch(`${calcBase}/calculate-apo`, {
+    const baselineUrl = `${functionsBase}/calculate-apo`;
+
+    let resp = await fetch(baselineUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,9 +54,18 @@ serve(async (req) => {
       },
       body: JSON.stringify({ occupation }),
     });
-    const base = await resp.json();
+
+    let base: any = {};
+    try {
+      base = await resp.json();
+    } catch (_) {
+      base = {};
+    }
     if (!resp.ok) {
-      return new Response(JSON.stringify({ error: base?.error || "calculate-apo failed" }), { status: resp.status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      const message = typeof base?.error === 'string' && base.error
+        ? base.error
+        : `calculate-apo proxy failed (status ${resp.status})`;
+      return new Response(JSON.stringify({ error: message }), { status: resp.status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const analysis = base?.analysis || base;

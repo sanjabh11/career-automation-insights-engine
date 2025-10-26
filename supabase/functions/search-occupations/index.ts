@@ -121,15 +121,80 @@ export async function handler(req: Request) {
       console.log(`Found ${onetResults.length} occupations from O*NET keyword search`);
       
       if (onetResults.length === 0) {
+        let query = supabase
+          .from("onet_occupation_enrichment")
+          .select("*", { count: "exact" })
+          .ilike("occupation_title", `%${keyword.trim()}%`);
+
+        if (filters.brightOutlook === true) {
+          query = query.eq("bright_outlook", true);
+        }
+
+        if (filters.brightOutlookCategory) {
+          query = query.eq("bright_outlook_category", filters.brightOutlookCategory);
+        }
+
+        if (filters.stem === true) {
+          query = query.eq("is_stem", true);
+        }
+
+        if (filters.green === true) {
+          query = query.eq("is_green", true);
+        }
+
+        if (filters.careerCluster) {
+          query = query.eq("career_cluster_id", filters.careerCluster);
+        }
+
+        if (filters.jobZone) {
+          query = query.eq("job_zone", filters.jobZone);
+        }
+
+        if (filters.minWage !== undefined) {
+          query = query.gte("median_wage_annual", filters.minWage);
+        }
+
+        if (filters.maxWage !== undefined) {
+          query = query.lte("median_wage_annual", filters.maxWage);
+        }
+
+        query = query
+          .order("occupation_title")
+          .range(offset, offset + limit - 1);
+
+        const { data: occupations, count, error } = await query;
+
+        if (error) {
+          console.error("Database query error:", error);
+          throw error;
+        }
+
+        const enrichedOccupations = await Promise.all(
+          (occupations || []).map(async (occ) => {
+            const { data: apoData } = await supabase
+              .from("saved_analyses")
+              .select("apo_score")
+              .eq("occupation_code", occ.occupation_code)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            return {
+              ...occ,
+              apoScore: apoData?.apo_score,
+            };
+          })
+        );
+
         return new Response(
           JSON.stringify({
-            occupations: [],
-            total: 0,
+            occupations: enrichedOccupations,
+            total: count || 0,
             limit,
             offset,
             filters,
-            hasMore: false,
-            source: 'onet_keyword',
+            hasMore: count ? count > offset + limit : false,
+            source: 'db_fallback',
           }),
           { headers: { ...cors, "Content-Type": "application/json" } }
         );

@@ -13,7 +13,7 @@ import { useSearchHistoryUnified } from '@/hooks/useSearchHistoryUnified';
 import { RateLimitDisplay } from './RateLimitDisplay';
 import { searchRateLimiter, checkRateLimit, formatTimeUntilReset } from '@/utils/rateLimiting';
 import { useSession } from '@/hooks/useSession';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getFunctionsBaseUrl } from '@/lib/utils';
 import { getDeviceId } from '@/utils/device';
 import { trackAnalyticsEvent } from '@/hooks/useAnalyticsEvents';
@@ -329,9 +329,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     <ErrorBoundary>
       <div className="space-y-6" aria-labelledby="career-search-heading">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2" id="career-search-heading">
-            Career Search
-          </h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold text-gray-900" id="career-search-heading">
+              Career Search
+            </h2>
+            <Link to="/help" className="text-sm text-blue-600 hover:underline">Help</Link>
+          </div>
           <p className="text-gray-600 text-sm">
             Search for occupations to analyze their automation potential using AI
           </p>
