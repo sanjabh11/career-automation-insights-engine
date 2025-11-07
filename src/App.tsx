@@ -43,6 +43,8 @@ import TaskSearchPage from "./pages/TaskSearchPage";
 import Test from "./pages/Test";
 import EconImporter from "./pages/EconImporter";
 import EconomicsBrowser from "./pages/EconomicsBrowser";
+import MarketplacePage from "./pages/MarketplacePage";
+import AgentDashboardPage from "./pages/AgentDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,9 @@ function App() {
             <Route path="/job-zone-ladder" element={<JobZoneLaddersPage />} />
             <Route path="/gap-analysis" element={<GapAnalysis />} />
             <Route path="/compare" element={<ComparePage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/agent-dashboard" element={<AgentDashboardPage />} />
+            <Route path="/agents" element={<AgentDashboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

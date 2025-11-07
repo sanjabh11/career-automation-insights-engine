@@ -20,6 +20,7 @@ export default function NavigationPremium() {
   const links = [
     { to: "/", label: "Home" },
     { to: "/ai-impact-planner", label: "Planner" },
+    { to: "/marketplace", label: "Agents" },
     { to: "/work-dimensions", label: "Dimensions" },
     { to: "/validation", label: "Validation" },
     { to: "/help", label: "Help" },
@@ -51,7 +52,12 @@ export default function NavigationPremium() {
               </Link>
             ))}
             {user ? (
-              <Button onClick={() => navigate("/dashboard")} className="rounded-xl">Dashboard</Button>
+              <>
+                <Button variant="ghost" onClick={() => navigate("/agent-dashboard")} className="rounded-xl">
+                  My Agents
+                </Button>
+                <Button onClick={() => navigate("/dashboard")} className="rounded-xl">Dashboard</Button>
+              </>
             ) : (
               <Button variant="outline" onClick={() => navigate("/auth")} className={`${isScrolled ? "" : "text-white border-white/70"} rounded-xl`}>
                 Sign In
