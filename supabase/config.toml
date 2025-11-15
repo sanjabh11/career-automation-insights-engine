@@ -12,3 +12,12 @@ verify_jwt = false
 
 [functions.search-occupations]
 verify_jwt = false
+
+[functions.agent-catalog]
+verify_jwt = false
+
+[functions.agent-deploy]
+verify_jwt = true
+
+[functions.agent-execute]
+verify_jwt = true
