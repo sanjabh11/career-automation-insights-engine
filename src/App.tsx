@@ -43,6 +43,8 @@ import TaskSearchPage from "./pages/TaskSearchPage";
 import Test from "./pages/Test";
 import EconImporter from "./pages/EconImporter";
 import EconomicsBrowser from "./pages/EconomicsBrowser";
+import PricingPage from "./pages/PricingPage";
+import WorkshopBookingPage from "./pages/WorkshopBookingPage";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +106,9 @@ function App() {
             <Route path="/help" element={<HelpPage />} />
             <Route path="/econ-importer" element={<EconImporter />} />
             <Route path="/economics" element={<EconomicsBrowser />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/workshops" element={<WorkshopBookingPage />} />
+            <Route path="/contact-sales" element={<WorkshopBookingPage />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/browse/job-zones" element={<BrowseJobZones />} />
