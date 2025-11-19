@@ -4,8 +4,8 @@
  * Based on PRD Section 3.1 (B2C Individual Freemium SaaS)
  */
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,10 +17,52 @@ import { useToast } from '@/hooks/use-toast';
 
 const PricingPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { currentTier, loading: subscriptionLoading } = useSubscription();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
+  const [highlightedTier, setHighlightedTier] = useState<string | null>(null);
+
+  // Pre-select tier from URL parameters (e.g., /pricing?tier=navigator&feature=apoChecks)
+  useEffect(() => {
+    const tierParam = searchParams.get('tier');
+    const featureParam = searchParams.get('feature');
+
+    if (tierParam) {
+      setHighlightedTier(tierParam);
+      // Scroll to pricing cards after a brief delay
+      setTimeout(() => {
+        const element = document.getElementById('pricing-cards');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+
+    // Log conversion funnel event
+    if (featureParam) {
+      const logConversionEvent = async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase.from('analytics_events').insert({
+              user_id: user.id,
+              event_type: 'pricing_page_visited',
+              payload: {
+                source: 'upgrade_prompt',
+                feature: featureParam,
+                tier_param: tierParam,
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Error logging conversion event:', error);
+        }
+      };
+      logConversionEvent();
+    }
+  }, [searchParams]);
 
   const handleSelectPlan = async (tier: SubscriptionTier) => {
     if (tier.id === 'free') {
@@ -108,9 +150,10 @@ const PricingPage = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div id="pricing-cards" className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {SUBSCRIPTION_TIERS.map((tier) => {
             const isCurrentPlan = currentTier === tier.id;
+            const isHighlighted = highlightedTier === tier.id;
             const price = billingPeriod === 'year' ? tier.price * 12 * 0.8 : tier.price;
             const monthlyPrice = billingPeriod === 'year' ? price / 12 : price;
 
@@ -118,7 +161,9 @@ const PricingPage = () => {
               <Card
                 key={tier.id}
                 className={`relative flex flex-col ${
-                  tier.recommended
+                  isHighlighted
+                    ? 'border-primary shadow-2xl scale-105 ring-2 ring-primary/30 animate-pulse'
+                    : tier.recommended
                     ? 'border-primary shadow-lg scale-105'
                     : 'border-border'
                 }`}

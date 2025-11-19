@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SecurityHeaders } from "@/components/SecurityHeaders";
+import { UpgradePromptProvider } from "@/contexts/UpgradePromptContext";
 import Index from "./pages/Index";
 import GapAnalysis from "./pages/GapAnalysis";
 import Auth from "./pages/Auth";
@@ -70,12 +71,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <SecurityHeaders />
-        <Toaster />
-        <BrowserRouter>
-          <GlobalShortcuts />
-          <AIAssistant />
-          <Routes>
+        <UpgradePromptProvider>
+          <SecurityHeaders />
+          <Toaster />
+          <BrowserRouter>
+            <GlobalShortcuts />
+            <AIAssistant />
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/test" element={<Test />} />
             <Route path="/auth" element={<Auth />} />
@@ -125,6 +127,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        </UpgradePromptProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
