@@ -45,6 +45,8 @@ import EconImporter from "./pages/EconImporter";
 import EconomicsBrowser from "./pages/EconomicsBrowser";
 import PricingPage from "./pages/PricingPage";
 import WorkshopBookingPage from "./pages/WorkshopBookingPage";
+import BootcampDashboardPage from "./pages/BootcampDashboardPage";
+import EnterpriseTeamDashboard from "./pages/EnterpriseTeamDashboard";
 
 const queryClient = new QueryClient();
 
@@ -109,6 +111,8 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/workshops" element={<WorkshopBookingPage />} />
             <Route path="/contact-sales" element={<WorkshopBookingPage />} />
+            <Route path="/bootcamp-dashboard" element={<BootcampDashboardPage />} />
+            <Route path="/enterprise-dashboard" element={<EnterpriseTeamDashboard orgId="demo" />} />
             <Route path="/browse/bright-outlook" element={<BrowseBrightOutlook />} />
             <Route path="/browse/stem" element={<BrowseSTEM />} />
             <Route path="/browse/job-zones" element={<BrowseJobZones />} />
