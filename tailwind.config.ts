@@ -14,10 +14,22 @@ export default {
 			center: true,
 			padding: '2rem',
 			screens: {
-				'2xl': '1400px'
+				'2xl': '1920px'
 			}
 		},
+		screens: {
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1440px',
+			'3xl': '1600px',
+		},
 		extend: {
+			fontFamily: {
+				sans: ["Inter", "sans-serif"],
+				serif: ["Playfair Display", "serif"],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

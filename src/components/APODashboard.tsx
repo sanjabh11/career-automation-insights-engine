@@ -19,6 +19,9 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
 import { GuidedTour } from '@/components/help/GuidedTour';
+import { RightSidebar } from './RightSidebar';
+import { MobileSidebarTrigger } from './MobileSidebarTrigger';
+import { ExecutiveSummary } from './ExecutiveSummary';
 
 export interface SelectedOccupation {
   code: string;
@@ -106,7 +109,7 @@ export const APODashboard = () => {
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
         <motion.div
-          className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8"
+          className="w-full py-4 sm:py-6 lg:py-8"
           variants={dashboardVariants}
           initial="hidden"
           animate="visible"
@@ -144,7 +147,7 @@ export const APODashboard = () => {
 
           {selectedJobs.length > 1 && (
             <ErrorBoundary>
-              <motion.div className="mb-6 sm:mb-8" variants={cardVariants}>
+              <motion.div className="mb-6 sm:mb-8 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto" variants={cardVariants}>
                 <OccupationComparisonPanel
                   occupations={selectedJobs}
                   onRemove={handleRemoveFromSelected}
@@ -153,7 +156,8 @@ export const APODashboard = () => {
             </ErrorBoundary>
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8">
+          <div className="main-layout">
+            {/* Left Column - Search & Top Careers */}
             <div className="space-y-4 sm:space-y-6">
               <motion.div variants={cardVariants}>
                 <Card className="p-4 sm:p-6 rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -182,7 +186,8 @@ export const APODashboard = () => {
               </ErrorBoundary>
             </div>
 
-            <div className="space-y-4 sm:space-y-6">
+            {/* Main Column - Career Impact Planner & Analysis */}
+            <div className="space-y-4 sm:space-y-6 min-w-0">
               <motion.div variants={cardVariants}>
                 <Card className="p-4 sm:p-6 rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex flex-col space-y-4">
@@ -207,6 +212,20 @@ export const APODashboard = () => {
               {selectedOccupation && (
                 <ErrorBoundary>
                   <motion.div variants={cardVariants}>
+                    <ExecutiveSummary
+                      occupationTitle={selectedOccupation.title}
+                      automationPercentage={calculateOverallAPO(selectedOccupation)}
+                      riskLevel={
+                        calculateOverallAPO(selectedOccupation) >= 67 ? 'high' :
+                          calculateOverallAPO(selectedOccupation) >= 34 ? 'medium' : 'low'
+                      }
+                      onViewDetails={() => {
+                        document.getElementById('detailed-analysis')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    />
+                  </motion.div>
+
+                  <motion.div variants={cardVariants} id="detailed-analysis" className="mt-6">
                     <OccupationAnalysis
                       occupation={selectedOccupation}
                       overallAPO={calculateOverallAPO(selectedOccupation)}
@@ -225,7 +244,23 @@ export const APODashboard = () => {
                 </ErrorBoundary>
               )}
             </div>
+
+            {/* Right Sidebar - Contextual Actions & Insights */}
+            <div className="hidden xl:block space-y-6">
+              <RightSidebar
+                selectedOccupation={selectedOccupation}
+                onAddToList={handleAddToSelected}
+                isAlreadySelected={selectedJobs.some(job => selectedOccupation && job.code === selectedOccupation.code)}
+              />
+            </div>
           </div>
+
+          {/* Mobile Sidebar Trigger (FAB) */}
+          <MobileSidebarTrigger
+            selectedOccupation={selectedOccupation}
+            onAddToList={handleAddToSelected}
+            isAlreadySelected={selectedJobs.some(job => selectedOccupation && job.code === selectedOccupation.code)}
+          />
         </motion.div>
 
         <ExportCareersModal
@@ -233,7 +268,7 @@ export const APODashboard = () => {
           onClose={() => setShowExport(false)}
           selectedJobs={selectedJobs}
         />
-      </div>
-    </ErrorBoundary>
+      </div >
+    </ErrorBoundary >
   );
 };
