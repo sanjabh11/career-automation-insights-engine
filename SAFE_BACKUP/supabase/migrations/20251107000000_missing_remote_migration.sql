@@ -1,0 +1,3 @@
+-- This file is a placeholder for a migration that exists on the remote database
+-- but was missing from the local directory.
+-- Version: 20251107000000
