@@ -1,0 +1,6 @@
+occupation_code,occupation_title,model,predicted_apo,observed_apo,ece_bin
+"11-1021.00","General and Operations Managers","Hybrid",0.53,0.51,0.50-0.60
+"15-1252.00","Software Developers","Hybrid",0.41,0.43,0.40-0.50
+"29-1141.00","Registered Nurses","Deterministic",0.27,0.25,0.20-0.30
+"43-4051.00","Customer Service Representatives","LLM-only",0.62,0.58,0.60-0.70
+"13-2011.00","Accountants and Auditors","Hybrid",0.49,0.47,0.40-0.50

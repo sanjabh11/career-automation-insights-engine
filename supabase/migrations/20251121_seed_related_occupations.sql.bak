@@ -1,0 +1,110 @@
+-- Seed additional related occupations data
+-- This provides comprehensive relationship data for common occupations
+-- =====================================================================
+
+-- Healthcare occupations
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Registered Nurses
+  ('29-1141', '29-1171', 'Nurse Practitioners', 0.90, 'career_path'),
+  ('29-1141', '29-2061', 'Licensed Practical and Licensed Vocational Nurses', 0.85, 'similar_skills'),
+  ('29-1141', '29-1151', 'Nurse Anesthetists', 0.83, 'career_path'),
+  
+  -- Physicians and Surgeons
+  ('29-1228', '29-1171', 'Nurse Practitioners', 0.82, 'industry'),
+  ('29-1228', '29-1215', 'Family Medicine Physicians', 0.88, 'similar_skills'),
+  ('29-1228', '29-1216', 'General Internal Medicine Physicians', 0.87, 'similar_skills')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Business and Management
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Management Analysts
+  ('13-1111', '13-1199', 'Business Operations Specialists, All Other', 0.88, 'similar_skills'),
+  ('13-1111', '13-2051', 'Financial and Investment Analysts', 0.82, 'similar_skills'),
+  ('13-1111', '11-3121', 'Human Resources Managers', 0.78, 'industry'),
+  
+  -- General and Operations Managers
+  ('11-1021', '11-3121', 'Human Resources Managers', 0.85, 'similar_skills'),
+  ('11-1021', '11-2021', 'Marketing Managers', 0.83, 'similar_skills'),
+  ('11-1021', '13-1111', 'Management Analysts', 0.80, 'knowledge_overlap')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Engineering occupations
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Mechanical Engineers
+  ('17-2141', '17-2199', 'Engineers, All Other', 0.90, 'similar_skills'),
+  ('17-2141', '17-2112', 'Industrial Engineers', 0.85, 'similar_skills'),
+  ('17-2141', '17-3027', 'Mechanical Engineering Technologists and Technicians', 0.82, 'career_path'),
+  
+  -- Civil Engineers
+  ('17-2051', '17-2199', 'Engineers, All Other', 0.88, 'similar_skills'),
+  ('17-2051', '17-3022', 'Civil Engineering Technologists and Technicians', 0.83, 'career_path'),
+  ('17-2051', '17-2141', 'Mechanical Engineers', 0.78, 'knowledge_overlap')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Education occupations
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Elementary School Teachers
+  ('25-2021', '25-2022', 'Middle School Teachers', 0.92, 'career_path'),
+  ('25-2021', '25-2031', 'Secondary School Teachers', 0.88, 'similar_skills'),
+  ('25-2021', '25-3031', 'Instructional Coordinators', 0.82, 'career_path'),
+  
+  -- Postsecondary Teachers
+  ('25-1199', '25-9031', 'Instructional Coordinators', 0.85, 'similar_skills'),
+  ('25-1199', '25-4012', 'Curators', 0.75, 'industry'),
+  ('25-1199', '19-3099', 'Social Scientists and Related Workers, All Other', 0.80, 'knowledge_overlap')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Sales and Customer Service
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Sales Representatives
+  ('41-4011', '41-3099', 'Sales Representatives, Services, All Other', 0.90, 'similar_skills'),
+  ('41-4011', '41-9099', 'Sales and Related Workers, All Other', 0.85, 'similar_skills'),
+  ('41-4011', '11-2022', 'Sales Managers', 0.82, 'career_path'),
+  
+  -- Customer Service Representatives
+  ('43-4051', '43-4171', 'Receptionists and Information Clerks', 0.85, 'similar_skills'),
+  ('43-4051', '43-4199', 'Information and Record Clerks, All Other', 0.82, 'similar_skills'),
+  ('43-4051', '41-2031', 'Retail Salespersons', 0.78, 'industry')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Financial occupations
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Accountants and Auditors
+  ('13-2011', '13-2082', 'Tax Preparers', 0.88, 'similar_skills'),
+  ('13-2011', '13-2099', 'Financial Specialists, All Other', 0.85, 'similar_skills'),
+  ('13-2011', '11-3031', 'Financial Managers', 0.82, 'career_path'),
+  
+  -- Financial Analysts
+  ('13-2051', '13-2011', 'Accountants and Auditors', 0.87, 'similar_skills'),
+  ('13-2051', '13-2061', 'Financial Examiners', 0.85, 'similar_skills'),
+  ('13-2051', '13-2052', 'Personal Financial Advisors', 0.83, 'knowledge_overlap')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Add more common technology occupations
+INSERT INTO public.onet_related_occupations (occupation_code, related_code, related_title, similarity_score, relationship_type)
+VALUES 
+  -- Database Administrators
+  ('15-1242', '15-1252', 'Software Developers', 0.85, 'similar_skills'),
+  ('15-1242', '15-1244', 'Network and Computer Systems Administrators', 0.88, 'similar_skills'),
+  ('15-1242', '15-1299', 'Computer Occupations, All Other', 0.82, 'industry'),
+  
+  -- Information Security Analysts
+  ('15-1212', '15-1244', 'Network and Computer Systems Administrators', 0.90, 'similar_skills'),
+  ('15-1212', '15-1299', 'Computer Occupations, All Other', 0.85, 'similar_skills'),
+  ('15-1212', '15-1252', 'Software Developers', 0.80, 'knowledge_overlap')
+ON CONFLICT (occupation_code, related_code) DO NOTHING;
+
+-- Verify seed count
+DO $$
+DECLARE
+  total_count INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO total_count FROM public.onet_related_occupations;
+  RAISE NOTICE 'Total related occupations seeded: %', total_count;
+END $$;

@@ -1,0 +1,54 @@
+[functions]
+  directory = "netlify/functions"
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  port = 8888
+  targetPort = 8080
+  functionsPort = 9999
+  framework = "#custom"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*; connect-src 'self' https://*; frame-src 'self'; object-src 'none'; base-uri 'self';"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    X-XSS-Protection = "1; mode=block"
+
+# Whop iframe routes - ALLOW embedding from Whop domains
+[[headers]]
+  for = "/whop/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://cdn.jsdelivr.net https://js.stripe.com https://whop.com https://*.whop.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*; connect-src 'self' https://* wss://*.supabase.co; frame-ancestors 'self' https://whop.com https://*.whop.com https://whop.dev https://*.whop.dev; object-src 'none'; base-uri 'self';"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    X-XSS-Protection = "1; mode=block"
+    # Note: X-Frame-Options intentionally omitted to allow Whop iframe embedding
+
+# Default headers for non-Whop routes
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://r2cdn.perplexity.ai; img-src 'self' data: https://*; connect-src 'self' https://* wss://*.supabase.co; frame-src 'self' https://js.stripe.com; frame-ancestors 'self' https://whop.com https://*.whop.com https://whop.dev https://*.whop.dev; object-src 'none'; base-uri 'self';"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    X-XSS-Protection = "1; mode=block"
+    # Note: X-Frame-Options removed to allow Whop iframe embedding (CSP frame-ancestors is used instead)
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
