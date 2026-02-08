@@ -254,7 +254,8 @@ export function AIImpactDashboard() {
                       <div className="text-xs text-[var(--text-tertiary)]">Code: {occ.code}</div>
                     </div>
                   ))}
-            </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
