@@ -40,6 +40,7 @@
 - [Database Schema](#database-schema)
 - [API Integrations](#api-integrations)
 - [Deployment](#deployment)
+- [Ops Quickstart](#ops-quickstart)
 - [Development](#development)
 - [Contributing](#contributing)
 
@@ -117,6 +118,15 @@
 - **Node.js** 18+ and npm
 - **Supabase Account** (free tier available)
 - **API Keys** for external services
+
+## 🛠️ Ops Quickstart
+
+- **Env setup & billing:** See [`docs/RUNBOOK_ENV_SETUP.md`](docs/RUNBOOK_ENV_SETUP.md) for Stripe/Supabase/Netlify variables, webhook configuration, and safety checks.
+- **Build & deploy:**
+  - Type-check: `npx tsc --noEmit`
+  - Build: `npx vite build`
+  - Deploy (Netlify): `npx netlify deploy --prod --dir=dist`
+- **Secrets hygiene:** `.env` is gitignored. Never commit secret keys. Update price ID mappings in both `src/lib/stripe.ts` and `supabase/functions/stripe-webhook/index.ts` if Stripe prices change.
 
 ### 1. Clone & Install
 ```bash
