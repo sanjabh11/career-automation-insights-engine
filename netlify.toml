@@ -48,6 +48,16 @@
     X-XSS-Protection = "1; mode=block"
     # Note: X-Frame-Options removed to allow Whop iframe embedding (CSP frame-ancestors is used instead)
 
+# Enable Netlify prerendering for SEO bots on SPA routes
+# This ensures Google/Bing can index client-rendered pages
+[build.processing]
+  [build.processing.html]
+    pretty_urls = true
+
+# Prerender SEO landing pages for search engine crawlers
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

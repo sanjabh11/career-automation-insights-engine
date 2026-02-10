@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb } from 'lucide-react';
+import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb, Share2, Twitter, Linkedin, Link2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
+import { ShareableScoreBadge } from '@/components/ShareableScoreBadge';
 
 interface AutomationPronePhrase {
     phrase: string;
@@ -36,14 +37,34 @@ interface AnalysisResult {
     }>;
 }
 
+const FREE_SCAN_KEY = 'apo:resume_free_scan_used';
+const MAX_FREE_SCANS = 1;
+
+function getFreeScanCount(): number {
+    try {
+        return parseInt(localStorage.getItem(FREE_SCAN_KEY) || '0', 10);
+    } catch {
+        return 0;
+    }
+}
+
+function incrementFreeScanCount(): void {
+    try {
+        localStorage.setItem(FREE_SCAN_KEY, String(getFreeScanCount() + 1));
+    } catch { /* noop */ }
+}
+
 export default function ResumeAnalyzer() {
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
     const [resumeText, setResumeText] = useState('');
     const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
     const [filename, setFilename] = useState('');
+    const [showSharePanel, setShowSharePanel] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
     const { toast } = useToast();
     const { session } = useSession();
+    const isAuthenticated = !!session?.user;
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -85,6 +106,15 @@ export default function ResumeAnalyzer() {
     });
 
     const analyzeResume = async (text: string, fname: string) => {
+        // Allow 1 free scan for guests, unlimited for authenticated users
+        if (!isAuthenticated && getFreeScanCount() >= MAX_FREE_SCANS) {
+            toast({
+                title: 'Free scan used',
+                description: 'Sign up for free to unlock more resume scans and full rewrite suggestions.',
+            });
+            return;
+        }
+
         setAnalyzing(true);
 
         try {
@@ -101,6 +131,11 @@ export default function ResumeAnalyzer() {
             if (data && data.success) {
                 setAnalysisResult(data as AnalysisResult);
 
+                // Track free scan usage for guests
+                if (!isAuthenticated) {
+                    incrementFreeScanCount();
+                }
+
                 toast({
                     title: 'Analysis Complete',
                     description: `Automation Risk Score: ${data.automation_risk_score}/100`,
@@ -115,6 +150,27 @@ export default function ResumeAnalyzer() {
             });
         } finally {
             setAnalyzing(false);
+        }
+    };
+
+    const shareScore = (platform: 'twitter' | 'linkedin' | 'copy') => {
+        const score = analysisResult?.automation_risk_score ?? 0;
+        const text = `My resume AI-Proof Score: ${100 - score}/100. Find out if your resume is AI-proof:`;
+        const url = window.location.origin + '/tools/resume-analyzer';
+
+        switch (platform) {
+            case 'twitter':
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                break;
+            case 'linkedin':
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+                break;
+            case 'copy':
+                navigator.clipboard.writeText(`${text} ${url}`);
+                setLinkCopied(true);
+                setTimeout(() => setLinkCopied(false), 2000);
+                toast({ title: 'Link copied!' });
+                break;
         }
     };
 
@@ -342,6 +398,29 @@ export default function ResumeAnalyzer() {
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* Shareable AI-Proof Score Badge */}
+                    <ShareableScoreBadge
+                        score={100 - (analysisResult?.automation_risk_score ?? 0)}
+                        onShareTwitter={() => shareScore('twitter')}
+                        onShareLinkedIn={() => shareScore('linkedin')}
+                    />
+
+                    {/* Signup Gate for Guests */}
+                    {!isAuthenticated && (
+                        <Card className="border-2 border-amber-500/30 bg-amber-900/10">
+                            <CardContent className="py-6 text-center">
+                                <Lock className="h-8 w-8 text-amber-400 mx-auto mb-3" />
+                                <h3 className="text-lg font-semibold mb-2">Unlock Full Analysis</h3>
+                                <p className="text-sm text-muted-foreground mb-4">
+                                    Sign up free to get unlimited scans, full rewrite suggestions, and skill recommendations.
+                                </p>
+                                <Button onClick={() => window.location.href = '/auth'} className="bg-emerald-600 hover:bg-emerald-500">
+                                    Sign Up Free
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    )}
 
                     {/* Action Buttons */}
                     <div className="flex gap-3">

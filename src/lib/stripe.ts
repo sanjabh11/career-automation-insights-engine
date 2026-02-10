@@ -77,8 +77,8 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     monthlyPrice: 29,
     annualPrice: 290, // $24.17/mo effective - 2 months free
     billingPeriod: 'month',
-    stripePriceIdMonthly: 'price_defender_monthly',
-    stripePriceIdAnnual: 'price_defender_annual',
+    stripePriceIdMonthly: 'price_1SzAwBCDRnHqUTRJY78xxjKY',
+    stripePriceIdAnnual: 'price_1SzAwBCDRnHqUTRJ7vMvAN28',
     recommended: true,
     badge: 'Most Popular',
     tagline: 'Career insurance for < $1/day',
@@ -108,8 +108,8 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     monthlyPrice: 149,
     annualPrice: 1490, // $124.17/mo effective - 2 months free
     billingPeriod: 'month',
-    stripePriceIdMonthly: 'price_coach_monthly',
-    stripePriceIdAnnual: 'price_coach_annual',
+    stripePriceIdMonthly: 'price_1SzAwCCDRnHqUTRJdPZaLEGn',
+    stripePriceIdAnnual: 'price_1SzAwCCDRnHqUTRJIbQ7YlJe',
     badge: 'For Professionals',
     tagline: 'White-label reports that sell',
     features: [
@@ -170,7 +170,7 @@ export const CREDIT_PACKAGES: CreditPackage[] = [
     credits: 5,
     price: 49,
     pricePerCredit: 9.80,
-    stripePriceId: 'price_credits_starter', // TODO: Replace with actual Stripe price ID
+    stripePriceId: 'price_1SzAwDCDRnHqUTRJVDblB0VC',
     features: [
       '5 report credits',
       'White-label branding',
@@ -184,7 +184,7 @@ export const CREDIT_PACKAGES: CreditPackage[] = [
     credits: 15,
     price: 129,
     pricePerCredit: 8.60,
-    stripePriceId: 'price_credits_professional',
+    stripePriceId: 'price_1SzAwECDRnHqUTRJmS8Qn13N',
     recommended: true,
     badge: 'Best Value',
     features: [
@@ -202,7 +202,7 @@ export const CREDIT_PACKAGES: CreditPackage[] = [
     credits: 40,
     price: 299,
     pricePerCredit: 7.48,
-    stripePriceId: 'price_credits_enterprise',
+    stripePriceId: 'price_1SzAwECDRnHqUTRJChSNHBVY',
     badge: 'Pro',
     features: [
       '40 report credits',
@@ -274,10 +274,16 @@ export const redirectToCheckout = async (
   }
 
   // Create checkout session via Supabase Edge Function
-  const response = await fetch('/api/create-checkout-session', {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    throw new Error('VITE_SUPABASE_URL not configured');
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
     },
     body: JSON.stringify({
       priceId,
@@ -287,8 +293,20 @@ export const redirectToCheckout = async (
     }),
   });
 
-  const { sessionId } = await response.json();
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({ error: 'Checkout failed' }));
+    throw new Error(errBody.error || `Checkout failed (${response.status})`);
+  }
 
+  const { sessionId, url } = await response.json();
+
+  // Prefer direct URL redirect (Stripe Checkout URL) if available
+  if (url) {
+    window.location.href = url;
+    return;
+  }
+
+  // Fallback to Stripe.js redirect
   const { error } = await stripe.redirectToCheckout({ sessionId });
 
   if (error) {
@@ -298,14 +316,78 @@ export const redirectToCheckout = async (
 };
 
 // ============================================================================
+// CREDIT CHECKOUT (PAYG)
+// ============================================================================
+
+export const redirectToCreditCheckout = async (
+  packageId: CreditPackage['id'],
+  userId: string
+): Promise<void> => {
+  const pkg = CREDIT_PACKAGES.find((p) => p.id === packageId);
+  if (!pkg || !pkg.stripePriceId) {
+    throw new Error('Invalid credit package or price not configured');
+  }
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    throw new Error('VITE_SUPABASE_URL not configured');
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-credit-checkout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+    },
+    body: JSON.stringify({
+      priceId: pkg.stripePriceId,
+      userId,
+      packageId: pkg.id,
+      credits: pkg.credits,
+    }),
+  });
+
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({ error: 'Credit checkout failed' }));
+    throw new Error(errBody.error || `Credit checkout failed (${response.status})`);
+  }
+
+  const { url } = await response.json();
+  if (url) {
+    window.location.href = url;
+  }
+};
+
+// ============================================================================
 // CUSTOMER PORTAL
 // ============================================================================
 
 export const redirectToCustomerPortal = async (): Promise<void> => {
-  // Call Supabase Edge Function to create portal session
-  const response = await fetch('/api/create-portal-session', {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    throw new Error('VITE_SUPABASE_URL not configured');
+  }
+
+  // Get current session token for auth
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-portal-session`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
   });
+
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({ error: 'Portal session failed' }));
+    throw new Error(errBody.error || `Portal failed (${response.status})`);
+  }
 
   const { url } = await response.json();
   window.location.href = url;

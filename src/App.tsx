@@ -45,6 +45,9 @@ const ResourcesPage = lazy(() => import("./pages/ResourcesPage"));
 const HelpPage = lazy(() => import("./pages/HelpPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
+const SEOComparisonPage = lazy(() => import("./pages/SEOComparisonPage"));
+const IndustrySEOPage = lazy(() => import("./pages/IndustrySEOPage"));
+const SampleReportPage = lazy(() => import("./pages/SampleReportPage"));
 const TaskSearchPage = lazy(() => import("./pages/TaskSearchPage"));
 const Test = lazy(() => import("./pages/Test"));
 const EconImporter = lazy(() => import("./pages/EconImporter"));
@@ -170,6 +173,11 @@ function App() {
 
                 {/* Monetization V2: SEO Landing Pages (Dec 24, 2024) */}
                 <Route path="/automation-risk/:occupation" element={<AutomationRiskLandingPage />} />
+                <Route path="/compare/:slugs" element={<SEOComparisonPage />} />
+                <Route path="/automation-risk/industry" element={<IndustrySEOPage />} />
+                <Route path="/automation-risk/industry/:industry" element={<IndustrySEOPage />} />
+
+                <Route path="/sample-report" element={<SampleReportPage />} />
 
                 {/* B2B Landing Pages */}
                 <Route path="/for-coaches" element={<ForCoachesPage />} />

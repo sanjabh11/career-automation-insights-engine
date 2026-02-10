@@ -10,6 +10,7 @@ import { Loader2, FileText, Settings, Download, Palette } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
+import { CreditBalance } from '@/components/monetization/CreditBalance';
 
 interface WhiteLabelConfig {
     company_name: string;
@@ -216,6 +217,9 @@ export default function CounselorReportGenerator() {
 
     return (
         <div className="space-y-6">
+            {/* Credit Balance */}
+            <CreditBalance showBuyButton={true} />
+
             {/* White-Label Settings */}
             <Card>
                 <CardHeader>

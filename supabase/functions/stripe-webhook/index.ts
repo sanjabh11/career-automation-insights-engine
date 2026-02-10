@@ -239,6 +239,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // Check if this is a credit purchase (one-time payment) vs subscription
+  if (session.metadata?.type === 'credit_purchase') {
+    await handleCreditPurchase(session, clientReferenceId);
+    return;
+  }
+
   // Create initial subscription record
   const tier = session.metadata?.tier || 'explorer';
 
@@ -261,6 +267,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   console.log(`Checkout completed for user: ${clientReferenceId}, tier: ${tier}`);
 }
 
+async function handleCreditPurchase(session: Stripe.Checkout.Session, userId: string) {
+  const credits = parseInt(session.metadata?.credits || '0', 10);
+  const packageId = session.metadata?.packageId || 'unknown';
+  const stripePaymentId = session.payment_intent as string;
+
+  if (credits <= 0) {
+    console.error('Invalid credit amount in checkout session metadata');
+    return;
+  }
+
+  // Add credits using the DB function
+  const { data, error } = await supabase.rpc('add_report_credits', {
+    p_user_id: userId,
+    p_credits: credits,
+    p_stripe_id: stripePaymentId,
+    p_description: `${packageId} credit package purchase (${credits} credits)`,
+  });
+
+  if (error) {
+    console.error('Error adding credits:', error);
+    throw error;
+  }
+
+  console.log(`Credit purchase completed: ${credits} credits for user ${userId}, package: ${packageId}`);
+}
+
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
@@ -268,14 +300,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 function getTierFromPrice(subscription: Stripe.Subscription): string {
   const priceId = subscription.items.data[0]?.price.id;
 
-  // Map Stripe price IDs to tiers (you'll need to set these in Stripe)
+  // Map Stripe price IDs to tiers (live price IDs from Stripe Dashboard)
   const priceToTierMap: Record<string, string> = {
-    'price_explorer': 'explorer',
-    'price_navigator': 'navigator',
-    'price_strategist': 'strategist',
+    'price_1SzAwBCDRnHqUTRJY78xxjKY': 'defender', // Defender Monthly $29
+    'price_1SzAwBCDRnHqUTRJ7vMvAN28': 'defender', // Defender Annual $290
+    'price_1SzAwCCDRnHqUTRJdPZaLEGn': 'coach',    // Coach Pro Monthly $149
+    'price_1SzAwCCDRnHqUTRJIbQ7YlJe': 'coach',    // Coach Pro Annual $1490
   };
 
-  return priceToTierMap[priceId] || 'explorer';
+  return priceToTierMap[priceId] || 'free';
 }
 
 function mapStripeStatus(stripeStatus: string): string {

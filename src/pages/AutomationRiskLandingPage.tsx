@@ -21,6 +21,7 @@ import {
 
 // Import SEO occupation data (50+ occupations for programmatic SEO)
 import { occupationRiskData, occupationSlugs } from '@/data/occupationRiskData';
+import { SEOReportDownload } from '@/components/SEOReportDownload';
 
 export const AutomationRiskLandingPage: React.FC = () => {
     const { occupation } = useParams<{ occupation: string }>();
@@ -248,46 +249,118 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* PDF Download + Email Capture */}
+            <section className="container mx-auto px-4 py-8">
+                <div className="max-w-2xl mx-auto">
+                    <SEOReportDownload data={data} occupationSlug={occupation || ''} />
+                </div>
+            </section>
+
             {/* CTA Section */}
             <section className="container mx-auto px-4 py-16">
                 <div className="max-w-2xl mx-auto">
                     <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
                         <CardHeader className="text-center">
-                            <CardTitle className="text-2xl">Get Your Personalized Career Future-Proofing Report</CardTitle>
+                            <CardTitle className="text-2xl">Get Your Full Personalized Analysis</CardTitle>
                             <CardDescription>
-                                This is just a preview. Get a detailed, personalized analysis of YOUR skills and tasks.
+                                This is a preview based on general occupation data. Sign up free to get a detailed,
+                                task-level analysis with personalized skill recommendations and bridge role pathfinding.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            {!isSubmitted ? (
-                                <form onSubmit={handleEmailSubmit} className="space-y-4">
-                                    <Input
-                                        type="email"
-                                        placeholder="Enter your email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                        className="text-lg py-6"
-                                    />
-                                    <Button type="submit" className="w-full text-lg py-6">
-                                        <Mail className="mr-2 h-5 w-5" />
-                                        Get My Free Report
-                                    </Button>
-                                    <p className="text-xs text-center text-muted-foreground">
-                                        Or <Link to="/pricing" className="text-primary underline">sign up as a Career Coach</Link> to generate white-labeled reports for your clients.
-                                    </p>
-                                </form>
-                            ) : (
-                                <div className="text-center py-8">
-                                    <ShieldCheck className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
-                                    <h3 className="text-xl font-bold mb-2">Check Your Email!</h3>
-                                    <p className="text-muted-foreground">
-                                        We've sent your personalized report to {email}
-                                    </p>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                    <ShieldCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                    <span>3 free APO checks/month</span>
                                 </div>
-                            )}
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                    <ShieldCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                    <span>AI career coaching</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                    <ShieldCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                    <span>No credit card required</span>
+                                </div>
+                            </div>
+                            <Link to="/auth">
+                                <Button className="w-full text-lg py-6">
+                                    <Mail className="mr-2 h-5 w-5" />
+                                    Get My Free Analysis
+                                </Button>
+                            </Link>
+                            <p className="text-xs text-center text-muted-foreground">
+                                Or <Link to="/for-coaches" className="text-primary underline">learn about Coach Pro</Link> to generate white-labeled reports for your clients.
+                            </p>
                         </CardContent>
                     </Card>
+                </div>
+            </section>
+
+            {/* Compare This Occupation - SEO Internal Links */}
+            <section className="container mx-auto px-4 py-8">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-2xl font-bold mb-4">Compare {data.title} vs Other Careers</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+                        {occupationSlugs
+                            .filter((s) => s !== occupation)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 6)
+                            .map((slug) => {
+                                const relData = occupationRiskData[slug];
+                                if (!relData) return null;
+                                return (
+                                    <Link key={slug} to={`/compare/${occupation}-vs-${slug}`} className="block">
+                                        <div className="p-3 bg-card border rounded-lg hover:border-primary/50 transition-colors text-sm">
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-medium truncate">{data.title}</span>
+                                                <span className="text-muted-foreground mx-1">vs</span>
+                                                <span className="font-medium truncate">{relData.title}</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Related Occupations + Industry Link - Internal Linking for SEO */}
+            <section className="container mx-auto px-4 py-8">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-2xl font-bold mb-6">Explore Related Occupations</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {occupationSlugs
+                            .filter((s) => s !== occupation)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 6)
+                            .map((slug) => {
+                                const relData = occupationRiskData[slug];
+                                if (!relData) return null;
+                                const relRiskColor = relData.overallRisk <= 30 ? 'text-emerald-500' : relData.overallRisk <= 60 ? 'text-amber-500' : 'text-red-500';
+                                return (
+                                    <Link key={slug} to={`/automation-risk/${slug}`} className="block">
+                                        <div className="p-4 bg-card border rounded-lg hover:border-primary/50 transition-colors">
+                                            <div className="font-medium">{relData.title}</div>
+                                            <div className="flex items-center justify-between mt-1">
+                                                <span className="text-sm text-muted-foreground">{relData.industry}</span>
+                                                <span className={`font-bold ${relRiskColor}`}>{relData.overallRisk}%</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                    </div>
+                    <div className="flex justify-center gap-4 mt-6">
+                        <Link to={`/automation-risk/industry/${data.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`} className="text-primary underline text-sm">
+                            More {data.industry} occupations &rarr;
+                        </Link>
+                        <Link to="/automation-risk/industry" className="text-primary underline text-sm">
+                            All industries &rarr;
+                        </Link>
+                        <Link to="/" className="text-primary underline text-sm">
+                            Search 1,016 occupations &rarr;
+                        </Link>
+                    </div>
                 </div>
             </section>
 
@@ -296,12 +369,12 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 <div className="max-w-4xl mx-auto text-center bg-card border rounded-xl p-8">
                     <h2 className="text-xl font-bold mb-2">Are You a Career Coach?</h2>
                     <p className="text-muted-foreground mb-4">
-                        Generate white-labeled Career Future-Proofing Reports for your clients.
-                        You pay $12 per report. Clients pay $150+. Keep the difference.
+                        Generate white-labeled "{data.title} Career Future-Proofing" reports for your clients in 30 seconds.
+                        You pay $10 per report. Clients pay $150+. <strong>That's 15x ROI.</strong>
                     </p>
-                    <Link to="/pricing">
+                    <Link to="/for-coaches">
                         <Button size="lg">
-                            Start Free Trial
+                            Learn About Coach Pro
                             <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     </Link>

@@ -21,6 +21,8 @@ import { useCareerPlanningStorage, LearningPath, Milestone } from '@/hooks/useCa
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { getCourseLink, getGenericCourseSearchUrl } from '@/lib/affiliateLinks';
+import { trackEvent } from '@/lib/posthog';
 
 export function LearningPathPanel() {
   const { 
@@ -279,16 +281,32 @@ export function LearningPathPanel() {
                     </div>
                   </div>
 
-                  {/* Skills Covered */}
+                  {/* Skills Covered — with course links */}
                   <div className="space-y-3">
                     <h4 className="font-semibold text-[var(--text-primary)]">Skills Covered</h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedPath.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
+                      {selectedPath.skills.map((skill, index) => {
+                        const course = getCourseLink(skill);
+                        const courseUrl = course?.url || getGenericCourseSearchUrl(skill);
+                        return (
+                          <a
+                            key={index}
+                            href={courseUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => trackEvent('affiliate_course_clicked', { skill, provider: course?.provider || 'coursera_search', course_title: course?.title || 'search' })}
+                            className="group"
+                            title={course ? `Learn: ${course.title} (${course.estimatedTime})` : `Find courses for ${skill}`}
+                          >
+                            <Badge variant="secondary" className="cursor-pointer group-hover:bg-[var(--accent-primary)]/20 group-hover:border-[var(--accent-primary)]/40 transition-colors">
+                              {skill}
+                              <BookOpen className="w-3 h-3 ml-1 opacity-50 group-hover:opacity-100" />
+                            </Badge>
+                          </a>
+                        );
+                      })}
                     </div>
+                    <p className="text-xs text-[var(--text-tertiary)]">Click any skill to find recommended courses</p>
                   </div>
 
                   {/* Prerequisites */}

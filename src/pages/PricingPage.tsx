@@ -267,21 +267,72 @@ const PricingPage = () => {
           })}
         </div>
 
-        {/* Enterprise CTA */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <Card className="border-2 border-[var(--accent-primary)]/20 bg-gradient-to-br from-[var(--accent-primary)]/5 to-[var(--accent-amber)]/5">
+        {/* Coach Pro CTA */}
+        <div className="mt-12 max-w-4xl mx-auto">
+          <Card className="border-2 border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-[var(--accent-primary)]/5">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Need a Custom Solution?</CardTitle>
+              <Badge variant="outline" className="mx-auto mb-2 text-amber-500 border-amber-500/30">For Career Coaches</Badge>
+              <CardTitle className="text-2xl">Coach Pro — White-Label Reports</CardTitle>
               <CardDescription className="text-base mt-2">
-                Enterprise plans available for teams and organizations with custom requirements
+                Generate branded AI career reports for your clients. Pay $10/report. Charge $150+. <strong>15x ROI.</strong>
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <div className="grid md:grid-cols-3 gap-6 mb-6">
                 <div>
-                  <h4 className="font-semibold mb-2">Workforce Planning</h4>
+                  <h4 className="font-semibold mb-2">Your Brand, Your Reports</h4>
                   <p className="text-sm text-muted-foreground">
-                    Analyze automation risk across your entire organization
+                    Custom logo, colors, and domain masking on every PDF
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Pay-As-You-Go</h4>
+                  <p className="text-sm text-muted-foreground">
+                    No subscription. Buy credits, generate reports, bill your clients
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">AI + O*NET Data</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Enterprise-grade intelligence that no competitor offers at this price
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/sample-report')}
+                  variant="outline"
+                >
+                  Try Sample Report Free
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/for-coaches')}
+                  className="bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[var(--bg-primary)]"
+                >
+                  Learn About Coach Pro
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Enterprise CTA */}
+        <div className="mt-8 max-w-4xl mx-auto">
+          <Card className="border-2 border-[var(--accent-primary)]/20 bg-gradient-to-br from-[var(--accent-primary)]/5 to-[var(--accent-amber)]/5">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Enterprise & Workforce Audit</CardTitle>
+              <CardDescription className="text-base mt-2">
+                Bulk-analyze your entire workforce. CSV upload, department-level risk scoring, and executive PDF reports.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <div className="grid md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <h4 className="font-semibold mb-2">Workforce Audit PDF</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Upload a CSV roster → get a C-suite-ready automation risk report
                   </p>
                 </div>
                 <div>
@@ -293,7 +344,7 @@ const PricingPage = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Custom Workshops</h4>
                   <p className="text-sm text-muted-foreground">
-                    On-site training and strategy sessions for your team
+                    On-site training and strategy sessions for your leadership team
                   </p>
                 </div>
               </div>
