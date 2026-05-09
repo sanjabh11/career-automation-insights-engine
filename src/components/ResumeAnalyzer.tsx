@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb, Share2, Twitter, Linkedin, Link2, Lock } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb, Lock, ShieldCheck, Trash2, FileWarning } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
@@ -25,6 +26,7 @@ interface RewriteSuggestion {
 }
 
 interface AnalysisResult {
+    analysis_id?: string | null;
     automation_risk_score: number;
     confidence_score: number;
     automation_prone_phrases: AutomationPronePhrase[];
@@ -54,14 +56,45 @@ function incrementFreeScanCount(): void {
     } catch { /* noop */ }
 }
 
+function printableRatio(text: string): number {
+    if (!text.length) return 0;
+    const printable = text.split('').filter((char) => {
+        const code = char.charCodeAt(0);
+        return code === 9 || code === 10 || code === 13 || (code >= 32 && code <= 126);
+    }).length;
+    return printable / text.length;
+}
+
+async function extractResumeText(file: File): Promise<{ text: string; warning?: string }> {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const rawText = await file.text();
+    const normalizedText = rawText.replace(/\u0000/g, ' ').replace(/\s+/g, ' ').trim();
+
+    if (extension === 'txt' || file.type === 'text/plain') {
+        return { text: normalizedText };
+    }
+
+    const ratio = printableRatio(rawText);
+    if (normalizedText.length < 300 || ratio < 0.75) {
+        throw new Error('This browser route cannot reliably extract text from that file. Export the resume as .txt or paste the resume text below.');
+    }
+
+    return {
+        text: normalizedText,
+        warning: 'This file was read with browser text extraction. For production PDF/DOCX quality, move parsing to a server-side parser before selling this workflow.',
+    };
+}
+
 export default function ResumeAnalyzer() {
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
     const [resumeText, setResumeText] = useState('');
     const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+    const [analysisId, setAnalysisId] = useState<string | null>(null);
     const [filename, setFilename] = useState('');
-    const [showSharePanel, setShowSharePanel] = useState(false);
+    const [fileWarning, setFileWarning] = useState<string | null>(null);
     const [linkCopied, setLinkCopied] = useState(false);
+    const [deletingAnalysis, setDeletingAnalysis] = useState(false);
     const { toast } = useToast();
     const { session } = useSession();
     const isAuthenticated = !!session?.user;
@@ -72,11 +105,12 @@ export default function ResumeAnalyzer() {
 
         setFilename(file.name);
         setUploading(true);
+        setFileWarning(null);
 
         try {
-            // Read file as text (simplified - in production, use PDF parser)
-            const text = await file.text();
+            const { text, warning } = await extractResumeText(file);
             setResumeText(text);
+            setFileWarning(warning || null);
 
             // Auto-analyze after upload
             await analyzeResume(text, file.name);
@@ -85,7 +119,7 @@ export default function ResumeAnalyzer() {
             console.error('Error reading file:', error);
             toast({
                 title: 'Upload Error',
-                description: 'Failed to read resume file',
+                description: error instanceof Error ? error.message : 'Failed to read resume file',
                 variant: 'destructive'
             });
         } finally {
@@ -106,6 +140,16 @@ export default function ResumeAnalyzer() {
     });
 
     const analyzeResume = async (text: string, fname: string) => {
+        const cleanedText = text.trim();
+        if (cleanedText.length < 200) {
+            toast({
+                title: 'Resume Text Too Short',
+                description: 'Paste or upload enough resume text for a meaningful automation-risk analysis.',
+                variant: 'destructive'
+            });
+            return;
+        }
+
         // Allow 1 free scan for guests, unlimited for authenticated users
         if (!isAuthenticated && getFreeScanCount() >= MAX_FREE_SCANS) {
             toast({
@@ -116,11 +160,13 @@ export default function ResumeAnalyzer() {
         }
 
         setAnalyzing(true);
+        setAnalysisResult(null);
+        setAnalysisId(null);
 
         try {
             const { data, error } = await supabase.functions.invoke('analyze-resume', {
                 body: {
-                    resume_text: text,
+                    resume_text: cleanedText,
                     user_id: session?.user?.id,
                     filename: fname
                 }
@@ -130,6 +176,7 @@ export default function ResumeAnalyzer() {
 
             if (data && data.success) {
                 setAnalysisResult(data as AnalysisResult);
+                setAnalysisId(data.analysis_id || null);
 
                 // Track free scan usage for guests
                 if (!isAuthenticated) {
@@ -174,6 +221,36 @@ export default function ResumeAnalyzer() {
         }
     };
 
+    const deleteSavedAnalysis = async () => {
+        if (!analysisId || !session?.user?.id) return;
+
+        setDeletingAnalysis(true);
+        try {
+            const { error } = await supabase
+                .from('resume_analyses')
+                .delete()
+                .eq('id', analysisId)
+                .eq('user_id', session.user.id);
+
+            if (error) throw error;
+
+            setAnalysisId(null);
+            toast({
+                title: 'Saved Analysis Deleted',
+                description: 'The stored resume analysis record was removed from your account.',
+            });
+        } catch (error: any) {
+            console.error('Error deleting resume analysis:', error);
+            toast({
+                title: 'Delete Failed',
+                description: error.message || 'Unable to delete saved analysis',
+                variant: 'destructive',
+            });
+        } finally {
+            setDeletingAnalysis(false);
+        }
+    };
+
     const getRiskLevel = (score: number) => {
         if (score < 30) return { label: 'Low Risk', color: 'text-green-600', bgColor: 'bg-green-100' };
         if (score < 60) return { label: 'Moderate Risk', color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
@@ -203,6 +280,13 @@ export default function ResumeAnalyzer() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <Alert>
+                        <ShieldCheck className="h-4 w-4" />
+                        <AlertDescription>
+                            Reliable path today: paste text or upload .txt. PDF/DOCX browser extraction is treated as degraded until server-side parsing is added. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below.
+                        </AlertDescription>
+                    </Alert>
+
                     {/* Dropzone */}
                     <div
                         {...getRootProps()}
@@ -227,7 +311,7 @@ export default function ResumeAnalyzer() {
                             <>
                                 <p className="text-lg font-medium mb-2">Drag & drop your resume here</p>
                                 <p className="text-sm text-muted-foreground">or click to browse</p>
-                                <p className="text-xs text-muted-foreground mt-2">Supports .txt, .pdf, .doc, .docx</p>
+                                <p className="text-xs text-muted-foreground mt-2">Best support: .txt. PDF/DOC/DOCX may require paste fallback.</p>
                             </>
                         )}
                     </div>
@@ -240,6 +324,42 @@ export default function ResumeAnalyzer() {
                             </AlertDescription>
                         </Alert>
                     )}
+
+                    {fileWarning && (
+                        <Alert>
+                            <FileWarning className="h-4 w-4" />
+                            <AlertDescription>{fileWarning}</AlertDescription>
+                        </Alert>
+                    )}
+
+                    <div className="space-y-3">
+                        <Textarea
+                            value={resumeText}
+                            onChange={(event) => {
+                                setResumeText(event.target.value);
+                                setFileWarning(null);
+                            }}
+                            placeholder="Paste resume text here if PDF/DOCX extraction is blocked or incomplete..."
+                            rows={8}
+                            disabled={uploading || analyzing}
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => analyzeResume(resumeText, filename || 'pasted-resume.txt')}
+                            disabled={uploading || analyzing || resumeText.trim().length < 200}
+                            className="w-full"
+                        >
+                            {analyzing ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Analyzing...
+                                </>
+                            ) : (
+                                'Analyze Pasted Text'
+                            )}
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -280,6 +400,33 @@ export default function ResumeAnalyzer() {
                             <Badge className={getRiskLevel(analysisResult.automation_risk_score).bgColor} variant="outline">
                                 Confidence: {Math.round(analysisResult.confidence_score * 100)}%
                             </Badge>
+
+                            <Alert>
+                                <ShieldCheck className="h-4 w-4" />
+                                <AlertDescription className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                    <span>
+                                        {analysisId
+                                            ? 'This signed-in analysis is saved to your account. Use delete when the client review is complete.'
+                                            : 'No saved analysis record is available for this result in the current session.'}
+                                    </span>
+                                    {analysisId && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={deleteSavedAnalysis}
+                                            disabled={deletingAnalysis}
+                                        >
+                                            {deletingAnalysis ? (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                            )}
+                                            Delete Saved Record
+                                        </Button>
+                                    )}
+                                </AlertDescription>
+                            </Alert>
                         </CardContent>
                     </Card>
 
@@ -427,6 +574,9 @@ export default function ResumeAnalyzer() {
                         <Button className="flex-1" variant="outline">
                             <Download className="mr-2 h-4 w-4" />
                             Download Full Report
+                        </Button>
+                        <Button className="flex-1" variant="outline" onClick={() => shareScore('copy')}>
+                            {linkCopied ? 'Link Copied' : 'Copy Score Link'}
                         </Button>
                         <Button className="flex-1">
                             Apply Suggestions

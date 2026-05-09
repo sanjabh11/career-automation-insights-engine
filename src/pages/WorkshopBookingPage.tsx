@@ -140,7 +140,7 @@ const WorkshopBookingPage = () => {
 
   if (step === 'submitted') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-primary)' }}>
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -204,7 +204,7 @@ const WorkshopBookingPage = () => {
   const estimatedPrice = calculatePrice();
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-12">

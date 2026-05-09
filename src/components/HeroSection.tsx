@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight, Cpu, Shield, TrendingUp, Search, Zap, Target, Lightbulb } from "lucide-react";
+import { ArrowRight, Cpu, Shield, TrendingUp, Search, Zap, Target, Lightbulb, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -45,6 +45,7 @@ export function HeroSection() {
   };
 
   const quickFilters = [
+    { label: "Market Map", path: "/market-map", icon: Map },
     { label: "Bright Outlook", path: "/browse/bright-outlook", icon: Zap },
     { label: "STEM Careers", path: "/browse/stem", icon: Target },
     { label: "Tech Skills", path: "/tech-skills", icon: Cpu },

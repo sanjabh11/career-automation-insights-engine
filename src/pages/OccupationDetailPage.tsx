@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Zap } from "lucide-react";
+import { Loader2, ArrowLeft, Sparkles } from "lucide-react";
 import { formatWage } from "@/types/onet-enrichment";
 import { OccupationAnalysis } from "@/components/OccupationAnalysis";
 
@@ -154,7 +154,7 @@ export default function OccupationDetailPage() {
           )}
           {occupation.is_stem && (
             <Badge variant="secondary" className="text-xs">
-              <Zap className="h-3 w-3 mr-1" /> STEM
+              <Sparkles className="h-3 w-3 mr-1" /> STEM
             </Badge>
           )}
           {occupation.job_zone && (

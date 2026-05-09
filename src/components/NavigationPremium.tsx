@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Shield, User, ChevronDown } from "lucide-react";
+import { Menu, X, Shield, User, ChevronDown, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/useSession";
 import { useAuthMode } from "@/contexts/WhopAppContext";
@@ -29,6 +29,7 @@ export default function NavigationPremium() {
   const mainLinks = [
     { to: "/", label: "Home" },
     { to: "/ai-impact-planner", label: "Planner" },
+    { to: "/market-map", label: "Market Map" },
     { to: "/work-dimensions", label: "Dimensions" },
   ];
 

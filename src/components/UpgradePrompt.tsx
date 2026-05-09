@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, MessageSquare, TrendingUp, Zap, ArrowRight } from 'lucide-react';
+import { Check, X, Sparkles, TrendingUp, Zap, ArrowRight } from 'lucide-react';
 import { SUBSCRIPTION_TIERS, type SubscriptionTier } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -33,7 +33,7 @@ const FEATURE_INFO = {
   aiChat: {
     title: 'AI Career Coach',
     description: 'Get personalized career guidance',
-    icon: MessageSquare,
+    icon: Sparkles,
     benefit: 'Unlimited AI conversations',
   },
   savedAnalyses: {
@@ -97,8 +97,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
 
   const handleUpgrade = async (tierId: string) => {
     try {
-      // DISABLED: Analytics temporarily disabled
-      /*
+      // Track conversion event
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase.from('analytics_events').insert({
@@ -113,7 +112,6 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           },
         });
       }
-      */
 
       // Navigate to pricing page with pre-selected tier
       navigate(`/pricing?tier=${tierId}&feature=${feature}`);
@@ -127,8 +125,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
 
   const handleDismiss = async () => {
     try {
-      // DISABLED: Analytics temporarily disabled
-      /*
+      // Track dismissal
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase.from('analytics_events').insert({
@@ -140,7 +137,6 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           },
         });
       }
-      */
     } catch (error) {
       console.error('Error tracking dismissal:', error);
     }
@@ -225,17 +221,18 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
             return (
               <Card
                 key={tier.id}
-                className={`relative cursor-pointer transition-all ${isRecommended
+                className={`relative cursor-pointer transition-all ${
+                  isRecommended
                     ? 'border-primary shadow-lg ring-2 ring-primary/20'
                     : isSelected
-                      ? 'border-primary'
-                      : 'border-border hover:border-primary/50'
-                  } ${isCurrent ? 'opacity-60' : ''}`}
+                    ? 'border-primary'
+                    : 'border-border hover:border-primary/50'
+                } ${isCurrent ? 'opacity-60' : ''}`}
                 onClick={() => !isCurrent && setSelectedTier(tier.id)}
               >
                 {isRecommended && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-[var(--accent-primary)] text-[var(--bg-primary)]">
+                    <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white">
                       Recommended
                     </Badge>
                   </div>
@@ -299,7 +296,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
         </div>
 
         {/* Benefits Section */}
-        <Card className="mt-4 bg-gradient-to-br from-[var(--accent-primary)]/5 to-[var(--accent-amber)]/5">
+        <Card className="mt-4 bg-gradient-to-br from-primary/5 to-purple-500/5">
           <CardHeader>
             <CardTitle className="text-lg">What You'll Get</CardTitle>
           </CardHeader>
@@ -351,7 +348,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           </Button>
           <Button
             onClick={() => handleUpgrade(recommendedTier.id)}
-            className="bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[var(--bg-primary)]"
+            className="bg-gradient-to-r from-primary to-purple-600"
           >
             View All Plans
           </Button>
@@ -378,8 +375,6 @@ export const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, compact =
 
   const handleUpgradeClick = async () => {
     try {
-      // DISABLED: Analytics temporarily disabled
-      /*
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase.from('analytics_events').insert({
@@ -392,7 +387,6 @@ export const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, compact =
           },
         });
       }
-      */
     } catch (error) {
       console.error('Error tracking banner click:', error);
     }
@@ -402,7 +396,7 @@ export const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, compact =
 
   if (compact) {
     return (
-      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[var(--accent-primary)]/10 to-[var(--accent-amber)]/10 rounded-lg border border-[var(--accent-primary)]/20">
+      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-purple-600/10 rounded-lg border border-primary/20">
         <div className="flex items-center gap-2">
           <FeatureIcon className="w-5 h-5 text-primary" />
           <span className="text-sm font-medium">Upgrade for {featureInfo.benefit.toLowerCase()}</span>
@@ -415,7 +409,7 @@ export const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, compact =
   }
 
   return (
-    <Card className="bg-gradient-to-br from-[var(--accent-primary)]/5 to-[var(--accent-amber)]/5 border-[var(--accent-primary)]/20">
+    <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5 border-primary/20">
       <CardContent className="flex items-center justify-between p-6">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-primary/10 rounded-lg">
@@ -426,7 +420,7 @@ export const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, compact =
             <p className="text-sm text-muted-foreground">{featureInfo.description}</p>
           </div>
         </div>
-        <Button onClick={handleUpgradeClick} className="bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[var(--bg-primary)]">
+        <Button onClick={handleUpgradeClick} className="bg-gradient-to-r from-primary to-purple-600">
           Upgrade Now
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>

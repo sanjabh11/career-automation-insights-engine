@@ -48,6 +48,16 @@ const DEFAULT_CATEGORY_WEIGHTS = {
   knowledge: 0.05     // Lowest - knowledge can often be codified
 };
 
+// Advanced scoring modifiers
+const AUTOMATION_FACTORS = {
+  routine_multiplier: 1.3,
+  creativity_penalty: 0.6,
+  human_interaction_penalty: 0.7,
+  physical_dexterity_penalty: 0.5,
+  cognitive_complexity_bonus: 1.1,
+  data_driven_bonus: 1.4
+};
+
 // Deterministic factor multipliers (controlled vocabulary) - default
 const DEFAULT_FACTOR_MULTIPLIERS: Record<string, number> = {
   routine: 1.2,
@@ -88,7 +98,6 @@ const ApoItemSchema = z.object({
     "insufficient_evidence",
   ])).default([]),
   explanation: z.string().min(1).max(500).optional(),
-  timeline: z.enum(["immediate", "short_term", "medium_term", "long_term"]).optional(),
   confidence: z.number().min(0).max(1).default(0.6),
   metadata: z.object({
     importance: z.number().min(0).max(1).default(0.5),
@@ -195,156 +204,18 @@ const validateAPOScore = (score: number, context: string): number => {
   return validated;
 };
 
-// ---------------------------------------------------------------------------
-// O*NET data grounding: fetch real task/knowledge/skill/ability/tech data
-// ---------------------------------------------------------------------------
-interface OnetContext {
-  tasks: Array<{ description: string; importance?: number; type?: string }>;
-  knowledge: Array<{ name: string; importance?: number; level?: number }>;
-  skills: Array<{ name: string; importance?: number; level?: number }>;
-  abilities: Array<{ name: string; importance?: number; level?: number }>;
-  technologies: Array<{ name: string; category?: string; is_hot?: boolean }>;
-}
+const calculateWeightedAPO = (categoryScores: Record<string, number>): number => {
+  let weightedSum = 0;
+  let totalWeight = 0;
 
-async function fetchOnetContext(
-  supabase: any,
-  occupationCode: string,
-): Promise<OnetContext> {
-  const empty: OnetContext = { tasks: [], knowledge: [], skills: [], abilities: [], technologies: [] };
-  if (!supabase) return empty;
+  for (const [category, score] of Object.entries(categoryScores)) {
+    const weight = DEFAULT_CATEGORY_WEIGHTS[category as keyof typeof DEFAULT_CATEGORY_WEIGHTS] || 0;
+    weightedSum += score * weight;
+    totalWeight += weight;
+  }
 
-  try {
-    // Fire all queries in parallel for speed
-    const [tasksRes, knowledgeRes, skillsRes, abilitiesRes, techRes] = await Promise.all([
-      supabase
-        .from('onet_detailed_tasks')
-        .select('task_description, importance, task_type')
-        .eq('occupation_code', occupationCode)
-        .order('importance', { ascending: false })
-        .limit(20),
-      supabase
-        .from('onet_knowledge')
-        .select('name, importance, level')
-        .eq('occupation_code', occupationCode)
-        .order('importance', { ascending: false })
-        .limit(15),
-      // Skills table doesn't exist yet — try onet_knowledge pattern; gracefully fail
-      supabase
-        .from('onet_abilities') // will reuse abilities table structure for skills if needed
-        .select('name, importance, level')
-        .eq('occupation_code', occupationCode)
-        .order('importance', { ascending: false })
-        .limit(15)
-        .then((r: any) => r), // placeholder — overridden below if skills table exists
-      supabase
-        .from('onet_abilities')
-        .select('name, importance, level')
-        .eq('occupation_code', occupationCode)
-        .order('importance', { ascending: false })
-        .limit(15),
-      supabase
-        .from('onet_technologies')
-        .select('technology_name, category, is_hot_technology')
-        .eq('occupation_code', occupationCode)
-        .limit(20),
-    ]);
-
-    return {
-      tasks: (tasksRes.data || []).map((t: any) => ({
-        description: t.task_description,
-        importance: t.importance ? Number(t.importance) : undefined,
-        type: t.task_type,
-      })),
-      knowledge: (knowledgeRes.data || []).map((k: any) => ({
-        name: k.name,
-        importance: k.importance ? Number(k.importance) : undefined,
-        level: k.level ? Number(k.level) : undefined,
-      })),
-      skills: [], // Dedicated skills table not yet migrated; LLM will infer from other context
-      abilities: (abilitiesRes.data || []).map((a: any) => ({
-        name: a.name,
-        importance: a.importance ? Number(a.importance) : undefined,
-        level: a.level ? Number(a.level) : undefined,
-      })),
-      technologies: (techRes.data || []).map((t: any) => ({
-        name: t.technology_name,
-        category: t.category,
-        is_hot: t.is_hot_technology,
-      })),
-    };
-  } catch (e) {
-    console.warn('O*NET context fetch failed (non-fatal, LLM will generate from training data):', e);
-    return empty;
-  }
-}
-
-function formatOnetContextForPrompt(ctx: OnetContext): string {
-  const lines: string[] = [];
-  if (ctx.tasks.length) {
-    lines.push('\nO*NET TASK STATEMENTS (authoritative — use these as the basis for task items):');
-    ctx.tasks.forEach((t, i) => {
-      const imp = t.importance != null ? ` [importance=${t.importance.toFixed(1)}]` : '';
-      lines.push(`  ${i + 1}. ${t.description}${imp}`);
-    });
-  }
-  if (ctx.knowledge.length) {
-    lines.push('\nO*NET KNOWLEDGE AREAS:');
-    ctx.knowledge.forEach((k) => {
-      const meta = [k.importance != null ? `imp=${k.importance.toFixed(1)}` : '', k.level != null ? `lv=${k.level.toFixed(1)}` : ''].filter(Boolean).join(', ');
-      lines.push(`  - ${k.name}${meta ? ` [${meta}]` : ''}`);
-    });
-  }
-  if (ctx.abilities.length) {
-    lines.push('\nO*NET ABILITIES:');
-    ctx.abilities.forEach((a) => {
-      const meta = [a.importance != null ? `imp=${a.importance.toFixed(1)}` : '', a.level != null ? `lv=${a.level.toFixed(1)}` : ''].filter(Boolean).join(', ');
-      lines.push(`  - ${a.name}${meta ? ` [${meta}]` : ''}`);
-    });
-  }
-  if (ctx.technologies.length) {
-    lines.push('\nO*NET TECHNOLOGIES:');
-    ctx.technologies.forEach((t) => {
-      const hot = t.is_hot ? ' [HOT]' : '';
-      const cat = t.category ? ` (${t.category})` : '';
-      lines.push(`  - ${t.name}${cat}${hot}`);
-    });
-  }
-  if (!lines.length) {
-    lines.push('\n(No O*NET data available for this occupation; generate items from research knowledge.)');
-  }
-  return lines.join('\n');
-}
-
-// ---------------------------------------------------------------------------
-// APO result caching: check apo_logs for recent matching result
-// ---------------------------------------------------------------------------
-const CACHE_TTL_HOURS = Number(Deno.env.get('APO_CACHE_TTL_HOURS') ?? '24');
-
-async function getCachedResult(
-  supabase: any,
-  occupationCode: string,
-  configId: string | null,
-): Promise<any | null> {
-  if (!supabase || CACHE_TTL_HOURS <= 0) return null;
-  try {
-    const cutoff = new Date(Date.now() - CACHE_TTL_HOURS * 3600_000).toISOString();
-    let query = supabase
-      .from('apo_logs')
-      .select('overall_apo, model_json, computed_items, category_scores, weights, ci_lower, ci_upper, ci_iterations, bls_trend_pct, bls_adjustment_pts, econ_viability_discount, sector_delay_months, industry_sector')
-      .eq('occupation_code', occupationCode)
-      .gte('created_at', cutoff)
-      .order('created_at', { ascending: false })
-      .limit(1);
-    if (configId) query = query.eq('config_id', configId);
-    const { data, error } = await query.maybeSingle();
-    if (error || !data) return null;
-    console.log(`Cache HIT for ${occupationCode} (within ${CACHE_TTL_HOURS}h)`);
-    return data;
-  } catch (e) {
-    console.warn('Cache lookup failed (non-fatal):', e);
-    return null;
-  }
-}
+  return totalWeight > 0 ? weightedSum / totalWeight : 0;
+};
 
 serve(async (req) => {
   console.log('Enhanced Calculate APO function invoked');
@@ -472,46 +343,8 @@ serve(async (req) => {
     // Ensure weights sum to 1.0 after DB merge
     weightsUsed = normalizeWeights(weightsUsed);
 
-    // APO-2: Check cache before expensive LLM call
-    const cached = await getCachedResult(supabase, occupation.code, configId);
-    if (cached) {
-      // Reconstruct response from cached telemetry row
-      const cachedResponse = {
-        overallAPO: cached.overall_apo,
-        categoryBreakdown: cached.category_scores,
-        tasks: (cached.computed_items as any)?.filter?.((i: any) => i.category === 'tasks') || [],
-        knowledge: (cached.computed_items as any)?.filter?.((i: any) => i.category === 'knowledge') || [],
-        skills: (cached.computed_items as any)?.filter?.((i: any) => i.category === 'skills') || [],
-        abilities: (cached.computed_items as any)?.filter?.((i: any) => i.category === 'abilities') || [],
-        technologies: (cached.computed_items as any)?.filter?.((i: any) => i.category === 'technologies') || [],
-        ci: cached.ci_lower != null ? { lower: cached.ci_lower, upper: cached.ci_upper, iterations: cached.ci_iterations } : undefined,
-        externalSignals: {
-          blsTrendPct: cached.bls_trend_pct,
-          blsAdjustmentPts: cached.bls_adjustment_pts,
-          industrySector: cached.industry_sector,
-          sectorDelayMonths: cached.sector_delay_months,
-          econViabilityDiscount: cached.econ_viability_discount,
-        },
-        metadata: { analysis_version: '2.1-cached', calculation_method: 'deterministic+gemini', timestamp: new Date().toISOString() },
-        confidence: 'medium',
-        timeline: 'medium_term',
-        insights: { primary_opportunities: [], main_challenges: [], automation_drivers: [], barriers: [] },
-        _cached: true,
-      };
-      const responseBody = { analysis: cachedResponse, ...cachedResponse };
-      return new Response(JSON.stringify(responseBody), {
-        headers: { ...baseHeaders, 'Content-Type': 'application/json', 'X-APO-Cache': 'HIT' },
-      });
-    }
-
-    // APO-1: Fetch real O*NET data to ground the LLM
-    const onetContext = await fetchOnetContext(supabase, occupation.code);
-    const onetDataBlock = formatOnetContextForPrompt(onetContext);
-    const hasOnetData = onetContext.tasks.length > 0 || onetContext.knowledge.length > 0 || onetContext.abilities.length > 0 || onetContext.technologies.length > 0;
-    console.log(`O*NET grounding: ${onetContext.tasks.length} tasks, ${onetContext.knowledge.length} knowledge, ${onetContext.abilities.length} abilities, ${onetContext.technologies.length} technologies`);
-
-    // Revised strict JSON-only system prompt (T5) — now grounded in O*NET data
-    const prompt = `You are an expert AI automation analyst specializing in workforce transformation, using a research-driven methodology (Frey & Osborne 2013; OECD/Arntz et al. 2016; ILO 2025) grounded in O*NET data. Output MUST be ONLY valid JSON conforming to the schema. Do NOT include any prose or code fences. No extra keys.\n\nRules:\n- Work item-first, then aggregate to categories (tasks, knowledge, skills, abilities, technologies), then overall.\n- Use controlled factor vocabulary only: ["routine","data_driven","creative","social","physical_complex","judgment","compliance","genai_boost","economic_viability","productivity_enhancement","insufficient_evidence"].\n- If evidence is weak, set low confidence and include "insufficient_evidence".\n- Category APO should equal the weighted mean of items[].apo (by item importance) within ±5 points; adjust items if misaligned.\n- Overall APO is weighted average of category_apos (equal unless tech-heavy: technologies +10%).\n- Reconcile contradictions (e.g., high barriers with high APO) by adjusting affected items (-10–20%).\n- Prefer partial task automation/augmentation over full replacement; penalize full automation unless most items >80%.${hasOnetData ? '\n- CRITICAL: Base your task items on the O*NET TASK STATEMENTS provided below. Use the provided importance scores to set metadata.importance. Do NOT invent tasks when real ones are given.' : ''}\n\nContext:\nOccupation: ${occupation.title}\nONET_Code: ${occupation.code}${onetDataBlock}\n\nSCHEMA (JSON):\n{\n  "overall_apo": 0.0-100.0,\n  "items": [\n    {\n      "category": "tasks|knowledge|skills|abilities|technologies",\n      "description": "string",\n      "factors": ["routine"|"data_driven"|"creative"|"social"|"physical_complex"|"judgment"|"compliance"|"genai_boost"|"economic_viability"|"productivity_enhancement"|"insufficient_evidence"],\n      "explanation": "string (<=280 chars)",\n      "timeline": "immediate|short_term|medium_term|long_term",\n      "confidence": 0.0-1.0,\n      "metadata": { "importance": 0.0-1.0, "frequency": "low|medium|high", "skill_level": 1-5, "tech_adoption": 0.0-1.0 }\n    }\n  ],\n  "category_apos": {\n    "tasks": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "knowledge": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "skills": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "abilities": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "technologies": { "apo": 0.0-100.0, "confidence": "low|medium|high" }\n  },\n  "timeline_projections": { "immediate": 0.0-100.0, "short_term": 0.0-100.0, "medium_term": 0.0-100.0, "long_term": 0.0-100.0, "explanation": "string" },\n  "key_factors": { "bottlenecks": ["string"], "gen_ai_impacts": ["string"], "adaptation_strategies": ["string"] },\n  "recommendations": ["string"],\n  "clarifications_needed": ["string"]\n}\n\nEXAMPLE (valid, compact):\n{\n  "overall_apo": 62.5,\n  "items": [{"category":"tasks","description":"Process invoices","factors":["routine","data_driven"],"explanation":"Highly routine data workflows","timeline":"short_term","confidence":0.8,"metadata":{"importance":0.7,"frequency":"high","skill_level":2,"tech_adoption":0.8}}],\n  "category_apos": {"tasks":{"apo":70,"confidence":"high"},"knowledge":{"apo":45,"confidence":"medium"},"skills":{"apo":55,"confidence":"medium"},"abilities":{"apo":40,"confidence":"medium"},"technologies":{"apo":80,"confidence":"high"}},\n  "timeline_projections": {"immediate":40,"short_term":55,"medium_term":70,"long_term":80,"explanation":"Adoption increases with tooling"},\n  "key_factors": {"bottlenecks":["manual approvals"],"gen_ai_impacts":["document extraction"],"adaptation_strategies":["process redesign"]},\n  "recommendations":["adopt OCR"],\n  "clarifications_needed":[]\n}`;
+    // Revised strict JSON-only system prompt (T5)
+    const prompt = `You are an expert AI automation analyst specializing in workforce transformation, using a research-driven methodology (Frey & Osborne 2013; OECD/Arntz et al. 2016; ILO 2025) grounded in O*NET data. Output MUST be ONLY valid JSON conforming to the schema. Do NOT include any prose or code fences. No extra keys.\n\nRules:\n- Work item-first, then aggregate to categories (tasks, knowledge, skills, abilities, technologies), then overall.\n- Use controlled factor vocabulary only: ["routine","data_driven","creative","social","physical_complex","judgment","compliance","genai_boost","economic_viability","productivity_enhancement","insufficient_evidence"].\n- If evidence is weak, set low confidence and include "insufficient_evidence".\n- Category APO should equal the weighted mean of items[].apo (by item importance) within ±5 points; adjust items if misaligned.\n- Overall APO is weighted average of category_apos (equal unless tech-heavy: technologies +10%).\n- Reconcile contradictions (e.g., high barriers with high APO) by adjusting affected items (-10–20%).\n- Prefer partial task automation/augmentation over full replacement; penalize full automation unless most items >80%.\n\nContext:\nOccupation: ${occupation.title}\nONET_Code: ${occupation.code}\n\nSCHEMA (JSON):\n{\n  "overall_apo": 0.0-100.0,\n  "items": [\n    {\n      "category": "tasks|knowledge|skills|abilities|technologies",\n      "description": "string",\n      "factors": ["routine"|"data_driven"|"creative"|"social"|"physical_complex"|"judgment"|"compliance"|"genai_boost"|"economic_viability"|"productivity_enhancement"|"insufficient_evidence"],\n      "explanation": "string (<=280 chars)",\n      "confidence": 0.0-1.0,\n      "metadata": { "importance": 0.0-1.0, "frequency": "low|medium|high", "skill_level": 1-5, "tech_adoption": 0.0-1.0 }\n    }\n  ],\n  "category_apos": {\n    "tasks": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "knowledge": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "skills": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "abilities": { "apo": 0.0-100.0, "confidence": "low|medium|high" },\n    "technologies": { "apo": 0.0-100.0, "confidence": "low|medium|high" }\n  },\n  "timeline_projections": { "immediate": 0.0-100.0, "short_term": 0.0-100.0, "medium_term": 0.0-100.0, "long_term": 0.0-100.0, "explanation": "string" },\n  "key_factors": { "bottlenecks": ["string"], "gen_ai_impacts": ["string"], "adaptation_strategies": ["string"] },\n  "recommendations": ["string"],\n  "clarifications_needed": ["string"]\n}\n\nEXAMPLE (valid, compact):\n{\n  "overall_apo": 62.5,\n  "items": [{"category":"tasks","description":"Process invoices","factors":["routine","data_driven"],"explanation":"Highly routine data workflows","confidence":0.8,"metadata":{"importance":0.7,"frequency":"high","skill_level":2,"tech_adoption":0.8}}],\n  "category_apos": {"tasks":{"apo":70,"confidence":"high"},"knowledge":{"apo":45,"confidence":"medium"},"skills":{"apo":55,"confidence":"medium"},"abilities":{"apo":40,"confidence":"medium"},"technologies":{"apo":80,"confidence":"high"}},\n  "timeline_projections": {"immediate":40,"short_term":55,"medium_term":70,"long_term":80,"explanation":"Adoption increases with tooling"},\n  "key_factors": {"bottlenecks":["manual approvals"],"gen_ai_impacts":["document extraction"],"adaptation_strategies":["process redesign"]},\n  "recommendations":["adopt OCR"],\n  "clarifications_needed":[]\n}`;
 
     console.log('Requesting Gemini analysis via GeminiClient');
     const client = new GeminiClient();
@@ -721,23 +554,19 @@ serve(async (req) => {
       console.warn('External adjustments failed (non-fatal):', e);
     }
 
-    // APO-4: Confidence-scaled Monte Carlo CI — noise inversely scaled by confidence
+    // Confidence Intervals via Monte Carlo sampling (fast, light-touch)
     try {
       const N = Number(Deno.env.get('APO_CI_ITERATIONS') ?? '200');
       const sims: number[] = [];
-      // Map confidence label to noise std dev: low confidence = wider band
-      const confToNoise = (conf: string): number => {
-        if (conf === 'high') return 0.02;   // ±2% noise
-        if (conf === 'medium') return 0.05; // ±5% noise
-        return 0.10;                         // ±10% noise for low confidence
-      };
       for (let i = 0; i < N; i++) {
+        // Apply small noise to each category score and external adjustments
+        const jitter = (x: number) => clamp100(x * (1 + randn(0.03)));
         const cs = {
-          tasks: clamp100((categoryScores.tasks?.apo ?? 0) * (1 + randn(confToNoise(categoryScores.tasks?.confidence ?? 'low')))),
-          knowledge: clamp100((categoryScores.knowledge?.apo ?? 0) * (1 + randn(confToNoise(categoryScores.knowledge?.confidence ?? 'low')))),
-          skills: clamp100((categoryScores.skills?.apo ?? 0) * (1 + randn(confToNoise(categoryScores.skills?.confidence ?? 'low')))),
-          abilities: clamp100((categoryScores.abilities?.apo ?? 0) * (1 + randn(confToNoise(categoryScores.abilities?.confidence ?? 'low')))),
-          technologies: clamp100((categoryScores.technologies?.apo ?? 0) * (1 + randn(confToNoise(categoryScores.technologies?.confidence ?? 'low')))),
+          tasks: jitter(categoryScores.tasks?.apo ?? 0),
+          knowledge: jitter(categoryScores.knowledge?.apo ?? 0),
+          skills: jitter(categoryScores.skills?.apo ?? 0),
+          abilities: jitter(categoryScores.abilities?.apo ?? 0),
+          technologies: jitter(categoryScores.technologies?.apo ?? 0),
         };
         let sim = clamp100(
           cs.tasks * weights.tasks +
@@ -800,31 +629,31 @@ serve(async (req) => {
         description: item.description,
         apo: clamp100(item.computedAPO),
         factors: item.factors || [],
-        timeline: item.timeline || 'medium_term'
+        timeline: 'unknown'
       })),
       knowledge: byCat.knowledge.map((item: any) => ({
         description: item.description,
         apo: clamp100(item.computedAPO),
         factors: item.factors || [],
-        timeline: item.timeline || 'medium_term'
+        timeline: 'unknown'
       })),
       skills: byCat.skills.map((item: any) => ({
         description: item.description,
         apo: clamp100(item.computedAPO),
         factors: item.factors || [],
-        timeline: item.timeline || 'medium_term'
+        timeline: 'unknown'
       })),
       abilities: byCat.abilities.map((item: any) => ({
         description: item.description,
         apo: clamp100(item.computedAPO),
         factors: item.factors || [],
-        timeline: item.timeline || 'medium_term'
+        timeline: 'unknown'
       })),
       technologies: byCat.technologies.map((item: any) => ({
         description: item.description,
         apo: clamp100(item.computedAPO),
         factors: item.factors || [],
-        timeline: item.timeline || 'short_term'
+        timeline: 'unknown'
       })),
       categoryBreakdown: {
         tasks: { apo: categoryScores.tasks?.apo ?? 0, confidence: categoryScores.tasks?.confidence ?? 'medium' },

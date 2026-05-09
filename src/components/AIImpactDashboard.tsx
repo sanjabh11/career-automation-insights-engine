@@ -257,6 +257,16 @@ export function AIImpactDashboard() {
                 </div>
               )}
             </div>
+
+            {selectedOccupation && (
+              <div className="p-3 rounded-lg border bg-[var(--bg-secondary)]">
+                <div className="font-medium">{selectedOccupation.title}</div>
+                <div className="text-xs text-[var(--text-tertiary)]">Code: {selectedOccupation.code}</div>
+                {selectedOccupation.description && (
+                  <p className="text-sm mt-2 text-[var(--text-secondary)]">{selectedOccupation.description}</p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>

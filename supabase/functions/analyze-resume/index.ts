@@ -7,6 +7,10 @@ const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+function buildRetainedResumeStub(resumeText: string): string {
+    return `[raw resume text redacted after analysis; original_length_chars=${resumeText.length}]`;
+}
+
 /**
  * Analyze Resume for Automation Risk
  * 
@@ -136,7 +140,7 @@ Respond in JSON format:
                 .insert({
                     user_id,
                     filename,
-                    resume_text,
+                    resume_text: buildRetainedResumeStub(resume_text),
                     automation_risk_score: analysisResult.automation_risk_score,
                     confidence_score: analysisResult.confidence_score,
                     automation_prone_phrases: analysisResult.automation_prone_phrases,

@@ -39,6 +39,7 @@ const ValidationMethodsPage = lazy(() => import("./pages/ValidationMethodsPage")
 const QualityPage = lazy(() => import("./pages/QualityPage"));
 const ResponsibleAIPage = lazy(() => import("./pages/ResponsibleAIPage"));
 const IndustryDashboardPage = lazy(() => import("./pages/IndustryDashboardPage"));
+const MarketMapPage = lazy(() => import("./pages/MarketMapPage"));
 const SkillsBuilderPage = lazy(() => import("./pages/SkillsBuilderPage"));
 const OperationsPage = lazy(() => import("./pages/OperationsPage"));
 const ResourcesPage = lazy(() => import("./pages/ResourcesPage"));
@@ -142,6 +143,7 @@ function App() {
                 <Route path="/quality" element={<QualityPage />} />
                 <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
                 <Route path="/industry" element={<IndustryDashboardPage />} />
+                <Route path="/market-map" element={<MarketMapPage />} />
                 <Route path="/impact" element={<ImpactDashboard />} />
                 <Route path="/impact-dashboard" element={<Navigate to="/impact" replace />} />
                 <Route path="/skills-builder" element={<SkillsBuilderPage />} />

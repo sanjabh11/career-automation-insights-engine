@@ -209,8 +209,7 @@ export const useSubscription = () => {
         p_feature_name: feature, // RPC might expect the feature name key, checking migration next
       });
 
-      // DISABLED: Analytics events temporarily disabled due to schema issues
-      /*
+      // Also log analytics event
       await supabase.from('analytics_events').insert({
         user_id: user.id,
         event_type: eventType,
@@ -219,7 +218,6 @@ export const useSubscription = () => {
           timestamp: new Date().toISOString(),
         },
       });
-      */
 
       // Refresh usage stats
       await fetchUsageStats(user.id);

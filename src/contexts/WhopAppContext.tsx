@@ -213,7 +213,7 @@ export function WhopAppProvider({ children, forceWhopMode = false }: WhopAppProv
       
       // Request user info from parent
       if (window.parent !== window) {
-        window.parent.postMessage({ type: 'WHOP_APP_READY' }, 'https://whop.com');
+        window.parent.postMessage({ type: 'WHOP_APP_READY' }, '*');
       }
       
       setIsInitialized(true);

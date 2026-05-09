@@ -24,7 +24,6 @@ import {
   DollarSign,
   Target,
   FileText,
-  Settings,
   Download,
   RefreshCw,
 } from 'lucide-react';
@@ -78,11 +77,57 @@ interface AutomationOpportunity {
   recommended_action: string;
 }
 
+interface UtilityRoleTemplate {
+  role: string;
+  soc_code: string;
+  department: string;
+  grid_modernization_skills: string[];
+  reskilling_focus: string;
+}
+
 const COLORS = {
   low: '#22c55e',
   medium: '#eab308',
   high: '#ef4444',
 };
+
+const UTILITY_ROLE_TEMPLATES: UtilityRoleTemplate[] = [
+  {
+    role: 'Electrical Power-Line Installers and Repairers',
+    soc_code: '49-9051.00',
+    department: 'Field Operations',
+    grid_modernization_skills: ['safety compliance', 'distribution automation', 'mobile work management'],
+    reskilling_focus: 'Augment field work with inspection data, outage analytics, and digital work orders.',
+  },
+  {
+    role: 'Electrical and Electronics Engineering Technologists and Technicians',
+    soc_code: '17-3023.00',
+    department: 'Substation / Grid Assets',
+    grid_modernization_skills: ['SCADA/OT', 'sensor diagnostics', 'relay testing'],
+    reskilling_focus: 'Move technicians toward grid-device analytics and operational technology reliability.',
+  },
+  {
+    role: 'Power Distributors and Dispatchers',
+    soc_code: '51-8012.00',
+    department: 'Control Center',
+    grid_modernization_skills: ['DER dispatch', 'situational awareness', 'AI decision support'],
+    reskilling_focus: 'Keep human authority over high-consequence operational decisions while automating routine monitoring.',
+  },
+  {
+    role: 'Information Security Analysts',
+    soc_code: '15-1212.00',
+    department: 'Cybersecurity / OT',
+    grid_modernization_skills: ['OT security', 'incident response', 'zero trust'],
+    reskilling_focus: 'Prioritize cyber controls for grid modernization and connected operational assets.',
+  },
+  {
+    role: 'Regulatory Affairs Specialists',
+    soc_code: '13-1041.07',
+    department: 'Regulatory / Compliance',
+    grid_modernization_skills: ['regulatory reporting', 'evidence management', 'rate-case analytics'],
+    reskilling_focus: 'Shift from manual reporting toward evidence review, compliance strategy, and stakeholder narrative.',
+  },
+];
 
 const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
   const { toast } = useToast();
@@ -770,18 +815,58 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
         <TabsContent value="scenarios" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Automation Scenario Planner</CardTitle>
+              <CardTitle>Utilities Workforce Audit Starter</CardTitle>
               <CardDescription>
-                Model what-if scenarios for automation and reskilling decisions
+                Role templates and grid-modernization skill gaps for a utilities/energy workforce audit.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <Settings className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">
-                  Scenario planner coming soon
-                </p>
-                <Button>Create New Scenario</Button>
+            <CardContent className="space-y-6">
+              <div className="rounded-lg border bg-amber-50 p-4 text-sm text-amber-900">
+                This is a starter package, not a completed utility audit. Use it to seed role mapping and buyer demos; a sellable version still needs persisted CSV imports, unmapped-row review, deterministic ROI, and an executive report.
+              </div>
+              <div className="grid gap-4">
+                {UTILITY_ROLE_TEMPLATES.map((template) => (
+                  <div key={template.soc_code} className="rounded-lg border p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <Badge variant="outline">{template.soc_code}</Badge>
+                          <Badge variant="secondary">{template.department}</Badge>
+                        </div>
+                        <h4 className="font-semibold">{template.role}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">{template.reskilling_focus}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 md:justify-end md:max-w-md">
+                        {template.grid_modernization_skills.map((skill) => (
+                          <Badge key={skill} variant="outline">{skill}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <Target className="w-5 h-5 text-[var(--accent-primary)] mb-2" />
+                    <p className="font-medium">Mapping Input</p>
+                    <p className="text-sm text-muted-foreground">CSV rows should map job title, department, headcount, wage, and SOC code.</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <DollarSign className="w-5 h-5 text-green-600 mb-2" />
+                    <p className="font-medium">ROI Formula</p>
+                    <p className="text-sm text-muted-foreground">Use training cost, wage, time-to-proficiency, risk reduction, retention, and avoided hiring cost.</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <FileText className="w-5 h-5 text-[var(--accent-primary)] mb-2" />
+                    <p className="font-medium">Report Output</p>
+                    <p className="text-sm text-muted-foreground">Executive reports must label O*NET, BLS/OEWS, job posting, macro, and AI-generated sources.</p>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>

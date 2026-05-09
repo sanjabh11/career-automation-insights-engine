@@ -1,9 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Zap, TrendingUp, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, Search, Zap, TrendingUp, Clock, Database, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -21,7 +23,7 @@ interface SkillNode {
 interface SkillLink {
     source: string;
     target: string;
-    value: number; // Similarity score
+    value: number;
 }
 
 interface GraphData {
@@ -29,10 +31,46 @@ interface GraphData {
     links: SkillLink[];
 }
 
+interface OccupationOption {
+    code: string;
+    title: string;
+    description?: string;
+}
+
+interface OccupationSkill {
+    element_id: string;
+    element_name: string;
+    data_value: number;
+}
+
 interface SkillAdjacencyGraphProps {
     currentSkillIds?: string[];
     skillType?: 'knowledge' | 'ability';
     occupationCode?: string;
+}
+
+const EXAMPLE_OCCUPATIONS: OccupationOption[] = [
+    { code: '15-1252.00', title: 'Software Developers' },
+    { code: '43-4051.00', title: 'Customer Service Representatives' },
+    { code: '53-3032.00', title: 'Heavy and Tractor-Trailer Truck Drivers' },
+    { code: '17-2071.00', title: 'Electrical Engineers' },
+];
+
+function normalizeOccupation(item: any): OccupationOption | null {
+    const code = item?.occupation_code || item?.code || item?.onetsoc_code;
+    const title = item?.occupation_title || item?.title || item?.name;
+    if (!code || !title) return null;
+
+    return {
+        code,
+        title,
+        description: item?.description || item?.summary || 'O*NET occupation profile',
+    };
+}
+
+function clampPercent(value?: number): number {
+    if (!Number.isFinite(value || 0)) return 0;
+    return Math.max(0, Math.min(100, Math.round((value || 0) * 100)));
 }
 
 export default function SkillAdjacencyGraph({
@@ -42,67 +80,127 @@ export default function SkillAdjacencyGraph({
 }: SkillAdjacencyGraphProps) {
     const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
     const [loading, setLoading] = useState(false);
+    const [searching, setSearching] = useState(false);
     const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
-    const [hoveredNode, setHoveredNode] = useState<SkillNode | null>(null);
+    const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+    const [occupationQuery, setOccupationQuery] = useState('');
+    const [occupationResults, setOccupationResults] = useState<OccupationOption[]>([]);
+    const [selectedOccupation, setSelectedOccupation] = useState<OccupationOption | null>(
+        occupationCode ? { code: occupationCode, title: occupationCode } : null
+    );
+    const [activeSkillType, setActiveSkillType] = useState<'knowledge' | 'ability'>(skillType);
+    const [currentSkills, setCurrentSkills] = useState<OccupationSkill[]>([]);
+    const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>(currentSkillIds);
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const { toast } = useToast();
 
-    // Fetch skills for occupation if provided
+    useEffect(() => {
+        setActiveSkillType(skillType);
+    }, [skillType]);
+
+    useEffect(() => {
+        if (currentSkillIds.length > 0) {
+            setSelectedSkillIds(currentSkillIds);
+        }
+    }, [currentSkillIds]);
+
     useEffect(() => {
         if (occupationCode && currentSkillIds.length === 0) {
-            fetchOccupationSkills(occupationCode);
+            loadOccupationSkills({ code: occupationCode, title: occupationCode }, activeSkillType);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [occupationCode]);
 
-    const fetchOccupationSkills = async (socCode: string) => {
+    const searchOccupations = async () => {
+        if (occupationQuery.trim().length < 2) {
+            setOccupationResults([]);
+            setStatusMessage('Type at least 2 characters to search O*NET occupations.');
+            return;
+        }
+
+        setSearching(true);
+        setStatusMessage(null);
+
         try {
-            const tableName = skillType === 'knowledge' ? 'onet_knowledge' : 'onet_abilities';
+            const { data, error } = await supabase.functions.invoke('search-occupations', {
+                body: {
+                    keyword: occupationQuery.trim(),
+                    limit: 8,
+                },
+            });
+
+            if (error) throw error;
+
+            const occupations = Array.isArray((data as any)?.occupations)
+                ? (data as any).occupations
+                : [];
+
+            const normalized = occupations
+                .map(normalizeOccupation)
+                .filter(Boolean) as OccupationOption[];
+
+            setOccupationResults(normalized);
+            setStatusMessage(
+                normalized.length > 0
+                    ? `Found ${normalized.length} matching occupation${normalized.length === 1 ? '' : 's'}.`
+                    : 'No matching occupations found. Try a broader title.'
+            );
+        } catch (error: any) {
+            console.error('Error searching occupations:', error);
+            setOccupationResults([]);
+            toast({
+                title: 'Occupation Search Failed',
+                description: error.message || 'Unable to search occupations',
+                variant: 'destructive'
+            });
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    const loadOccupationSkills = async (
+        occupation: OccupationOption,
+        nextSkillType: 'knowledge' | 'ability' = activeSkillType
+    ) => {
+        setSelectedOccupation(occupation);
+        setActiveSkillType(nextSkillType);
+        setLoading(true);
+        setStatusMessage(`Loading ${nextSkillType} data for ${occupation.title}...`);
+        setSelectedNode(null);
+
+        try {
+            const tableName = nextSkillType === 'knowledge' ? 'onet_knowledge' : 'onet_abilities';
 
             const { data, error } = await supabase
                 .from(tableName)
                 .select('element_id, element_name, data_value')
-                .eq('onetsoc_code', socCode)
-                .gte('data_value', 3.0) // Moderate importance
+                .eq('onetsoc_code', occupation.code)
+                .gte('data_value', 3.0)
                 .order('data_value', { ascending: false })
                 .limit(5);
 
             if (error) throw error;
 
-            if (data && data.length > 0) {
-                const skillIds = data.map(s => s.element_id);
-                await calculateAdjacency(skillIds);
+            const skills = (data || []) as OccupationSkill[];
+            setCurrentSkills(skills);
+
+            if (skills.length === 0) {
+                setSelectedSkillIds([]);
+                setGraphData({ nodes: [], links: [] });
+                setStatusMessage(`No ${nextSkillType} records were found for ${occupation.title}.`);
+                return;
             }
-        } catch (error) {
+
+            const skillIds = skills.map(skill => skill.element_id);
+            setSelectedSkillIds(skillIds);
+            await calculateAdjacency(skillIds, nextSkillType, occupation);
+        } catch (error: any) {
             console.error('Error fetching occupation skills:', error);
+            setGraphData({ nodes: [], links: [] });
+            setStatusMessage('Skill data could not be loaded for this occupation.');
             toast({
-                title: 'Error',
-                description: 'Failed to load occupation skills',
-                variant: 'destructive'
-            });
-        }
-    };
-
-    const calculateAdjacency = async (skillIds: string[]) => {
-        setLoading(true);
-
-        try {
-            const { data, error } = await supabase.functions.invoke('calculate-skill-adjacency', {
-                body: {
-                    skill_ids: skillIds,
-                    skill_type: skillType,
-                    limit: 10
-                }
-            });
-
-            if (error) throw error;
-
-            if (data && data.success) {
-                buildGraphData(data.data);
-            }
-        } catch (error) {
-            console.error('Error calculating adjacency:', error);
-            toast({
-                title: 'Error',
-                description: 'Failed to calculate skill adjacency',
+                title: 'Skill Load Failed',
+                description: error.message || 'Failed to load occupation skills',
                 variant: 'destructive'
             });
         } finally {
@@ -110,34 +208,84 @@ export default function SkillAdjacencyGraph({
         }
     };
 
-    const buildGraphData = (adjacencyData: any[]) => {
+    const calculateAdjacency = async (
+        skillIds: string[] = selectedSkillIds,
+        nextSkillType: 'knowledge' | 'ability' = activeSkillType,
+        occupation: OccupationOption | null = selectedOccupation
+    ) => {
+        if (skillIds.length === 0) {
+            setStatusMessage('Select an occupation first so APO can use its strongest O*NET skills.');
+            return;
+        }
+
+        setLoading(true);
+        setStatusMessage('Calculating adjacent skills from APO embeddings...');
+
+        try {
+            const { data, error } = await supabase.functions.invoke('calculate-skill-adjacency', {
+                body: {
+                    skill_ids: skillIds,
+                    skill_type: nextSkillType,
+                    limit: 10
+                }
+            });
+
+            if (error) throw error;
+
+            if (data && data.success) {
+                buildGraphData(data.data || [], nextSkillType);
+                const label = occupation?.title || 'selected skills';
+                setStatusMessage(`Adjacency graph created for ${label}.`);
+            } else {
+                throw new Error(data?.error || 'Adjacency function returned no usable data');
+            }
+        } catch (error: any) {
+            console.error('Error calculating adjacency:', error);
+            setGraphData({ nodes: [], links: [] });
+            setStatusMessage('Adjacency calculation failed. Check Supabase function keys and seeded skill data.');
+            toast({
+                title: 'Adjacency Calculation Failed',
+                description: error.message || 'Failed to calculate skill adjacency',
+                variant: 'destructive'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const buildGraphData = (adjacencyData: any[], nextSkillType: 'knowledge' | 'ability') => {
         const nodes: SkillNode[] = [];
         const links: SkillLink[] = [];
         const nodeMap = new Map<string, SkillNode>();
 
-        // Add current (central) skill nodes
         adjacencyData.forEach(item => {
+            const skillId = item.skill_id || item.element_id;
+            const skillName = item.skill_name || item.element_name || skillId;
+            if (!skillId || nodeMap.has(skillId)) return;
+
             const currentNode: SkillNode = {
-                id: item.skill_id,
-                name: item.skill_name,
-                type: item.skill_type,
+                id: skillId,
+                name: skillName,
+                type: item.skill_type || nextSkillType,
                 isCurrent: true
             };
             nodes.push(currentNode);
-            nodeMap.set(item.skill_id, currentNode);
+            nodeMap.set(skillId, currentNode);
         });
 
-        // Add adjacent (ghost) nodes and links
         adjacencyData.forEach(item => {
-            item.adjacent_skills?.forEach((adj: any) => {
-                const adjacentId = adj.adjacent_skill_id;
+            const sourceId = item.skill_id || item.element_id;
+            if (!sourceId) return;
 
-                // Add adjacent node if not already added
+            item.adjacent_skills?.forEach((adj: any) => {
+                const adjacentId = adj.adjacent_skill_id || adj.skill_id;
+                if (!adjacentId) return;
+
                 if (!nodeMap.has(adjacentId)) {
                     const adjacentNode: SkillNode = {
                         id: adjacentId,
-                        name: adj.adjacent_skill_name,
-                        type: item.skill_type,
+                        name: adj.adjacent_skill_name || adj.skill_name || adjacentId,
+                        type: item.skill_type || nextSkillType,
                         isCurrent: false,
                         similarity: adj.similarity_score,
                         learningHours: adj.estimated_learning_hours,
@@ -148,11 +296,10 @@ export default function SkillAdjacencyGraph({
                     nodeMap.set(adjacentId, adjacentNode);
                 }
 
-                // Add link
                 links.push({
-                    source: item.skill_id,
+                    source: sourceId,
                     target: adjacentId,
-                    value: adj.similarity_score
+                    value: Number(adj.similarity_score || 0.25)
                 });
             });
         });
@@ -160,53 +307,151 @@ export default function SkillAdjacencyGraph({
         setGraphData({ nodes, links });
     };
 
-    const handleNodeClick = useCallback((node: any) => {
-        setSelectedNode(node as SkillNode);
-    }, []);
+    const layout = useMemo(() => {
+        const width = 720;
+        const height = 460;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const currentNodes = graphData.nodes.filter(node => node.isCurrent);
+        const adjacentNodes = graphData.nodes.filter(node => !node.isCurrent);
+        const positions = new Map<string, { x: number; y: number }>();
 
-    const nodeCanvasObject = useCallback((node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-        const label = node.name;
-        const fontSize = 12 / globalScale;
-        ctx.font = `${fontSize}px Sans-Serif`;
+        currentNodes.forEach((node, index) => {
+            const radius = currentNodes.length <= 1 ? 0 : 82;
+            const angle = (Math.PI * 2 * index) / Math.max(currentNodes.length, 1) - Math.PI / 2;
+            positions.set(node.id, {
+                x: centerX + Math.cos(angle) * radius,
+                y: centerY + Math.sin(angle) * radius,
+            });
+        });
 
-        // Node appearance
-        const isCurrent = node.isCurrent;
-        const isHovered = hoveredNode?.id === node.id;
-        const isSelected = selectedNode?.id === node.id;
+        adjacentNodes.forEach((node, index) => {
+            const radius = 185 + ((index % 2) * 34);
+            const angle = (Math.PI * 2 * index) / Math.max(adjacentNodes.length, 1) - Math.PI / 2;
+            positions.set(node.id, {
+                x: centerX + Math.cos(angle) * radius,
+                y: centerY + Math.sin(angle) * radius,
+            });
+        });
 
-        // Draw node circle
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, isCurrent ? 8 : 6, 0, 2 * Math.PI);
+        return { width, height, positions };
+    }, [graphData]);
 
-        if (isCurrent) {
-            ctx.fillStyle = '#3b82f6'; // Blue for current skills
-        } else {
-            ctx.fillStyle = isHovered || isSelected ? '#2DD4A8' : 'rgba(45, 212, 168, 0.4)'; // Teal ghost nodes
+    const handleSkillTypeChange = (nextSkillType: 'knowledge' | 'ability') => {
+        setActiveSkillType(nextSkillType);
+        if (selectedOccupation) {
+            loadOccupationSkills(selectedOccupation, nextSkillType);
+        } else if (selectedSkillIds.length > 0) {
+            calculateAdjacency(selectedSkillIds, nextSkillType);
         }
+    };
 
-        ctx.fill();
+    const currentSkillNames = currentSkills.map(skill => skill.element_name).slice(0, 5);
 
-        // Draw border for selected/hovered
-        if (isHovered || isSelected) {
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2 / globalScale;
-            ctx.stroke();
-        }
+    const renderGraph = useCallback(() => {
+        if (graphData.nodes.length === 0) return null;
 
-        // Draw label
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#1f2937';
-        ctx.fillText(label, node.x, node.y + 12);
+        return (
+            <div className="border rounded-lg bg-[var(--bg-secondary)] relative overflow-hidden">
+                <svg
+                    viewBox={`0 0 ${layout.width} ${layout.height}`}
+                    className="w-full h-[500px]"
+                    role="img"
+                    aria-label="Skill adjacency graph"
+                >
+                    <defs>
+                        <filter id="nodeShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="3" stdDeviation="4" floodOpacity="0.18" />
+                        </filter>
+                    </defs>
 
-        // Draw similarity badge for ghost nodes
-        if (!isCurrent && node.similarity) {
-            const badgeText = `${Math.round(node.similarity * 100)}%`;
-            ctx.font = `${fontSize * 0.8}px Sans-Serif`;
-            ctx.fillStyle = '#10b981';
-            ctx.fillText(badgeText, node.x, node.y - 12);
-        }
-    }, [hoveredNode, selectedNode]);
+                    {graphData.links.map((link, index) => {
+                        const source = layout.positions.get(String(link.source));
+                        const target = layout.positions.get(String(link.target));
+                        if (!source || !target) return null;
+                        return (
+                            <line
+                                key={`${link.source}-${link.target}-${index}`}
+                                x1={source.x}
+                                y1={source.y}
+                                x2={target.x}
+                                y2={target.y}
+                                stroke="rgba(139, 92, 246, 0.35)"
+                                strokeWidth={Math.max(1.5, link.value * 5)}
+                            />
+                        );
+                    })}
+
+                    {graphData.nodes.map(node => {
+                        const position = layout.positions.get(node.id);
+                        if (!position) return null;
+                        const isActive = hoveredNodeId === node.id || selectedNode?.id === node.id;
+                        const radius = node.isCurrent ? 17 : 14;
+
+                        return (
+                            <g
+                                key={node.id}
+                                role="button"
+                                tabIndex={0}
+                                className="cursor-pointer"
+                                onClick={() => setSelectedNode(node)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        setSelectedNode(node);
+                                    }
+                                }}
+                                onMouseEnter={() => setHoveredNodeId(node.id)}
+                                onMouseLeave={() => setHoveredNodeId(null)}
+                            >
+                                <circle
+                                    cx={position.x}
+                                    cy={position.y}
+                                    r={radius}
+                                    fill={node.isCurrent ? '#2563eb' : isActive ? '#0f766e' : 'rgba(20, 184, 166, 0.55)'}
+                                    stroke={isActive ? '#ffffff' : node.isCurrent ? '#bfdbfe' : '#99f6e4'}
+                                    strokeWidth={isActive ? 4 : 2}
+                                    filter="url(#nodeShadow)"
+                                />
+                                {!node.isCurrent && node.similarity && (
+                                    <text
+                                        x={position.x}
+                                        y={position.y - 24}
+                                        textAnchor="middle"
+                                        className="fill-emerald-700 text-[11px] font-semibold"
+                                    >
+                                        {clampPercent(node.similarity)}%
+                                    </text>
+                                )}
+                                <text
+                                    x={position.x}
+                                    y={position.y + radius + 15}
+                                    textAnchor="middle"
+                                    className="fill-slate-800 text-[12px] font-medium"
+                                >
+                                    {node.name.length > 22 ? `${node.name.slice(0, 21)}...` : node.name}
+                                </text>
+                            </g>
+                        );
+                    })}
+                </svg>
+
+                <div className="absolute top-4 right-4 bg-[var(--bg-secondary)]/95 backdrop-blur p-3 rounded-lg shadow-lg text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-600"></div>
+                        <span>Current O*NET skills</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-teal-500 opacity-70"></div>
+                        <span>Adjacent skills</span>
+                    </div>
+                    <div className="text-muted-foreground pt-2 border-t">
+                        Select a node for details
+                    </div>
+                </div>
+            </div>
+        );
+    }, [graphData, hoveredNodeId, layout, selectedNode]);
 
     return (
         <div className="space-y-4">
@@ -217,15 +462,116 @@ export default function SkillAdjacencyGraph({
                         Skill Adjacency Graph
                     </CardTitle>
                     <CardDescription>
-                        Explore related skills based on AI-powered similarity analysis
+                        Start with an occupation, load its strongest O*NET skills, then find adjacent skills using the APO skill-similarity function.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    {/* Control Panel */}
+                <CardContent className="space-y-5">
+                    <Alert>
+                        <ShieldCheck className="h-4 w-4" />
+                        <AlertDescription>
+                            Status: partially usable until the Edge Function, pgvector cache, and O*NET skill tables are verified in the target environment.
+                        </AlertDescription>
+                    </Alert>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
+                        <div className="space-y-2">
+                            <Label htmlFor="skill-occupation-search">Occupation search</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="skill-occupation-search"
+                                    value={occupationQuery}
+                                    onChange={(event) => setOccupationQuery(event.target.value)}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter') searchOccupations();
+                                    }}
+                                    placeholder="Search job title, e.g. dispatcher, electrician, analyst"
+                                    disabled={loading || searching}
+                                />
+                                <Button type="button" onClick={searchOccupations} disabled={loading || searching}>
+                                    {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                                    <span className="sr-only">Search</span>
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Skill type</Label>
+                            <div className="flex rounded-md border overflow-hidden">
+                                <Button
+                                    type="button"
+                                    variant={activeSkillType === 'knowledge' ? 'default' : 'ghost'}
+                                    className="rounded-none"
+                                    onClick={() => handleSkillTypeChange('knowledge')}
+                                    disabled={loading}
+                                >
+                                    Knowledge
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={activeSkillType === 'ability' ? 'default' : 'ghost'}
+                                    className="rounded-none"
+                                    onClick={() => handleSkillTypeChange('ability')}
+                                    disabled={loading}
+                                >
+                                    Abilities
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {EXAMPLE_OCCUPATIONS.map(example => (
+                            <Button
+                                key={example.code}
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => loadOccupationSkills(example)}
+                                disabled={loading}
+                            >
+                                {example.title}
+                            </Button>
+                        ))}
+                    </div>
+
+                    {occupationResults.length > 0 && (
+                        <div className="grid gap-2">
+                            {occupationResults.map(occupation => (
+                                <button
+                                    key={occupation.code}
+                                    type="button"
+                                    className="text-left rounded-lg border p-3 hover:border-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/5 transition-colors"
+                                    onClick={() => loadOccupationSkills(occupation)}
+                                    disabled={loading}
+                                >
+                                    <div className="font-medium">{occupation.title}</div>
+                                    <div className="text-xs text-muted-foreground">{occupation.code}</div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {selectedOccupation && (
+                        <div className="rounded-lg border bg-[var(--bg-secondary)] p-4 space-y-3">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline">{selectedOccupation.code}</Badge>
+                                <span className="font-semibold">{selectedOccupation.title}</span>
+                                <Badge variant="secondary">{activeSkillType}</Badge>
+                            </div>
+                            {currentSkillNames.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {currentSkillNames.map(skill => (
+                                        <Badge key={skill} variant="secondary">{skill}</Badge>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className="flex items-center gap-4 flex-wrap">
                         <Button
-                            onClick={() => calculateAdjacency(currentSkillIds)}
-                            disabled={loading || currentSkillIds.length === 0}
+                            onClick={() => calculateAdjacency()}
+                            disabled={loading || selectedSkillIds.length === 0}
                         >
                             {loading ? (
                                 <>
@@ -239,111 +585,98 @@ export default function SkillAdjacencyGraph({
 
                         {graphData.nodes.length > 0 && (
                             <div className="text-sm text-muted-foreground">
-                                {graphData.nodes.filter(n => n.isCurrent).length} current skills •{' '}
+                                {graphData.nodes.filter(n => n.isCurrent).length} current skills /{' '}
                                 {graphData.nodes.filter(n => !n.isCurrent).length} adjacent skills
                             </div>
                         )}
                     </div>
 
-                    {/* Graph Visualization */}
-                    {graphData.nodes.length > 0 && (
-                        <div className="border rounded-lg bg-[var(--bg-secondary)] relative" style={{ height: '500px' }}>
-                            <ForceGraph2D
-                                graphData={graphData}
-                                nodeLabel="name"
-                                nodeCanvasObject={nodeCanvasObject}
-                                onNodeClick={handleNodeClick}
-                                onNodeHover={(node) => setHoveredNode(node as SkillNode | null)}
-                                linkWidth={(link: any) => link.value * 3}
-                                linkColor={() => 'rgba(139, 92, 246, 0.3)'}
-                                linkDirectionalParticles={2}
-                                linkDirectionalParticleWidth={2}
-                                enableZoomInteraction={true}
-                                enablePanInteraction={true}
-                                cooldownTicks={100}
-                                d3AlphaDecay={0.02}
-                                d3VelocityDecay={0.3}
-                            />
-
-                            {/* Legend */}
-                            <div className="absolute top-4 right-4 bg-[var(--bg-secondary)]/90 backdrop-blur p-3 rounded-lg shadow-lg text-xs space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]"></div>
-                                    <span>Current Skills</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)] opacity-40"></div>
-                                    <span>Adjacent Skills</span>
-                                </div>
-                                <div className="text-muted-foreground mt-2 pt-2 border-t">
-                                    Click nodes for details
-                                </div>
-                            </div>
-                        </div>
+                    {statusMessage && (
+                        <p className="text-sm text-muted-foreground">{statusMessage}</p>
                     )}
 
-                    {/* Empty State */}
+                    {renderGraph()}
+
                     {graphData.nodes.length === 0 && !loading && (
-                        <div className="text-center py-12 text-muted-foreground">
+                        <div className="text-center py-12 text-muted-foreground border border-dashed rounded-lg">
                             <Zap className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                            <p>Select skills or an occupation to view the adjacency graph</p>
+                            <p className="font-medium">Search an occupation or load an example to create the graph.</p>
+                            <p className="text-sm mt-1">The standalone route no longer requires users to know skill IDs.</p>
                         </div>
                     )}
+
+                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        <Badge variant="outline" className="gap-1">
+                            <Database className="h-3 w-3" />
+                            O*NET skill tables
+                        </Badge>
+                        <Badge variant="outline" className="gap-1">
+                            <Zap className="h-3 w-3" />
+                            APO adjacency Edge Function
+                        </Badge>
+                        <Badge variant="outline" className="gap-1">
+                            <TrendingUp className="h-3 w-3" />
+                            Demand/salary fields require provenance verification
+                        </Badge>
+                    </div>
                 </CardContent>
             </Card>
 
-            {/* Selected Node Details */}
-            {selectedNode && !selectedNode.isCurrent && (
-                <Card className="border-[var(--accent-primary)]/20">
+            {selectedNode && (
+                <Card className={selectedNode.isCurrent ? '' : 'border-[var(--accent-primary)]/20'}>
                     <CardHeader>
                         <CardTitle className="text-lg">{selectedNode.name}</CardTitle>
                         <CardDescription>
-                            Similar to your current skills by {Math.round((selectedNode.similarity || 0) * 100)}%
+                            {selectedNode.isCurrent
+                                ? 'Current occupation skill from O*NET.'
+                                : `Adjacent skill with ${clampPercent(selectedNode.similarity)}% similarity to your current skill set.`}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <Clock className="h-4 w-4" />
-                                    <span>Learning Time</span>
+                    {!selectedNode.isCurrent && (
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Clock className="h-4 w-4" />
+                                        <span>Learning Time</span>
+                                    </div>
+                                    <div className="text-2xl font-bold">
+                                        {selectedNode.learningHours || 'N/A'}
+                                        {selectedNode.learningHours && <span className="text-sm font-normal ml-1">hrs</span>}
+                                    </div>
                                 </div>
-                                <div className="text-2xl font-bold">
-                                    {selectedNode.learningHours || 'N/A'}
-                                    {selectedNode.learningHours && <span className="text-sm font-normal ml-1">hrs</span>}
+
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <TrendingUp className="h-4 w-4" />
+                                        <span>Salary Impact</span>
+                                    </div>
+                                    <div className="text-2xl font-bold text-green-600">
+                                        {selectedNode.salaryImpact
+                                            ? `$${selectedNode.salaryImpact.toLocaleString()}`
+                                            : 'N/A'}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Zap className="h-4 w-4" />
+                                        <span>Demand Score</span>
+                                    </div>
+                                    <div className="text-2xl font-bold">
+                                        {selectedNode.demandScore || 'N/A'}
+                                        {selectedNode.demandScore && <span className="text-sm font-normal ml-1">/100</span>}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <TrendingUp className="h-4 w-4" />
-                                    <span>Salary Impact</span>
-                                </div>
-                                <div className="text-2xl font-bold text-green-600">
-                                    {selectedNode.salaryImpact
-                                        ? `$${selectedNode.salaryImpact.toLocaleString()}`
-                                        : 'N/A'}
-                                </div>
+                            <div className="pt-4 border-t">
+                                <Button className="w-full" variant="outline">
+                                    Add to Learning Path
+                                </Button>
                             </div>
-
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <Zap className="h-4 w-4" />
-                                    <span>Demand Score</span>
-                                </div>
-                                <div className="text-2xl font-bold">
-                                    {selectedNode.demandScore || 'N/A'}
-                                    {selectedNode.demandScore && <span className="text-sm font-normal ml-1">/100</span>}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="pt-4 border-t">
-                            <Button className="w-full" variant="outline">
-                                Add to Learning Path
-                            </Button>
-                        </div>
-                    </CardContent>
+                        </CardContent>
+                    )}
                 </Card>
             )}
         </div>

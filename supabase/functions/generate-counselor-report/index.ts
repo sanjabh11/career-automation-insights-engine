@@ -60,12 +60,18 @@ serve(async (req) => {
         const { data: occupation } = await supabase
             .from('onet_occupation_enrichment')
             .select('*')
-            .eq('soc_code', client_occupation_code)
-            .single();
+            .eq('occupation_code', client_occupation_code)
+            .maybeSingle();
 
         if (!occupation) {
             throw new Error('Occupation not found');
         }
+
+        const normalizedOccupation = {
+            ...occupation,
+            title: occupation.occupation_title || occupation.title || client_occupation_code,
+            soc_code: occupation.occupation_code || occupation.soc_code || client_occupation_code,
+        };
 
         // Get APO analysis (or calculate if not exists)
         let apoData = report_data?.apo_analysis;
@@ -82,7 +88,7 @@ serve(async (req) => {
                     body: JSON.stringify({
                         occupation: {
                             code: client_occupation_code,
-                            title: occupation.title
+                            title: normalizedOccupation.title
                         }
                     })
                 }
@@ -96,7 +102,7 @@ serve(async (req) => {
         // Generate report HTML (can be converted to PDF client-side)
         const reportHtml = generateReportHtml({
             clientName: client_name,
-            occupation: occupation,
+            occupation: normalizedOccupation,
             apoData: apoData,
             branding: brandingConfig,
             generatedDate: new Date().toLocaleDateString()
@@ -109,10 +115,10 @@ serve(async (req) => {
                 counselor_id,
                 client_name,
                 client_occupation_code,
-                client_occupation_title: occupation.title,
+                client_occupation_title: normalizedOccupation.title,
                 report_data: {
                     apo_analysis: apoData,
-                    occupation: occupation
+                    occupation: normalizedOccupation
                 },
                 branding_config: brandingConfig,
                 generation_time_ms: Date.now() - startTime,
@@ -132,7 +138,7 @@ serve(async (req) => {
                 html: reportHtml,
                 metadata: {
                     client_name,
-                    occupation_title: occupation.title,
+                    occupation_title: normalizedOccupation.title,
                     generated_at: new Date().toISOString(),
                     generation_time_ms: Date.now() - startTime
                 },
