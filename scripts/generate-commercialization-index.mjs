@@ -283,7 +283,7 @@ CI boundary:
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
-- GitHub remote branch, \`sanjabh1103\` write access, installed workflow, hosted push CI, and hosted manual source/audit workflow are verified.
+- GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 
