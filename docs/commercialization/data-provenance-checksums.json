@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T10:44:20.201Z",
+  "generatedAt": "2026-05-24T11:07:19.838Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -497,6 +497,32 @@
       "bytes": 1114,
       "rows": 39,
       "sha256": "d831d1ab23f28d68ab42919f89ff9248784d5fa86fab90fa3d3a4855709e02cf",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-live-supabase-verifier",
+      "label": "Live Supabase commercial boundary verifier",
+      "path": "scripts/verify-commercial-live-supabase.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "resume_analysis_deletion_receipts",
+        "delete_resume_analysis_with_receipt",
+        "log_commercial_report_artifact_event",
+        "non-mutating-public-api-boundary",
+        "missing-object-or-schema-cache",
+        "allow-missing-env"
+      ],
+      "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations or seed staff users.",
+      "bytes": 10729,
+      "rows": 312,
+      "sha256": "0c3309dbd54e96d36fcd9ee348b1a1582f68b3b32b1749d2f0ef56f0ce780db6",
       "failures": [],
       "passed": true
     },

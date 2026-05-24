@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T10:44:20.201Z
+Generated: 2026-05-24T11:07:19.838Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T09:52:12.192Z
 All referenced current-source checks passed: yes
@@ -27,6 +27,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 455 | `33120b2419a182fd...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
+| `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 312 | `0c3309dbd54e96d3...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 
@@ -49,5 +50,6 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `proof-pack-gallery-page`: Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.
 - `commercial-proof-pack-ci-workflow-template`: Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.
 - `commercial-proof-pack-ci-workflow-installed`: Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.
+- `commercial-live-supabase-verifier`: Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations or seed staff users.
 - `onet-task-rating-metadata-migration`: Schema support for O*NET Task Ratings does not prove the migration has been applied or populated in the target Supabase project.
 - `artifact-review-event-migration`: Staff review events create an append-only readiness trail; they do not replace legal, accessibility, or labor-relations review.

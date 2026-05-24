@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T10:44:19.758Z",
+  "generatedAt": "2026-05-24T11:07:19.043Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -599,6 +599,10 @@
     {
       "name": "verify:commercial-full",
       "command": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey"
+    },
+    {
+      "name": "verify:commercial-live-supabase",
+      "command": "node scripts/verify-commercial-live-supabase.mjs --write"
     },
     {
       "name": "verify:commercial-network",

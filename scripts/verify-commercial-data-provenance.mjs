@@ -163,6 +163,15 @@ const artifacts = [
     caveat: 'Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.',
   },
   {
+    id: 'commercial-live-supabase-verifier',
+    label: 'Live Supabase commercial boundary verifier',
+    path: 'scripts/verify-commercial-live-supabase.mjs',
+    type: 'live-verifier',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['resume_analysis_deletion_receipts', 'delete_resume_analysis_with_receipt', 'log_commercial_report_artifact_event', 'non-mutating-public-api-boundary', 'missing-object-or-schema-cache', 'allow-missing-env'],
+    caveat: 'Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations or seed staff users.',
+  },
+  {
     id: 'onet-task-rating-metadata-migration',
     label: 'O*NET Task Rating metadata migration',
     path: 'supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql',

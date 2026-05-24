@@ -394,6 +394,18 @@ const checks = [
       /"sql": \{/,
     ],
   },
+  {
+    id: 'commercial-live-supabase-verifier',
+    file: 'scripts/verify-commercial-live-supabase.mjs',
+    expected: [
+      /resume_analysis_deletion_receipts/,
+      /delete_resume_analysis_with_receipt/,
+      /log_commercial_report_artifact_event/,
+      /non-mutating-public-api-boundary/,
+      /missing-object-or-schema-cache/,
+      /allow-missing-env/,
+    ],
+  },
 ];
 
 async function main() {

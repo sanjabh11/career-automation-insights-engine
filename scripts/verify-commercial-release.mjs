@@ -66,6 +66,14 @@ const NETWORK_STEPS = [
   },
 ];
 
+const LIVE_SUPABASE_STEPS = [
+  {
+    id: 'live-supabase',
+    label: 'Verify live Supabase commercial review/deletion boundaries',
+    command: ['node', 'scripts/verify-commercial-live-supabase.mjs', '--write'],
+  },
+];
+
 const JOURNEY_STEPS = [
   {
     id: 'browser-journey',
@@ -92,6 +100,8 @@ function printUsage() {
 
 Options:
   --with-network   Also run official source URL checks and npm production audit.
+  --with-live-supabase
+                   Also run non-mutating live Supabase object/RPC proof using SUPABASE_URL and SUPABASE_ANON_KEY.
   --with-a11y      Also run the Playwright responsive/accessibility smoke gate.
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
@@ -107,6 +117,7 @@ async function main() {
   }
 
   const includeNetwork = hasFlag('--with-network');
+  const includeLiveSupabase = hasFlag('--with-live-supabase');
   const includeA11y = hasFlag('--with-a11y');
   const includeJourney = hasFlag('--with-journey');
 
@@ -114,6 +125,7 @@ async function main() {
     ...DEFAULT_STEPS,
     ...(includeA11y ? A11Y_STEPS : []),
     ...(includeNetwork ? NETWORK_STEPS : []),
+    ...(includeLiveSupabase ? LIVE_SUPABASE_STEPS : []),
     ...(includeJourney ? JOURNEY_STEPS : []),
   ];
 
