@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T07:21:32.084Z
+Generated: 2026-05-24T07:35:04.105Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T06:59:50.426Z
 All referenced current-source checks passed: yes
@@ -16,7 +16,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `onet-task-ratings-ingest-script` | O*NET Task Ratings ingest script | `supabase/lib/scripts/ingest_onet_metadata.ts` | ingestion-script | 378 | `8226fee512c1378c...` | `onet` | pass |
 | `source-manifest-module` | Source manifest module | `src/lib/sourceManifest.ts` | source-registry | 423 | `f6249e19e1b183cc...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `ai-workforce-consortium-2025`, `nace-career-readiness`, `dol-ai-literacy-framework`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `esco`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
 | `report-evidence-card-module` | Report evidence card renderer | `src/lib/reportEvidenceCards.ts` | report-runtime | 91 | `2a82837b74fe7871...` | `onet`, `bls-ai-mlr-2025`, `nist-ai-rmf`, `llm-output` | pass |
-| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 1,143 | `86ff0ac993cb08fe...` | `onet`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `ai-workforce-consortium-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
+| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 1,300 | `ba38a7642b1b6ed7...` | `onet`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `ai-workforce-consortium-2025`, `nace-career-readiness`, `dol-ai-literacy-framework`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `commercial-report-artifacts-module` | Commercial report artifact review runtime | `src/lib/commercialReportArtifacts.ts` | report-runtime | 376 | `f36c7b1c4714ec8d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
@@ -33,7 +33,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `onet-task-ratings-ingest-script`: Task Ratings import can populate O*NET 30.3 importance/frequency metadata, but reports must not claim task-time precision until the target Supabase table export is checksum-verified.
 - `source-manifest-module`: Commercial source registry; adapter-ready records are not imported provider-backed data.
 - `report-evidence-card-module`: Shared report evidence card renderer; evidence cards still depend on correct source assignment in each report flow.
-- `work-transition-proof-pack-module`: Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.
+- `work-transition-proof-pack-module`: Emerging role radar, skill-change ledger, learning/provider boundary, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.
 - `report-provenance-module`: Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.
 - `workforce-executive-report-module`: Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.
 - `commercial-report-artifacts-module`: Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.

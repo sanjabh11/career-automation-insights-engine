@@ -15,13 +15,13 @@ Bounded pilot promise: produce reviewed AI work-transition reports for individua
 
 Primary gallery route: `/proof-pack-gallery`
 
-Gallery evidence boundary: every buyer path and exported CRM row must carry source IDs, source labels, confidence, caveat, "does not prove", and human-review state. The gallery is a market-test artifact, not proof of live CRM performance or provider-backed labor-market intelligence.
+Gallery evidence boundary: every buyer path and exported CRM row must carry source IDs, source labels, confidence, caveat, "does not prove", and human-review state. The gallery is a market-test artifact, not proof of live CRM performance, course/provider endorsement, or provider-backed labor-market intelligence.
 
 | Offer | Buyer | Deliverable | Success Metric | Boundary |
 |---|---|---|---|---|
-| Individual transition report | Career changer, coach client | One occupation proof pack with task split, skill ledger, role radar, evidence cards, and review state. | User can explain three next actions and three caveats after reading. | Not a guarantee of future employment. |
-| Coach sample-report bundle | Coach, resume writer, counselor | White-label sample report and client-ready discussion guide. | Coach books 3-5 paid discovery sessions using sample artifact. | Coach review required before client delivery. |
-| Workforce CSV audit | Workforce board, L&D, HR | CSV role exposure rollup with executive report skeleton and review queue. | Buyer identifies 2-3 safe pilot roles and review owners. | Not employee ranking or employment decision support. |
+| Individual transition report | Career changer, coach client | One occupation proof pack with task split, skill ledger, role radar, learning/provider boundary, evidence cards, and review state. | User can explain three next actions and three caveats after reading. | Not a guarantee of future employment or training outcome. |
+| Coach sample-report bundle | Coach, resume writer, counselor | White-label sample report and client-ready discussion guide. | Coach books 3-5 paid discovery sessions using sample artifact. | Coach review required before client delivery; course/provider choices need separate review. |
+| Workforce CSV audit | Workforce board, L&D, HR | CSV role exposure rollup with executive report skeleton and review queue. | Buyer identifies 2-3 safe pilot roles and review owners. | Not employee ranking, employment decision support, or training-vendor procurement advice. |
 
 ## LinkedIn Strategy
 
@@ -68,7 +68,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 14 | Licensed posting-data validation | Common in paid platforms | Medium | Low until licensed | Pending |
 | 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as section/final artifact events plus downloadable review attestation; live Supabase application pending |
 | 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Pending |
-| 17 | Course/provider recommendation boundary | Common | Medium | Medium | Pending |
+| 17 | Course/provider recommendation boundary | Common | Medium | Medium | Implemented as source-labeled learning/provider boundary; live provider catalog and outcome validation pending |
 | 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Pending |
 | 19 | CRM/email automation for leads | Common commercial need | High | High | Source-labeled CRM-import CSV implemented; live CRM/email sync pending |
 | 20 | Public sample gallery by occupation | Common marketing pattern | Medium | High | Implemented as `/proof-pack-gallery` with outreach evidence cards; deployed-domain analytics pending |

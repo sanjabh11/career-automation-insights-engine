@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T06:59:50.426Z",
+  "generatedAt": "2026-05-24T07:36:47.741Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -209,7 +209,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "ff723db2353f05907cef41bb2f1e718c063d3bd31b0c31069aaa49be7dfdd01e",
+      "contentSha256": "cdfd8a8f455fc88dd2ac9485ca6b0f79ff19fd14e4d2979b37e5a404afeb02bb",
       "byteLength": 74698,
       "evidence": [
         {
@@ -229,8 +229,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "2748140ed93637da55e127e6ff0a437187126d3ac8e1b2dc575684d3c293b7b0",
-      "byteLength": 73086,
+      "contentSha256": "b68ebb983c2d2a61efc00cb9ae8a738230edc4182901b91cac84bdcda48c80e2",
+      "byteLength": 73088,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -249,7 +249,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "334f141396f0fed6be6a0e91299c37fa36eef3451159a722e12d3b4d1ddda486",
+      "contentSha256": "0066681383959d9a325a606e2267eecbcedbf1196cb3c2aecb6f2cc5b35f451b",
       "byteLength": 165940,
       "evidence": [
         {
@@ -269,7 +269,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "4d9f04114a78d2e442200c6924c6fa8c937d74830e5e8743ed881ecb0b1e8f93",
+      "contentSha256": "3c7f91b316c913a7122e7c8516e61385430f12786bf25a53d943557e28202301",
       "byteLength": 210582,
       "evidence": [
         {
@@ -429,7 +429,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "0e7fa28ff854d378ced50a76d2a8fd4a9d7242e8fc8a29fd0e3c2066704b49b1",
+      "contentSha256": "43fd1c95e558a285cada02f3cd14c282f36eddb96e57b1b4c210e80d924cc87f",
       "byteLength": 91198,
       "evidence": [
         {

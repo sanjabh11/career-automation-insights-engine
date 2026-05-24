@@ -155,6 +155,7 @@ Uncommon but differentiating:
 | Source-level confidence per report section | More defensible than a single opaque risk score. |
 | Dual benchmark framing with Anthropic Economic Index plus OpenAI GDPval | Explains both observed AI-use patterns and frontier capability progress without collapsing them into one score. |
 | Coach-branded pilot packets | Faster sales path than building a full subscription suite first. |
+| Learning/provider recommendation boundary | Lets the product say what to learn next without pretending to endorse courses, vendors, credentials, or job outcomes. |
 | Data-provider adapter boundary | Lets the app expand beyond O*NET without locking into one vendor. |
 
 ## Prioritized Implementation Backlog

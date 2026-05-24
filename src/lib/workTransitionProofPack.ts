@@ -20,8 +20,14 @@ export type ProofPackSectionId =
   | "task_exposure_split"
   | "skill_change_ledger"
   | "ai_era_role_radar"
+  | "learning_provider_boundary"
   | "evidence_cards"
   | "client_delivery";
+export type LearningRecommendationType =
+  | "learning_theme"
+  | "provider_selection"
+  | "accessibility_check"
+  | "outcome_validation";
 
 export interface TaskWeightingMetadata {
   method: TaskWeightingMethod;
@@ -80,6 +86,17 @@ export interface AiEraRole {
   searchTerms: string[];
 }
 
+export interface LearningProviderBoundary {
+  recommendationType: LearningRecommendationType;
+  title: string;
+  sourceIds: string[];
+  confidence: EvidenceConfidence;
+  reviewStatus: ReportReviewStatus;
+  caveat: string;
+  doesNotProve: string;
+  validationChecklist: string[];
+}
+
 export interface ProofPackSectionReview {
   sectionId: ProofPackSectionId;
   sectionTitle: string;
@@ -104,6 +121,7 @@ export interface TransitionProofPack {
   taskExposure: TaskExposureItem[];
   skillLedger: SkillChangeItem[];
   aiEraRoles: AiEraRole[];
+  learningBoundaries: LearningProviderBoundary[];
   evidenceCards: EvidenceCard[];
   sectionReviews: ProofPackSectionReview[];
   nextActions: string[];
@@ -523,9 +541,76 @@ function reviewStatusForContext(
   hasBlockingRows = false
 ): ReportReviewStatus {
   if (hasBlockingRows) return "staff_review_required";
+  if (sectionId === "learning_provider_boundary" && context !== "individual") return "staff_review_required";
   if (context === "workforce") return sectionId === "client_delivery" ? "staff_review_required" : "staff_reviewed";
   if (context === "coach") return sectionId === "client_delivery" ? "client_ready" : "coach_reviewed";
   return sectionId === "client_delivery" ? "staff_review_required" : "auto_generated";
+}
+
+function buildLearningProviderBoundaries(
+  context: TransitionProofPack["context"]
+): LearningProviderBoundary[] {
+  const baseReviewStatus = reviewStatusForContext(context, "learning_provider_boundary");
+  const providerReviewStatus: ReportReviewStatus = context === "individual" ? "staff_review_required" : baseReviewStatus;
+
+  return [
+    {
+      recommendationType: "learning_theme",
+      title: "Learning themes before provider picks",
+      sourceIds: ["dol-ai-literacy-framework", "nace-career-readiness", "oecd-skills-outlook-2025"],
+      confidence: "medium",
+      reviewStatus: baseReviewStatus,
+      caveat: "Learning next actions are transition themes, not course, certificate, bootcamp, or vendor endorsements.",
+      doesNotProve: "That any course, provider, certificate, or training path guarantees employment, pay, promotion, or legal/compliance readiness.",
+      validationChecklist: [
+        "Map each learning theme to a skill-ledger row and learner goal.",
+        "Check learner constraints, affordability, time, language, and support needs.",
+        "Validate local demand before presenting a learning theme as a paid pathway.",
+      ],
+    },
+    {
+      recommendationType: "provider_selection",
+      title: "Provider selection review",
+      sourceIds: ["wcag-22", "ada-ai-hiring-guidance", "nist-ai-rmf"],
+      confidence: "medium",
+      reviewStatus: providerReviewStatus,
+      caveat: "Provider, cost, accessibility, accommodation, refund, data-use, and credential-recognition claims need human review before recommendation.",
+      doesNotProve: "That any named provider is approved, accessible, compliant, effective, or appropriate for a specific learner.",
+      validationChecklist: [
+        "Review accessibility and accommodation path before sharing a provider option.",
+        "Confirm cost, refund, time commitment, data-use policy, and credential recognition.",
+        "Keep provider choices separate from employment, promotion, or compensation decisions.",
+      ],
+    },
+    {
+      recommendationType: "accessibility_check",
+      title: "Accessibility and accommodation fit",
+      sourceIds: ["wcag-22", "ada-ai-hiring-guidance", "nist-ai-rmf"],
+      confidence: "medium",
+      reviewStatus: providerReviewStatus,
+      caveat: "Training and assessment tools can still create barriers if accessibility, accommodations, language, device access, or assistive technology needs are not reviewed.",
+      doesNotProve: "That a learning platform, assessment, or AI tutor is accessible or legally suitable for every learner.",
+      validationChecklist: [
+        "Check keyboard, screen-reader, captioning, contrast, timing, and mobile access before recommendation.",
+        "Document accommodation and support options for learners who need them.",
+        "Avoid using inaccessible training outcomes as evidence for employment decisions.",
+      ],
+    },
+    {
+      recommendationType: "outcome_validation",
+      title: "Market and outcome validation",
+      sourceIds: ["lightcast", "esco", "wef-foj-2025", "llm-output"],
+      confidence: "low",
+      reviewStatus: "staff_review_required",
+      caveat: "Licensed posting data, employer demand, and outcome evidence remain adapter-ready until a reviewed provider or market-data source is attached.",
+      doesNotProve: "That local employers recognize the credential, that demand exists in a region, or that completion creates a job placement outcome.",
+      validationChecklist: [
+        "Attach local posting or employer signal before paid course guidance.",
+        "Record whether the source is open, licensed, provider-supplied, or LLM-generated.",
+        "Preserve a reviewer note when converting a learning theme into a specific pathway.",
+      ],
+    },
+  ];
 }
 
 function buildSectionReviews(input: {
@@ -606,6 +691,22 @@ function buildSectionReviews(input: {
         "Taxonomy and posting validation status are visible",
         "No role is labeled official unless taxonomy-mapped",
         "Reviewer has validated search terms before client use",
+      ],
+    },
+    {
+      sectionId: "learning_provider_boundary",
+      sectionTitle: "Learning And Provider Boundary",
+      requiredForInstitutionalDelivery: true,
+      reviewerRole,
+      blockingReason: "Learning themes must stay separate from course, credential, provider, or placement claims until reviewed.",
+      caveat: "Learning next actions are planning themes; provider choices require accessibility, cost, local-demand, outcome, and data-use review.",
+      sourceIds: ["dol-ai-literacy-framework", "nace-career-readiness", "wcag-22", "ada-ai-hiring-guidance", "oecd-skills-outlook-2025"],
+      evidenceCardIds: evidenceCardIds.filter((id) => id.includes("learning") || id.includes("skill")),
+      acceptanceCriteria: [
+        "Learning themes are separated from provider endorsements",
+        "No course, provider, certificate, or training path is shown as a guaranteed outcome",
+        "Provider, cost, accessibility, accommodation, refund, and data-use checks are visible",
+        "Local market validation is required before paid pathway guidance",
       ],
     },
     {
@@ -789,6 +890,7 @@ export function buildOccupationTransitionProofPack(
     .slice()
     .sort((a, b) => roleRelevanceScore(b, data) - roleRelevanceScore(a, data))
     .slice(0, 5);
+  const learningBoundaries = buildLearningProviderBoundaries(context);
 
   const evidenceCards = [
     createEvidenceCard({
@@ -835,6 +937,17 @@ export function buildOccupationTransitionProofPack(
       generatedAt,
       action: "Use role radar to pick search terms and learning themes.",
     }),
+    createEvidenceCard({
+      id: "learning-provider-boundary",
+      claim: "Learning next actions are transition themes, not course/vendor endorsements.",
+      sourceIds: ["dol-ai-literacy-framework", "nace-career-readiness", "wcag-22", "ada-ai-hiring-guidance", "oecd-skills-outlook-2025"],
+      confidence: "medium",
+      caveat: "Provider, cost, accessibility, learner constraints, data use, local demand, and outcome evidence need review before recommending a course or credential.",
+      doesNotProve: "That any course, provider, certificate, or training path guarantees employment, pay, promotion, or legal/compliance readiness.",
+      reviewStatus: "staff_review_required",
+      generatedAt,
+      action: "Review provider fit, accessibility, cost, learner constraints, and local demand before recommending a course.",
+    }),
   ];
 
   return {
@@ -846,6 +959,7 @@ export function buildOccupationTransitionProofPack(
     taskExposure,
     skillLedger,
     aiEraRoles,
+    learningBoundaries,
     evidenceCards,
     sectionReviews: buildSectionReviews({ context, evidenceCards }),
     nextActions: [
@@ -953,6 +1067,7 @@ export function buildWorkforceTransitionProofPack(
       caveat: "Unknown status must remain visible until live posting validation or licensed market data is integrated.",
     },
   ];
+  const learningBoundaries = buildLearningProviderBoundaries("workforce");
 
   const evidenceCards = [
     createEvidenceCard({
@@ -988,6 +1103,17 @@ export function buildWorkforceTransitionProofPack(
       generatedAt,
       action: "Attach department-level learning paths only after pilot review.",
     }),
+    createEvidenceCard({
+      id: "learning-provider-boundary",
+      claim: "Learning next actions are transition themes, not course/vendor endorsements.",
+      sourceIds: ["dol-ai-literacy-framework", "nace-career-readiness", "wcag-22", "ada-ai-hiring-guidance", "oecd-skills-outlook-2025"],
+      confidence: "medium",
+      caveat: "Provider, cost, accessibility, learner constraints, data use, local demand, and outcome evidence need review before recommending a course or credential.",
+      doesNotProve: "That any course, provider, certificate, or training path guarantees employment, pay, promotion, or legal/compliance readiness.",
+      reviewStatus,
+      generatedAt,
+      action: "Review provider fit, accessibility, cost, learner constraints, and local demand before recommending a workforce learning pathway.",
+    }),
   ];
 
   return {
@@ -999,6 +1125,7 @@ export function buildWorkforceTransitionProofPack(
     taskExposure,
     skillLedger,
     aiEraRoles: AI_ERA_ROLE_RADAR.slice(0, 6),
+    learningBoundaries,
     evidenceCards,
     sectionReviews: buildSectionReviews({ context: "workforce", evidenceCards, unmappedCount }),
     nextActions: [
@@ -1043,6 +1170,16 @@ function renderSkillActionLabel(action: SkillAction): string {
     learn_next: "Learn next",
   };
   return labels[action];
+}
+
+function renderLearningRecommendationTypeLabel(type: LearningRecommendationType): string {
+  const labels: Record<LearningRecommendationType, string> = {
+    learning_theme: "Learning theme",
+    provider_selection: "Provider selection",
+    accessibility_check: "Accessibility check",
+    outcome_validation: "Outcome validation",
+  };
+  return labels[type];
 }
 
 function renderRoleTaxonomyStatusLabel(status: AiEraRoleTaxonomyStatus): string {
@@ -1162,6 +1299,29 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
         `).join("")}
       </div>
 
+      <h3>Learning And Provider Boundary</h3>
+      <table class="proof-table learning-provider-boundary">
+        <thead>
+          <tr><th>Boundary</th><th>Confidence</th><th>Review</th><th>Sources</th><th>Caveat / does not prove</th><th>Validation checklist</th></tr>
+        </thead>
+        <tbody>
+          ${pack.learningBoundaries.map((boundary) => `
+            <tr>
+              <td><strong>${escapeHtml(boundary.title)}</strong><br/><span>${escapeHtml(renderLearningRecommendationTypeLabel(boundary.recommendationType))}</span></td>
+              <td>${escapeHtml(boundary.confidence)} confidence</td>
+              <td><span class="review-state">${escapeHtml(renderReviewStatusLabel(boundary.reviewStatus))}</span></td>
+              <td>${boundary.sourceIds.map(escapeHtml).join(", ")}</td>
+              <td>${escapeHtml(boundary.caveat)}<br/><span>Does not prove: ${escapeHtml(boundary.doesNotProve)}</span></td>
+              <td>
+                <ul class="proof-checklist">
+                  ${boundary.validationChecklist.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+
       <h3>Next Actions</h3>
       <ol class="proof-next-actions">
         ${pack.nextActions.map((action) => `<li>${escapeHtml(action)}</li>`).join("")}
@@ -1193,6 +1353,8 @@ export function getTransitionProofPackCss(): string {
     .ai-era-role-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 12px; }
     .ai-era-role-card p { margin: 7px 0; }
     .ai-era-role-card-header { display: flex; gap: 8px; justify-content: space-between; }
+    .proof-checklist { margin: 0; padding-left: 16px; }
+    .proof-checklist li { margin: 3px 0; }
     .ai-era-role-card-header span, .role-caveat { color: #64748b; }
     .proof-next-actions { margin: 8px 0 0; padding-left: 20px; font-size: 12px; }
     .proof-next-actions li { margin: 5px 0; }

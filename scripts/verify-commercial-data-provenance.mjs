@@ -68,9 +68,9 @@ const artifacts = [
     label: 'AI work transition proof pack renderer',
     path: 'src/lib/workTransitionProofPack.ts',
     type: 'report-runtime',
-    sourceIds: ['onet', 'wef-foj-2025', 'oecd-skills-outlook-2025', 'ai-workforce-consortium-2025', 'anthropic-economic-index', 'anthropic-observed-exposure', 'openai-gdpval', 'bls-ai-mlr-2025', 'wcag-22', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'esco', 'lightcast', 'llm-output'],
-    expectedSnippets: ['AI_ERA_ROLE_RADAR', 'TaskExposureBucket', 'SkillChangeStatus', 'ProofPackSectionReview', 'getTransitionProofPackReviewMetadata', 'renderTransitionProofPackHtml', 'Source caveat', 'Role validation'],
-    caveat: 'Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.',
+    sourceIds: ['onet', 'wef-foj-2025', 'oecd-skills-outlook-2025', 'ai-workforce-consortium-2025', 'nace-career-readiness', 'dol-ai-literacy-framework', 'anthropic-economic-index', 'anthropic-observed-exposure', 'openai-gdpval', 'bls-ai-mlr-2025', 'wcag-22', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'esco', 'lightcast', 'llm-output'],
+    expectedSnippets: ['AI_ERA_ROLE_RADAR', 'TaskExposureBucket', 'SkillChangeStatus', 'LearningProviderBoundary', 'learning-provider-boundary', 'ProofPackSectionReview', 'getTransitionProofPackReviewMetadata', 'renderTransitionProofPackHtml', 'Source caveat', 'Role validation'],
+    caveat: 'Emerging role radar, skill-change ledger, learning/provider boundary, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.',
   },
   {
     id: 'report-provenance-module',

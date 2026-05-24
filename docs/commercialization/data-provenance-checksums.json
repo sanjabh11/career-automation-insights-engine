@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T07:21:32.084Z",
+  "generatedAt": "2026-05-24T07:35:04.105Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -182,6 +182,8 @@
         "wef-foj-2025",
         "oecd-skills-outlook-2025",
         "ai-workforce-consortium-2025",
+        "nace-career-readiness",
+        "dol-ai-literacy-framework",
         "anthropic-economic-index",
         "anthropic-observed-exposure",
         "openai-gdpval",
@@ -197,16 +199,18 @@
         "AI_ERA_ROLE_RADAR",
         "TaskExposureBucket",
         "SkillChangeStatus",
+        "LearningProviderBoundary",
+        "learning-provider-boundary",
         "ProofPackSectionReview",
         "getTransitionProofPackReviewMetadata",
         "renderTransitionProofPackHtml",
         "Source caveat",
         "Role validation"
       ],
-      "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 55647,
-      "rows": 1143,
-      "sha256": "86ff0ac993cb08fe332cc788059f4cdd0f80bef6d0f44d132645c08dd8ff6d4c",
+      "caveat": "Emerging role radar, skill-change ledger, learning/provider boundary, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
+      "bytes": 64678,
+      "rows": 1300,
+      "sha256": "ba38a7642b1b6ed701e6750553575214fe82542faa542839c73252caaa24238b",
       "failures": [],
       "passed": true
     },
