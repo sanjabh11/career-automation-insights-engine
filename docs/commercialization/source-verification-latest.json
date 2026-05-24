@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T14:20:39.352Z",
+  "generatedAt": "2026-05-24T15:31:38.683Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "6ea7d973b85e5af59d3f9a2a049d67307713730375c7270d1661dfe737f9836e",
-      "byteLength": 233752,
+      "contentSha256": "cc2b01ea6548eb9de0210717fdf18f995c07c9d103f06ef130984f57ebf16ccc",
+      "byteLength": 233754,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "24b0a9df53c211fffe1020212c71286148bb2d6f7f4624e6e0b1cdcb551a8e0c",
+      "contentSha256": "aeaadd5dd8b25c622ea7fe275ad8c432b453523073d81740131977ad436bb543",
       "byteLength": 316096,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
-      "byteLength": 116284,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "7b6f14ca2f40ee2c3b92569c03fac36e1f3a33ba27a33d938eb47055f506730b",
+      "contentSha256": "462aab8538aceac57d034c6cfe332b37357a7c8ad25e2058ccbcca38cf7ab3da",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "aa4b89b55532f117e961585cc5f862f3c30241911f02faed478800bfe1fd00a9",
+      "contentSha256": "fafbb15ec3aad8225960266edd11f5968edc34be06e8b43ef66c2a2fc998f780",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,7 +349,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "d5b9e6e5af528ff19248ba8335132b5cf28fa8dc5c6432107aa71c67729fadd7",
+      "contentSha256": "cbbfbefb7787c68c7909b04d8edc7ba532e35dfc660425f8f88e4e884c77ccdb",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "dd36b43e4c78ab2a6573ff2986852eea985a0cd8cfadc5f52299bc62b8227c5f",
-      "byteLength": 164873,
+      "contentSha256": "12a82036ee23595be8ac9a3f381eb0c471b0d699bf29cf62f4c1eacb0350a706",
+      "byteLength": 165940,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "4694b834a0ea0591d18bd784f866ba4ff5bb1b5348dad6415941ea63d58d3810",
+      "contentSha256": "0e15b93f63153a8bc42dd5796ddb6aad8e5b68a9f3469402604ce84cd3775cba",
       "byteLength": 210582,
       "evidence": [
         {
@@ -509,7 +509,7 @@
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
       "status": 200,
       "ok": true,
-      "contentSha256": "9bde19eb6f3919bf72673e849ce6e4c5f6b5b5f9087f725e1b1b205a426ce9e1",
+      "contentSha256": "10597647af94734463742e45fef410a1fb63af98542248babfb22374d3e330f2",
       "byteLength": 53582,
       "evidence": [
         {
@@ -549,7 +549,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "99feb801f877a7f2ccf8e79841a1bea96361e568a08fae34de1b04b82f52430c",
+      "contentSha256": "870a253e1e1bc8828f04e537d9c0bb393a553faa110e0a202e2c5a35c21a42b2",
       "byteLength": 91197,
       "evidence": [
         {

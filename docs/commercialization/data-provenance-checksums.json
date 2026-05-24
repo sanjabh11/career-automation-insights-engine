@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T14:44:48.656Z",
+  "generatedAt": "2026-05-24T15:33:33.517Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T14:20:39.352Z",
+    "generatedAt": "2026-05-24T15:31:38.683Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -421,6 +421,33 @@
       "bytes": 13321,
       "rows": 269,
       "sha256": "ecc59aba53a8cd1dc6dd5d45fed7b98c6c52286ec4fdb1d56bff439c2d331902",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-analyzer-proof-report-ui",
+      "label": "Resume analyzer downloadable proof report UI",
+      "path": "src/components/ResumeAnalyzer.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "getResumeProofReportHtml",
+        "data-resume-proof-report=\"true\"",
+        "Resume Work Transition Proof Report",
+        "Download Proof Report",
+        "Copy Rewrite Drafts",
+        "coaching draft only",
+        "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
+      ],
+      "caveat": "Resume proof report download is a client-side coaching artifact; production PDF/DOCX parsing, live saved-artifact storage, external provider retention controls, and employment-decision validation remain separate work.",
+      "bytes": 49467,
+      "rows": 910,
+      "sha256": "2cff27c64341cb98021443e548a1a408764d6e0905777e388c1fe9d79b8b4b13",
       "failures": [],
       "passed": true
     },

@@ -136,6 +136,15 @@ const artifacts = [
     caveat: 'Edge-function proof metadata documents raw-text redaction, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.',
   },
   {
+    id: 'resume-analyzer-proof-report-ui',
+    label: 'Resume analyzer downloadable proof report UI',
+    path: 'src/components/ResumeAnalyzer.tsx',
+    type: 'commercial-page',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22', 'llm-output'],
+    expectedSnippets: ['getResumeProofReportHtml', 'data-resume-proof-report="true"', 'Resume Work Transition Proof Report', 'Download Proof Report', 'Copy Rewrite Drafts', 'coaching draft only', 'Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool'],
+    caveat: 'Resume proof report download is a client-side coaching artifact; production PDF/DOCX parsing, live saved-artifact storage, external provider retention controls, and employment-decision validation remain separate work.',
+  },
+  {
     id: 'proof-pack-gallery-page',
     label: 'Phase 6 proof-pack gallery and outreach CSV',
     path: 'src/pages/ProofPackGalleryPage.tsx',

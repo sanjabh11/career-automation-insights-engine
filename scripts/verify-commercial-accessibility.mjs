@@ -259,6 +259,7 @@ async function runChecks(baseUrl) {
         const url = route.request().url();
         if (
           url.includes('supabase-disabled.invalid') ||
+          url.includes('m.stripe.com') ||
           url.includes('m.stripe.network') ||
           url.includes('js.stripe.com') ||
           url.includes('fonts.gstatic.com') ||

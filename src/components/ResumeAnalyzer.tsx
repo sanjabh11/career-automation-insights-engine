@@ -127,6 +127,159 @@ function ResumeEvidenceBoundaryNote({ card, label }: { card?: ResumeProofEvidenc
     );
 }
 
+function escapeHtml(value: unknown): string {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getResumeProofReportHtml(result: AnalysisResult, receipt: ResumeDeletionReceipt | null): string {
+    const proofPack = result.proof_pack;
+    const generatedAt = proofPack?.generatedAt || new Date().toISOString();
+    const sourceIds = proofPack?.sourceIds || ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+    const evidenceCards = proofPack?.evidenceCards || [];
+    const decisionBoundaries = proofPack?.decisionBoundaries || [
+        'Not a hiring, firing, promotion, compensation, layoff, or eligibility decision system.',
+        'Human review is required before client delivery or institutional use.',
+    ];
+
+    const phraseRows = result.automation_prone_phrases.map((phrase) => `
+      <tr>
+        <td>${escapeHtml(phrase.phrase)}</td>
+        <td>${escapeHtml(phrase.severity)}</td>
+        <td>${escapeHtml(phrase.reason)}</td>
+      </tr>`).join('');
+    const rewriteRows = result.rewrite_suggestions.map((suggestion) => `
+      <tr>
+        <td>${escapeHtml(suggestion.original)}</td>
+        <td>${escapeHtml(suggestion.suggested)}</td>
+        <td>${escapeHtml(suggestion.rationale)}</td>
+      </tr>`).join('');
+    const skillRows = result.recommended_skills.map((skill) => `
+      <tr>
+        <td>${escapeHtml(skill.skill)}</td>
+        <td>${escapeHtml(skill.priority)}</td>
+        <td>${escapeHtml(skill.reason)}</td>
+      </tr>`).join('');
+    const evidenceRows = evidenceCards.map((card) => `
+      <section class="evidence-card">
+        <h3>${escapeHtml(card.id)}</h3>
+        <p><strong>Claim:</strong> ${escapeHtml(card.claim)}</p>
+        <p><strong>Sources:</strong> ${escapeHtml(card.sourceIds.join(', '))}</p>
+        <p><strong>Confidence:</strong> ${escapeHtml(card.confidence)}. <strong>Review:</strong> ${escapeHtml(formatReviewStatus(card.reviewStatus))}</p>
+        <p><strong>Caveat:</strong> ${escapeHtml(card.caveat)}</p>
+        <p><strong>Does not prove:</strong> ${escapeHtml(card.doesNotProve)}</p>
+      </section>`).join('');
+    const parserBoundary = proofPack?.parserBoundary;
+    const retentionText = receipt
+        ? `Deletion receipt ${receipt.receiptId} recorded ${receipt.deletionStatus} for saved analysis ${receipt.analysisId}. Receipt hash prefix: ${receipt.receiptHash.slice(0, 16)}.`
+        : 'No deletion receipt is attached to this downloaded report. Signed-in saved analyses can create an app-level deletion receipt from the resume analyzer.';
+
+    return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Resume Work Transition Proof Report</title>
+  <style>
+    body { color: #172033; font-family: Inter, Arial, sans-serif; line-height: 1.55; margin: 0 auto; max-width: 920px; padding: 32px; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    h2 { border-bottom: 2px solid #d8e1ee; font-size: 18px; margin-top: 28px; padding-bottom: 6px; }
+    h3 { font-size: 14px; margin-bottom: 4px; }
+    .meta, .boundary, .evidence-card { background: #f8fafc; border: 1px solid #d8e1ee; border-radius: 8px; margin: 12px 0; padding: 12px; }
+    .score { align-items: baseline; display: flex; gap: 12px; margin: 18px 0; }
+    .score strong { font-size: 42px; }
+    table { border-collapse: collapse; margin: 12px 0; width: 100%; }
+    th, td { border: 1px solid #d8e1ee; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #eef4fb; }
+    ul { padding-left: 20px; }
+    .small { color: #5b677a; font-size: 12px; }
+  </style>
+</head>
+<body data-resume-proof-report="true">
+  <h1>Resume Work Transition Proof Report</h1>
+  <p class="small">Generated ${escapeHtml(new Date(generatedAt).toLocaleString())}. This is a coaching artifact, not an employment decision tool.</p>
+
+  <section class="meta">
+    <p><strong>Automation risk score:</strong> ${escapeHtml(result.automation_risk_score)} / 100</p>
+    <p><strong>Model confidence:</strong> ${escapeHtml(Math.round(result.confidence_score * 100))}%</p>
+    <p><strong>Review state:</strong> ${escapeHtml(formatReviewStatus(proofPack?.reviewStatus))}</p>
+    <p><strong>Sources:</strong> ${escapeHtml(sourceIds.join(', '))}</p>
+  </section>
+
+  <h2>Decision Boundaries</h2>
+  <section class="boundary">
+    <ul>${decisionBoundaries.map((boundary) => `<li>${escapeHtml(boundary)}</li>`).join('')}</ul>
+  </section>
+
+  <h2>Parser And Retention Boundary</h2>
+  <section class="boundary">
+    <p>${escapeHtml(parserBoundary?.caveat || 'The report analyzes text supplied to the app. Production PDF/DOCX parsing requires a separate server-side parser verification.')}</p>
+    <p><strong>Raw file stored:</strong> ${parserBoundary?.rawFileStored ? 'yes' : 'no'}; <strong>raw resume text stored:</strong> ${parserBoundary?.rawResumeTextStored ? 'yes' : 'no'}; <strong>production PDF/DOCX parser ready:</strong> ${parserBoundary?.productionPdfDocxParser ? 'yes' : 'no'}.</p>
+    <p>${escapeHtml(retentionText)}</p>
+  </section>
+
+  <h2>Automation-Prone Phrases</h2>
+  <table>
+    <thead><tr><th>Phrase</th><th>Severity</th><th>Reason</th></tr></thead>
+    <tbody>${phraseRows || '<tr><td colspan="3">No automation-prone phrases returned by the model.</td></tr>'}</tbody>
+  </table>
+
+  <h2>Rewrite Drafts</h2>
+  <table>
+    <thead><tr><th>Original</th><th>Suggested</th><th>Rationale</th></tr></thead>
+    <tbody>${rewriteRows || '<tr><td colspan="3">No rewrite drafts returned by the model.</td></tr>'}</tbody>
+  </table>
+
+  <h2>Recommended Skill Themes</h2>
+  <table>
+    <thead><tr><th>Skill</th><th>Priority</th><th>Reason</th></tr></thead>
+    <tbody>${skillRows || '<tr><td colspan="3">No skill themes returned by the model.</td></tr>'}</tbody>
+  </table>
+
+  <h2>Evidence Cards</h2>
+  ${evidenceRows || '<section class="evidence-card"><p>No evidence cards were returned. Do not use this output for client delivery.</p></section>'}
+</body>
+</html>`;
+}
+
+function getRewriteDraftPacket(result: AnalysisResult): string {
+    const proofPack = result.proof_pack;
+    const rewriteEvidence = findResumeEvidenceCard(proofPack, 'resume-rewrite-boundary');
+    const skillEvidence = findResumeEvidenceCard(proofPack, 'resume-skill-recommendation-boundary');
+    const lines = [
+        'Resume work-transition rewrite draft packet',
+        '',
+        'Boundary: coaching draft only. Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool.',
+        rewriteEvidence ? `Rewrite caveat: ${rewriteEvidence.caveat}` : null,
+        skillEvidence ? `Skill caveat: ${skillEvidence.caveat}` : null,
+        '',
+        'Rewrite drafts:',
+        ...result.rewrite_suggestions.flatMap((suggestion, index) => [
+            `${index + 1}. Original: ${suggestion.original}`,
+            `   Suggested: ${suggestion.suggested}`,
+            `   Rationale: ${suggestion.rationale}`,
+        ]),
+        '',
+        'Skill themes:',
+        ...result.recommended_skills.map((skill, index) => `${index + 1}. ${skill.skill} (${skill.priority}) - ${skill.reason}`),
+    ].filter((line): line is string => Boolean(line));
+
+    return lines.join('\n');
+}
+
+function downloadHtml(filename: string, html: string): void {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
 function getFreeScanCount(): number {
     try {
         return parseInt(localStorage.getItem(FREE_SCAN_KEY) || '0', 10);
@@ -339,6 +492,42 @@ export default function ResumeAnalyzer() {
             });
         } finally {
             setDeletingAnalysis(false);
+        }
+    };
+
+    const downloadResumeProofReport = () => {
+        if (!analysisResult) return;
+
+        const html = getResumeProofReportHtml(analysisResult, deletionReceipt);
+        downloadHtml('resume-work-transition-proof-report.html', html);
+        toast({
+            title: 'Proof Report Downloaded',
+            description: 'The HTML report includes sources, caveats, review state, and decision boundaries.',
+        });
+    };
+
+    const copyRewriteDrafts = async () => {
+        if (!analysisResult) return;
+
+        const packet = getRewriteDraftPacket(analysisResult);
+        try {
+            await navigator.clipboard.writeText(packet);
+            toast({
+                title: 'Rewrite Drafts Copied',
+                description: 'The copied packet includes coaching caveats and review boundaries.',
+            });
+        } catch {
+            const blob = new Blob([packet], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'resume-rewrite-drafts.txt';
+            link.click();
+            URL.revokeObjectURL(url);
+            toast({
+                title: 'Rewrite Drafts Downloaded',
+                description: 'Clipboard was unavailable, so a bounded text packet was downloaded.',
+            });
         }
     };
 
@@ -777,16 +966,16 @@ export default function ResumeAnalyzer() {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3">
-                        <Button className="flex-1" variant="outline">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                        <Button className="flex-1" variant="outline" onClick={downloadResumeProofReport}>
                             <Download className="mr-2 h-4 w-4" />
-                            Download Full Report
+                            Download Proof Report
                         </Button>
                         <Button className="flex-1" variant="outline" onClick={() => shareScore('copy')}>
                             {linkCopied ? 'Link Copied' : 'Copy Score Link'}
                         </Button>
-                        <Button className="flex-1">
-                            Apply Suggestions
+                        <Button className="flex-1" onClick={() => void copyRewriteDrafts()} disabled={analysisResult.rewrite_suggestions.length === 0}>
+                            Copy Rewrite Drafts
                         </Button>
                     </div>
                 </>
