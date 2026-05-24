@@ -98,7 +98,7 @@ export default function ForCoachesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0F172A]">
+        <div className="min-h-screen overflow-x-hidden bg-[#0F172A]">
             <NavigationPremium />
             <main>
 
