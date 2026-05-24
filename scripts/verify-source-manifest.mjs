@@ -18,6 +18,42 @@ const checks = [
     ],
   },
   {
+    id: 'onet-task-statements',
+    label: 'Task Statements - O*NET 30.3',
+    url: 'https://www.onetcenter.org/dictionary/30.3/text/task_statements.html',
+    expected: [
+      { label: 'Task Statements table', pattern: /Task Statements/i },
+      { label: 'task statement fields', pattern: /O\*NET-SOC Code.*Task ID.*Task.*Task Type/i },
+    ],
+  },
+  {
+    id: 'onet-task-ratings',
+    label: 'Task Ratings - O*NET 30.3',
+    url: 'https://www.onetcenter.org/dictionary/30.3/text/task_ratings.html',
+    expected: [
+      { label: 'Task Ratings table', pattern: /Task Ratings/i },
+      { label: 'task rating fields', pattern: /Scale ID.*Category.*Data Value.*Standard Error/i },
+    ],
+  },
+  {
+    id: 'onet-task-categories',
+    label: 'Task Categories - O*NET 30.3',
+    url: 'https://www.onetcenter.org/dictionary/30.3/text/task_categories.html',
+    expected: [
+      { label: 'Task Categories table', pattern: /Task Categories/i },
+      { label: 'frequency category evidence', pattern: /Frequency of Task|Category Description/i },
+    ],
+  },
+  {
+    id: 'onet-scales-reference',
+    label: 'Scales Reference - O*NET 30.3',
+    url: 'https://www.onetcenter.org/dictionary/30.3/text/scales_reference.html',
+    expected: [
+      { label: 'Scales Reference table', pattern: /Scales Reference/i },
+      { label: 'scale fields and importance example', pattern: /Scale ID.*Scale Name.*Minimum.*Maximum.*IM.*Importance/i },
+    ],
+  },
+  {
     id: 'bls-emp',
     label: 'BLS Employment Projections',
     url: 'https://www.bls.gov/emp/',

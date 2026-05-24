@@ -17,6 +17,7 @@
     "verify:commercial-full": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey",
     "verify:commercial-network": "node scripts/verify-commercial-release.mjs --with-network",
     "verify:data-provenance": "node scripts/verify-commercial-data-provenance.mjs --write",
+    "verify:onet-task-ratings": "node scripts/verify-onet-task-ratings-ingest.mjs",
     "verify:report-evidence": "node scripts/verify-report-evidence.mjs",
     "smoke:commercial": "node scripts/smoke-commercial-routes.mjs",
     "verify:commercial-trust": "node scripts/verify-commercial-trust-boundaries.mjs",

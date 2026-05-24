@@ -13,11 +13,11 @@ export const StatsOverview = ({ selectedJobsCount }: StatsOverviewProps) => {
     {
       title: 'O*NET Occupations',
       value: '1,016+',
-      description: 'O*NET 29.3 database',
+      description: 'O*NET 30.3 source boundary',
       icon: Database,
       iconColor: 'text-[var(--accent-primary)]',
       iconBg: 'bg-[var(--accent-primary)]/10',
-      source: 'O*NET 29.3',
+      source: 'O*NET 30.3',
     },
     {
       title: 'Net New Jobs by 2030',

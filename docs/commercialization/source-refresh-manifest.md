@@ -9,6 +9,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | Source | Current version/status | Verified use | Claim boundary |
 |---|---|---|---|
 | O*NET | O*NET Database 30.3 production release, May 2026 | SOC occupation metadata, tasks, skills, descriptors, and Task Ratings importance/frequency fields | Do not claim all in-app rows are 30.3-backed or task-time precise until the data-refresh job and checksum manifest run. |
+| O*NET Task Statements/Ratings/Categories/Scales | O*NET 30.3 text dictionary | Task statement ingestion, importance/relevance/frequency weighting metadata, and frequency labels | Use as occupation-level task-prioritization evidence only after migration, ingest, and exported-table checksum proof. |
 | BLS Employment Projections | 2024-34 occupational employment projections | Growth/outlook context | Directional labor-market context only; not employer-specific forecasting. |
 | BLS OEWS | May 2025 OEWS tables, published May 2026 | Wage and employment estimates | Use only after SOC/occupation mapping is verified. |
 | WEF Future of Jobs | 2025 edition, 2025-2030 horizon | Macro skill and technology trend framing | Use for directional narrative, not occupation scoring by itself. |
@@ -34,7 +35,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 ## Next Refresh Work
 
 1. Schedule `npm run verify:sources` and archive each `source-verification-latest.json` output before source-sensitive demos.
-2. Add checksums for imported O*NET/BLS data tables after ingestion, including O*NET Task Ratings importance/frequency rows before replacing proxy task weights.
+2. Apply `20260524000300_add_onet_task_rating_metadata.sql`, run the O*NET 30.3 Task Statements/Task Ratings ingest, and add checksums for the exported `onet_detailed_tasks` table before replacing proxy task weights.
 3. Attach score-level evidence cards to generated report sections.
 4. Store source manifest snapshots with each generated commercial report artifact.
 5. Block marketing copy from claiming provider-backed scoring when a source is only `adapter-ready`.
@@ -53,9 +54,11 @@ Lead capture now routes through `capture_commercial_lead`, which normalizes repe
 
 Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The script starts Vite on a local open port, verifies commercial routes are registered in `src/App.tsx`, and checks that each route returns a Vite app shell. This is a route smoke gate, not a replacement for browser-level lead capture and PDF/report generation tests.
 
-Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, OECD, AI Workforce Consortium/Cisco, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
+Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET release and task dictionary pages, BLS, WEF, OECD, AI Workforce Consortium/Cisco, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
-Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
+Run `npm run verify:onet-task-ratings` after changing O*NET task-rating imports. The script verifies the official 30.3 Task Statements, Task Ratings, Task Categories, and Scales Reference source checks, the Supabase task-rating metadata migration, the Deno ingest boundary, the runtime weighting helper, and data-provenance coverage.
+
+Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, O*NET Task Ratings ingest boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
 
 Run `npm run verify:commercial-trust` before commercial demos or outreach copy changes. The script checks that public pages do not crash when Supabase env vars are absent, `/privacy` is routed, SEO and coach consent copy link to privacy, browser fallback queues redact report HTML, and the expanded source guardrails remain registered.
 
@@ -68,6 +71,10 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 ## Official References
 
 - O*NET Database releases: https://www.onetcenter.org/db_releases.html
+- O*NET 30.3 Task Statements: https://www.onetcenter.org/dictionary/30.3/text/task_statements.html
+- O*NET 30.3 Task Ratings: https://www.onetcenter.org/dictionary/30.3/text/task_ratings.html
+- O*NET 30.3 Task Categories: https://www.onetcenter.org/dictionary/30.3/text/task_categories.html
+- O*NET 30.3 Scales Reference: https://www.onetcenter.org/dictionary/30.3/text/scales_reference.html
 - BLS Employment Projections: https://www.bls.gov/emp/
 - BLS OEWS tables: https://www.bls.gov/oes/tables.htm
 - WEF Future of Jobs Report 2025: https://www.weforum.org/publications/the-future-of-jobs-report-2025/

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T06:06:47.332Z",
+  "generatedAt": "2026-05-24T06:41:29.585Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T06:06:30.848Z",
+    "generatedAt": "2026-05-24T06:30:55.172Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -66,12 +66,41 @@
         "<path-to-onet-csv-root>",
         "Job Zones.txt",
         "Tools Used.txt",
+        "Task Statements.txt",
+        "Task Ratings.txt",
+        "Task Categories.txt",
         "SUPABASE_SERVICE_ROLE_KEY"
       ],
       "caveat": "Ingestion utility boundary only; it proves import mechanics exist, not that current production tables are refreshed.",
-      "bytes": 8164,
-      "rows": 228,
-      "sha256": "8deb7c39cc054a4189cbeca3e8405b3168548f28eaeb58800c96cb0340cd83f6",
+      "bytes": 15528,
+      "rows": 378,
+      "sha256": "8226fee512c1378c798536a0f120a2babcc85c7ccf4b2b77f520144afbc7a364",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "onet-task-ratings-ingest-script",
+      "label": "O*NET Task Ratings ingest script",
+      "path": "supabase/lib/scripts/ingest_onet_metadata.ts",
+      "type": "ingestion-script",
+      "sourceIds": [
+        "onet"
+      ],
+      "expectedSnippets": [
+        "ingestTaskStatementsAndRatings",
+        "Task Statements.txt",
+        "Task Ratings.txt",
+        "Task Categories.txt",
+        "scaleId === \"IM\"",
+        "scaleId === \"RT\"",
+        "scaleId === \"FT\"",
+        "frequency_category",
+        "task_ratings_ingested_at"
+      ],
+      "caveat": "Task Ratings import can populate O*NET 30.3 importance/frequency metadata, but reports must not claim task-time precision until the target Supabase table export is checksum-verified.",
+      "bytes": 15528,
+      "rows": 378,
+      "sha256": "8226fee512c1378c798536a0f120a2babcc85c7ccf4b2b77f520144afbc7a364",
       "failures": [],
       "passed": true
     },
@@ -82,6 +111,10 @@
       "type": "source-registry",
       "sourceIds": [
         "onet",
+        "onet-task-statements",
+        "onet-task-ratings",
+        "onet-task-categories",
+        "onet-scales-reference",
         "bls-emp",
         "bls-oews",
         "wef-foj-2025",
@@ -106,9 +139,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 17786,
-      "rows": 318,
-      "sha256": "05602a9337bf747e6ed96fa3c40c768ac4fe6541ea5a5699fea62d1308af5da7",
+      "bytes": 21197,
+      "rows": 378,
+      "sha256": "bf3cfdbd3bb49ddd23d23bcf9534189b4b29886af61dded5f2da80e9397effc6",
       "failures": [],
       "passed": true
     },
@@ -168,9 +201,9 @@
         "Role validation"
       ],
       "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 53486,
-      "rows": 1099,
-      "sha256": "94065f34f739b8c4a3060e12de3a3acabe7c7a52507c0ac65b514af3db4f7b31",
+      "bytes": 55647,
+      "rows": 1143,
+      "sha256": "86ff0ac993cb08fe332cc788059f4cdd0f80bef6d0f44d132645c08dd8ff6d4c",
       "failures": [],
       "passed": true
     },
@@ -270,6 +303,33 @@
       "bytes": 16199,
       "rows": 299,
       "sha256": "8c4c27d9a0356b42b0572b050758eba6b019bcca0361e65412188a2e20c784a3",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "onet-task-rating-metadata-migration",
+      "label": "O*NET Task Rating metadata migration",
+      "path": "supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "onet",
+        "onet-task-statements",
+        "onet-task-ratings",
+        "onet-task-categories",
+        "onet-scales-reference"
+      ],
+      "expectedSnippets": [
+        "onet_release_version",
+        "relevance_value",
+        "importance_n",
+        "frequency_category",
+        "frequency_percent",
+        "task_ratings_ingested_at"
+      ],
+      "caveat": "Schema support for O*NET Task Ratings does not prove the migration has been applied or populated in the target Supabase project.",
+      "bytes": 2886,
+      "rows": 45,
+      "sha256": "b719ea4ba88bed94ee311d4c6d13d6694d2f26805837a62361cfbd7fd3a357f4",
       "failures": [],
       "passed": true
     },

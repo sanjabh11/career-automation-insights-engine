@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T06:04:18.276Z",
+  "generatedAt": "2026-05-24T06:41:28.717Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -613,6 +613,10 @@
       "command": "node scripts/verify-commercial-data-provenance.mjs --write"
     },
     {
+      "name": "verify:onet-task-ratings",
+      "command": "node scripts/verify-onet-task-ratings-ingest.mjs"
+    },
+    {
       "name": "verify:report-evidence",
       "command": "node scripts/verify-report-evidence.mjs"
     },
@@ -636,6 +640,10 @@
     "nist-ai-rmf",
     "oecd-skills-outlook-2025",
     "onet",
+    "onet-scales-reference",
+    "onet-task-categories",
+    "onet-task-ratings",
+    "onet-task-statements",
     "openai-gdpval",
     "serpapi",
     "wcag-22",
@@ -794,9 +802,12 @@
         "src/components/SEOReportDownload.tsx",
         "src/pages/SampleReportPage.tsx",
         "src/lib/workforceExecutiveReport.ts",
+        "supabase/lib/scripts/ingest_onet_metadata.ts",
+        "supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql",
+        "scripts/verify-onet-task-ratings-ingest.mjs",
         "scripts/verify-report-evidence.mjs"
       ],
-      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, AI-era role radar with role-level review/taxonomy/posting-validation boundaries, \"does not prove\" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, final artifact approval, and human-review attestation."
+      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, AI-era role radar with role-level review/taxonomy/posting-validation boundaries, \"does not prove\" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, final artifact approval, and human-review attestation. O*NET 30.3 Task Ratings migration, ingest boundary, runtime helper, and verifier are implemented before replacing proxy weights."
     },
     {
       "feature": "Privacy and responsible-use trust boundary",

@@ -51,7 +51,7 @@ export default function ForCoachesPage() {
         {
             icon: Shield,
             title: "O*NET-Grounded Analysis",
-            description: "Enterprise-grade task assessments powered by real O*NET 29.3 data your clients can't get from ChatGPT."
+            description: "Source-labeled task assessments grounded in the O*NET 30.3 release boundary, with caveats your clients cannot get from a generic chat answer."
         },
         {
             icon: Users,
@@ -213,7 +213,7 @@ export default function ForCoachesPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <Shield className="h-4 w-4 text-emerald-400" />
-                            <span>Powered by <strong className="text-white">O*NET 29.3</strong> + <strong className="text-white">Gemini AI</strong></span>
+                            <span>Source-verified <strong className="text-white">O*NET 30.3</strong> boundary + <strong className="text-white">AI-assisted</strong> analysis</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Users className="h-4 w-4 text-emerald-400" />
@@ -425,9 +425,9 @@ export default function ForCoachesPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
-                            <div className="text-4xl font-bold text-emerald-400 mb-2">O*NET 29.3</div>
+                            <div className="text-4xl font-bold text-emerald-400 mb-2">O*NET 30.3</div>
                             <div className="text-slate-300 font-medium mb-1">U.S. Dept. of Labor Data</div>
-                            <div className="text-slate-500 text-sm">Same database used by federal workforce agencies. Not ChatGPT guesses.</div>
+                            <div className="text-slate-500 text-sm">Source-verified occupation and task-rating boundary. Not generic chat guesses.</div>
                         </div>
                         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
                             <div className="text-4xl font-bold text-emerald-400 mb-2">Gemini AI</div>

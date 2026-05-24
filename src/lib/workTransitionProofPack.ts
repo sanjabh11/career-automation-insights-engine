@@ -32,6 +32,18 @@ export interface TaskWeightingMetadata {
   caveat: string;
 }
 
+export interface OnetTaskRatingWeightInput {
+  exposureScore: number;
+  importance: number | null;
+  frequencyCategory?: number | null;
+  frequencyLabel?: string | null;
+  frequencyPercent?: number | null;
+  relevance?: number | null;
+  recommendSuppress?: boolean | null;
+  releaseVersion?: string | null;
+  evidenceBasis?: string;
+}
+
 export interface TaskExposureItem {
   task: string;
   bucket: TaskExposureBucket;
@@ -422,6 +434,43 @@ function frequencyProxyForScore(score: number): TaskWeightingMetadata["frequency
   return "unknown";
 }
 
+function frequencyProxyForCategory(category?: number | null): TaskWeightingMetadata["frequencyProxy"] {
+  if (!category) return "unknown";
+  if (category >= 5) return "high";
+  if (category >= 3) return "medium";
+  return "low";
+}
+
+function frequencyWeightForCategory(category?: number | null): number {
+  if (!category) return 0.35;
+  return clamp(category / 7, 0.1, 1);
+}
+
+export function buildOnetTaskRatingWeighting(input: OnetTaskRatingWeightInput): TaskWeightingMetadata {
+  const importance = clamp(input.importance ?? 3, 1, 5);
+  const frequencyWeight = frequencyWeightForCategory(input.frequencyCategory);
+  const exposureWeight = clamp(input.exposureScore / 100, 0.05, 1);
+  const release = input.releaseVersion || "30.3";
+  const frequencyPhrase = input.frequencyLabel
+    ? `${input.frequencyLabel}${input.frequencyPercent !== null && input.frequencyPercent !== undefined ? ` (${roundToTwo(input.frequencyPercent)}%)` : ""}`
+    : "frequency category unavailable";
+  const relevancePhrase = input.relevance !== null && input.relevance !== undefined
+    ? `, ${roundToTwo(input.relevance)} relevance`
+    : "";
+  const suppressPhrase = input.recommendSuppress
+    ? " Low-precision O*NET ratings are flagged for review."
+    : "";
+
+  return {
+    method: "onet_task_ratings_ready",
+    priorityWeight: roundToTwo(clamp(exposureWeight * ((importance / 5) * 0.65 + frequencyWeight * 0.35), 0.05, 1)),
+    importanceProxy: roundToTwo(importance),
+    frequencyProxy: frequencyProxyForCategory(input.frequencyCategory),
+    evidenceBasis: input.evidenceBasis || `O*NET ${release} Task Ratings: ${roundToTwo(importance)}/5 importance${relevancePhrase}; dominant frequency ${frequencyPhrase}.`,
+    caveat: `O*NET Task Ratings are occupation-level survey summaries, not exact task-time allocation for a person or employer.${suppressPhrase}`,
+  };
+}
+
 function buildSeedTaskWeighting(score: number, rank: number, evidenceBasis: string): TaskWeightingMetadata {
   const rankMultiplier = clamp(1 - rank * 0.05, 0.75, 1);
   return {
@@ -430,7 +479,7 @@ function buildSeedTaskWeighting(score: number, rank: number, evidenceBasis: stri
     importanceProxy: roundToTwo(clamp(score / 20, 1, 5)),
     frequencyProxy: frequencyProxyForScore(score),
     evidenceBasis,
-    caveat: "Proxy weight from current seed score; replace with imported O*NET Task Ratings importance and frequency before claiming task-time precision.",
+    caveat: "Proxy weight from current seed score; use checksum-verified O*NET Task Ratings before claiming task-time precision.",
   };
 }
 
@@ -758,11 +807,11 @@ export function buildOccupationTransitionProofPack(
       claim: "Task prioritization should account for importance and frequency, not exposure score alone.",
       sourceIds: ["onet", "bls-ai-mlr-2025", "nist-ai-rmf"],
       confidence: "medium",
-      caveat: "Current report weights use transparent seed proxies until O*NET Task Ratings importance and frequency imports are checksum-verified.",
+      caveat: "Current report weights use transparent seed proxies unless checksum-verified O*NET Task Ratings are attached to the artifact.",
       doesNotProve: "That the displayed priority weight is true time allocation for a worker, employer, or occupation.",
       reviewStatus,
       generatedAt,
-      action: "Replace proxy weights with imported O*NET Task Ratings before making task-time claims.",
+      action: "Use the O*NET 30.3 Task Ratings ingest and checksum gate before making task-time claims.",
     }),
     createEvidenceCard({
       id: "skill-change-ledger",

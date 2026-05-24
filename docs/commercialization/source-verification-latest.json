@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T06:06:30.848Z",
+  "generatedAt": "2026-05-24T06:30:55.172Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -18,6 +18,86 @@
         },
         {
           "label": "O*NET 30.3 May 2026 release row",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-statements",
+      "label": "Task Statements - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_statements.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "8fea21f8f674c29ae6344ba06757e0c22376a0baaf8e83fea96ae9bfd4ede71f",
+      "byteLength": 38804,
+      "evidence": [
+        {
+          "label": "Task Statements table",
+          "matched": true
+        },
+        {
+          "label": "task statement fields",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-ratings",
+      "label": "Task Ratings - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_ratings.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7179bd544168da3fe4ffb8e599630f17d75adec6a872f8e54bf429cd56b576d7",
+      "byteLength": 40085,
+      "evidence": [
+        {
+          "label": "Task Ratings table",
+          "matched": true
+        },
+        {
+          "label": "task rating fields",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-categories",
+      "label": "Task Categories - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_categories.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ec7213d26c8d756319df3f3316a05bb3033525f66a84fc6ca577008817aea20b",
+      "byteLength": 35524,
+      "evidence": [
+        {
+          "label": "Task Categories table",
+          "matched": true
+        },
+        {
+          "label": "frequency category evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-scales-reference",
+      "label": "Scales Reference - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/scales_reference.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "0b57b6dbe1945c3d1dde3d958b6cfed33849f178be030aaed26990ab8ecd626b",
+      "byteLength": 35898,
+      "evidence": [
+        {
+          "label": "Scales Reference table",
+          "matched": true
+        },
+        {
+          "label": "scale fields and importance example",
           "matched": true
         }
       ],
@@ -109,8 +189,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
-      "byteLength": 116284,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -129,7 +209,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "34aaa1c7fd0c5ba2a280c59c198b4aefd0262049a701bfe366cc65932844ce0d",
+      "contentSha256": "5e595a65f7f12e8fb3ed40c3ba034206a293a7697fa8e4a8ee4458dae03d4fff",
       "byteLength": 165940,
       "evidence": [
         {
@@ -149,7 +229,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "021a4b4cef6697c396adf7f0454b9d8aff3cd87d68a82bb23ef79cad52d5a79b",
+      "contentSha256": "df9a6af93c83ac0102574f3fc127cb417a4b3141f6bfc9123aea2210f11f7d0c",
       "byteLength": 210582,
       "evidence": [
         {
@@ -289,7 +369,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "d101f2c3fa8afad56ca3db23f33a730ea0cfb79914cb11cd1756a840717b298f",
+      "contentSha256": "47b0240f66d5866ec3ab1e78e8ff858af531bd89bc59adaa8be620c6e20f9767",
       "byteLength": 91198,
       "evidence": [
         {

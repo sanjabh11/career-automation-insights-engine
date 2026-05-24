@@ -19,6 +19,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-report-evidence.mjs'],
   },
   {
+    id: 'onet-task-ratings',
+    label: 'Verify O*NET Task Ratings ingest boundary',
+    command: ['node', 'scripts/verify-onet-task-ratings-ingest.mjs'],
+  },
+  {
     id: 'data-provenance',
     label: 'Verify local data provenance checksums',
     command: ['node', 'scripts/verify-commercial-data-provenance.mjs', '--write'],
