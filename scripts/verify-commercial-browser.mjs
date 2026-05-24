@@ -171,6 +171,143 @@ async function verifyPopupReport(popupPromise, expectedText, label) {
   await popup.close();
 }
 
+function getMockResumeAnalysisResponse() {
+  const generatedAt = '2026-05-24T00:00:00.000Z';
+  const sourceIds = ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+  return {
+    success: true,
+    analysis_id: null,
+    automation_risk_score: 42,
+    confidence_score: 0.82,
+    automation_prone_phrases: [
+      {
+        phrase: 'handled routine reports',
+        context: 'Operations reporting',
+        severity: 'medium',
+        reason: 'Routine report generation can often be AI-assisted and should be reframed around judgment, stakeholder context, and exception handling.',
+      },
+    ],
+    rewrite_suggestions: [
+      {
+        original: 'Handled routine reports',
+        suggested: 'Translated recurring operations reports into exception-focused briefings for managers.',
+        rationale: 'Reframes the task around judgment and decision support rather than routine production.',
+      },
+    ],
+    detected_skills: ['Excel', 'reporting', 'stakeholder communication'],
+    recommended_skills: [
+      {
+        skill: 'AI-assisted analytics QA',
+        priority: 'high',
+        reason: 'Adds human-review strength around model-generated summaries and data checks.',
+      },
+    ],
+    proof_pack: {
+      proofPackType: 'resume_analysis',
+      schemaVersion: '2026-05-24',
+      generatedAt,
+      reviewStatus: 'staff_review_required',
+      sourceIds,
+      decisionBoundaries: [
+        'Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool.',
+        'Human review is required before coach, counselor, workforce, or institutional delivery.',
+      ],
+      parserBoundary: {
+        filename: 'pasted-resume.txt',
+        inputMode: 'pasted_text',
+        rawFileStored: false,
+        rawResumeTextStored: false,
+        savedAnalysisId: null,
+        deletionReceiptAvailable: false,
+        productionPdfDocxParser: false,
+        caveat: 'Browser text input was analyzed for coaching only; production PDF/DOCX parsing requires server-side parser verification.',
+      },
+      evidenceCards: [
+        {
+          id: 'resume-risk-score-boundary',
+          claim: 'Resume risk score is an AI-assisted language review signal.',
+          sourceIds,
+          confidence: 'medium',
+          generatedAt,
+          caveat: 'Score depends on supplied resume text and prompt behavior.',
+          doesNotProve: 'Does not prove job loss, employability, screening eligibility, or performance.',
+          reviewStatus: 'staff_review_required',
+        },
+        {
+          id: 'resume-rewrite-boundary',
+          claim: 'Rewrite drafts are coaching suggestions.',
+          sourceIds,
+          confidence: 'medium',
+          generatedAt,
+          caveat: 'Drafts need human editing before client use.',
+          doesNotProve: 'Does not prove hiring advantage or application success.',
+          reviewStatus: 'staff_review_required',
+        },
+        {
+          id: 'resume-skill-recommendation-boundary',
+          claim: 'Recommended skills are directional learning themes.',
+          sourceIds,
+          confidence: 'medium',
+          generatedAt,
+          caveat: 'Skill recommendations need local labor-market and advisor validation.',
+          doesNotProve: 'Does not prove market demand or credential value.',
+          reviewStatus: 'staff_review_required',
+        },
+      ],
+    },
+  };
+}
+
+async function verifyResumeProofReportDownload(page, baseUrl) {
+  console.log('checking /tools/resume-analyzer proof report');
+  await page.goto(`${baseUrl}/tools/resume-analyzer`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
+  await assertVisible(page.getByRole('heading', { name: /Resume Automation Risk Analyzer/i }).first(), '/tools/resume-analyzer heading');
+
+  const resumeText = [
+    'Operations analyst with five years of experience handling routine reports, recurring spreadsheet updates, stakeholder requests, and weekly dashboard summaries.',
+    'Built Excel workbooks, documented exceptions, reviewed data quality, coordinated manager briefings, and translated recurring findings into operational decisions.',
+    'Seeking to reposition the resume around human judgment, AI-assisted analytics QA, and cross-functional communication.',
+  ].join(' ');
+  await page.getByPlaceholder(/Paste resume text here/i).fill(resumeText);
+
+  const analyzeButton = page.getByRole('button', { name: /Analyze Pasted Text/i });
+  await assertButtonEnabled(analyzeButton, 'resume analyze pasted text');
+  await analyzeButton.click();
+  await assertVisible(page.getByRole('heading', { name: /Automation Risk Assessment/i }), 'resume proof result');
+  await assertVisible(page.getByText(/Resume Analysis Evidence And Review Boundaries/i), 'resume proof evidence boundaries');
+  await assertVisible(page.getByRole('button', { name: /Download Proof Report/i }), 'resume proof report button');
+  await assertVisible(page.getByRole('button', { name: /Copy Rewrite Drafts/i }), 'resume rewrite draft button');
+
+  const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download Proof Report/i }).click();
+  const download = await downloadPromise;
+  const suggestedFilename = download.suggestedFilename();
+  if (!suggestedFilename.includes('resume-work-transition-proof-report')) {
+    throw new Error(`Unexpected resume proof report filename: ${suggestedFilename}`);
+  }
+  const htmlBody = await download.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Resume proof report stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expected of [
+    'data-resume-proof-report="true"',
+    'Resume Work Transition Proof Report',
+    'Parser And Retention Boundary',
+    'resume-risk-score-boundary',
+    'resume-rewrite-boundary',
+    'resume-skill-recommendation-boundary',
+    'Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool',
+    'Does not prove',
+  ]) {
+    if (!htmlBody.includes(expected)) {
+      throw new Error(`Resume proof report HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - resume proof report HTML');
+}
+
 async function verifyOfflineQueueRedaction(page, source) {
   const queue = await page.evaluate(() => {
     const raw = window.localStorage.getItem('commercial_leads_offline_queue');
@@ -388,6 +525,19 @@ async function runBrowserChecks(baseUrl) {
 
   await context.route('**/*', async (route) => {
     const url = route.request().url();
+    if (url.includes('/functions/v1/analyze-resume')) {
+      await route.fulfill({
+        status: route.request().method() === 'OPTIONS' ? 204 : 200,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-headers': 'authorization, apikey, content-type, x-client-info',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'content-type': 'application/json',
+        },
+        body: route.request().method() === 'OPTIONS' ? '' : JSON.stringify(getMockResumeAnalysisResponse()),
+      });
+      return;
+    }
     if (url.includes('supabase-disabled.invalid')) {
       await route.abort('failed');
       return;
@@ -402,6 +552,7 @@ async function runBrowserChecks(baseUrl) {
     await verifyPrivacyPage(page, baseUrl);
     await verifyCoachSampleReport(page, baseUrl);
     await verifySeoReportDownload(page, baseUrl);
+    await verifyResumeProofReportDownload(page, baseUrl);
     await verifyWorkforceAuditBuilder(page, baseUrl);
     await verifyCounselorCohortProofPack(page, baseUrl);
     await verifyProofPackGallery(page, baseUrl);

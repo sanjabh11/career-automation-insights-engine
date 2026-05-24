@@ -225,9 +225,13 @@ const checks = [
     expected: [
       /verifyCoachSampleReport/,
       /verifySeoReportDownload/,
+      /verifyResumeProofReportDownload/,
       /verifyWorkforceAuditBuilder/,
       /verifyCounselorCohortProofPack/,
       /verifyProofPackGallery/,
+      /data-resume-proof-report="true"/,
+      /Resume Work Transition Proof Report/,
+      /Download Proof Report/,
       /verifyOfflineQueueRedaction/,
       /career-center-cohort-report/,
       /Weight basis/,
