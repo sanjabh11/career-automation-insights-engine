@@ -10,6 +10,7 @@ import {
 } from "@/lib/reportEvidenceCards";
 
 export type TaskExposureBucket = "automatable" | "ai_assisted" | "human_led" | "emerging";
+export type TaskWeightingMethod = "seed_score_proxy" | "onet_task_ratings_ready" | "workforce_headcount_weighted";
 export type SkillChangeStatus = "growing" | "stable" | "declining" | "changing" | "unknown";
 export type SkillAction = "protect" | "upgrade" | "replace" | "learn_next";
 export type ProofPackSectionId =
@@ -20,10 +21,20 @@ export type ProofPackSectionId =
   | "evidence_cards"
   | "client_delivery";
 
+export interface TaskWeightingMetadata {
+  method: TaskWeightingMethod;
+  priorityWeight: number;
+  importanceProxy: number;
+  frequencyProxy: "high" | "medium" | "low" | "unknown";
+  evidenceBasis: string;
+  caveat: string;
+}
+
 export interface TaskExposureItem {
   task: string;
   bucket: TaskExposureBucket;
   exposureScore: number;
+  weighting: TaskWeightingMetadata;
   rationale: string;
   sourceIds: string[];
 }
@@ -361,6 +372,45 @@ function bucketForScore(score: number): TaskExposureBucket {
   return "human_led";
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function roundToTwo(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function frequencyProxyForScore(score: number): TaskWeightingMetadata["frequencyProxy"] {
+  if (score >= 80) return "high";
+  if (score >= 50) return "medium";
+  if (score > 0) return "low";
+  return "unknown";
+}
+
+function buildSeedTaskWeighting(score: number, rank: number, evidenceBasis: string): TaskWeightingMetadata {
+  const rankMultiplier = clamp(1 - rank * 0.05, 0.75, 1);
+  return {
+    method: "seed_score_proxy",
+    priorityWeight: roundToTwo(clamp((score / 100) * rankMultiplier, 0.05, 1)),
+    importanceProxy: roundToTwo(clamp(score / 20, 1, 5)),
+    frequencyProxy: frequencyProxyForScore(score),
+    evidenceBasis,
+    caveat: "Proxy weight from current seed score; replace with imported O*NET Task Ratings importance and frequency before claiming task-time precision.",
+  };
+}
+
+function buildWorkforceTaskWeighting(row: WorkforceProofPackRow, maxWeightedExposure: number): TaskWeightingMetadata {
+  const weightedExposure = row.apoScore * Math.max(1, row.headcount);
+  return {
+    method: "workforce_headcount_weighted",
+    priorityWeight: roundToTwo(clamp(weightedExposure / Math.max(1, maxWeightedExposure), 0.05, 1)),
+    importanceProxy: roundToTwo(clamp(row.apoScore / 20, 1, 5)),
+    frequencyProxy: "unknown",
+    evidenceBasis: `${row.headcount} role(s) x ${Math.round(row.apoScore)} APO score from uploaded workforce CSV.`,
+    caveat: "Headcount weighting is not task-time allocation; validate task mix and O*NET Task Ratings before executive planning.",
+  };
+}
+
 function roleRelevanceScore(role: AiEraRole, data: OccupationRiskData): number {
   const haystack = [
     data.title,
@@ -557,29 +607,40 @@ export function buildOccupationTransitionProofPack(
   const generatedAtIso = generatedAt.toISOString();
   const reviewStatus: ReportReviewStatus = context === "coach" ? "coach_reviewed" : "auto_generated";
   const taskExposure: TaskExposureItem[] = [
-    ...data.highRiskTasks.map((task) => {
+    ...data.highRiskTasks.map((task, index) => {
       const score = parseTaskScore(task, data.overallRisk);
       return {
         task: stripScoreLabel(task),
         bucket: bucketForScore(score),
         exposureScore: score,
+        weighting: buildSeedTaskWeighting(score, index, "Seed occupation task score parsed from the commercial SEO task list."),
         rationale: score >= 80
           ? "Routine or structured work that current AI/workflow automation can often support heavily."
           : "Work likely changes through AI assistance but still needs human context and validation.",
         sourceIds: ["onet", "anthropic-observed-exposure", "bls-ai-mlr-2025"],
       };
     }),
-    ...data.safeSkills.slice(0, 3).map((skill) => ({
+    ...data.safeSkills.slice(0, 3).map((skill, index) => ({
       task: skill,
       bucket: "human_led" as const,
       exposureScore: Math.max(5, 100 - data.overallRisk),
+      weighting: buildSeedTaskWeighting(
+        Math.max(20, 100 - data.overallRisk),
+        index,
+        "Human-led preservation proxy from the occupation's safe-skill list."
+      ),
       rationale: "Human-led capability that depends on accountability, context, judgment, or relationship quality.",
       sourceIds: ["onet", "bls-ai-mlr-2025", "wef-foj-2025"],
     })),
-    ...data.reskillingSuggestions.slice(0, 2).map((skill) => ({
+    ...data.reskillingSuggestions.slice(0, 2).map((skill, index) => ({
       task: `Build capability in ${skill}`,
       bucket: "emerging" as const,
       exposureScore: 0,
+      weighting: buildSeedTaskWeighting(
+        35,
+        index,
+        "Emerging transition priority proxy from the occupation's reskilling suggestion list."
+      ),
       rationale: "Emerging work-transition capability that should be validated against local demand before client action.",
       sourceIds: ["wef-foj-2025", "lightcast", "llm-output"],
     })),
@@ -625,6 +686,17 @@ export function buildOccupationTransitionProofPack(
       reviewStatus,
       generatedAt,
       action: "Use the task split as a planning conversation starter.",
+    }),
+    createEvidenceCard({
+      id: "task-weighting-method",
+      claim: "Task prioritization should account for importance and frequency, not exposure score alone.",
+      sourceIds: ["onet", "bls-ai-mlr-2025", "nist-ai-rmf"],
+      confidence: "medium",
+      caveat: "Current report weights use transparent seed proxies until O*NET Task Ratings importance and frequency imports are checksum-verified.",
+      doesNotProve: "That the displayed priority weight is true time allocation for a worker, employer, or occupation.",
+      reviewStatus,
+      generatedAt,
+      action: "Replace proxy weights with imported O*NET Task Ratings before making task-time claims.",
     }),
     createEvidenceCard({
       id: "skill-change-ledger",
@@ -678,11 +750,16 @@ export function buildWorkforceTransitionProofPack(
   const reviewStatus: ReportReviewStatus = "staff_review_required";
   const priorityRows = rows.slice().sort((a, b) => (b.apoScore * b.headcount) - (a.apoScore * a.headcount)).slice(0, 8);
   const unmappedCount = rows.filter((row) => !row.socCode).length;
+  const maxWeightedExposure = priorityRows.reduce(
+    (max, row) => Math.max(max, row.apoScore * Math.max(1, row.headcount)),
+    1
+  );
 
   const taskExposure: TaskExposureItem[] = priorityRows.map((row) => ({
     task: `${row.department}: ${row.role}`,
     bucket: row.apoScore >= 70 ? "automatable" : row.apoScore >= 50 ? "ai_assisted" : "human_led",
     exposureScore: row.apoScore,
+    weighting: buildWorkforceTaskWeighting(row, maxWeightedExposure),
     rationale: row.socCode
       ? "Mapped row can be reviewed against SOC/O*NET and workforce context."
       : "Unmapped row must be human-reviewed before client-ready recommendations.",
@@ -818,6 +895,15 @@ function renderSkillActionLabel(action: SkillAction): string {
   return labels[action];
 }
 
+function renderTaskWeighting(task: TaskExposureItem): string {
+  const methodLabels: Record<TaskWeightingMethod, string> = {
+    seed_score_proxy: "Seed proxy",
+    onet_task_ratings_ready: "O*NET Task Ratings-ready",
+    workforce_headcount_weighted: "Headcount-weighted",
+  };
+  return `${methodLabels[task.weighting.method]}: ${Math.round(task.weighting.priorityWeight * 100)} priority, ${task.weighting.importanceProxy}/5 importance proxy, ${task.weighting.frequencyProxy} frequency proxy. ${task.weighting.evidenceBasis} Caveat: ${task.weighting.caveat}`;
+}
+
 export function renderTransitionProofPackHtml(pack: TransitionProofPack): string {
   const reviewMetadataJson = escapeHtml(JSON.stringify(getTransitionProofPackReviewMetadata(pack)));
 
@@ -853,7 +939,7 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
       <h3>Task Exposure Split</h3>
       <table class="proof-table task-exposure-split">
         <thead>
-          <tr><th>Task / role signal</th><th>Bucket</th><th>Score</th><th>Rationale</th></tr>
+          <tr><th>Task / role signal</th><th>Bucket</th><th>Score</th><th>Weight basis</th><th>Rationale</th></tr>
         </thead>
         <tbody>
           ${pack.taskExposure.slice(0, 10).map((task) => `
@@ -861,6 +947,7 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
               <td>${escapeHtml(task.task)}</td>
               <td><span class="proof-pill proof-pill-${escapeHtml(task.bucket)}">${escapeHtml(renderTaskBucketLabel(task.bucket))}</span></td>
               <td>${task.bucket === "emerging" ? "n/a" : `${Math.round(task.exposureScore)}%`}</td>
+              <td>${escapeHtml(renderTaskWeighting(task))}</td>
               <td>${escapeHtml(task.rationale)}</td>
             </tr>
           `).join("")}

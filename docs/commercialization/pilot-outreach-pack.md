@@ -58,7 +58,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 8 | Coach-branded sample report | Common sales tactic | High | High | Implemented skeleton |
 | 9 | Privacy and deletion proof | Common enterprise requirement | High | Medium | Partly implemented |
 | 10 | Accessibility gate before outreach | Common requirement, often skipped | High | Medium | Scripted and passing locally; expand before enterprise launch |
-| 11 | O*NET task-time weighting | Common research need | High | Medium | Pending |
+| 11 | O*NET task-time weighting | Common research need | High | Medium | Proxy weight basis implemented; checksum-verified O*NET Task Ratings import pending |
 | 12 | BLS/OEWS wage and employment context | Common | Medium | Medium | Adapter-ready |
 | 13 | ESCO skill taxonomy crosswalk | Common in EU/global products | Medium | Medium | Adapter-ready |
 | 14 | Licensed posting-data validation | Common in paid platforms | Medium | Low until licensed | Pending |

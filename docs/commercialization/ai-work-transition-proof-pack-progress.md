@@ -26,7 +26,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 | Risk | Loophole | Fix Implemented Or Planned | Confidence After Fix |
 |---|---|---|---:|
 | Overclaiming job loss | Users may read high exposure as layoff probability. | Evidence cards explicitly state exposure is not job loss, screening, or employment decision proof. | 95% |
-| Weak evidence trail | Buyer cannot tell why a claim exists. | Shared evidence card model requires sources, confidence, timestamp, caveat, "does not prove", and review status. | 96% |
+| Weak evidence trail | Buyer cannot tell why a claim exists. | Shared evidence card model requires sources, confidence, timestamp, caveat, "does not prove", review status, and task-weight caveats where prioritization is shown. | 96% |
 | Generic skill advice | Existing app can feel like a calculator, not a transition report. | Proof pack adds skill-change ledger with protect, upgrade, replace, and learn-next actions. | 92% |
 | Fake role invention | AI-era roles could look like official occupations. | Role radar labels all entries as emerging signals and caveats non-official status. | 94% |
 | Institutional misuse | Workforce buyers could use scores for employee decisions. | Workforce report states role/task-level planning only and requires review for unmapped rows. | 95% |
@@ -40,7 +40,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 |---|---|---|---:|---:|---:|---|
 | Phase 0: Stabilize branch and CI | Clean GitHub checkout, branch, commercial scripts, build gate, route smoke, commercial index, trust/data provenance checks, branch pushed. | CI workflow push needs token with `workflow` scope; collaborator invite verification needs GitHub admin/auth. | 4 | 20% | 12% | Yes for local implementation; no for launch. |
 | Phase 1: Evidence Card Engine | Shared evidence-card renderer, report integration, NIST source, verifier wired into `verify:commercial`. | Formal CI evidence after workflow push. | 5 | 0% | 12% | Yes. |
-| Phase 2: Task Exposure Split | Individual, coach, and workforce reports render automatable, AI-assisted, human-led, and emerging task buckets. | O*NET task-time weighting and validated adoption signals. | 4 | 20% | 12% | Yes for MVP proof pack. |
+| Phase 2: Task Exposure Split | Individual, coach, and workforce reports render automatable, AI-assisted, human-led, and emerging task buckets with transparent priority weights, importance/frequency proxies, evidence basis, and task-time caveats. | Import checksum-verified O*NET Task Ratings importance/frequency data and validated adoption signals. | 4 | 12% | 7% | Yes for MVP proof pack; continue before stronger task-time claims. |
 | Phase 3: Skill Change Ledger | Reports render growing, stable, declining, changing, unknown states and protect, upgrade, replace, learn-next actions. | Live labor-market validation and licensed posting adapters. | 4 | 20% | 12% | Yes for MVP proof pack. |
 | Phase 4: AI-Era Role Radar | 20+ caveated emerging roles mapped to skills, sources, adjacent roles, and confidence. | Posting-level validation and taxonomy crosswalk. | 4 | 20% | 12% | Yes for MVP proof pack. |
 | Phase 5: Human Review Workflow | Section-level human-review workflow renders in proof-pack reports; report artifact metadata stores section status, readiness, blocking reasons, acceptance criteria, and allowed next states; workforce audits store review workflow metadata; lead ops can log section-reviewed/client-ready events and final artifact client-ready approval with staff actor identity, notes, source IDs, and evidence card IDs. | Apply Supabase migration in target project and confirm staff-auth e2e against live data. | 4 | 8% | 8% | Yes for bounded outreach pilot; continue before enterprise launch. |
@@ -52,7 +52,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 |---|---|
 | 0 | `npm run verify:commercial`, `npm run index:commercial`, `git diff --check`, branch pushed, CI green. |
 | 1 | Every commercial report section has source IDs, confidence, timestamp, caveat, "does not prove", and review state. |
-| 2 | Reports visibly split work into automatable, AI-assisted, human-led, and emerging task buckets. |
+| 2 | Reports visibly split work into automatable, AI-assisted, human-led, and emerging task buckets, and task prioritization shows weight basis plus caveat before any task-time claim. |
 | 3 | Skills show status plus action, and no skill recommendation appears without source and caveat. |
 | 4 | Role radar avoids official-occupation claims and every role has caveat, confidence, and source IDs. |
 | 5 | Report sections can move through auto-generated, review-required, reviewed, and client-ready states; generated artifacts preserve section review metadata; lead ops can log final artifact client-ready approval only after every section is ready. |
@@ -62,5 +62,5 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 
 1. Apply the new artifact-review migration in the target Supabase project and confirm staff-auth review/final-approval events against live data.
 2. Re-authenticate GitHub with workflow scope, install `docs/commercialization/commercial-proof-pack.workflow.yml` as `.github/workflows/commercial-proof-pack.yml`, invite `sanjabh1103`, and capture CI evidence.
-3. Add O*NET task-time weighting and local posting validation before making stronger market-intelligence claims.
+3. Replace seed proxy task weights with imported O*NET Task Ratings importance/frequency values and local posting validation before making stronger market-intelligence claims.
 4. Add CRM/email automation and a deployed sample gallery for scaled outreach.

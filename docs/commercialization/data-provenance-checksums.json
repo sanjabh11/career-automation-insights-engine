@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T04:51:58.356Z",
+  "generatedAt": "2026-05-24T05:04:11.190Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T04:50:37.786Z",
+    "generatedAt": "2026-05-24T05:03:18.404Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -103,9 +103,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 14732,
+      "bytes": 14806,
       "rows": 273,
-      "sha256": "96e5ff0af6c50518090ecccbf8a0565981fda55ded09cc0821f65932de6343d0",
+      "sha256": "e021c03cbdf006d38d163f8033e71262afc19de185ff5e599306ccc0b8f35868",
       "failures": [],
       "passed": true
     },
@@ -161,9 +161,9 @@
         "renderTransitionProofPackHtml"
       ],
       "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 42513,
-      "rows": 899,
-      "sha256": "c98d9275196be4dcf790b42b4d32dc8b6a4fadbe1eeddf9df03417e4064d0911",
+      "bytes": 46634,
+      "rows": 979,
+      "sha256": "cfb4295829b18df5cdb060b61dd3fe62600200f862bfdc848cdd82df008017db",
       "failures": [],
       "passed": true
     },

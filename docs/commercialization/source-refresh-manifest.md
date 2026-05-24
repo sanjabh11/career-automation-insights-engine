@@ -8,7 +8,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 
 | Source | Current version/status | Verified use | Claim boundary |
 |---|---|---|---|
-| O*NET | O*NET Database 30.3 production release, May 2026 | SOC occupation metadata, tasks, skills, descriptors | Do not claim all in-app rows are 30.3-backed until the data-refresh job and checksum manifest run. |
+| O*NET | O*NET Database 30.3 production release, May 2026 | SOC occupation metadata, tasks, skills, descriptors, and Task Ratings importance/frequency fields | Do not claim all in-app rows are 30.3-backed or task-time precise until the data-refresh job and checksum manifest run. |
 | BLS Employment Projections | 2024-34 occupational employment projections | Growth/outlook context | Directional labor-market context only; not employer-specific forecasting. |
 | BLS OEWS | May 2025 OEWS tables, published May 2026 | Wage and employment estimates | Use only after SOC/occupation mapping is verified. |
 | WEF Future of Jobs | 2025 edition, 2025-2030 horizon | Macro skill and technology trend framing | Use for directional narrative, not occupation scoring by itself. |
@@ -31,7 +31,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 ## Next Refresh Work
 
 1. Schedule `npm run verify:sources` and archive each `source-verification-latest.json` output before source-sensitive demos.
-2. Add checksums for imported O*NET/BLS data tables after ingestion.
+2. Add checksums for imported O*NET/BLS data tables after ingestion, including O*NET Task Ratings importance/frequency rows before replacing proxy task weights.
 3. Attach score-level evidence cards to generated report sections.
 4. Store source manifest snapshots with each generated commercial report artifact.
 5. Block marketing copy from claiming provider-backed scoring when a source is only `adapter-ready`.
@@ -50,7 +50,7 @@ Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The
 
 Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, Anthropic, OpenAI GDPval, WCAG, ADA, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
-Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums still require a live exported Supabase data snapshot after ingestion.
+Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
 
 Run `npm run verify:commercial-trust` before commercial demos or outreach copy changes. The script checks that public pages do not crash when Supabase env vars are absent, `/privacy` is routed, SEO and coach consent copy link to privacy, browser fallback queues redact report HTML, and the expanded source guardrails remain registered.
 

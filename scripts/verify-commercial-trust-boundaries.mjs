@@ -66,6 +66,7 @@ const checks = [
       /id: 'anthropic-observed-exposure'/,
       /id: 'wcag-22'/,
       /id: 'ada-ai-hiring-guidance'/,
+      /Task Ratings importance\/frequency fields/,
       /Do not claim WCAG conformance/,
     ],
   },
@@ -82,6 +83,7 @@ const checks = [
       /verifySeoReportDownload/,
       /verifyWorkforceAuditBuilder/,
       /verifyOfflineQueueRedaction/,
+      /Weight basis/,
     ],
   },
   {

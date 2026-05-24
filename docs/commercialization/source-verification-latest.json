@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:50:37.786Z",
+  "generatedAt": "2026-05-24T05:03:18.404Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -89,8 +89,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "697bc14bfccb282e1856c2692ca6a1af525785c0602e18282534881ea9ea7c75",
-      "byteLength": 164873,
+      "contentSha256": "9467be543a9d61f1b9fa85e7470eefe98ca031ca9e9264ad41f678682b36029b",
+      "byteLength": 165940,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -109,7 +109,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "93cb1199bd18780b37a6b966a6d837f1f0de0127aff8b597b01e1ac41744a2e9",
+      "contentSha256": "85952f0384c371cf681bad5888419db5926a796a52d5bf693e783127201d7bcb",
       "byteLength": 210582,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "1ae50f4e4036be9a189a6eaf60ba264e3601c34992a31ab82b44486f38c6a622",
+      "contentSha256": "796a5895ef8c3a93ceee8e434736a6d111e7744ad44d34e24bb7ea426144def8",
       "byteLength": 91198,
       "evidence": [
         {

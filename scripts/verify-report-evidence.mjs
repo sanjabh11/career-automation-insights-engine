@@ -24,6 +24,7 @@ const checks = [
     path: 'src/lib/workTransitionProofPack.ts',
     snippets: [
       'TaskExposureBucket',
+      'TaskWeightingMetadata',
       'SkillChangeStatus',
       'SkillAction',
       'ProofPackSectionReview',
@@ -37,6 +38,8 @@ const checks = [
       'data-review-workflow',
       'data-review-section-id',
       'Task Exposure Split',
+      'Weight basis',
+      'task-weighting-method',
       'Skill Change Ledger',
       'AI-Era Role Radar',
       'Human Review Workflow',
@@ -135,6 +138,21 @@ const coverageGroups = [
     id: 'task-exposure-buckets',
     path: 'src/lib/workTransitionProofPack.ts',
     snippets: ['"automatable"', '"ai_assisted"', '"human_led"', '"emerging"'],
+  },
+  {
+    id: 'task-weighting-boundary',
+    path: 'src/lib/workTransitionProofPack.ts',
+    snippets: [
+      '"seed_score_proxy"',
+      '"onet_task_ratings_ready"',
+      '"workforce_headcount_weighted"',
+      'priorityWeight',
+      'importanceProxy',
+      'frequencyProxy',
+      'O*NET Task Ratings',
+      'task-time precision',
+      'doesNotProve: "That the displayed priority weight is true time allocation for a worker, employer, or occupation."',
+    ],
   },
   {
     id: 'skill-change-statuses',
