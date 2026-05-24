@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T05:33:33.008Z",
+  "generatedAt": "2026-05-24T05:46:06.177Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T05:33:25.059Z",
+    "generatedAt": "2026-05-24T05:42:34.971Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -94,6 +94,7 @@
         "wcag-22",
         "nist-ai-rmf",
         "ada-ai-hiring-guidance",
+        "iso-42001",
         "esco",
         "lightcast",
         "serpapi",
@@ -105,9 +106,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 16921,
-      "rows": 303,
-      "sha256": "b93120d254316172ddcd31890169f22d715e9d623d084bdd77a89fd75d6dabf5",
+      "bytes": 17786,
+      "rows": 318,
+      "sha256": "05602a9337bf747e6ed96fa3c40c768ac4fe6541ea5a5699fea62d1308af5da7",
       "failures": [],
       "passed": true
     },
@@ -218,6 +219,30 @@
       "bytes": 10619,
       "rows": 234,
       "sha256": "4ad0baba8eac8298fd19e252acea0abf55ef4a8df31aaca9a764874a46c0ab29",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-report-artifacts-module",
+      "label": "Commercial report artifact review runtime",
+      "path": "src/lib/commercialReportArtifacts.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "buildProofPackReviewAttestation",
+        "human_review_attestation",
+        "snapshotHash",
+        "legalSignature: false"
+      ],
+      "caveat": "Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.",
+      "bytes": 13091,
+      "rows": 376,
+      "sha256": "f36c7b1c4714ec8dbc129767d891cf1169c43f6506862e1759d13cfff8cc2afc",
       "failures": [],
       "passed": true
     },

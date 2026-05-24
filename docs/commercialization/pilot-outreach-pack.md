@@ -52,7 +52,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 2 | "Does not prove" boundaries | Uncommon | High | High | Implemented |
 | 3 | Task exposure split instead of one risk score | Common idea, uncommon presentation | High | High | Implemented |
 | 4 | Skill-change ledger with actions | Common in talent platforms, uncommon in public career tools | High | High | Implemented with all five states, per-row confidence, review state, source IDs, and caveats |
-| 5 | Human review state per report section | Uncommon | High | Medium | Implemented for rendered reports, artifact metadata, staff section approval UI, and final artifact approval event |
+| 5 | Human review state per report section | Uncommon | High | Medium | Implemented for rendered reports, artifact metadata, staff section approval UI, final artifact approval event, and non-legal review attestation |
 | 6 | AI-era role radar with caveated emerging status | Uncommon | High | High | Implemented with role-level review, taxonomy, posting-validation, search-term, source, and caveat boundaries |
 | 7 | Workforce CSV proof pack | Common enterprise need, uncommon bounded proof artifact | High | High | Implemented skeleton |
 | 8 | Coach-branded sample report | Common sales tactic | High | High | Implemented skeleton |
@@ -62,7 +62,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 12 | BLS/OEWS wage and employment context | Common | Medium | Medium | Adapter-ready |
 | 13 | ESCO skill taxonomy crosswalk | Common in EU/global products | Medium | Medium | Adapter-ready |
 | 14 | Licensed posting-data validation | Common in paid platforms | Medium | Low until licensed | Pending |
-| 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as section and final artifact events; live Supabase application pending |
+| 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as section/final artifact events plus downloadable review attestation; live Supabase application pending |
 | 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Pending |
 | 17 | Course/provider recommendation boundary | Common | Medium | Medium | Pending |
 | 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Pending |

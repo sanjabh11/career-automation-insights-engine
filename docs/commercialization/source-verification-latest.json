@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T05:33:25.059Z",
+  "generatedAt": "2026-05-24T05:48:01.491Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -129,7 +129,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "a2773b811d1f8935de3f9a315b75bbab229b4297e86d95bbaf79336639bfddd8",
+      "contentSha256": "073fd0dfe165bcc7e75345bd74e6781da89c977c86d7f857f53665364f23c7b1",
       "byteLength": 165940,
       "evidence": [
         {
@@ -149,7 +149,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "52a7cbd7b7cca218f5a300d4b32810a19387ef30b82e9466032a2e6ce8b74321",
+      "contentSha256": "a9b57dba20b22169f0c99a575a098ee72ba0c2b7236fe51e2f53f1a4e92c18c9",
       "byteLength": 210582,
       "evidence": [
         {
@@ -244,6 +244,26 @@
       "passed": true
     },
     {
+      "id": "iso-42001",
+      "label": "ISO/IEC 42001 AI management system",
+      "url": "https://www.iso.org/standard/42001",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
+      "byteLength": 121776,
+      "evidence": [
+        {
+          "label": "ISO/IEC 42001 title",
+          "matched": true
+        },
+        {
+          "label": "AI management system governance evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "esco",
       "label": "ESCO v1.2.1",
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
@@ -269,7 +289,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "13699da2f940a281b638ed358b95b5bac7992c1670d50f59ecf1fbaa73d3d293",
+      "contentSha256": "24408b9677649703ef1cc91d8f753deb3b15528fa2a27f35f06b46b983ddb73f",
       "byteLength": 91198,
       "evidence": [
         {

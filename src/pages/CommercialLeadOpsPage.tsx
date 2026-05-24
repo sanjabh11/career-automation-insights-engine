@@ -34,10 +34,12 @@ import {
   updateCommercialLeadStatus,
 } from "@/lib/commercialLeadOps";
 import {
+  buildProofPackReviewAttestation,
   CommercialReportArtifactEvent,
   getCommercialReportArtifact,
   listCommercialReportArtifactEvents,
   logCommercialReportArtifactEvent,
+  type ProofPackReviewAttestation,
 } from "@/lib/commercialReportArtifacts";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import type { ProofPackSectionReview } from "@/lib/workTransitionProofPack";
@@ -172,6 +174,14 @@ function readProofPackReviewWorkflow(lead: CommercialLeadRow): LeadProofPackRevi
     pendingSectionCount: typeof rawWorkflow.pendingSectionCount === "number" ? rawWorkflow.pendingSectionCount : undefined,
     sections,
   };
+}
+
+function readProofPackReviewAttestation(lead: CommercialLeadRow): ProofPackReviewAttestation | null {
+  const value = lead.metadata?.proof_pack_review_attestation;
+  if (!isRecord(value)) return null;
+  if (value.attestationType !== "human_review_attestation") return null;
+  if (typeof value.attestationId !== "string" || typeof value.snapshotHash !== "string") return null;
+  return value as unknown as ProofPackReviewAttestation;
 }
 
 function updateWorkflowSectionStatus(
@@ -314,6 +324,20 @@ export default function CommercialLeadOpsPage() {
     const link = document.createElement("a");
     link.href = url;
     link.download = `commercial-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const downloadReviewAttestation = (lead: CommercialLeadRow, attestation: ProofPackReviewAttestation) => {
+    const blob = new Blob([`${JSON.stringify(attestation, null, 2)}\n`], {
+      type: "application/json;charset=utf-8",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${lead.email.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${attestation.attestationId}.json`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -538,6 +562,15 @@ export default function CommercialLeadOpsPage() {
     setUpdatingReviewKey(reviewKey);
 
     try {
+      const reviewAttestation = await buildProofPackReviewAttestation({
+        artifactId,
+        leadId: lead.id,
+        leadEmail: lead.email,
+        reviewerUserId: userId,
+        reviewerEmail: user?.email || null,
+        staffNote,
+        workflow,
+      });
       const event = await logCommercialReportArtifactEvent({
         artifactId,
         leadId: lead.id,
@@ -545,6 +578,7 @@ export default function CommercialLeadOpsPage() {
         deliveryChannel: "lead-ops-review",
         metadata: {
           proof_pack_artifact_client_ready: true,
+          proof_pack_review_attestation: reviewAttestation,
           lead_email: lead.email,
           reviewer_user_id: userId,
           reviewer_email: user?.email || null,
@@ -584,7 +618,10 @@ export default function CommercialLeadOpsPage() {
                   logged_at: event.createdAt,
                   reviewer_user_id: userId,
                   reviewer_email: user?.email || null,
+                  attestation_id: reviewAttestation.attestationId,
+                  snapshot_hash: reviewAttestation.snapshotHash,
                 },
+                proof_pack_review_attestation: reviewAttestation,
               },
             }
             : candidate
@@ -815,6 +852,7 @@ export default function CommercialLeadOpsPage() {
                 const artifactEvents = artifactId ? artifactEventsById[artifactId] || [] : [];
                 const isHistoryExpanded = artifactId ? expandedEventsArtifactId === artifactId : false;
                 const reviewWorkflow = readProofPackReviewWorkflow(lead);
+                const reviewAttestation = readProofPackReviewAttestation(lead);
                 const pendingReviewCount = reviewWorkflow
                   ? reviewWorkflow.pendingSectionCount ?? reviewWorkflow.sections.filter((section) => !section.clientReady).length
                   : null;
@@ -894,6 +932,37 @@ export default function CommercialLeadOpsPage() {
 	                                  ))}
                                 </div>
                               )}
+                            </div>
+                          )}
+                          {reviewAttestation && (
+                            <div className="rounded-md border border-emerald-200 bg-emerald-50 p-2 text-slate-800">
+                              <div className="flex flex-wrap items-start justify-between gap-2">
+                                <div>
+                                  <div className="font-medium text-emerald-950">Human review attestation</div>
+                                  <div className="text-slate-600">
+                                    {reviewAttestation.clientReadySectionCount}/{reviewAttestation.sectionCount} sections ready;
+                                    snapshot {reviewAttestation.snapshotHash.slice(0, 12)}.
+                                  </div>
+                                  <div className="text-slate-600">
+                                    Reviewer: {reviewAttestation.reviewerEmail || "recorded staff reviewer"} ·{" "}
+                                    {formatDate(reviewAttestation.generatedAt)}
+                                  </div>
+                                  <div className="mt-1 text-slate-600">
+                                    Non-legal attestation only; not an employment-selection validation.
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 px-2 text-xs"
+                                  aria-label={`Download human review attestation for ${lead.email}`}
+                                  onClick={() => downloadReviewAttestation(lead, reviewAttestation)}
+                                >
+                                  <Download className="mr-1 h-3 w-3" />
+                                  Attestation JSON
+                                </Button>
+                              </div>
                             </div>
                           )}
                           {reviewWorkflow && (

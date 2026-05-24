@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { ReportReviewStatus } from "@/lib/reportEvidenceCards";
 
 export interface CommercialReportArtifactInput {
   artifactType: string;
@@ -57,6 +58,63 @@ export interface CommercialReportArtifactEvent {
   deliveryChannel?: string | null;
   metadata?: Record<string, unknown>;
   createdAt: string;
+}
+
+export interface ProofPackReviewAttestationSection {
+  sectionId: string;
+  sectionTitle: string;
+  reviewStatus: ReportReviewStatus;
+  clientReady: boolean;
+  requiredForInstitutionalDelivery: boolean;
+  acceptanceCriteria: string[];
+  sourceIds: string[];
+  evidenceCardIds: string[];
+}
+
+export interface ProofPackReviewAttestationInput {
+  artifactId: string;
+  leadId: string;
+  leadEmail: string;
+  reviewerUserId?: string | null;
+  reviewerEmail?: string | null;
+  staffNote?: string | null;
+  workflow: {
+    reviewStatus?: ReportReviewStatus;
+    clientReady?: boolean;
+    pendingSectionCount?: number;
+    sections: ProofPackReviewAttestationSection[];
+  };
+  generatedAt?: string;
+}
+
+export interface ProofPackReviewAttestation {
+  attestationId: string;
+  attestationType: "human_review_attestation";
+  generatedAt: string;
+  artifactId: string;
+  leadId: string;
+  leadEmail: string;
+  reviewerUserId: string | null;
+  reviewerEmail: string | null;
+  staffNote: string | null;
+  reviewStatus: "client_ready";
+  sectionCount: number;
+  clientReadySectionCount: number;
+  pendingSectionCount: number;
+  sourceIds: string[];
+  evidenceCardIds: string[];
+  sectionStatuses: Array<{
+    sectionId: string;
+    sectionTitle: string;
+    reviewStatus: ReportReviewStatus;
+    clientReady: boolean;
+    acceptanceCriteria: string[];
+  }>;
+  decisionBoundaries: string[];
+  governanceSourceIds: string[];
+  snapshotHash: string;
+  legalSignature: false;
+  caveat: string;
 }
 
 interface CommercialReportArtifactRpcRow {
@@ -140,6 +198,100 @@ interface CommercialReportArtifactRpcClient {
 }
 
 const artifactClient = supabase as unknown as CommercialReportArtifactRpcClient;
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(stableStringify).join(",")}]`;
+  }
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function uniqueSorted(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort();
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  if (globalThis.crypto?.subtle) {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0;
+  }
+  return `fallback-${Math.abs(hash).toString(16).padStart(8, "0")}`;
+}
+
+export async function buildProofPackReviewAttestation(
+  input: ProofPackReviewAttestationInput
+): Promise<ProofPackReviewAttestation> {
+  const generatedAt = input.generatedAt || new Date().toISOString();
+  const sections = input.workflow.sections.map((section) => ({
+    sectionId: section.sectionId,
+    sectionTitle: section.sectionTitle,
+    reviewStatus: section.reviewStatus,
+    clientReady: section.clientReady,
+    requiredForInstitutionalDelivery: section.requiredForInstitutionalDelivery,
+    acceptanceCriteria: section.acceptanceCriteria,
+    sourceIds: section.sourceIds,
+    evidenceCardIds: section.evidenceCardIds,
+  }));
+  const pendingSectionCount = sections.filter((section) => !section.clientReady).length;
+  const snapshot = {
+    artifactId: input.artifactId,
+    leadId: input.leadId,
+    leadEmail: input.leadEmail,
+    reviewerUserId: input.reviewerUserId || null,
+    reviewerEmail: input.reviewerEmail || null,
+    generatedAt,
+    sections,
+  };
+  const snapshotHash = await sha256Hex(stableStringify(snapshot));
+
+  return {
+    attestationId: `ppra_${generatedAt.replace(/[^0-9]/g, "").slice(0, 14)}_${snapshotHash.slice(0, 12)}`,
+    attestationType: "human_review_attestation",
+    generatedAt,
+    artifactId: input.artifactId,
+    leadId: input.leadId,
+    leadEmail: input.leadEmail,
+    reviewerUserId: input.reviewerUserId || null,
+    reviewerEmail: input.reviewerEmail || null,
+    staffNote: input.staffNote?.trim() || null,
+    reviewStatus: "client_ready",
+    sectionCount: sections.length,
+    clientReadySectionCount: sections.length - pendingSectionCount,
+    pendingSectionCount,
+    sourceIds: uniqueSorted(sections.flatMap((section) => section.sourceIds)),
+    evidenceCardIds: uniqueSorted(sections.flatMap((section) => section.evidenceCardIds)),
+    sectionStatuses: sections.map((section) => ({
+      sectionId: section.sectionId,
+      sectionTitle: section.sectionTitle,
+      reviewStatus: section.reviewStatus,
+      clientReady: section.clientReady,
+      acceptanceCriteria: section.acceptanceCriteria,
+    })),
+    decisionBoundaries: [
+      "Planning artifact only; not a hiring, firing, promotion, compensation, or layoff decision system.",
+      "Client-ready means the listed proof-pack sections were reviewed for this artifact, not that labor-market outcomes are certified.",
+      "Accessibility, accommodation, adverse-impact, legal, and labor-relations review remain customer-specific responsibilities.",
+    ],
+    governanceSourceIds: ["nist-ai-rmf", "iso-42001", "ada-ai-hiring-guidance", "wcag-22"],
+    snapshotHash,
+    legalSignature: false,
+    caveat: "This is a non-legal human review attestation for proof-pack delivery traceability; it is not an electronic signature, compliance certification, or employment-selection validation.",
+  };
+}
 
 function normalizeArtifact(row: CommercialReportArtifactRpcRow): CommercialReportArtifact {
   return {

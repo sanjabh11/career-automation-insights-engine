@@ -18,9 +18,9 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | Anthropic observed exposure research | 2026 labor-market impacts research | Separates theoretical capability from observed automated, work-related AI use | Use for claim discipline; do not translate exposure directly into job-loss claims. |
 | OpenAI GDPval | First version, September 2025 | Economically valuable knowledge-work capability benchmark | Use for model-capability context only, not as a labor-market forecast. |
 | BLS AI Monthly Labor Review | February 2025 occupational case-study article | Claim discipline around exposure, uncertainty, and occupation-specific employment-projection nuance | Exposure does not imply rapid displacement; use to temper commercial claims. |
-| AI Workforce Consortium | 2025 ICT in Motion report and AI skills resources | Market-signal context for emerging AI-era role labels and skill demand language | Use only as market-signal context until role labels are validated against current postings and mapped to SOC/O*NET or ESCO. |
 | WCAG 2.2 | W3C Recommendation | Accessibility conformance target for public commercial flows | Do not claim conformance until manual and automated audit evidence exists. |
 | ADA algorithmic hiring guidance | DOJ/EEOC guidance | Employment-decision, accommodation, and human-review guardrails | Planning-only reports unless validation, accommodation, and adverse-impact review exist. |
+| ISO/IEC 42001 | ISO/IEC 42001:2023 AI management system | AI governance, traceability, transparency, and review-attestation framing | Use as governance design context only; do not claim ISO certification or compliance. |
 
 ## Adapter Boundaries
 
@@ -51,7 +51,7 @@ Lead capture now routes through `capture_commercial_lead`, which normalizes repe
 
 Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The script starts Vite on a local open port, verifies commercial routes are registered in `src/App.tsx`, and checks that each route returns a Vite app shell. This is a route smoke gate, not a replacement for browser-level lead capture and PDF/report generation tests.
 
-Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, OECD, AI Workforce Consortium/Cisco, Anthropic, OpenAI GDPval, WCAG, ADA, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
+Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, OECD, AI Workforce Consortium/Cisco, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
 Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
 
@@ -77,8 +77,8 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - OpenAI GDPval leaderboard: https://evals.openai.com/gdpval/leaderboard
 - OpenAI GDPval paper record: https://arxiv.org/abs/2510.04374
 - BLS AI impacts in employment projections: https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm
-- AI Workforce Consortium ICT in Motion 2025: https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - ADA AI hiring guidance: https://www.ada.gov/resources/ai-guidance/
+- ISO/IEC 42001: https://www.iso.org/standard/42001
 - ESCO Services API: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
 - NIST AI RMF: https://www.nist.gov/itl/ai-risk-management-framework

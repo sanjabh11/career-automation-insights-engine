@@ -117,6 +117,15 @@ const checks = [
     ],
   },
   {
+    id: 'iso-42001',
+    label: 'ISO/IEC 42001 AI management system',
+    url: 'https://www.iso.org/standard/42001',
+    expected: [
+      { label: 'ISO/IEC 42001 title', pattern: /ISO\/IEC 42001:2023/i },
+      { label: 'AI management system governance evidence', pattern: /Artificial Intelligence Management System|managing risk|traceability|transparency/i },
+    ],
+  },
+  {
     id: 'esco',
     label: 'ESCO v1.2.1',
     url: 'https://esco.ec.europa.eu/en/use-esco/use-esco-services-api',
