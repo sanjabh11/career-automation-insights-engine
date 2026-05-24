@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T15:41:20.479Z
+Generated: 2026-05-24T16:24:45.435Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -33,7 +33,7 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 | Commercial lead operations | Founder, sales, support, pilot operations | `/operations/leads` | Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation. | `src/pages/CommercialLeadOpsPage.tsx`<br/>`src/lib/commercialLeadOps.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql`<br/>`supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` |
 | Source provenance and claim boundaries | All buyers, especially institutional and workforce pilots | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest. | `src/lib/sourceManifest.ts`<br/>`src/lib/reportProvenance.ts`<br/>`scripts/verify-source-manifest.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/source-refresh-manifest.md`<br/>`docs/commercialization/data-provenance-checksums.md` |
 | AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, AI-era role radar with role-level review/taxonomy/posting-validation boundaries, learning/provider recommendation boundaries, local labor-market proof appendix boundaries, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, final artifact approval, and human-review attestation. O*NET 30.3 Task Ratings migration, ingest boundary, runtime helper, and verifier are implemented before replacing proxy weights. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/lib/scripts/ingest_onet_metadata.ts`<br/>`supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql`<br/>`scripts/verify-onet-task-ratings-ingest.mjs`<br/>`scripts/verify-report-evidence.mjs` |
-| Privacy and responsible-use trust boundary | Individuals, coaches, institutional reviewers | `/privacy`, `/tools/resume-analyzer`, `/responsible-ai` | Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier. | `src/pages/PrivacyPage.tsx`<br/>`src/components/ResumeAnalyzer.tsx`<br/>`src/lib/resumeAnalysisPrivacy.ts`<br/>`src/pages/ResponsibleAIPage.tsx`<br/>`src/integrations/supabase/client.ts`<br/>`supabase/functions/analyze-resume/index.ts`<br/>`supabase/migrations/20260524000400_add_resume_deletion_receipts.sql`<br/>`scripts/verify-commercial-trust-boundaries.mjs` |
+| Privacy and responsible-use trust boundary | Individuals, coaches, institutional reviewers | `/privacy`, `/tools/resume-analyzer`, `/responsible-ai` | Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier. | `src/pages/PrivacyPage.tsx`<br/>`src/components/ResumeAnalyzer.tsx`<br/>`src/lib/resumeAnalysisPrivacy.ts`<br/>`src/lib/resumeProofReportArtifacts.ts`<br/>`src/pages/ResponsibleAIPage.tsx`<br/>`src/integrations/supabase/client.ts`<br/>`supabase/functions/analyze-resume/index.ts`<br/>`supabase/migrations/20260524000400_add_resume_deletion_receipts.sql`<br/>`supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql`<br/>`scripts/verify-commercial-trust-boundaries.mjs` |
 | Counselor report generator | Schools, workforce boards, coaches | `/tools/counselor-reports` | Route now includes a downloadable aggregate-only career-center cohort proof pack with source-labeled cohort segments, FERPA-style privacy boundary, NACE first-destination outcome boundary, evidence cards, CSV export, and advisor-review requirements. Live authenticated batch consent and commercial artifact persistence remain pending. | `src/components/CounselorReportGenerator.tsx`<br/>`src/lib/careerCenterCohortProofPack.ts`<br/>`supabase/migrations/20251213000003_white_label_configs.sql` |
 
 ## Supabase Commercial Persistence Boundary
@@ -46,12 +46,16 @@ Tables:
 - `public.commercial_workforce_audit_rows`
 - `public.commercial_workforce_audits`
 - `public.resume_analysis_deletion_receipts`
+- `public.resume_proof_report_artifact_deletion_receipts`
+- `public.resume_proof_report_artifacts`
 
 RPC functions:
 - `public.capture_commercial_lead` (granted)
 - `public.create_commercial_report_artifact` (granted)
 - `public.create_commercial_workforce_audit` (granted)
+- `public.create_resume_proof_report_artifact` (granted)
 - `public.delete_resume_analysis_with_receipt` (granted)
+- `public.delete_resume_proof_report_artifact_with_receipt` (granted)
 - `public.get_commercial_leads` (granted)
 - `public.get_commercial_report_artifact` (granted)
 - `public.get_commercial_report_artifact_events` (granted)
@@ -62,12 +66,17 @@ RPC functions:
 - `public.log_commercial_report_artifact_event` (granted)
 - `public.update_commercial_lead_status` (granted)
 - `public.update_commercial_workforce_row_mapping` (granted)
+- `public.update_resume_proof_report_artifact_updated_at`
 
 Policies:
 - Commercial staff can read own staff record
 - Public can create commercial leads
+- Service role can manage redacted resume proof artifacts
 - Service role can manage resume deletion receipts
+- Service role can manage resume proof artifact deletion receipts
+- Users can read own redacted resume proof artifacts
 - Users can read own resume deletion receipts
+- Users can read own resume proof artifact deletion receipts
 
 ## Source Registry Coverage
 
@@ -82,7 +91,9 @@ Policies:
 - `bls-qcew`
 - `careeronestop-api`
 - `census-acs-api`
+- `cfpb-employment-algorithmic-scores`
 - `dol-ai-literacy-framework`
+- `eeoc-employment-selection-procedures`
 - `esco`
 - `ferpa-student-privacy`
 - `iso-42001`

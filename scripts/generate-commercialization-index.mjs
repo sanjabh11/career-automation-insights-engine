@@ -136,13 +136,15 @@ const featureMap = [
       'src/pages/PrivacyPage.tsx',
       'src/components/ResumeAnalyzer.tsx',
       'src/lib/resumeAnalysisPrivacy.ts',
+      'src/lib/resumeProofReportArtifacts.ts',
       'src/pages/ResponsibleAIPage.tsx',
       'src/integrations/supabase/client.ts',
       'supabase/functions/analyze-resume/index.ts',
       'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
+      'supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql',
       'scripts/verify-commercial-trust-boundaries.mjs',
     ],
-    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
+    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
   },
   {
     feature: 'Counselor report generator',
@@ -294,15 +296,24 @@ See \`${JSON_OUTPUT}\` for the same index as JSON.
 }
 
 async function main() {
-  const [appSource, packageSource, manifestSource, baseSqlSource, reviewSqlSource, resumeDeletionSqlSource] = await Promise.all([
+  const [
+    appSource,
+    packageSource,
+    manifestSource,
+    baseSqlSource,
+    reviewSqlSource,
+    resumeDeletionSqlSource,
+    resumeProofArtifactSqlSource,
+  ] = await Promise.all([
     readFile('src/App.tsx', 'utf8'),
     readFile('package.json', 'utf8'),
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
     readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
     readFile('supabase/migrations/20260524000400_add_resume_deletion_receipts.sql', 'utf8'),
+    readFile('supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql', 'utf8'),
   ]);
-  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${resumeDeletionSqlSource}`;
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
   const branch = process.env.GIT_BRANCH || 'commercialization-proof-packs';
   const index = {
     generatedAt: new Date().toISOString(),

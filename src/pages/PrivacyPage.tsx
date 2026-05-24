@@ -33,6 +33,11 @@ export default function PrivacyPage() {
               Resume-analyzer content should be treated as sensitive. The product should not be used for
               employment decisions without human review, source validation, and applicable legal review.
             </p>
+            <p>
+              Saved resume proof-report artifacts are designed to be redacted: raw resume text, original
+              phrase rows, and detailed rewrite rows are omitted from the saved artifact. The full local
+              download remains user-controlled unless a separate consented institutional workflow is added.
+            </p>
           </CardContent>
         </Card>
 
@@ -81,6 +86,11 @@ export default function PrivacyPage() {
               You can request deletion of saved report artifacts or ask us to stop pilot outreach.
               Commercial lead records preserve consent and artifact-delivery evidence so staff can audit
               whether a report was opened or downloaded.
+            </p>
+            <p>
+              Signed-in resume users can delete saved resume analyses and saved redacted resume proof-report
+              artifacts from the analyzer. Deletion receipts are app-level receipts only; they do not certify
+              deletion from browser downloads, external model-provider logs, exports, or backups.
             </p>
             <p>
               This page is an operational privacy notice for the current pilot implementation. A formal

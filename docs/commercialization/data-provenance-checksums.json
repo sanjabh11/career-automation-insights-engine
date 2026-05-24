@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T15:41:22.206Z",
+  "generatedAt": "2026-05-24T16:24:47.505Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T15:31:38.683Z",
+    "generatedAt": "2026-05-24T16:16:00.829Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -135,6 +135,8 @@
         "wcag-22",
         "nist-ai-rmf",
         "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
         "iso-42001",
         "esco",
         "lightcast",
@@ -148,9 +150,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 30339,
-      "rows": 513,
-      "sha256": "0d3073320c18301bdf97afd9d5b9e21f6ad958cfae6d95951cd08de3297c4203",
+      "bytes": 32764,
+      "rows": 543,
+      "sha256": "bd69d703f258e7003d5d94d492a4afbdf8ea9d50d7bcd47123f752f018d31cfd",
       "failures": [],
       "passed": true
     },
@@ -354,6 +356,8 @@
       "sourceIds": [
         "nist-ai-rmf",
         "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
         "llm-output"
       ],
       "expectedSnippets": [
@@ -378,6 +382,8 @@
       "sourceIds": [
         "nist-ai-rmf",
         "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
         "llm-output"
       ],
       "expectedSnippets": [
@@ -432,22 +438,88 @@
       "sourceIds": [
         "nist-ai-rmf",
         "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
         "wcag-22",
         "llm-output"
       ],
       "expectedSnippets": [
         "getResumeProofReportHtml",
         "data-resume-proof-report=\"true\"",
+        "data-resume-proof-report-redacted",
+        "data-resume-proof-artifact-boundary=\"true\"",
         "Resume Work Transition Proof Report",
         "Download Proof Report",
+        "Save Redacted Artifact",
         "Copy Rewrite Drafts",
         "coaching draft only",
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
-      "caveat": "Resume proof report download is a client-side coaching artifact; production PDF/DOCX parsing, live saved-artifact storage, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 49467,
-      "rows": 910,
-      "sha256": "2cff27c64341cb98021443e548a1a408764d6e0905777e388c1fe9d79b8b4b13",
+      "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live deployment, external provider retention controls, and employment-decision validation remain separate work.",
+      "bytes": 61438,
+      "rows": 1103,
+      "sha256": "653edd2c899f6f61d1597d532e9eed1d7955a2d1ca075d23f939baec7e1571e5",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-proof-report-artifact-client",
+      "label": "Resume proof-report artifact client",
+      "path": "src/lib/resumeProofReportArtifacts.ts",
+      "type": "privacy-runtime",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "createResumeProofReportArtifact",
+        "deleteResumeProofReportArtifactWithReceipt",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
+        "reportHtmlRedacted",
+        "resumeDetailRowsRedacted",
+        "rawResumeTextStored"
+      ],
+      "caveat": "Client helper saves only redacted resume proof-report artifacts when Supabase is configured and the user is authenticated; it does not prove the target Supabase migration is applied or that external provider logs/backups are deleted.",
+      "bytes": 4991,
+      "rows": 152,
+      "sha256": "2ff26b17a34b668d05befcf865d02e22e758a59472b828b1502f0b1e88220d13",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-proof-report-artifact-migration",
+      "label": "Resume proof-report artifact migration",
+      "path": "supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "resume_proof_report_artifacts",
+        "resume_proof_report_artifact_deletion_receipts",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
+        "data-resume-proof-report-redacted=\"true\"",
+        "Raw resume text stored: no",
+        "raw_resume_text_stored BOOLEAN NOT NULL DEFAULT FALSE",
+        "resume_detail_rows_redacted BOOLEAN NOT NULL DEFAULT TRUE",
+        "CHECK (raw_resume_text_stored = FALSE)",
+        "CHECK (resume_detail_rows_redacted = TRUE)",
+        "Users can read own redacted resume proof artifacts",
+        "GRANT SELECT ON public.resume_proof_report_artifacts TO authenticated"
+      ],
+      "caveat": "Schema adds authenticated user-owned redacted artifact persistence and app-level deletion receipts; it does not apply itself to the live Supabase target or certify external retention deletion.",
+      "bytes": 12613,
+      "rows": 282,
+      "sha256": "7ca18c1ef3788b23b270edffa1f8311f59a2aa9d7af198f48c17b84f4fa0adce",
       "failures": [],
       "passed": true
     },
@@ -553,15 +625,18 @@
       "expectedSnippets": [
         "resume_analysis_deletion_receipts",
         "delete_resume_analysis_with_receipt",
+        "resume_proof_report_artifacts",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
         "log_commercial_report_artifact_event",
         "non-mutating-public-api-boundary",
         "missing-object-or-schema-cache",
         "allow-missing-env"
       ],
-      "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations or seed staff users.",
-      "bytes": 10729,
-      "rows": 312,
-      "sha256": "0c3309dbd54e96d36fcd9ee348b1a1582f68b3b32b1749d2f0ef56f0ce780db6",
+      "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
+      "bytes": 12369,
+      "rows": 348,
+      "sha256": "53d7929634f0785a8b0059db6c5434ed9a2aefe3c340ac299194a1280a8f609d",
       "failures": [],
       "passed": true
     },

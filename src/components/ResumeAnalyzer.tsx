@@ -7,12 +7,18 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb, Lock, ShieldCheck, Trash2, FileWarning } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { isSupabaseConfigured, supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { ShareableScoreBadge } from '@/components/ShareableScoreBadge';
-import { REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
+import { getReportSourceSnapshot, REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
 import { deleteResumeAnalysisWithReceipt, type ResumeDeletionReceipt } from '@/lib/resumeAnalysisPrivacy';
+import {
+    createResumeProofReportArtifact,
+    deleteResumeProofReportArtifactWithReceipt,
+    type ResumeProofReportArtifact,
+    type ResumeProofReportArtifactDeletionReceipt,
+} from '@/lib/resumeProofReportArtifacts';
 
 interface AutomationPronePhrase {
     phrase: string;
@@ -77,6 +83,10 @@ interface AnalysisResult {
     proof_pack?: ResumeProofPack;
 }
 
+interface ResumeProofReportOptions {
+    redactResumeDetails?: boolean;
+}
+
 const FREE_SCAN_KEY = 'apo:resume_free_scan_used';
 const MAX_FREE_SCANS = 1;
 const REVIEW_STATUS_LABELS: Record<string, string> = {
@@ -136,23 +146,32 @@ function escapeHtml(value: unknown): string {
         .replace(/'/g, '&#39;');
 }
 
-function getResumeProofReportHtml(result: AnalysisResult, receipt: ResumeDeletionReceipt | null): string {
+function getResumeProofReportHtml(
+    result: AnalysisResult,
+    receipt: ResumeDeletionReceipt | null,
+    options: ResumeProofReportOptions = {}
+): string {
     const proofPack = result.proof_pack;
     const generatedAt = proofPack?.generatedAt || new Date().toISOString();
-    const sourceIds = proofPack?.sourceIds || ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+    const sourceIds = proofPack?.sourceIds || ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores'];
     const evidenceCards = proofPack?.evidenceCards || [];
+    const redactResumeDetails = options.redactResumeDetails === true;
     const decisionBoundaries = proofPack?.decisionBoundaries || [
         'Not a hiring, firing, promotion, compensation, layoff, or eligibility decision system.',
         'Human review is required before client delivery or institutional use.',
     ];
 
-    const phraseRows = result.automation_prone_phrases.map((phrase) => `
+    const phraseRows = redactResumeDetails
+        ? `<tr><td colspan="3">Resume detail rows redacted from saved artifact. Phrase count: ${escapeHtml(result.automation_prone_phrases.length)}. Use the local user-controlled download for detailed phrase review.</td></tr>`
+        : result.automation_prone_phrases.map((phrase) => `
       <tr>
         <td>${escapeHtml(phrase.phrase)}</td>
         <td>${escapeHtml(phrase.severity)}</td>
         <td>${escapeHtml(phrase.reason)}</td>
       </tr>`).join('');
-    const rewriteRows = result.rewrite_suggestions.map((suggestion) => `
+    const rewriteRows = redactResumeDetails
+        ? `<tr><td colspan="3">Rewrite detail rows redacted from saved artifact. Draft count: ${escapeHtml(result.rewrite_suggestions.length)}. Human-reviewed rewrite work should happen in the user-controlled local artifact or a consented institutional workflow.</td></tr>`
+        : result.rewrite_suggestions.map((suggestion) => `
       <tr>
         <td>${escapeHtml(suggestion.original)}</td>
         <td>${escapeHtml(suggestion.suggested)}</td>
@@ -198,7 +217,7 @@ function getResumeProofReportHtml(result: AnalysisResult, receipt: ResumeDeletio
     .small { color: #5b677a; font-size: 12px; }
   </style>
 </head>
-<body data-resume-proof-report="true">
+<body data-resume-proof-report="true" data-resume-proof-report-redacted="${redactResumeDetails ? 'true' : 'false'}">
   <h1>Resume Work Transition Proof Report</h1>
   <p class="small">Generated ${escapeHtml(new Date(generatedAt).toLocaleString())}. This is a coaching artifact, not an employment decision tool.</p>
 
@@ -213,6 +232,12 @@ function getResumeProofReportHtml(result: AnalysisResult, receipt: ResumeDeletio
   <section class="boundary">
     <ul>${decisionBoundaries.map((boundary) => `<li>${escapeHtml(boundary)}</li>`).join('')}</ul>
   </section>
+
+  ${redactResumeDetails ? `<h2>Saved Artifact Redaction Boundary</h2>
+  <section class="boundary">
+    <p><strong>Raw resume text stored: no.</strong> Original phrase rows, detailed rewrite rows, and pasted resume text are omitted from this saved artifact.</p>
+    <p>This saved artifact is for user-owned coaching review only. It is not a hiring, firing, promotion, compensation, layoff, screening, eligibility, consumer-report, or employment-decision artifact.</p>
+  </section>` : ''}
 
   <h2>Parser And Retention Boundary</h2>
   <section class="boundary">
@@ -343,6 +368,11 @@ export default function ResumeAnalyzer() {
     const [linkCopied, setLinkCopied] = useState(false);
     const [deletingAnalysis, setDeletingAnalysis] = useState(false);
     const [deletionReceipt, setDeletionReceipt] = useState<ResumeDeletionReceipt | null>(null);
+    const [savingProofArtifact, setSavingProofArtifact] = useState(false);
+    const [deletingProofArtifact, setDeletingProofArtifact] = useState(false);
+    const [savedProofArtifact, setSavedProofArtifact] = useState<ResumeProofReportArtifact | null>(null);
+    const [proofArtifactDeletionReceipt, setProofArtifactDeletionReceipt] =
+        useState<ResumeProofReportArtifactDeletionReceipt | null>(null);
     const { toast } = useToast();
     const { session } = useSession();
     const isAuthenticated = !!session?.user;
@@ -371,6 +401,8 @@ export default function ResumeAnalyzer() {
         setAnalysisResult(null);
         setAnalysisId(null);
         setDeletionReceipt(null);
+        setSavedProofArtifact(null);
+        setProofArtifactDeletionReceipt(null);
 
         try {
             const { data, error } = await supabase.functions.invoke('analyze-resume', {
@@ -504,6 +536,95 @@ export default function ResumeAnalyzer() {
             title: 'Proof Report Downloaded',
             description: 'The HTML report includes sources, caveats, review state, and decision boundaries.',
         });
+    };
+
+    const saveRedactedProofArtifact = async () => {
+        if (!analysisResult) return;
+
+        if (!isAuthenticated) {
+            toast({
+                title: 'Sign In Required',
+                description: 'Sign in before saving a redacted resume proof artifact.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        if (!isSupabaseConfigured) {
+            toast({
+                title: 'Artifact Storage Unavailable',
+                description: 'Supabase is not configured in this environment, so only local downloads are available.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        setSavingProofArtifact(true);
+        setProofArtifactDeletionReceipt(null);
+        try {
+            const proofPack = analysisResult.proof_pack;
+            const reportHtmlRedacted = getResumeProofReportHtml(analysisResult, deletionReceipt, {
+                redactResumeDetails: true,
+            });
+            const artifact = await createResumeProofReportArtifact({
+                analysisId,
+                title: 'Resume Work Transition Proof Report',
+                reportHtmlRedacted,
+                sourceVersions: getReportSourceSnapshot(),
+                metadata: {
+                    proof_pack_type: proofPack?.proofPackType || 'resume_analysis',
+                    review_status: proofPack?.reviewStatus || 'staff_review_required',
+                    source_ids: proofPack?.sourceIds || ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores'],
+                    evidence_card_ids: proofPack?.evidenceCards.map((card) => card.id) || [],
+                    automation_risk_score: analysisResult.automation_risk_score,
+                    confidence_score: analysisResult.confidence_score,
+                    phrase_count_redacted: analysisResult.automation_prone_phrases.length,
+                    rewrite_count_redacted: analysisResult.rewrite_suggestions.length,
+                    raw_resume_text_stored: false,
+                    resume_detail_rows_redacted: true,
+                    non_employment_decision_boundary:
+                        'not_for_hiring_firing_promotion_compensation_layoff_screening_or_eligibility',
+                },
+            });
+            setSavedProofArtifact(artifact);
+            toast({
+                title: 'Redacted Artifact Saved',
+                description: 'The saved artifact omits resume detail rows and preserves evidence, caveats, and review state.',
+            });
+        } catch (error: unknown) {
+            console.error('Error saving resume proof artifact:', error);
+            toast({
+                title: 'Artifact Save Failed',
+                description: getErrorMessage(error, 'Unable to save redacted resume proof artifact.'),
+                variant: 'destructive',
+            });
+        } finally {
+            setSavingProofArtifact(false);
+        }
+    };
+
+    const deleteSavedProofArtifact = async () => {
+        if (!savedProofArtifact) return;
+
+        setDeletingProofArtifact(true);
+        try {
+            const receipt = await deleteResumeProofReportArtifactWithReceipt(savedProofArtifact.id);
+            setSavedProofArtifact(null);
+            setProofArtifactDeletionReceipt(receipt);
+            toast({
+                title: 'Artifact Deletion Receipt Created',
+                description: 'The saved redacted proof artifact was deleted and a bounded receipt was recorded.',
+            });
+        } catch (error: unknown) {
+            console.error('Error deleting resume proof artifact:', error);
+            toast({
+                title: 'Artifact Delete Failed',
+                description: getErrorMessage(error, 'Unable to delete redacted resume proof artifact.'),
+                variant: 'destructive',
+            });
+        } finally {
+            setDeletingProofArtifact(false);
+        }
     };
 
     const copyRewriteDrafts = async () => {
@@ -735,6 +856,89 @@ export default function ResumeAnalyzer() {
                                             <p>
                                                 <strong>Sources:</strong> {deletionReceipt.sourceIds.join(', ')}. <strong>Caveat:</strong> {deletionReceipt.caveat}
                                             </p>
+                                        </div>
+                                    </AlertDescription>
+                                </Alert>
+                            )}
+
+                            <Alert data-resume-proof-artifact-boundary="true">
+                                <ShieldCheck className="h-4 w-4" />
+                                <AlertDescription className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                    <span>
+                                        Saved proof artifacts are redacted: raw resume text, phrase detail rows, and rewrite detail rows are omitted. Keep the local download for user-controlled detailed review.
+                                        {!isAuthenticated && ' Sign in to save a redacted proof artifact.'}
+                                        {isAuthenticated && !isSupabaseConfigured && ' Supabase is not configured, so saving is unavailable in this environment.'}
+                                    </span>
+                                    <div className="flex flex-col gap-2 sm:flex-row">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => void saveRedactedProofArtifact()}
+                                            disabled={savingProofArtifact || !isAuthenticated || !isSupabaseConfigured}
+                                        >
+                                            {savingProofArtifact ? (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <ShieldCheck className="mr-2 h-4 w-4" />
+                                            )}
+                                            Save Redacted Artifact
+                                        </Button>
+                                        {savedProofArtifact && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => void deleteSavedProofArtifact()}
+                                                disabled={deletingProofArtifact}
+                                            >
+                                                {deletingProofArtifact ? (
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                )}
+                                                Delete Artifact
+                                            </Button>
+                                        )}
+                                    </div>
+                                </AlertDescription>
+                            </Alert>
+
+                            {savedProofArtifact && (
+                                <Alert data-resume-proof-artifact-status="true">
+                                    <ShieldCheck className="h-4 w-4" />
+                                    <AlertDescription>
+                                        <div className="space-y-1">
+                                            <p>
+                                                <strong>Saved redacted artifact:</strong> {savedProofArtifact.id.slice(0, 8)}.
+                                            </p>
+                                            <p>
+                                                <strong>Review:</strong> {formatReviewStatus(savedProofArtifact.reviewStatus)}. <strong>Sources:</strong> {savedProofArtifact.sourceIds.join(', ')}.
+                                            </p>
+                                            <p>{savedProofArtifact.retentionPolicy}</p>
+                                            <p>
+                                                <strong>Caveat:</strong> {savedProofArtifact.caveat}
+                                            </p>
+                                        </div>
+                                    </AlertDescription>
+                                </Alert>
+                            )}
+
+                            {proofArtifactDeletionReceipt && (
+                                <Alert data-resume-proof-artifact-deletion-receipt="true">
+                                    <ShieldCheck className="h-4 w-4" />
+                                    <AlertDescription>
+                                        <div className="space-y-1">
+                                            <p>
+                                                <strong>Artifact deletion receipt:</strong> {proofArtifactDeletionReceipt.receiptId}
+                                            </p>
+                                            <p>
+                                                Artifact {proofArtifactDeletionReceipt.artifactId} was marked {proofArtifactDeletionReceipt.deletionStatus} at {new Date(proofArtifactDeletionReceipt.deletedAt).toLocaleString()}.
+                                            </p>
+                                            <p>
+                                                <strong>Receipt hash:</strong> <code>{proofArtifactDeletionReceipt.receiptHash.slice(0, 16)}...</code>
+                                            </p>
+                                            <p>{proofArtifactDeletionReceipt.caveat}</p>
                                         </div>
                                     </AlertDescription>
                                 </Alert>

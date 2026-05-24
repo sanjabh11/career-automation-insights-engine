@@ -230,6 +230,24 @@ const checks = [
     ],
   },
   {
+    id: 'eeoc-employment-selection-procedures',
+    label: 'EEOC employment tests and selection procedures',
+    url: 'https://www.eeoc.gov/laws/guidance/employment-tests-and-selection-procedures',
+    expected: [
+      { label: 'EEOC employment tests title', pattern: /Employment Tests and Selection Procedures/i },
+      { label: 'employment selection boundary evidence', pattern: /disparate impact|selection procedures|job-related and consistent with business necessity/i },
+    ],
+  },
+  {
+    id: 'cfpb-employment-algorithmic-scores',
+    label: 'CFPB employment algorithmic score circular',
+    url: 'https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/',
+    expected: [
+      { label: 'CFPB circular title', pattern: /Consumer Financial Protection Circular 2024-06|Background Dossiers and Algorithmic Scores/i },
+      { label: 'employment FCRA purpose evidence', pattern: /permission to procure a consumer report|provide notices before and upon taking adverse actions|hiring, promotion, reassignment, or retention/i },
+    ],
+  },
+  {
     id: 'iso-42001',
     label: 'ISO/IEC 42001 AI management system',
     url: 'https://www.iso.org/standard/42001',

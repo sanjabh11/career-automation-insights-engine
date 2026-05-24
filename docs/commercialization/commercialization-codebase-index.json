@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T15:41:20.479Z",
+  "generatedAt": "2026-05-24T16:24:45.435Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -645,7 +645,9 @@
     "bls-qcew",
     "careeronestop-api",
     "census-acs-api",
+    "cfpb-employment-algorithmic-scores",
     "dol-ai-literacy-framework",
+    "eeoc-employment-selection-procedures",
     "esco",
     "ferpa-student-privacy",
     "iso-42001",
@@ -674,13 +676,17 @@
       "commercial_staff",
       "commercial_workforce_audit_rows",
       "commercial_workforce_audits",
-      "resume_analysis_deletion_receipts"
+      "resume_analysis_deletion_receipts",
+      "resume_proof_report_artifact_deletion_receipts",
+      "resume_proof_report_artifacts"
     ],
     "functions": [
       "capture_commercial_lead",
       "create_commercial_report_artifact",
       "create_commercial_workforce_audit",
+      "create_resume_proof_report_artifact",
       "delete_resume_analysis_with_receipt",
+      "delete_resume_proof_report_artifact_with_receipt",
       "get_commercial_leads",
       "get_commercial_report_artifact",
       "get_commercial_report_artifact_events",
@@ -690,13 +696,16 @@
       "list_commercial_workforce_review_rows",
       "log_commercial_report_artifact_event",
       "update_commercial_lead_status",
-      "update_commercial_workforce_row_mapping"
+      "update_commercial_workforce_row_mapping",
+      "update_resume_proof_report_artifact_updated_at"
     ],
     "grants": [
       "capture_commercial_lead",
       "create_commercial_report_artifact",
       "create_commercial_workforce_audit",
+      "create_resume_proof_report_artifact",
       "delete_resume_analysis_with_receipt",
+      "delete_resume_proof_report_artifact_with_receipt",
       "get_commercial_leads",
       "get_commercial_report_artifact",
       "get_commercial_report_artifact_events",
@@ -711,8 +720,12 @@
     "policies": [
       "Commercial staff can read own staff record",
       "Public can create commercial leads",
+      "Service role can manage redacted resume proof artifacts",
       "Service role can manage resume deletion receipts",
-      "Users can read own resume deletion receipts"
+      "Service role can manage resume proof artifact deletion receipts",
+      "Users can read own redacted resume proof artifacts",
+      "Users can read own resume deletion receipts",
+      "Users can read own resume proof artifact deletion receipts"
     ]
   },
   "featureMap": [
@@ -856,13 +869,15 @@
         "src/pages/PrivacyPage.tsx",
         "src/components/ResumeAnalyzer.tsx",
         "src/lib/resumeAnalysisPrivacy.ts",
+        "src/lib/resumeProofReportArtifacts.ts",
         "src/pages/ResponsibleAIPage.tsx",
         "src/integrations/supabase/client.ts",
         "supabase/functions/analyze-resume/index.ts",
         "supabase/migrations/20260524000400_add_resume_deletion_receipts.sql",
+        "supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql",
         "scripts/verify-commercial-trust-boundaries.mjs"
       ],
-      "proof": "Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier."
+      "proof": "Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier."
     },
     {
       "feature": "Counselor report generator",

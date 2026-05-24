@@ -275,8 +275,10 @@ async function verifyResumeProofReportDownload(page, baseUrl) {
   await analyzeButton.click();
   await assertVisible(page.getByRole('heading', { name: /Automation Risk Assessment/i }), 'resume proof result');
   await assertVisible(page.getByText(/Resume Analysis Evidence And Review Boundaries/i), 'resume proof evidence boundaries');
+  await assertVisible(page.getByText(/Saved proof artifacts are redacted/i), 'resume redacted artifact boundary');
   await assertVisible(page.getByRole('button', { name: /Download Proof Report/i }), 'resume proof report button');
   await assertVisible(page.getByRole('button', { name: /Copy Rewrite Drafts/i }), 'resume rewrite draft button');
+  await assertButtonDisabled(page.getByRole('button', { name: /Save Redacted Artifact/i }), 'guest resume redacted artifact save');
 
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
   await page.getByRole('button', { name: /Download Proof Report/i }).click();

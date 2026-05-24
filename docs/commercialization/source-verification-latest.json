@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T15:31:38.683Z",
+  "generatedAt": "2026-05-24T16:16:00.829Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,7 +189,7 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "cc2b01ea6548eb9de0210717fdf18f995c07c9d103f06ef130984f57ebf16ccc",
+      "contentSha256": "417a4ed9d345dcbb67c047c57e11fdd13dade771856ba79374996804d27fd959",
       "byteLength": 233754,
       "evidence": [
         {
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "aeaadd5dd8b25c622ea7fe275ad8c432b453523073d81740131977ad436bb543",
+      "contentSha256": "ab8b085e92aa69f24bb3f27badb4eadb24b4cccfdfd629243f4ecfcf04421e5d",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "6e1293dd78aaab1d013c1ba66bbdb2667b815da31f2513a65ea2c1e7ef9fbd51",
+      "contentSha256": "4c19e4e276aac03d791e55f499984f67b8462017f783b4d383b717feb8a2b03b",
       "byteLength": 303692,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
-      "byteLength": 114397,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "462aab8538aceac57d034c6cfe332b37357a7c8ad25e2058ccbcca38cf7ab3da",
+      "contentSha256": "83e36ac63953c3e6488283e1cc25770ba7fef3d6975e060fd79a24475ad8eb39",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "fafbb15ec3aad8225960266edd11f5968edc34be06e8b43ef66c2a2fc998f780",
+      "contentSha256": "454f6e4f8272369aa710bc73c6f635ec487cc5ad7cc1b6cfea23f110a891e109",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "cbbfbefb7787c68c7909b04d8edc7ba532e35dfc660425f8f88e4e884c77ccdb",
-      "byteLength": 73088,
+      "contentSha256": "02065626bb955c21850462ea6ebb026d306353a5a67d0cf4682e26563fdd73a6",
+      "byteLength": 73087,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "12a82036ee23595be8ac9a3f381eb0c471b0d699bf29cf62f4c1eacb0350a706",
+      "contentSha256": "0e88259580ad9af7aef4b9ca44fec1b9739988ff0ebefb9424127cc7ac01119c",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "0e15b93f63153a8bc42dd5796ddb6aad8e5b68a9f3469402604ce84cd3775cba",
+      "contentSha256": "117ee401aeffa5b7fb0fc8562d7480cf936c12877bea5109b7d2573a2eb5b901",
       "byteLength": 210582,
       "evidence": [
         {
@@ -484,6 +484,46 @@
       "passed": true
     },
     {
+      "id": "eeoc-employment-selection-procedures",
+      "label": "EEOC employment tests and selection procedures",
+      "url": "https://www.eeoc.gov/laws/guidance/employment-tests-and-selection-procedures",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6f5ccb7b5396f2263c99c27c4a9c8c0b5e731fcca2fcd76ed3b522bc2ea1f273",
+      "byteLength": 83674,
+      "evidence": [
+        {
+          "label": "EEOC employment tests title",
+          "matched": true
+        },
+        {
+          "label": "employment selection boundary evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "cfpb-employment-algorithmic-scores",
+      "label": "CFPB employment algorithmic score circular",
+      "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6cf8247698194d541bca42ada1c2ec99a8b4ca599224c165a7a62fa8a66cb3ca",
+      "byteLength": 183444,
+      "evidence": [
+        {
+          "label": "CFPB circular title",
+          "matched": true
+        },
+        {
+          "label": "employment FCRA purpose evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "iso-42001",
       "label": "ISO/IEC 42001 AI management system",
       "url": "https://www.iso.org/standard/42001",
@@ -509,7 +549,7 @@
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
       "status": 200,
       "ok": true,
-      "contentSha256": "10597647af94734463742e45fef410a1fb63af98542248babfb22374d3e330f2",
+      "contentSha256": "9bde19eb6f3919bf72673e849ce6e4c5f6b5b5f9087f725e1b1b205a426ce9e1",
       "byteLength": 53582,
       "evidence": [
         {
@@ -549,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "870a253e1e1bc8828f04e537d9c0bb393a553faa110e0a202e2c5a35c21a42b2",
+      "contentSha256": "0a2d3cbb941c3a422b08e32246ff05b46587420a892a8b2d847573c232c78e98",
       "byteLength": 91197,
       "evidence": [
         {
