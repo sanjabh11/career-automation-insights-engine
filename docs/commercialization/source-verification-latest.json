@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T17:51:27.814Z",
+  "generatedAt": "2026-05-24T18:31:47.945Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "2771faa40697146c7f3c9104ee7caee65279aae6523c99a7e2ff2195647ca90c",
-      "byteLength": 233750,
+      "contentSha256": "b9435ee69f4c537dfab2a14efc49b27f43adcf40e770dea4ffbebf54b4d90684",
+      "byteLength": 233746,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "c7443e6a69377ee50f4979b7d3b8810e042f0b0e3a1d1973160485a538976d21",
+      "contentSha256": "58cc45ac597af06ecdfc03b782466d53c9f986a2537370634d87eb0ea85f2417",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "4c19e4e276aac03d791e55f499984f67b8462017f783b4d383b717feb8a2b03b",
+      "contentSha256": "6948793898adba6d54efc07d36c47d0ec3505d194432391651f2240c688cd883",
       "byteLength": 303692,
       "evidence": [
         {
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "ecda13ef1723ce4fc39aa56149e7af071b470e9d994f9c4bb1afa1b00698f380",
+      "contentSha256": "d594429bfac8b9e4f08992d14dcc7a4b8fb930291178ae424275cd1dc78894f4",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "6ba0babd5891547c4029b51f74686bf1e786fccbb3fdc7b0b1186e659a11bd25",
+      "contentSha256": "f59569502cb61b845f8469c0e8466679d93043274cf85b2518645c8210d4486b",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,7 +349,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "8f98174169e68c5fd6c2ac049af322f794d6169e4f80998e255704680b180211",
+      "contentSha256": "065ff4595d1bcb1468b9ab98d0b324193290bf41d25d048dd3a2c0a0c3485f3a",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "25433b1ae57600355b2053c72c6cdc6d329651c619b357b20e2495d4efd1dfd6",
-      "byteLength": 165940,
+      "contentSha256": "4e66ea3ec2a0c898bad32fc7078d79b2b8d6df95eac01f9e93cdc108fc882f3a",
+      "byteLength": 164873,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "cd880e446d78d0b9c0b7a64dbf594ec3353cb648cfab627782c99b4b89b2c57e",
+      "contentSha256": "92132c34a54f055985cd2654f2976ab6b5741a9c4595ad64270f3f1778d2b8c3",
       "byteLength": 210582,
       "evidence": [
         {
@@ -589,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "a31e1176e6fa6be24acb8240e851db47a2fb54853f82e5978bdf114c14992289",
+      "contentSha256": "209414d2bd118c5afefb72a61bebe4bd1503c90f3dfe23e924212e03e07204e2",
       "byteLength": 91197,
       "evidence": [
         {

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T17:51:40.715Z",
+  "generatedAt": "2026-05-24T18:32:02.598Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T17:51:27.814Z",
+    "generatedAt": "2026-05-24T18:31:47.945Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -598,9 +598,67 @@
         "SUPABASE_DB_PASSWORD"
       ],
       "caveat": "Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.",
-      "bytes": 23279,
+      "bytes": 23653,
       "rows": 432,
-      "sha256": "da509116a146492cc4967a5c4a64840c8efdf30effefa3ead26145a035aa6a7e",
+      "sha256": "ae909becdeddcc1a229053df54672037e0ced52d94aa13c291372caffa6db023",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-accessibility-audit-json",
+      "label": "Commercial accessibility audit JSON artifact",
+      "path": "docs/commercialization/commercial-accessibility-audit-latest.json",
+      "type": "verification-artifact",
+      "sourceIds": [
+        "wcag-22",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "automated_smoke_passed_manual_wcag_required",
+        "not a WCAG conformance claim",
+        "manualReviewChecklist",
+        "WCAG-EM",
+        "Focus Not Obscured",
+        "Target Size",
+        "Accessible Authentication",
+        "WAI Easy Checks",
+        "WAI-ARIA Authoring Practices"
+      ],
+      "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
+      "bytes": 17782,
+      "rows": 565,
+      "sha256": "49065275a1bae1f14a554da46ad15a83283d34fa67fb7c9b821d8e4e977b4d96",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-accessibility-audit-markdown",
+      "label": "Commercial accessibility audit Markdown packet",
+      "path": "docs/commercialization/commercial-accessibility-audit-latest.md",
+      "type": "verification-artifact",
+      "sourceIds": [
+        "wcag-22",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "Commercial WCAG 2.2 Accessibility Audit Packet",
+        "automated_smoke_passed_manual_wcag_required",
+        "not a WCAG conformance claim",
+        "Manual WCAG 2.2 Review Checklist",
+        "wcag-em-scope",
+        "focus-not-obscured",
+        "target-size",
+        "accessible-authentication",
+        "screen-reader-and-name-role-value",
+        "WAI-ARIA Authoring Practices",
+        "WCAG-EM"
+      ],
+      "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
+      "bytes": 6658,
+      "rows": 50,
+      "sha256": "26eb5fc0d83d0568ce471989d676e83014b6a1135f7bf58ed80d8eb5d1f0aad2",
       "failures": [],
       "passed": true
     },
@@ -730,7 +788,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 4241,
       "rows": 63,
-      "sha256": "45e87f98fae5bb0852f74f0c78590355251b55a3a112e512ab517856524770a4",
+      "sha256": "713eb681b511cafca0739ca3b68736e1ece8109a2abfe1e47c71956b248dfedf",
       "failures": [],
       "passed": true
     },

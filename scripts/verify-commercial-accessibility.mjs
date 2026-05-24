@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { mkdir, writeFile } from 'node:fs/promises';
 
 const HOST = '127.0.0.1';
 const START_PORT = 5176;
@@ -8,6 +9,9 @@ const STARTUP_TIMEOUT_MS = 30_000;
 const SERVER_PROBE_TIMEOUT_MS = 3_000;
 const ROUTE_TIMEOUT_MS = 45_000;
 const BROWSER_LAUNCH_TIMEOUT_MS = 60_000;
+const AUDIT_OUTPUT_DIR = 'docs/commercialization';
+const AUDIT_JSON_OUTPUT = `${AUDIT_OUTPUT_DIR}/commercial-accessibility-audit-latest.json`;
+const AUDIT_MD_OUTPUT = `${AUDIT_OUTPUT_DIR}/commercial-accessibility-audit-latest.md`;
 
 const routes = [
   { path: '/privacy', label: 'privacy policy' },
@@ -24,6 +28,86 @@ const viewports = [
   { name: 'mobile', width: 375, height: 812 },
   { name: 'tablet', width: 768, height: 1024 },
   { name: 'desktop', width: 1440, height: 1100 },
+];
+
+const officialReferences = [
+  {
+    label: 'WCAG 2.2 Recommendation',
+    url: 'https://www.w3.org/TR/WCAG22/',
+    use: 'Target standard for commercial route accessibility checks and manual audit notes.',
+  },
+  {
+    label: 'WCAG-EM overview',
+    url: 'https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/',
+    use: 'Evaluation-methodology structure for scope, target conformance level, sampling, audit results, and reporting.',
+  },
+  {
+    label: 'WCAG-EM 2.0 draft',
+    url: 'https://www.w3.org/TR/wcag-em-2/',
+    use: 'Current W3C methodology draft for optional conformance claims and report structure.',
+  },
+  {
+    label: 'WAI Easy Checks',
+    url: 'https://www.w3.org/WAI/test-evaluate/preliminary/',
+    use: 'Preliminary manual checks for headings, labels, keyboard access, visible focus, forms, and contrast.',
+  },
+  {
+    label: 'WAI-ARIA Authoring Practices',
+    url: 'https://www.w3.org/WAI/ARIA/apg/',
+    use: 'Manual interaction-pattern review for dynamic widgets, names, roles, states, and keyboard behavior.',
+  },
+];
+
+const manualReviewChecklist = [
+  {
+    id: 'wcag-em-scope',
+    status: 'manual_required',
+    source: 'WCAG-EM',
+    criteria: ['Evaluation scope', 'Target conformance level', 'Representative route sample', 'User-agent and assistive-technology context'],
+    evidenceNeeded: 'Document evaluator, browser, assistive technology, routes, states, and target WCAG 2.2 A/AA scope before any conformance statement.',
+  },
+  {
+    id: 'focus-not-obscured',
+    status: 'manual_required',
+    source: 'WCAG 2.2',
+    criteria: ['2.4.7 Focus Visible', '2.4.11 Focus Not Obscured (Minimum)', '2.4.12 Focus Not Obscured (Enhanced)'],
+    evidenceNeeded: 'Tab through sticky navigation, modals, report popups, downloadable artifacts, and long forms at mobile/tablet/desktop sizes and capture obscured-focus issues.',
+  },
+  {
+    id: 'target-size',
+    status: 'manual_required',
+    source: 'WCAG 2.2',
+    criteria: ['2.5.5 Target Size (Enhanced)', '2.5.8 Target Size (Minimum)'],
+    evidenceNeeded: 'Measure compact links, icon buttons, table actions, form controls, and mobile CTA clusters for pointer target size or spacing exceptions.',
+  },
+  {
+    id: 'redundant-entry-and-errors',
+    status: 'manual_required',
+    source: 'WCAG 2.2 / WAI Easy Checks',
+    criteria: ['3.3.1 Error Identification', '3.3.2 Labels or Instructions', '3.3.7 Redundant Entry'],
+    evidenceNeeded: 'Exercise lead capture, coach sample, resume analyzer, workforce CSV, and counselor forms with missing/invalid values and verify labels, instructions, recovery, and no unnecessary re-entry.',
+  },
+  {
+    id: 'accessible-authentication',
+    status: 'manual_required',
+    source: 'WCAG 2.2',
+    criteria: ['3.3.8 Accessible Authentication (Minimum)', '3.3.9 Accessible Authentication (Enhanced)'],
+    evidenceNeeded: 'Review sign-in/payment/account flows before institutional pilots; prove there is no cognitive-function test without an accessible alternative.',
+  },
+  {
+    id: 'screen-reader-and-name-role-value',
+    status: 'manual_required',
+    source: 'WAI-ARIA Authoring Practices',
+    criteria: ['4.1.2 Name, Role, Value', '1.3.1 Info and Relationships', '2.1.1 Keyboard'],
+    evidenceNeeded: 'Use a screen reader to review menus, dialogs, generated reports, evidence cards, CSV/HTML download controls, and dynamic status messages.',
+  },
+  {
+    id: 'contrast-and-reflow',
+    status: 'manual_required',
+    source: 'WCAG 2.2 / WAI Easy Checks',
+    criteria: ['1.4.3 Contrast (Minimum)', '1.4.10 Reflow', '1.4.11 Non-text Contrast', '1.4.12 Text Spacing'],
+    evidenceNeeded: 'Run color contrast and text-spacing checks on commercial cards, badges, alerts, charts, downloadable HTML, and dark-theme surfaces.',
+  },
 ];
 
 function wait(ms) {
@@ -107,6 +191,54 @@ function createPageIssueCollector(page) {
   });
 
   return issues;
+}
+
+function renderAuditMarkdown(audit) {
+  const tableCell = (value) => String(value).replace(/\s+/g, ' ').replace(/\|/g, '\\|').trim();
+  const routeRows = audit.routeResults.map((result) =>
+    `| \`${result.path}\` | ${tableCell(result.label)} | ${tableCell(result.viewport)} | ${tableCell(result.heading)} | ${result.interactiveCount} | ${result.bodyLength} | ${result.keyboardTabStopsChecked ?? 'n/a'} | pass |`
+  );
+  const checklistRows = audit.manualReviewChecklist.map((item) =>
+    `| \`${item.id}\` | ${tableCell(item.source)} | ${item.criteria.map(tableCell).join('<br/>')} | ${tableCell(item.status)} | ${tableCell(item.evidenceNeeded)} |`
+  );
+  const referenceRows = audit.officialReferences.map((item) => `- [${item.label}](${item.url}) - ${item.use}`);
+
+  return `# Commercial WCAG 2.2 Accessibility Audit Packet
+
+Generated: ${audit.generatedAt}
+Target: ${audit.target}
+Status: **${audit.status}**
+
+## Boundary
+
+${audit.boundary}
+
+## Automated Smoke Results
+
+| Route | Label | Viewport | H1 | Controls | Visible Text Length | Keyboard Tab Stops Checked | Result |
+|---|---|---|---|---:|---:|---:|---|
+${routeRows.join('\n')}
+
+## Manual WCAG 2.2 Review Checklist
+
+These rows are required before any institutional delivery or WCAG conformance statement.
+
+| Check | Source | Criteria | Status | Evidence Needed |
+|---|---|---|---|---|
+${checklistRows.join('\n')}
+
+## Official References
+
+${referenceRows.join('\n')}
+`;
+}
+
+async function writeAuditArtifacts(audit) {
+  await mkdir(AUDIT_OUTPUT_DIR, { recursive: true });
+  await writeFile(AUDIT_JSON_OUTPUT, `${JSON.stringify(audit, null, 2)}\n`);
+  await writeFile(AUDIT_MD_OUTPUT, renderAuditMarkdown(audit));
+  console.log(`wrote ${AUDIT_JSON_OUTPUT}`);
+  console.log(`wrote ${AUDIT_MD_OUTPUT}`);
 }
 
 async function evaluateCommercialAccessibility(page, route, viewportName) {
@@ -200,6 +332,23 @@ async function evaluateCommercialAccessibility(page, route, viewportName) {
   console.log(
     `ok ${route.path} ${viewportName} - h1="${result.heading}" controls=${result.interactiveCount} text=${result.bodyLength}`
   );
+
+  return {
+    path: route.path,
+    label: route.label,
+    viewport: viewportName,
+    heading: result.heading,
+    bodyLength: result.bodyLength,
+    interactiveCount: result.interactiveCount,
+    automatedChecks: [
+      'one visible h1',
+      'main landmark present',
+      'visible body text present',
+      'no horizontal overflow above tolerance',
+      'interactive controls have accessible names',
+    ],
+    result: 'pass',
+  };
 }
 
 async function verifyKeyboardFocus(page, route) {
@@ -242,11 +391,18 @@ async function verifyKeyboardFocus(page, route) {
   }
 
   console.log(`ok ${route.path} keyboard - first ${Math.min(5, result.count)} tab stops visible`);
+
+  return {
+    focusableCount: result.count,
+    keyboardTabStopsChecked: Math.min(5, result.count),
+    result: 'pass',
+  };
 }
 
 async function runChecks(baseUrl) {
   console.log('launching Playwright browser for commercial accessibility smoke');
   const browser = await launchCommercialBrowser();
+  const routeResults = [];
 
   try {
     for (const viewport of viewports) {
@@ -277,9 +433,12 @@ async function runChecks(baseUrl) {
       for (const route of routes) {
         await page.goto(`${baseUrl}${route.path}`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
         await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
-        await evaluateCommercialAccessibility(page, route, viewport.name);
+        const routeResult = await evaluateCommercialAccessibility(page, route, viewport.name);
         if (viewport.name === 'mobile') {
-          await verifyKeyboardFocus(page, route);
+          const keyboardResult = await verifyKeyboardFocus(page, route);
+          routeResults.push({ ...routeResult, ...keyboardResult });
+        } else {
+          routeResults.push(routeResult);
         }
       }
 
@@ -292,6 +451,12 @@ async function runChecks(baseUrl) {
   } finally {
     await browser.close();
   }
+
+  return {
+    routeResults,
+    pageCount: routes.length,
+    viewportCount: viewports.length,
+  };
 }
 
 function stopServer(server) {
@@ -327,7 +492,19 @@ async function main() {
   try {
     await waitForServer(baseUrl);
     console.log(`server ready at ${baseUrl}`);
-    await runChecks(baseUrl);
+    const checkSummary = await runChecks(baseUrl);
+    await writeAuditArtifacts({
+      generatedAt: new Date().toISOString(),
+      target: baseUrl,
+      status: 'automated_smoke_passed_manual_wcag_required',
+      boundary:
+        'This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.',
+      routes,
+      viewports,
+      routeResults: checkSummary.routeResults,
+      manualReviewChecklist,
+      officialReferences,
+    });
     console.log(`Commercial accessibility/responsive smoke passed at ${baseUrl}`);
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);

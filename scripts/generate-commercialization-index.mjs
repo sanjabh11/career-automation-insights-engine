@@ -44,9 +44,12 @@ const featureMap = [
       'src/pages/ProofPackGalleryPage.tsx',
       'scripts/verify-report-evidence.mjs',
       'scripts/verify-commercial-browser.mjs',
+      'scripts/verify-commercial-accessibility.mjs',
       'scripts/verify-commercial-data-provenance.mjs',
+      'docs/commercialization/commercial-accessibility-audit-latest.md',
+      'docs/commercialization/commercial-accessibility-audit-latest.json',
     ],
-    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, employment-decision boundary, live proof blockers, evidence cards, and a CSV risk register for buyer review.',
+    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, and a CSV risk register for buyer review.',
   },
   {
     feature: 'Commercial proof-pack CI workflow',
@@ -60,8 +63,9 @@ const featureMap = [
       'scripts/generate-commercial-supabase-deployment-packet.mjs',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-accessibility.mjs',
+      'docs/commercialization/commercial-accessibility-audit-latest.md',
     ],
-    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y and browser journey checks on push/PR, plus manual/scheduled source and production audit checks.',
+    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, plus manual/scheduled source and production audit checks.',
   },
   {
     feature: 'SEO report lead capture',
@@ -285,7 +289,7 @@ ${formatTable(['Script', 'Command'], scriptRows)}
 Required commercial pre-demo gate:
 
 1. \`npm run verify:commercial\`
-2. \`npm run verify:commercial-a11y\` or \`npm run verify:commercial -- --with-a11y\` when Chromium startup is stable
+2. \`npm run verify:commercial-a11y\` or \`npm run verify:commercial -- --with-a11y\` when Chromium startup is stable; this writes \`docs/commercialization/commercial-accessibility-audit-latest.md\` and \`.json\`
 3. \`npm run verify:sources\` when DNS/network access is available
 4. \`npm audit --omit=dev --audit-level=high\` when registry access is available
 5. \`npm run verify:commercial-browser\` when macOS/CI browser startup is stable enough for the full lead/report/workforce journey
@@ -297,7 +301,7 @@ CI boundary:
 ## Remaining Index Gaps
 
 - Full repo lint is still legacy-failing outside the commercial proof-pack files.
-- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
+- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
