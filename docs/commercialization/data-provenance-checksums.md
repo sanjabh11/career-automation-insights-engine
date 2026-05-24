@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T10:16:52.628Z
+Generated: 2026-05-24T10:28:38.297Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T09:52:12.192Z
 All referenced current-source checks passed: yes
@@ -25,8 +25,8 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `resume-deletion-receipt-migration` | Resume analysis deletion receipt migration | `supabase/migrations/20260524000400_add_resume_deletion_receipts.sql` | supabase-migration | 145 | `26cbcd73f5380890...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 172 | `e39a79a9d7811d7b...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 455 | `33120b2419a182fd...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
-| `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `5e73a97e85f04f4e...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
-| `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `5e73a97e85f04f4e...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
+| `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `9517990489338e18...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
+| `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `9517990489338e18...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 

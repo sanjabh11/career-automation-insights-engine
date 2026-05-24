@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T10:16:52.628Z",
+  "generatedAt": "2026-05-24T10:28:38.297Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -472,7 +472,7 @@
       "caveat": "Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.",
       "bytes": 1114,
       "rows": 39,
-      "sha256": "5e73a97e85f04f4e4ebae219c100d69c4c3c430331f5d4db03dd286d2e4a74c9",
+      "sha256": "9517990489338e18af9970bec0f25f3a4b003f0c78d8f442a024a302e4576106",
       "failures": [],
       "passed": true
     },
@@ -496,7 +496,7 @@
       "caveat": "Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.",
       "bytes": 1114,
       "rows": 39,
-      "sha256": "5e73a97e85f04f4e4ebae219c100d69c4c3c430331f5d4db03dd286d2e4a74c9",
+      "sha256": "9517990489338e18af9970bec0f25f3a4b003f0c78d8f442a024a302e4576106",
       "failures": [],
       "passed": true
     },
