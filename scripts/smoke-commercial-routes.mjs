@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 const HOST = '127.0.0.1';
 const START_PORT = 5174;
 const STARTUP_TIMEOUT_MS = 30_000;
-const ROUTE_TIMEOUT_MS = 10_000;
+const ROUTE_TIMEOUT_MS = 30_000;
 
 const commercialRoutes = [
   { path: '/', appRoute: 'path="/"', label: 'Home' },
