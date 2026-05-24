@@ -6,11 +6,19 @@ import {
   type EvidenceCard,
   type EvidenceConfidence,
   type ReportReviewStatus,
+  REVIEW_STATUS_LABELS,
 } from "@/lib/reportEvidenceCards";
 
 export type TaskExposureBucket = "automatable" | "ai_assisted" | "human_led" | "emerging";
 export type SkillChangeStatus = "growing" | "stable" | "declining" | "changing" | "unknown";
 export type SkillAction = "protect" | "upgrade" | "replace" | "learn_next";
+export type ProofPackSectionId =
+  | "decision_boundary"
+  | "task_exposure_split"
+  | "skill_change_ledger"
+  | "ai_era_role_radar"
+  | "evidence_cards"
+  | "client_delivery";
 
 export interface TaskExposureItem {
   task: string;
@@ -39,6 +47,21 @@ export interface AiEraRole {
   confidence: EvidenceConfidence;
 }
 
+export interface ProofPackSectionReview {
+  sectionId: ProofPackSectionId;
+  sectionTitle: string;
+  reviewStatus: ReportReviewStatus;
+  requiredForInstitutionalDelivery: boolean;
+  reviewerRole: string;
+  clientReady: boolean;
+  blockingReason: string;
+  caveat: string;
+  sourceIds: string[];
+  evidenceCardIds: string[];
+  acceptanceCriteria: string[];
+  allowedNextStatuses: ReportReviewStatus[];
+}
+
 export interface TransitionProofPack {
   generatedAt: string;
   reviewStatus: ReportReviewStatus;
@@ -49,6 +72,7 @@ export interface TransitionProofPack {
   skillLedger: SkillChangeItem[];
   aiEraRoles: AiEraRole[];
   evidenceCards: EvidenceCard[];
+  sectionReviews: ProofPackSectionReview[];
   nextActions: string[];
 }
 
@@ -359,8 +383,170 @@ function roleRelevanceScore(role: AiEraRole, data: OccupationRiskData): number {
   return needles.reduce((score, token) => score + (haystack.includes(token) ? 1 : 0), 0);
 }
 
+function reviewStatusForContext(
+  context: TransitionProofPack["context"],
+  sectionId: ProofPackSectionId,
+  hasBlockingRows = false
+): ReportReviewStatus {
+  if (hasBlockingRows) return "staff_review_required";
+  if (context === "workforce") return sectionId === "client_delivery" ? "staff_review_required" : "staff_reviewed";
+  if (context === "coach") return sectionId === "client_delivery" ? "client_ready" : "coach_reviewed";
+  return sectionId === "client_delivery" ? "staff_review_required" : "auto_generated";
+}
+
+function buildSectionReviews(input: {
+  context: TransitionProofPack["context"];
+  evidenceCards: EvidenceCard[];
+  unmappedCount?: number;
+}): ProofPackSectionReview[] {
+  const hasUnmappedRows = (input.unmappedCount || 0) > 0;
+  const evidenceCardIds = input.evidenceCards.map((card) => card.id);
+  const reviewerRole = input.context === "workforce"
+    ? "Commercial staff reviewer"
+    : input.context === "coach"
+      ? "Coach or counselor reviewer"
+      : "Coach or staff reviewer before institutional delivery";
+  const requiredForInstitutionalDelivery = input.context !== "individual" || hasUnmappedRows;
+  const baseSourceIds = input.context === "workforce"
+    ? ["nist-ai-rmf", "ada-ai-hiring-guidance", "onet"]
+    : ["nist-ai-rmf", "bls-ai-mlr-2025", "onet"];
+
+  const sections: Array<Omit<ProofPackSectionReview, "reviewStatus" | "clientReady" | "allowedNextStatuses">> = [
+    {
+      sectionId: "decision_boundary",
+      sectionTitle: "Decision Boundary",
+      requiredForInstitutionalDelivery: true,
+      reviewerRole,
+      blockingReason: "Employment-decision, layoff, and local-context boundaries must be visible before sharing.",
+      caveat: "This report supports planning conversations only and cannot be used as hiring, firing, promotion, or layoff evidence.",
+      sourceIds: ["nist-ai-rmf", "ada-ai-hiring-guidance"],
+      evidenceCardIds,
+      acceptanceCriteria: [
+        "Decision boundary visible in report",
+        "No employment-decision recommendation present",
+        "No layoff prediction language present",
+      ],
+    },
+    {
+      sectionId: "task_exposure_split",
+      sectionTitle: "Task Exposure Split",
+      requiredForInstitutionalDelivery,
+      reviewerRole,
+      blockingReason: "Tasks must match the client's actual role mix before client-ready guidance.",
+      caveat: "Occupation task data is representative and may not match a specific person, employer, region, or workflow.",
+      sourceIds: baseSourceIds,
+      evidenceCardIds: evidenceCardIds.filter((id) => id.includes("task") || id.includes("workforce")),
+      acceptanceCriteria: [
+        "Task buckets are visible",
+        "Automatable work is separated from AI-assisted and human-led work",
+        "Client-specific task fit has reviewer confirmation",
+      ],
+    },
+    {
+      sectionId: "skill_change_ledger",
+      sectionTitle: "Skill Change Ledger",
+      requiredForInstitutionalDelivery,
+      reviewerRole,
+      blockingReason: "Skill actions need client, program, or local market validation before delivery.",
+      caveat: "Skill labels are planning signals until validated with local postings, program goals, or licensed provider data.",
+      sourceIds: ["wef-foj-2025", "esco", "lightcast"],
+      evidenceCardIds: evidenceCardIds.filter((id) => id.includes("skill")),
+      acceptanceCriteria: [
+        "Skill status and action are visible",
+        "Provider-backed signals are caveated",
+        "Learning recommendation is not presented as guaranteed placement",
+      ],
+    },
+    {
+      sectionId: "ai_era_role_radar",
+      sectionTitle: "AI-Era Role Radar",
+      requiredForInstitutionalDelivery,
+      reviewerRole,
+      blockingReason: "Emerging roles need posting, taxonomy, or employer validation before client-ready positioning.",
+      caveat: "Role radar titles are emerging signals, not official occupations or guaranteed job titles.",
+      sourceIds: ["wef-foj-2025", "anthropic-economic-index", "openai-gdpval", "llm-output"],
+      evidenceCardIds: evidenceCardIds.filter((id) => id.includes("role")),
+      acceptanceCriteria: [
+        "Emerging role status is visible",
+        "No role is labeled official unless taxonomy-mapped",
+        "Reviewer has validated search terms before client use",
+      ],
+    },
+    {
+      sectionId: "evidence_cards",
+      sectionTitle: "Evidence Cards",
+      requiredForInstitutionalDelivery: true,
+      reviewerRole,
+      blockingReason: "Every major recommendation must include source, confidence, caveat, timestamp, and does-not-prove boundary.",
+      caveat: "Evidence cards document source boundaries; they do not certify market outcomes.",
+      sourceIds: ["nist-ai-rmf", "bls-ai-mlr-2025", "llm-output"],
+      evidenceCardIds,
+      acceptanceCriteria: [
+        "Every evidence card has source IDs",
+        "Every evidence card has a does-not-prove statement",
+        "Review status is visible on each card",
+      ],
+    },
+    {
+      sectionId: "client_delivery",
+      sectionTitle: "Client Delivery Readiness",
+      requiredForInstitutionalDelivery: true,
+      reviewerRole,
+      blockingReason: "The artifact needs reviewer approval before institutional delivery.",
+      caveat: hasUnmappedRows
+        ? `${input.unmappedCount} workforce row(s) still need SOC/O*NET mapping review.`
+        : "Client-ready status means reviewed for this artifact, not validated as a labor-market prediction.",
+      sourceIds: ["nist-ai-rmf", "ada-ai-hiring-guidance", "wcag-22"],
+      evidenceCardIds,
+      acceptanceCriteria: [
+        "Reviewer role is named",
+        "Blocking rows or caveats are visible",
+        "Client-ready status is not implied until review is complete",
+      ],
+    },
+  ];
+
+  return sections.map((section) => {
+    const reviewStatus = reviewStatusForContext(input.context, section.sectionId, hasUnmappedRows && section.requiredForInstitutionalDelivery);
+    const clientReady = reviewStatus === "client_ready" || reviewStatus === "staff_reviewed" || reviewStatus === "coach_reviewed";
+    return {
+      ...section,
+      reviewStatus,
+      clientReady,
+      allowedNextStatuses: reviewStatus === "client_ready"
+        ? ["client_ready"]
+        : ["staff_review_required", "staff_reviewed", "client_ready"],
+    };
+  });
+}
+
 export function getAiEraRoleRadar(limit = AI_ERA_ROLE_RADAR.length): AiEraRole[] {
   return AI_ERA_ROLE_RADAR.slice(0, limit);
+}
+
+export function getTransitionProofPackReviewMetadata(pack: TransitionProofPack): Record<string, unknown> {
+  const pendingSections = pack.sectionReviews.filter((section) => !section.clientReady);
+  return {
+    generatedAt: pack.generatedAt,
+    context: pack.context,
+    reviewStatus: pack.reviewStatus,
+    clientReady: pendingSections.length === 0,
+    pendingSectionCount: pendingSections.length,
+    sections: pack.sectionReviews.map((section) => ({
+      sectionId: section.sectionId,
+      sectionTitle: section.sectionTitle,
+      reviewStatus: section.reviewStatus,
+      requiredForInstitutionalDelivery: section.requiredForInstitutionalDelivery,
+      reviewerRole: section.reviewerRole,
+      clientReady: section.clientReady,
+      blockingReason: section.clientReady ? null : section.blockingReason,
+      caveat: section.caveat,
+      sourceIds: section.sourceIds,
+      evidenceCardIds: section.evidenceCardIds,
+      acceptanceCriteria: section.acceptanceCriteria,
+      allowedNextStatuses: section.allowedNextStatuses,
+    })),
+  };
 }
 
 export function buildOccupationTransitionProofPack(
@@ -474,6 +660,7 @@ export function buildOccupationTransitionProofPack(
     skillLedger,
     aiEraRoles,
     evidenceCards,
+    sectionReviews: buildSectionReviews({ context, evidenceCards }),
     nextActions: [
       "Validate which listed tasks are actually part of the current job.",
       "Prioritize human-led skills before making transition decisions.",
@@ -586,6 +773,7 @@ export function buildWorkforceTransitionProofPack(
     skillLedger,
     aiEraRoles: AI_ERA_ROLE_RADAR.slice(0, 6),
     evidenceCards,
+    sectionReviews: buildSectionReviews({ context: "workforce", evidenceCards, unmappedCount }),
     nextActions: [
       "Validate every unmapped SOC/O*NET row before executive use.",
       "Split automation opportunity from employment decision-making.",
@@ -593,6 +781,10 @@ export function buildWorkforceTransitionProofPack(
       "Attach signed artifact delivery and reviewer notes before paid enterprise pilots.",
     ],
   };
+}
+
+function renderReviewStatusLabel(status: ReportReviewStatus): string {
+  return REVIEW_STATUS_LABELS[status] || status;
 }
 
 function renderTaskBucketLabel(bucket: TaskExposureBucket): string {
@@ -627,8 +819,11 @@ function renderSkillActionLabel(action: SkillAction): string {
 }
 
 export function renderTransitionProofPackHtml(pack: TransitionProofPack): string {
+  const reviewMetadataJson = escapeHtml(JSON.stringify(getTransitionProofPackReviewMetadata(pack)));
+
   return `
     <section class="transition-proof-pack" data-proof-pack="ai-work-transition">
+      <template data-proof-pack-review-metadata="true">${reviewMetadataJson}</template>
       <div class="proof-pack-heading">
         <div>
           <h2>${escapeHtml(pack.title)}</h2>
@@ -636,6 +831,24 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
         </div>
         <span class="proof-review-state review-state">${escapeHtml(pack.reviewStatus)}</span>
       </div>
+
+      <h3>Human Review Workflow</h3>
+      <table class="proof-table proof-review-workflow" data-review-workflow="section-readiness">
+        <thead>
+          <tr><th>Section</th><th>Review state</th><th>Required before institutional delivery</th><th>Client ready?</th><th>Blocking reason / caveat</th></tr>
+        </thead>
+        <tbody>
+          ${pack.sectionReviews.map((section) => `
+            <tr data-review-section-id="${escapeHtml(section.sectionId)}" data-review-status="${escapeHtml(section.reviewStatus)}">
+              <td><strong>${escapeHtml(section.sectionTitle)}</strong><br/><span>${escapeHtml(section.reviewerRole)}</span></td>
+              <td><span class="review-state">${escapeHtml(renderReviewStatusLabel(section.reviewStatus))}</span></td>
+              <td>${section.requiredForInstitutionalDelivery ? "Yes" : "No"}</td>
+              <td>${section.clientReady ? "Yes" : "No"}</td>
+              <td>${escapeHtml(section.clientReady ? section.caveat : section.blockingReason)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
 
       <h3>Task Exposure Split</h3>
       <table class="proof-table task-exposure-split">

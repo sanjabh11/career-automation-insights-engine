@@ -130,8 +130,8 @@ const checks = [
     ],
   },
   {
-    id: 'commercial-ci-workflow',
-    file: '.github/workflows/commercial-proof-pack.yml',
+    id: 'commercial-ci-workflow-template',
+    file: 'docs/commercialization/commercial-proof-pack.workflow.yml',
     expected: [
       /name: Commercial Proof Pack/,
       /npm ci/,

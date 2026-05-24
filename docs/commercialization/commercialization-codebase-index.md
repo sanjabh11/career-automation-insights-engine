@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T04:13:33.565Z
+Generated: 2026-05-24T04:29:12.987Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -29,7 +29,7 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 | Workforce CSV exposure audit | HR, L&D, workforce boards, AI transformation consultants | `/enterprise-dashboard` | CSV parsing, role exposure rollup, saved audits, review queue, broader local SOC suggestions, staff mapping boundary, downloadable executive HTML report. | `src/pages/EnterpriseTeamDashboard.tsx`<br/>`src/lib/commercialWorkforceAudits.ts`<br/>`src/lib/socSuggestions.ts`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | Commercial lead operations | Founder, sales, support, pilot operations | `/operations/leads` | Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging. | `src/pages/CommercialLeadOpsPage.tsx`<br/>`src/lib/commercialLeadOps.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | Source provenance and claim boundaries | All buyers, especially institutional and workforce pilots | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest. | `src/lib/sourceManifest.ts`<br/>`src/lib/reportProvenance.ts`<br/>`scripts/verify-source-manifest.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/source-refresh-manifest.md`<br/>`docs/commercialization/data-provenance-checksums.md` |
-| AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, and review-state markers. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`scripts/verify-report-evidence.mjs` |
+| AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, section-level review workflow, and persisted review metadata. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`scripts/verify-report-evidence.mjs` |
 | Privacy and responsible-use trust boundary | Individuals, coaches, institutional reviewers | `/privacy`, `/tools/resume-analyzer`, `/responsible-ai` | Privacy notice, missing-Supabase fallback, deletion/employment-decision messaging, consent and local-queue guardrail verifier. | `src/pages/PrivacyPage.tsx`<br/>`src/components/ResumeAnalyzer.tsx`<br/>`src/pages/ResponsibleAIPage.tsx`<br/>`src/integrations/supabase/client.ts`<br/>`scripts/verify-commercial-trust-boundaries.mjs` |
 | Counselor report generator | Schools, workforce boards, coaches | `/tools/counselor-reports` | Route exists as institutional wedge; still needs batch consent and commercial artifact integration. | `src/components/CounselorReportGenerator.tsx`<br/>`supabase/migrations/20251213000003_white_label_configs.sql` |
 
@@ -111,16 +111,17 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- `.github/workflows/commercial-proof-pack.yml` runs `npm ci`, installs Playwright Chromium, and runs `npm run verify:commercial -- --with-a11y`.
+- `docs/commercialization/commercial-proof-pack.workflow.yml` is the ready-to-install GitHub Actions workflow template. Move it to `.github/workflows/commercial-proof-pack.yml` after GitHub auth has `workflow` scope, then confirm the first run.
 
 ## Remaining Index Gaps
 
 - Full repo lint is still legacy-failing outside the commercial proof-pack files.
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
-- Proof-pack output now has static and route-smoke verification; richer scoring still needs O*NET task-time imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
+- Proof-pack output now has static and route-smoke verification plus section-level review metadata; richer scoring still needs O*NET task-time imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; reviewer identity, signed approval, and staff UI transitions remain the next Phase 5 hardening layer.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
-- GitHub collaborator invite, push, and PR remain blocked until GitHub CLI tokens are re-authenticated.
+- GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts have checksums, but production O*NET/BLS imported database-table checksums still need a live Supabase data export.
 

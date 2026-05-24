@@ -144,11 +144,28 @@ async function assertButtonEnabled(locator, label) {
 
 async function verifyPopupReport(popupPromise, expectedText, label) {
   const popup = await popupPromise;
-  await popup.waitForFunction(
-    (text) => document.body?.innerText.includes(text),
-    expectedText,
-    { timeout: INTERACTION_TIMEOUT_MS }
+  const expectedTexts = Array.isArray(expectedText) ? expectedText : [expectedText];
+  for (const text of expectedTexts) {
+    await popup.waitForFunction(
+      (expected) => document.body?.innerText.includes(expected),
+      text,
+      { timeout: INTERACTION_TIMEOUT_MS }
+    );
+  }
+  const hasReviewMetadata = await popup.evaluate(() =>
+    {
+      const template = document.querySelector('template[data-proof-pack-review-metadata="true"]');
+      const metadataText = [
+        template?.textContent,
+        template instanceof HTMLTemplateElement ? template.innerHTML : '',
+        template instanceof HTMLTemplateElement ? template.content.textContent : '',
+      ].join('\n');
+      return Boolean(template && metadataText.includes('sections'));
+    }
   );
+  if (!hasReviewMetadata) {
+    throw new Error(`${label} is missing machine-readable proof-pack review metadata`);
+  }
   console.log(`ok popup - ${label}`);
   await popup.close();
 }
@@ -175,6 +192,11 @@ async function verifyOfflineQueueRedaction(page, source) {
 
   if (latest.consent_to_contact !== true || !latest.consent_text) {
     throw new Error(`Offline queue entry for ${source} is missing consent evidence`);
+  }
+
+  const reviewWorkflow = latest.metadata?.proof_pack_review_workflow;
+  if (!reviewWorkflow || !Array.isArray(reviewWorkflow.sections) || reviewWorkflow.sections.length === 0) {
+    throw new Error(`Offline queue entry for ${source} is missing proof-pack review workflow metadata`);
   }
 
   console.log(`ok offline queue redacted - ${source}`);
@@ -208,7 +230,11 @@ async function verifyCoachSampleReport(page, baseUrl) {
 
   const popupPromise = page.waitForEvent('popup', { timeout: INTERACTION_TIMEOUT_MS });
   await generateButton.click();
-  await verifyPopupReport(popupPromise, 'AI Career Resilience Report', 'coach sample report');
+  await verifyPopupReport(
+    popupPromise,
+    ['AI Career Resilience Report', 'Human Review Workflow', 'Client Delivery Readiness'],
+    'coach sample report'
+  );
   await assertVisible(
     page.getByText(/Queued locally because Supabase was unavailable|Saved to Supabase lead ops/i),
     'coach lead persistence status'
@@ -230,7 +256,11 @@ async function verifySeoReportDownload(page, baseUrl) {
 
   const popupPromise = page.waitForEvent('popup', { timeout: INTERACTION_TIMEOUT_MS });
   await downloadButton.click();
-  await verifyPopupReport(popupPromise, 'AI Automation Risk Report', 'SEO occupation report');
+  await verifyPopupReport(
+    popupPromise,
+    ['AI Automation Risk Report', 'Human Review Workflow', 'Client Delivery Readiness'],
+    'SEO occupation report'
+  );
   await assertVisible(page.getByText(/Report Downloaded/i), 'SEO report downloaded success state');
   await verifyOfflineQueueRedaction(page, 'seo-report-download');
 }

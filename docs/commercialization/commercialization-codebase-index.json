@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:13:33.565Z",
+  "generatedAt": "2026-05-24T04:29:12.987Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -761,7 +761,7 @@
         "src/lib/workforceExecutiveReport.ts",
         "scripts/verify-report-evidence.mjs"
       ],
-      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, and review-state markers."
+      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, section-level review workflow, and persisted review metadata."
     },
     {
       "feature": "Privacy and responsible-use trust boundary",

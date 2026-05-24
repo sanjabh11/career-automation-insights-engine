@@ -60,8 +60,8 @@ const artifacts = [
     path: 'src/lib/workTransitionProofPack.ts',
     type: 'report-runtime',
     sourceIds: ['onet', 'wef-foj-2025', 'anthropic-economic-index', 'anthropic-observed-exposure', 'openai-gdpval', 'bls-ai-mlr-2025', 'wcag-22', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'esco', 'lightcast', 'llm-output'],
-    expectedSnippets: ['AI_ERA_ROLE_RADAR', 'TaskExposureBucket', 'SkillChangeStatus', 'renderTransitionProofPackHtml'],
-    caveat: 'Emerging role radar and skill-change ledger are planning signals; provider-backed market validation remains adapter-ready.',
+    expectedSnippets: ['AI_ERA_ROLE_RADAR', 'TaskExposureBucket', 'SkillChangeStatus', 'ProofPackSectionReview', 'getTransitionProofPackReviewMetadata', 'renderTransitionProofPackHtml'],
+    caveat: 'Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.',
   },
   {
     id: 'report-provenance-module',

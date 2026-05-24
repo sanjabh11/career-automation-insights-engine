@@ -100,7 +100,7 @@ Fresh market refresh notes from the May 2026 web check:
 | Resume parsing | Browser text/paste route with warning | Server-side parser boundary, file storage minimization, deletion receipts | Medium |
 | Revenue operations | Pricing and monetization tables exist | Working purchase flow for report credits, invoices, fulfillment states | Medium |
 | Analytics | PostHog events exist | Funnel dashboards for coach report, SEO report, enterprise audit | Medium |
-| Quality gates | Build passes; focused lint on touched files passes; `npm run verify:commercial` orchestrates commercial index, trust, data provenance, scoped lint, production build, and route smoke; `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` covers responsive/accessibility smoke when Chromium startup is stable; `npm run verify:commercial-browser` exercises privacy, coach sample, SEO report, and workforce CSV audit journeys when Chromium startup is stable; `.github/workflows/commercial-proof-pack.yml` is ready to enforce the core plus a11y gate after push | Repo-wide lint cleanup, full visual snapshots, formal WCAG audit, DNS-backed source checks, npm audit, and deployed CI run evidence | Medium |
+| Quality gates | Build passes; focused lint on touched files passes; `npm run verify:commercial` orchestrates commercial index, trust, data provenance, scoped lint, production build, and route smoke; `npm run verify:commercial-a11y` covers responsive/accessibility smoke; `npm run verify:commercial-browser` exercises privacy, coach sample, SEO report, and workforce CSV audit journeys; `docs/commercialization/commercial-proof-pack.workflow.yml` is ready to install after GitHub auth has workflow scope | Repo-wide lint cleanup, full visual snapshots, formal WCAG audit, active GitHub workflow installation, and deployed CI run evidence | Medium |
 | Codebase index | `npm run index:commercial` generates `commercialization-codebase-index.md` and `.json` from actual routes, package scripts, source registry IDs, and commercial Supabase SQL objects | Extend index to cover deployed URL evidence, CI artifacts, and billing fulfillment state after push/deploy access is restored | High |
 | Outreach assets | Product pages and sample outputs exist | LinkedIn campaign pack, demo deck, case-study template, buyer-specific landing pages | Medium |
 
@@ -169,7 +169,7 @@ Uncommon but differentiating:
 | High | Commercial route smoke and e2e tests | Medium | `npm run smoke:commercial` covers route registration and HTTP app-shell responses; `npm run verify:commercial-browser` covers commercial browser interactions, report popups, consent gating, offline redaction, and workforce CSV parsing; `npm run verify:commercial-a11y` covers responsive/accessibility smoke across key commercial routes. |
 | High | Commercial trust-boundary verifier | High | `npm run verify:commercial-trust` checks Supabase-env fallback, privacy routing, consent privacy links, offline queue redaction, and expanded source guardrail registration. |
 | High | Commercial codebase index | High | `npm run index:commercial` generates route/module/RPC/source/verification maps as Markdown and JSON for handoff and drift control. |
-| High | Commercial release orchestrator and CI | High | `npm run verify:commercial` runs the core local/CI commercial proof gate; `.github/workflows/commercial-proof-pack.yml` installs dependencies and Playwright Chromium before running the same gate on push/PR. |
+| High | Commercial release orchestrator and CI template | High | `npm run verify:commercial` runs the core local commercial proof gate; `docs/commercialization/commercial-proof-pack.workflow.yml` is the GitHub Actions template to install after token reauth with `workflow` scope. |
 | Medium | Server-side resume parser | Medium | Edge function accepts file, extracts text, deletes raw file, returns receipt. |
 | Medium | Deterministic SOC suggestion service | Medium | Review queue shows ranked local O*NET/SOC candidates before staff approval, with expanded common-role seeds and 50%/75% confidence coverage in the executive skeleton. |
 | Medium | Payment/report credits | Medium | Stripe checkout, credits ledger, report generation decrements credit. |
@@ -220,7 +220,7 @@ I am opening a small pilot for coaches: 10 branded sample reports plus feedback 
 
 ## Immediate Next Build Steps
 
-1. Re-authenticate GitHub CLI, invite `sanjabh1103`, push the branch, and capture the first `.github/workflows/commercial-proof-pack.yml` run as CI evidence.
+1. Re-authenticate GitHub CLI with `workflow` scope, install `docs/commercialization/commercial-proof-pack.workflow.yml` as `.github/workflows/commercial-proof-pack.yml`, invite `sanjabh1103`, and capture the first workflow run as CI evidence.
 2. Seed `commercial_staff` in Supabase for the first staff user and connect email/CRM follow-up.
 3. Expand SOC/O*NET suggestions from the broadened local seed catalog to a full O*NET occupation index or Supabase search RPC.
 4. Add resend/download history UI, signed storage URL or PDF export, and resend workflow for staff-opened artifacts.

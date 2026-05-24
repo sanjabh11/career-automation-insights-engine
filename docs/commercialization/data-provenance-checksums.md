@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T04:13:34.451Z
+Generated: 2026-05-24T04:29:13.570Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T04:13:13.797Z
 All referenced current-source checks passed: yes
@@ -15,7 +15,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `onet-ingest-boundary` | O*NET metadata ingestion boundary | `supabase/lib/scripts/ingest_onet_metadata.ts` | ingestion-script | 228 | `8deb7c39cc054a41...` | `onet` | pass |
 | `source-manifest-module` | Source manifest module | `src/lib/sourceManifest.ts` | source-registry | 273 | `96e5ff0af6c50518...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `serpapi`, `llm-output` | pass |
 | `report-evidence-card-module` | Report evidence card renderer | `src/lib/reportEvidenceCards.ts` | report-runtime | 91 | `2a82837b74fe7871...` | `onet`, `bls-ai-mlr-2025`, `nist-ai-rmf`, `llm-output` | pass |
-| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 695 | `a2632be756e9f58b...` | `onet`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
+| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 899 | `c98d9275196be4dc...` | `onet`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 
@@ -26,6 +26,6 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `onet-ingest-boundary`: Ingestion utility boundary only; it proves import mechanics exist, not that current production tables are refreshed.
 - `source-manifest-module`: Commercial source registry; adapter-ready records are not imported provider-backed data.
 - `report-evidence-card-module`: Shared report evidence card renderer; evidence cards still depend on correct source assignment in each report flow.
-- `work-transition-proof-pack-module`: Emerging role radar and skill-change ledger are planning signals; provider-backed market validation remains adapter-ready.
+- `work-transition-proof-pack-module`: Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.
 - `report-provenance-module`: Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.
 - `workforce-executive-report-module`: Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.

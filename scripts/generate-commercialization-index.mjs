@@ -96,7 +96,7 @@ const featureMap = [
       'src/lib/workforceExecutiveReport.ts',
       'scripts/verify-report-evidence.mjs',
     ],
-    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, and review-state markers.',
+    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, section-level review workflow, and persisted review metadata.',
   },
   {
     feature: 'Privacy and responsible-use trust boundary',
@@ -238,16 +238,17 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- \`.github/workflows/commercial-proof-pack.yml\` runs \`npm ci\`, installs Playwright Chromium, and runs \`npm run verify:commercial -- --with-a11y\`.
+- \`docs/commercialization/commercial-proof-pack.workflow.yml\` is the ready-to-install GitHub Actions workflow template. Move it to \`.github/workflows/commercial-proof-pack.yml\` after GitHub auth has \`workflow\` scope, then confirm the first run.
 
 ## Remaining Index Gaps
 
 - Full repo lint is still legacy-failing outside the commercial proof-pack files.
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
-- Proof-pack output now has static and route-smoke verification; richer scoring still needs O*NET task-time imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
+- Proof-pack output now has static and route-smoke verification plus section-level review metadata; richer scoring still needs O*NET task-time imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; reviewer identity, signed approval, and staff UI transitions remain the next Phase 5 hardening layer.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
-- GitHub collaborator invite, push, and PR remain blocked until GitHub CLI tokens are re-authenticated.
+- GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts have checksums, but production O*NET/BLS imported database-table checksums still need a live Supabase data export.
 

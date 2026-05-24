@@ -35,6 +35,7 @@ import {
 import {
   buildOccupationTransitionProofPack,
   getTransitionProofPackCss,
+  getTransitionProofPackReviewMetadata,
   renderTransitionProofPackHtml,
 } from '@/lib/workTransitionProofPack';
 import { useToast } from '@/hooks/use-toast';
@@ -112,10 +113,19 @@ function getRiskColor(risk: number): string {
   return 'text-red-500';
 }
 
-function generateSampleReportHTML(data: OccupationRiskData, brandConfig: CoachSampleBrandConfig): string {
+interface GeneratedSampleReportPayload {
+  html: string;
+  proofPackReviewWorkflow: Record<string, unknown>;
+}
+
+function generateSampleReportPayload(
+  data: OccupationRiskData,
+  brandConfig: CoachSampleBrandConfig
+): GeneratedSampleReportPayload {
   const riskLevel = data.overallRisk <= 30 ? 'Low' : data.overallRisk <= 60 ? 'Medium' : 'High';
   const riskColor = data.overallRisk <= 30 ? '#10b981' : data.overallRisk <= 60 ? '#f59e0b' : '#ef4444';
-  const proofPack = buildOccupationTransitionProofPack(data, 'coach');
+  const generatedAt = new Date();
+  const proofPack = buildOccupationTransitionProofPack(data, 'coach', generatedAt);
   const config = resolveBrandConfig(brandConfig);
   const brand = escapeHtml(config.companyName || 'Automation Insights');
   const primaryColor = config.primaryColor;
@@ -136,7 +146,7 @@ function generateSampleReportHTML(data: OccupationRiskData, brandConfig: CoachSa
     ? `<p style="margin-top:4px;">Powered by <a href="https://automationinsights.app" style="color:${accentColor};text-decoration:none;">Automation Insights</a></p>`
     : '';
 
-  return `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -184,7 +194,7 @@ function generateSampleReportHTML(data: OccupationRiskData, brandConfig: CoachSa
     <div class="brand">${brand}</div>
     <h1>AI Career Resilience Report</h1>
     <div class="subtitle">${escapeHtml(data.title)} (SOC: ${escapeHtml(data.code)})</div>
-    <div class="subtitle">Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+    <div class="subtitle">Generated ${generatedAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
     ${contactBlock}
   </div>
 
@@ -237,6 +247,11 @@ function generateSampleReportHTML(data: OccupationRiskData, brandConfig: CoachSa
   <script>window.onload = () => window.print();</script>
 </body>
 </html>`;
+
+  return {
+    html,
+    proofPackReviewWorkflow: getTransitionProofPackReviewMetadata(proofPack),
+  };
 }
 
 export default function SampleReportPage() {
@@ -324,11 +339,11 @@ export default function SampleReportPage() {
       branded: !!resolvedBrandConfig.companyName,
       artifact_capture_requested: !!resolvedBrandConfig.contactEmail,
     });
-    const html = generateSampleReportHTML(selectedData, resolvedBrandConfig);
+    const reportPayload = generateSampleReportPayload(selectedData, resolvedBrandConfig);
     const win = window.open('', '_blank');
     if (win) {
       win.document.open('text/html');
-      win.document.write(html);
+      win.document.write(reportPayload.html);
       win.document.close();
     }
 
@@ -347,7 +362,7 @@ export default function SampleReportPage() {
         occupationSlug: selectedSlug,
         occupationTitle: selectedData.title,
 	        riskScore: selectedData.overallRisk,
-	        reportHtml: html,
+	        reportHtml: reportPayload.html,
 	        consentToContact: resolvedBrandConfig.consentToContact,
 	        consentText: coachConsentText,
 	        metadata: {
@@ -358,6 +373,7 @@ export default function SampleReportPage() {
           website_url: resolvedBrandConfig.websiteUrl || null,
           include_platform_branding: resolvedBrandConfig.includePlatformBranding,
           sample_report: true,
+          proof_pack_review_workflow: reportPayload.proofPackReviewWorkflow,
         },
       });
       setLeadStatus(result);

@@ -62,6 +62,10 @@ import {
 } from '@/lib/reportProvenance';
 import { getSocSuggestionCatalogStats, suggestSocCodes } from '@/lib/socSuggestions';
 import { downloadWorkforceExecutiveReport } from '@/lib/workforceExecutiveReport';
+import {
+  buildWorkforceTransitionProofPack,
+  getTransitionProofPackReviewMetadata,
+} from '@/lib/workTransitionProofPack';
 
 interface OrgMetrics {
   total_employees: number;
@@ -666,6 +670,9 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
     }
 
     const summaryToSave = summarizeWorkforceRows(rowsToSave);
+    const proofPackReviewWorkflow = getTransitionProofPackReviewMetadata(
+      buildWorkforceTransitionProofPack(rowsToSave)
+    );
     setSavingAudit(true);
     try {
       const savedAudit = await saveCommercialWorkforceAudit({
@@ -681,7 +688,10 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
           unmappedRows: summaryToSave.unmappedRows,
         },
         rows: rowsToSave,
-        sourceVersions: getWorkforceAuditSourceVersions(),
+        sourceVersions: {
+          ...getWorkforceAuditSourceVersions(),
+          proof_pack_review_workflow: proofPackReviewWorkflow,
+        },
       });
 
       setAuditRows(rowsToSave);

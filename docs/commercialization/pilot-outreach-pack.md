@@ -52,7 +52,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 2 | "Does not prove" boundaries | Uncommon | High | High | Implemented |
 | 3 | Task exposure split instead of one risk score | Common idea, uncommon presentation | High | High | Implemented |
 | 4 | Skill-change ledger with actions | Common in talent platforms, uncommon in public career tools | High | High | Implemented |
-| 5 | Human review state per report | Uncommon | High | Medium | Partly implemented |
+| 5 | Human review state per report section | Uncommon | High | Medium | Implemented for rendered reports and artifact metadata; staff approval UI pending |
 | 6 | AI-era role radar with caveated emerging status | Uncommon | High | High | Implemented |
 | 7 | Workforce CSV proof pack | Common enterprise need, uncommon bounded proof artifact | High | High | Implemented skeleton |
 | 8 | Coach-branded sample report | Common sales tactic | High | High | Implemented skeleton |
@@ -83,8 +83,8 @@ The strongest differentiators are the combination of evidence cards, explicit "d
 |---|---|---|
 | Core commercial gate | `npm run verify:commercial` | Passing locally |
 | Evidence verifier | `npm run verify:report-evidence` | Passing locally |
-| Browser journey | `npm run verify:commercial-browser` | Pending current environment proof |
-| Accessibility smoke | `npm run verify:commercial-a11y` | Pending current environment proof |
-| Source refresh | `npm run verify:sources` | Pending DNS/network proof |
-| Security audit | `npm audit --omit=dev --audit-level=high` | Pending registry/network proof |
-| GitHub CI | Pushed branch and workflow run | Pending auth/push |
+| Browser journey | `npm run verify:commercial-browser` | Passing locally |
+| Accessibility smoke | `npm run verify:commercial-a11y` | Passing locally |
+| Source refresh | `npm run verify:sources` | Passing locally |
+| Security audit | `npm audit --omit=dev --audit-level=high` | Passing locally |
+| GitHub CI | Pushed branch and workflow run | Pending GitHub token with workflow scope |

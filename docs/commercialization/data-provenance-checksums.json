@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:13:34.451Z",
+  "generatedAt": "2026-05-24T04:29:13.570Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -156,12 +156,14 @@
         "AI_ERA_ROLE_RADAR",
         "TaskExposureBucket",
         "SkillChangeStatus",
+        "ProofPackSectionReview",
+        "getTransitionProofPackReviewMetadata",
         "renderTransitionProofPackHtml"
       ],
-      "caveat": "Emerging role radar and skill-change ledger are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 32930,
-      "rows": 695,
-      "sha256": "a2632be756e9f58be1e610abae874440aff88a5e6f254ece97d460db62adc799",
+      "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
+      "bytes": 42513,
+      "rows": 899,
+      "sha256": "c98d9275196be4dcf790b42b4d32dc8b6a4fadbe1eeddf9df03417e4064d0911",
       "failures": [],
       "passed": true
     },
