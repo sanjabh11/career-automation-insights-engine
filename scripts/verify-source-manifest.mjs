@@ -76,6 +76,42 @@ const checks = [
     ],
   },
   {
+    id: 'bls-laus',
+    label: 'BLS LAUS data overview',
+    url: 'https://www.bls.gov/lau/data-overview.htm',
+    expected: [
+      { label: 'LAUS Data Overview title', pattern: /LAUS Data Overview/i },
+      { label: 'local geography tables and maps evidence', pattern: /Monthly and annual data tables and maps by state, metropolitan area, county, and city/i },
+    ],
+  },
+  {
+    id: 'bls-qcew',
+    label: 'BLS QCEW data overview',
+    url: 'https://www.bls.gov/cew/data-overview.htm',
+    expected: [
+      { label: 'QCEW Data Overview title', pattern: /QCEW Data Overview Page/i },
+      { label: 'county and open data access evidence', pattern: /every NAICS industry for every county|QCEW Open Data Access|For Developers/i },
+    ],
+  },
+  {
+    id: 'careeronestop-api',
+    label: 'CareerOneStop Web API Services',
+    url: 'https://github.com/CareerOneStop/API-Overview',
+    expected: [
+      { label: 'CareerOneStop API services evidence', pattern: /Web API Services/i },
+      { label: 'quality-controlled data and access evidence', pattern: /quality-controlled data sets|Request data access|Authentication|API Token/i },
+    ],
+  },
+  {
+    id: 'census-acs-api',
+    label: 'Census ACS Data API',
+    url: 'https://www.census.gov/programs-surveys/acs/data/data-via-api.html',
+    expected: [
+      { label: 'ACS Data via API title', pattern: /American Community Survey Data via API/i },
+      { label: 'Census API access evidence', pattern: /Application Programming Interface \(API\).*access American Community Survey \(ACS\) data/i },
+    ],
+  },
+  {
     id: 'wef-foj-2025',
     label: 'World Economic Forum Future of Jobs Report 2025',
     url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/',
@@ -88,9 +124,10 @@ const checks = [
     id: 'oecd-skills-outlook-2025',
     label: 'OECD Skills Outlook 2025',
     url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf',
+    timeoutMs: 60_000,
     expected: [
       { label: 'OECD Skills Outlook 2025 title', pattern: /OECD Skills Outlook 2025/i },
-      { label: 'skill and labour-market transition evidence', pattern: /skills|labour market|artificial intelligence/i },
+      { label: 'skill and labour-market transition evidence', pattern: /skills|labour market|timely labour-market intelligence|artificial intelligence/i },
     ],
   },
   {
@@ -227,7 +264,7 @@ function sha256(value) {
 async function fetchSource(check) {
   const response = await fetch(check.url, {
     redirect: 'follow',
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    signal: AbortSignal.timeout(check.timeoutMs || REQUEST_TIMEOUT_MS),
     headers: {
       accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'user-agent': 'CareerAutomationInsightsEngine/1.0 source freshness verifier',

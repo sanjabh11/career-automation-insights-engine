@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T07:36:47.741Z",
+  "generatedAt": "2026-05-24T08:00:00.725Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -144,6 +144,86 @@
       "passed": true
     },
     {
+      "id": "bls-laus",
+      "label": "BLS LAUS data overview",
+      "url": "https://www.bls.gov/lau/data-overview.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "5fc0872b479c8996be5e70014bd207d6a82755ff95f45f984db9bbf3a99bd466",
+      "byteLength": 71832,
+      "evidence": [
+        {
+          "label": "LAUS Data Overview title",
+          "matched": true
+        },
+        {
+          "label": "local geography tables and maps evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-qcew",
+      "label": "BLS QCEW data overview",
+      "url": "https://www.bls.gov/cew/data-overview.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "eadf8bcaf13e7de404a77e94fb5a51157d0017b088d1a7f3337656e54ebf7629",
+      "byteLength": 77617,
+      "evidence": [
+        {
+          "label": "QCEW Data Overview title",
+          "matched": true
+        },
+        {
+          "label": "county and open data access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "careeronestop-api",
+      "label": "CareerOneStop Web API Services",
+      "url": "https://github.com/CareerOneStop/API-Overview",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "0e1d4c8ca81959f56dbb1179ceaf03c2480ebfe6b85102fbe26887d8f4c33e95",
+      "byteLength": 233754,
+      "evidence": [
+        {
+          "label": "CareerOneStop API services evidence",
+          "matched": true
+        },
+        {
+          "label": "quality-controlled data and access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "census-acs-api",
+      "label": "Census ACS Data API",
+      "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ee9c446454ddf539338b71b9ff6d91b3ffd1b814f67944d9f363a4f8788c1b3e",
+      "byteLength": 316096,
+      "evidence": [
+        {
+          "label": "ACS Data via API title",
+          "matched": true
+        },
+        {
+          "label": "Census API access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "wef-foj-2025",
       "label": "World Economic Forum Future of Jobs Report 2025",
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
@@ -209,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "cdfd8a8f455fc88dd2ac9485ca6b0f79ff19fd14e4d2979b37e5a404afeb02bb",
+      "contentSha256": "7786b5c5ed57b041d415db733c1ab1b50502a1da9e54ce0071cad20463e46623",
       "byteLength": 74698,
       "evidence": [
         {
@@ -229,7 +309,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "b68ebb983c2d2a61efc00cb9ae8a738230edc4182901b91cac84bdcda48c80e2",
+      "contentSha256": "262987a34521e8966ad0932b00f571020fb787ab29be4936a504a519feeb13c8",
       "byteLength": 73088,
       "evidence": [
         {
@@ -249,7 +329,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "0066681383959d9a325a606e2267eecbcedbf1196cb3c2aecb6f2cc5b35f451b",
+      "contentSha256": "30b21a2b3f0101fd0a968f69f7b77cfc16b044de1102f50e7e9581d8a0c71e70",
       "byteLength": 165940,
       "evidence": [
         {
@@ -269,7 +349,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "3c7f91b316c913a7122e7c8516e61385430f12786bf25a53d943557e28202301",
+      "contentSha256": "83b67b117682958656e741a7597a7feb2e6b026f1705cba6f5516289361599a9",
       "byteLength": 210582,
       "evidence": [
         {
@@ -429,8 +509,8 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "43fd1c95e558a285cada02f3cd14c282f36eddb96e57b1b4c210e80d924cc87f",
-      "byteLength": 91198,
+      "contentSha256": "8f298da7a00d949a38222ae22d77ca7bd7159a1cac603ad9acfbcbde5302136d",
+      "byteLength": 91197,
       "evidence": [
         {
           "label": "AI Risk Management Framework title",

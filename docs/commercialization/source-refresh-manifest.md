@@ -80,8 +80,12 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - O*NET 30.3 Scales Reference: https://www.onetcenter.org/dictionary/30.3/text/scales_reference.html
 - BLS Employment Projections: https://www.bls.gov/emp/
 - BLS OEWS tables: https://www.bls.gov/oes/tables.htm
+- BLS LAUS data overview: https://www.bls.gov/lau/data-overview.htm
+- BLS QCEW data overview: https://www.bls.gov/cew/data-overview.htm
+- CareerOneStop API Overview: https://github.com/CareerOneStop/API-Overview
+- Census ACS Data via API: https://www.census.gov/programs-surveys/acs/data/data-via-api.html
 - WEF Future of Jobs Report 2025: https://www.weforum.org/publications/the-future-of-jobs-report-2025/
-- OECD Skills Outlook 2025: https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf
+- OECD Skills Outlook 2025: https://www.oecd.org/en/publications/2025/12/oecd-skills-outlook-2025_ac37c7d4.html
 - AI Workforce Consortium ICT in Motion 2025: https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html
 - NACE Career Readiness Competencies: https://www.naceweb.org/career-readiness/competencies/career-readiness-defined
 - DOL AI Literacy Framework: https://www.dol.gov/agencies/eta/advisories/ten-07-25

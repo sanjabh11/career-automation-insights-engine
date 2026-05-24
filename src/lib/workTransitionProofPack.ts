@@ -21,6 +21,7 @@ export type ProofPackSectionId =
   | "skill_change_ledger"
   | "ai_era_role_radar"
   | "learning_provider_boundary"
+  | "local_labor_market_appendix"
   | "evidence_cards"
   | "client_delivery";
 export type LearningRecommendationType =
@@ -28,6 +29,18 @@ export type LearningRecommendationType =
   | "provider_selection"
   | "accessibility_check"
   | "outcome_validation";
+export type LocalLaborMarketSignalType =
+  | "oews_wage_employment"
+  | "laus_unemployment_context"
+  | "qcew_industry_context"
+  | "career_one_stop_cross_check"
+  | "acs_demographic_context"
+  | "posting_snapshot";
+export type LocalLaborMarketValidationStatus =
+  | "national_seed"
+  | "needs_location_selection"
+  | "adapter_ready"
+  | "verified_local_snapshot";
 
 export interface TaskWeightingMetadata {
   method: TaskWeightingMethod;
@@ -97,6 +110,20 @@ export interface LearningProviderBoundary {
   validationChecklist: string[];
 }
 
+export interface LocalLaborMarketSignal {
+  signalType: LocalLaborMarketSignalType;
+  label: string;
+  jurisdiction: string;
+  validationStatus: LocalLaborMarketValidationStatus;
+  sourceIds: string[];
+  confidence: EvidenceConfidence;
+  reviewStatus: ReportReviewStatus;
+  currentUse: string;
+  caveat: string;
+  doesNotProve: string;
+  nextValidationSteps: string[];
+}
+
 export interface ProofPackSectionReview {
   sectionId: ProofPackSectionId;
   sectionTitle: string;
@@ -122,6 +149,7 @@ export interface TransitionProofPack {
   skillLedger: SkillChangeItem[];
   aiEraRoles: AiEraRole[];
   learningBoundaries: LearningProviderBoundary[];
+  localLaborMarketSignals: LocalLaborMarketSignal[];
   evidenceCards: EvidenceCard[];
   sectionReviews: ProofPackSectionReview[];
   nextActions: string[];
@@ -542,6 +570,7 @@ function reviewStatusForContext(
 ): ReportReviewStatus {
   if (hasBlockingRows) return "staff_review_required";
   if (sectionId === "learning_provider_boundary" && context !== "individual") return "staff_review_required";
+  if (sectionId === "local_labor_market_appendix" && context !== "individual") return "staff_review_required";
   if (context === "workforce") return sectionId === "client_delivery" ? "staff_review_required" : "staff_reviewed";
   if (context === "coach") return sectionId === "client_delivery" ? "client_ready" : "coach_reviewed";
   return sectionId === "client_delivery" ? "staff_review_required" : "auto_generated";
@@ -608,6 +637,118 @@ function buildLearningProviderBoundaries(
         "Attach local posting or employer signal before paid course guidance.",
         "Record whether the source is open, licensed, provider-supplied, or LLM-generated.",
         "Preserve a reviewer note when converting a learning theme into a specific pathway.",
+      ],
+    },
+  ];
+}
+
+function buildLocalLaborMarketSignals(
+  context: TransitionProofPack["context"],
+  targetLabel: string
+): LocalLaborMarketSignal[] {
+  const baseReviewStatus = reviewStatusForContext(context, "local_labor_market_appendix");
+
+  return [
+    {
+      signalType: "oews_wage_employment",
+      label: `${targetLabel} occupation wage and employment context`,
+      jurisdiction: "National seed; state or metro not selected",
+      validationStatus: "needs_location_selection",
+      sourceIds: ["bls-oews", "careeronestop-api"],
+      confidence: "medium",
+      reviewStatus: baseReviewStatus,
+      currentUse: "Attach BLS OEWS state, metropolitan, or nonmetropolitan occupation rows after SOC/O*NET mapping and location selection.",
+      caveat: "OEWS estimates are survey-based wage and employment context; they are not real-time job openings, employer demand, or compensation commitments.",
+      doesNotProve: "That a local employer is hiring, that a salary is available to a specific person, or that a transition will raise pay.",
+      nextValidationSteps: [
+        "Confirm SOC/O*NET occupation mapping before local lookup.",
+        "Select state, metro, or nonmetropolitan area and record the OEWS release vintage.",
+        "Preserve estimate date, geography, and reviewer note in the report artifact.",
+      ],
+    },
+    {
+      signalType: "laus_unemployment_context",
+      label: "Local labor-force pressure context",
+      jurisdiction: "State, county, city, or metro required",
+      validationStatus: "adapter_ready",
+      sourceIds: ["bls-laus"],
+      confidence: "medium",
+      reviewStatus: "staff_review_required",
+      currentUse: "Use BLS LAUS only as area-level labor-force context once a jurisdiction and month are attached.",
+      caveat: "LAUS describes employment, unemployment, and labor-force conditions by place of residence, not occupation-specific demand.",
+      doesNotProve: "That the occupation is growing or shrinking in the selected area.",
+      nextValidationSteps: [
+        "Attach state, county, city, or metro identifier and month/year.",
+        "Do not mix LAUS area unemployment with occupation-level OEWS rows without labeling the difference.",
+        "Review whether the area chosen matches where the learner or employer can realistically work.",
+      ],
+    },
+    {
+      signalType: "qcew_industry_context",
+      label: "County and industry employment base",
+      jurisdiction: "County or state plus NAICS industry required",
+      validationStatus: "adapter_ready",
+      sourceIds: ["bls-qcew"],
+      confidence: "medium",
+      reviewStatus: "staff_review_required",
+      currentUse: "Use QCEW as an industry/geography appendix for workforce-board or L&D pilots after NAICS context is known.",
+      caveat: "QCEW is industry-by-geography employment and wage context, not occupation-level skill demand.",
+      doesNotProve: "That a specific occupation, skill, course, or AI-era role is demanded by local employers.",
+      nextValidationSteps: [
+        "Attach NAICS industry, county or state, quarter/year, and ownership scope.",
+        "Use alongside OEWS or postings when making occupation-level claims.",
+        "Label QCEW as industry context, not a replacement for occupation postings.",
+      ],
+    },
+    {
+      signalType: "career_one_stop_cross_check",
+      label: "CareerOneStop occupation and training cross-check",
+      jurisdiction: "Authenticated API adapter required",
+      validationStatus: "adapter_ready",
+      sourceIds: ["careeronestop-api", "dol-ai-literacy-framework", "nace-career-readiness"],
+      confidence: "low",
+      reviewStatus: "staff_review_required",
+      currentUse: "Keep CareerOneStop as an authenticated adapter for occupation, salary, LMI, training, license, and skills-gap cross-checks.",
+      caveat: "CareerOneStop API access requires authentication and should be logged with endpoint, token owner, query, location, and timestamp.",
+      doesNotProve: "That a training provider is endorsed, accessible, affordable, or outcome-validated for a specific learner.",
+      nextValidationSteps: [
+        "Add authenticated endpoint logging before live calls.",
+        "Separate salary/LMI, training, license, and skills-gap fields in stored source snapshots.",
+        "Run human review before converting cross-checks into client-ready recommendations.",
+      ],
+    },
+    {
+      signalType: "acs_demographic_context",
+      label: "ACS local demographic and economic context",
+      jurisdiction: "Selected geography and ACS vintage required",
+      validationStatus: "adapter_ready",
+      sourceIds: ["census-acs-api"],
+      confidence: "low",
+      reviewStatus: "staff_review_required",
+      currentUse: "Use ACS only for contextual workforce access factors such as education, commuting, language, broadband, or income constraints.",
+      caveat: "ACS context is not an occupation-demand source and must not be used to rank or screen people.",
+      doesNotProve: "That an individual can or cannot succeed in an occupation, training path, or AI-transition role.",
+      nextValidationSteps: [
+        "Choose ACS table variables before implementation and document why each is relevant.",
+        "Attach geography, vintage, margin-of-error handling, and reviewer note.",
+        "Keep demographic context out of employment decision-making workflows.",
+      ],
+    },
+    {
+      signalType: "posting_snapshot",
+      label: "Licensed or reviewed posting snapshot",
+      jurisdiction: "Local search market required",
+      validationStatus: "adapter_ready",
+      sourceIds: ["lightcast", "serpapi"],
+      confidence: "low",
+      reviewStatus: "staff_review_required",
+      currentUse: "Use only after a licensed posting provider or reviewed search snapshot is attached with query, location, timestamp, and deduplication caveat.",
+      caveat: "Search and posting snapshots are volatile, duplicated, and provider-dependent unless normalized and reviewed.",
+      doesNotProve: "That current openings are complete, unique, still active, or representative of the whole local labor market.",
+      nextValidationSteps: [
+        "Record query, geography, timestamp, provider, and cache key.",
+        "Deduplicate employer/title/location rows before counting signals.",
+        "Keep posting evidence separate from official BLS and ACS public datasets.",
       ],
     },
   ];
@@ -707,6 +848,22 @@ function buildSectionReviews(input: {
         "No course, provider, certificate, or training path is shown as a guaranteed outcome",
         "Provider, cost, accessibility, accommodation, refund, and data-use checks are visible",
         "Local market validation is required before paid pathway guidance",
+      ],
+    },
+    {
+      sectionId: "local_labor_market_appendix",
+      sectionTitle: "Local Labor-Market Proof Appendix",
+      requiredForInstitutionalDelivery: true,
+      reviewerRole,
+      blockingReason: "Region-specific recommendations need location, source vintage, and reviewer validation before client-ready use.",
+      caveat: "Local labor-market context must separate occupation wages, area unemployment, industry employment, demographics, postings, and training-provider evidence.",
+      sourceIds: ["bls-oews", "bls-laus", "bls-qcew", "careeronestop-api", "census-acs-api", "serpapi", "lightcast"],
+      evidenceCardIds: evidenceCardIds.filter((id) => id.includes("local") || id.includes("labor") || id.includes("skill") || id.includes("role")),
+      acceptanceCriteria: [
+        "Location and jurisdiction are visible before region-specific claims",
+        "Official BLS/Census context is separated from postings and provider data",
+        "No local demand, wage, training, or placement claim is made without source vintage and review state",
+        "Licensed posting intelligence remains adapter-ready until provider terms and query logs exist",
       ],
     },
     {
@@ -891,6 +1048,7 @@ export function buildOccupationTransitionProofPack(
     .sort((a, b) => roleRelevanceScore(b, data) - roleRelevanceScore(a, data))
     .slice(0, 5);
   const learningBoundaries = buildLearningProviderBoundaries(context);
+  const localLaborMarketSignals = buildLocalLaborMarketSignals(context, data.title);
 
   const evidenceCards = [
     createEvidenceCard({
@@ -948,6 +1106,17 @@ export function buildOccupationTransitionProofPack(
       generatedAt,
       action: "Review provider fit, accessibility, cost, learner constraints, and local demand before recommending a course.",
     }),
+    createEvidenceCard({
+      id: "local-labor-market-appendix",
+      claim: "Region-specific guidance needs a local labor-market appendix before client-ready use.",
+      sourceIds: ["bls-oews", "bls-laus", "bls-qcew", "careeronestop-api", "census-acs-api", "serpapi", "lightcast"],
+      confidence: "medium",
+      caveat: "Official public labor data, authenticated CareerOneStop fields, live postings, and licensed market data answer different questions and must not be collapsed into one demand score.",
+      doesNotProve: "That a local employer is hiring, that a role is available to a specific learner, or that a transition path will produce placement, pay, promotion, or retention outcomes.",
+      reviewStatus: "staff_review_required",
+      generatedAt,
+      action: "Attach location, geography, source vintage, query metadata, and reviewer notes before making local market claims.",
+    }),
   ];
 
   return {
@@ -960,6 +1129,7 @@ export function buildOccupationTransitionProofPack(
     skillLedger,
     aiEraRoles,
     learningBoundaries,
+    localLaborMarketSignals,
     evidenceCards,
     sectionReviews: buildSectionReviews({ context, evidenceCards }),
     nextActions: [
@@ -1068,6 +1238,7 @@ export function buildWorkforceTransitionProofPack(
     },
   ];
   const learningBoundaries = buildLearningProviderBoundaries("workforce");
+  const localLaborMarketSignals = buildLocalLaborMarketSignals("workforce", "workforce role mix");
 
   const evidenceCards = [
     createEvidenceCard({
@@ -1114,6 +1285,17 @@ export function buildWorkforceTransitionProofPack(
       generatedAt,
       action: "Review provider fit, accessibility, cost, learner constraints, and local demand before recommending a workforce learning pathway.",
     }),
+    createEvidenceCard({
+      id: "local-labor-market-appendix",
+      claim: "Region-specific guidance needs a local labor-market appendix before client-ready use.",
+      sourceIds: ["bls-oews", "bls-laus", "bls-qcew", "careeronestop-api", "census-acs-api", "serpapi", "lightcast"],
+      confidence: "medium",
+      caveat: "Official public labor data, authenticated CareerOneStop fields, live postings, and licensed market data answer different questions and must not be collapsed into one demand score.",
+      doesNotProve: "That a local employer is hiring, that a role is available to a specific learner, or that a transition path will produce placement, pay, promotion, or retention outcomes.",
+      reviewStatus,
+      generatedAt,
+      action: "Attach location, geography, source vintage, query metadata, and reviewer notes before making workforce market claims.",
+    }),
   ];
 
   return {
@@ -1126,6 +1308,7 @@ export function buildWorkforceTransitionProofPack(
     skillLedger,
     aiEraRoles: AI_ERA_ROLE_RADAR.slice(0, 6),
     learningBoundaries,
+    localLaborMarketSignals,
     evidenceCards,
     sectionReviews: buildSectionReviews({ context: "workforce", evidenceCards, unmappedCount }),
     nextActions: [
@@ -1180,6 +1363,28 @@ function renderLearningRecommendationTypeLabel(type: LearningRecommendationType)
     outcome_validation: "Outcome validation",
   };
   return labels[type];
+}
+
+function renderLocalLaborMarketSignalTypeLabel(type: LocalLaborMarketSignalType): string {
+  const labels: Record<LocalLaborMarketSignalType, string> = {
+    oews_wage_employment: "OEWS wage/employment",
+    laus_unemployment_context: "LAUS unemployment context",
+    qcew_industry_context: "QCEW industry context",
+    career_one_stop_cross_check: "CareerOneStop cross-check",
+    acs_demographic_context: "ACS context",
+    posting_snapshot: "Posting snapshot",
+  };
+  return labels[type];
+}
+
+function renderLocalLaborMarketValidationStatus(status: LocalLaborMarketValidationStatus): string {
+  const labels: Record<LocalLaborMarketValidationStatus, string> = {
+    national_seed: "National seed",
+    needs_location_selection: "Needs location selection",
+    adapter_ready: "Adapter-ready",
+    verified_local_snapshot: "Verified local snapshot",
+  };
+  return labels[status];
 }
 
 function renderRoleTaxonomyStatusLabel(status: AiEraRoleTaxonomyStatus): string {
@@ -1315,6 +1520,30 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
               <td>
                 <ul class="proof-checklist">
                   ${boundary.validationChecklist.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+
+      <h3>Local Labor-Market Proof Appendix</h3>
+      <table class="proof-table local-labor-market-appendix">
+        <thead>
+          <tr><th>Signal</th><th>Jurisdiction / status</th><th>Confidence</th><th>Review</th><th>Current use</th><th>Caveat / does not prove</th><th>Next validation</th></tr>
+        </thead>
+        <tbody>
+          ${pack.localLaborMarketSignals.map((signal) => `
+            <tr>
+              <td><strong>${escapeHtml(signal.label)}</strong><br/><span>${escapeHtml(renderLocalLaborMarketSignalTypeLabel(signal.signalType))}</span><br/><span>Sources: ${signal.sourceIds.map(escapeHtml).join(", ")}</span></td>
+              <td>${escapeHtml(signal.jurisdiction)}<br/><span>${escapeHtml(renderLocalLaborMarketValidationStatus(signal.validationStatus))}</span></td>
+              <td>${escapeHtml(signal.confidence)} confidence</td>
+              <td><span class="review-state">${escapeHtml(renderReviewStatusLabel(signal.reviewStatus))}</span></td>
+              <td>${escapeHtml(signal.currentUse)}</td>
+              <td>${escapeHtml(signal.caveat)}<br/><span>Does not prove: ${escapeHtml(signal.doesNotProve)}</span></td>
+              <td>
+                <ul class="proof-checklist">
+                  ${signal.nextValidationSteps.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
                 </ul>
               </td>
             </tr>
