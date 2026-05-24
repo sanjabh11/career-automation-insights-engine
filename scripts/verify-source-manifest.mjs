@@ -54,6 +54,15 @@ const checks = [
     ],
   },
   {
+    id: 'ai-workforce-consortium-2025',
+    label: 'AI Workforce Consortium ICT in Motion 2025',
+    url: 'https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html',
+    expected: [
+      { label: 'AI Workforce Consortium source', pattern: /AI Workforce Consortium/i },
+      { label: 'AI role and skill market signal', pattern: /78% of (the )?job roles analyzed include AI skills|7 of the 10 fastest-growing ICT roles are AI-related|AI Risk & Governance Specialist/i },
+    ],
+  },
+  {
     id: 'anthropic-economic-index',
     label: 'Anthropic Economic Index',
     url: 'https://www.anthropic.com/research/the-anthropic-economic-index',
@@ -87,6 +96,15 @@ const checks = [
     expected: [
       { label: 'AI impacts article title', pattern: /Incorporating AI impacts in BLS employment projections/i },
       { label: 'Monthly Labor Review source', pattern: /Monthly Labor Review|U\.S\. Bureau of Labor Statistics/i },
+    ],
+  },
+  {
+    id: 'ai-workforce-consortium-2025',
+    label: 'AI Workforce Consortium resources',
+    url: 'https://www.cisco.com/site/m/ai-workforce-consortium/resources.html',
+    expected: [
+      { label: 'AI Workforce Consortium title', pattern: /AI Workforce Consortium/i },
+      { label: '2025 ICT in Motion report reference', pattern: /ICT in Motion|Next Wave of AI Integration/i },
     ],
   },
   {

@@ -246,6 +246,7 @@ I am opening a small pilot for coaches: 10 branded sample reports plus feedback 
 - OpenAI GDPval leaderboard: https://evals.openai.com/gdpval/leaderboard
 - OpenAI GDPval paper record: https://arxiv.org/abs/2510.04374
 - BLS AI impacts in employment projections: https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm
+- AI Workforce Consortium resources: https://www.cisco.com/site/m/ai-workforce-consortium/resources.html
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - ADA AI hiring guidance: https://www.ada.gov/resources/ai-guidance/
 - NIST AI Risk Management Framework: https://www.nist.gov/itl/ai-risk-management-framework

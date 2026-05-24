@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T05:19:42.834Z",
+  "generatedAt": "2026-05-24T05:28:42.538Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -609,6 +609,7 @@
   ],
   "sourceIds": [
     "ada-ai-hiring-guidance",
+    "ai-workforce-consortium-2025",
     "anthropic-economic-index",
     "anthropic-observed-exposure",
     "bls-ai-mlr-2025",

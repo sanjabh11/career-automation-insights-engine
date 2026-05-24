@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-24T05:19:43.257Z",
+  "generatedAt": "2026-05-24T05:28:42.895Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T05:18:48.761Z",
-    "allPassed": true,
+    "generatedAt": "2026-05-24T05:27:09.654Z",
+    "allPassed": false,
     "requiredForPass": false
   },
   "allPassed": true,
@@ -86,6 +86,7 @@
         "bls-oews",
         "wef-foj-2025",
         "oecd-skills-outlook-2025",
+        "ai-workforce-consortium-2025",
         "anthropic-economic-index",
         "anthropic-observed-exposure",
         "openai-gdpval",
@@ -104,9 +105,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 15773,
-      "rows": 288,
-      "sha256": "13a149972bc0d6c589453704bb19afeb2d6d948cd2463115ffe1c5e9b9092946",
+      "bytes": 17956,
+      "rows": 318,
+      "sha256": "93dfcaeab3995ff7ddfd665f97e5d4d5619c4bcee4b231f0a0ef1fb6345ac44a",
       "failures": [],
       "passed": true
     },
@@ -143,6 +144,7 @@
         "onet",
         "wef-foj-2025",
         "oecd-skills-outlook-2025",
+        "ai-workforce-consortium-2025",
         "anthropic-economic-index",
         "anthropic-observed-exposure",
         "openai-gdpval",
@@ -161,12 +163,13 @@
         "ProofPackSectionReview",
         "getTransitionProofPackReviewMetadata",
         "renderTransitionProofPackHtml",
-        "Source caveat"
+        "Source caveat",
+        "Role validation"
       ],
       "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 50641,
-      "rows": 1049,
-      "sha256": "7f7980f1398a66f83d8461310af23e3a52a44ae9903c767e3753fb6016e3e052",
+      "bytes": 53486,
+      "rows": 1099,
+      "sha256": "94065f34f739b8c4a3060e12de3a3acabe7c7a52507c0ac65b514af3db4f7b31",
       "failures": [],
       "passed": true
     },

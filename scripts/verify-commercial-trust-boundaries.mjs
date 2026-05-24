@@ -65,6 +65,7 @@ const checks = [
     expected: [
       /id: 'anthropic-observed-exposure'/,
       /id: 'oecd-skills-outlook-2025'/,
+      /id: 'ai-workforce-consortium-2025'/,
       /id: 'wcag-22'/,
       /id: 'ada-ai-hiring-guidance'/,
       /Task Ratings importance\/frequency fields/,

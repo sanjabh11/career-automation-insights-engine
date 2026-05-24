@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T05:19:42.834Z
+Generated: 2026-05-24T05:28:42.538Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -65,6 +65,7 @@ Policies:
 ## Source Registry Coverage
 
 - `ada-ai-hiring-guidance`
+- `ai-workforce-consortium-2025`
 - `anthropic-economic-index`
 - `anthropic-observed-exposure`
 - `bls-ai-mlr-2025`

@@ -53,7 +53,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 3 | Task exposure split instead of one risk score | Common idea, uncommon presentation | High | High | Implemented |
 | 4 | Skill-change ledger with actions | Common in talent platforms, uncommon in public career tools | High | High | Implemented with all five states, per-row confidence, review state, source IDs, and caveats |
 | 5 | Human review state per report section | Uncommon | High | Medium | Implemented for rendered reports, artifact metadata, staff section approval UI, and final artifact approval event |
-| 6 | AI-era role radar with caveated emerging status | Uncommon | High | High | Implemented |
+| 6 | AI-era role radar with caveated emerging status | Uncommon | High | High | Implemented with role-level review, taxonomy, posting-validation, search-term, source, and caveat boundaries |
 | 7 | Workforce CSV proof pack | Common enterprise need, uncommon bounded proof artifact | High | High | Implemented skeleton |
 | 8 | Coach-branded sample report | Common sales tactic | High | High | Implemented skeleton |
 | 9 | Privacy and deletion proof | Common enterprise requirement | High | Medium | Partly implemented |

@@ -13,6 +13,8 @@ export type TaskExposureBucket = "automatable" | "ai_assisted" | "human_led" | "
 export type TaskWeightingMethod = "seed_score_proxy" | "onet_task_ratings_ready" | "workforce_headcount_weighted";
 export type SkillChangeStatus = "growing" | "stable" | "declining" | "changing" | "unknown";
 export type SkillAction = "protect" | "upgrade" | "replace" | "learn_next";
+export type AiEraRoleTaxonomyStatus = "emerging-not-taxonomy-mapped" | "taxonomy-mapped";
+export type AiEraRoleMarketValidationStatus = "needs-posting-validation" | "posting-validated" | "provider-validated";
 export type ProofPackSectionId =
   | "decision_boundary"
   | "task_exposure_split"
@@ -59,6 +61,11 @@ export interface AiEraRole {
   caveat: string;
   sourceIds: string[];
   confidence: EvidenceConfidence;
+  reviewStatus: ReportReviewStatus;
+  taxonomyStatus: AiEraRoleTaxonomyStatus;
+  marketValidationStatus: AiEraRoleMarketValidationStatus;
+  validationNote: string;
+  searchTerms: string[];
 }
 
 export interface ProofPackSectionReview {
@@ -98,7 +105,22 @@ interface WorkforceProofPackRow {
   socCode?: string;
 }
 
-const AI_ERA_ROLE_RADAR: AiEraRole[] = [
+type AiEraRoleSeed = Omit<
+  AiEraRole,
+  "reviewStatus" | "taxonomyStatus" | "marketValidationStatus" | "validationNote" | "searchTerms"
+>;
+
+const ROLE_RADAR_MARKET_SIGNAL_SOURCE_ID = "ai-workforce-consortium-2025";
+
+function buildRoleSearchTerms(role: AiEraRoleSeed): string[] {
+  return Array.from(new Set([
+    role.title,
+    ...role.adjacentRoleHint.split(",").map((item) => item.trim()).filter(Boolean),
+    ...role.skills.slice(0, 2),
+  ])).slice(0, 6);
+}
+
+const AI_ERA_ROLE_RADAR_SEEDS: AiEraRoleSeed[] = [
   {
     title: "AI Operations Analyst",
     status: "emerging-signal",
@@ -351,6 +373,16 @@ const AI_ERA_ROLE_RADAR: AiEraRole[] = [
   },
 ];
 
+const AI_ERA_ROLE_RADAR: AiEraRole[] = AI_ERA_ROLE_RADAR_SEEDS.map((role) => ({
+  ...role,
+  sourceIds: Array.from(new Set([...role.sourceIds, ROLE_RADAR_MARKET_SIGNAL_SOURCE_ID])),
+  reviewStatus: "staff_review_required",
+  taxonomyStatus: "emerging-not-taxonomy-mapped",
+  marketValidationStatus: "needs-posting-validation",
+  validationNote: "Search-term signal only until validated against current postings and mapped to SOC/O*NET or ESCO.",
+  searchTerms: buildRoleSearchTerms(role),
+}));
+
 const escapeHtml = (value: string): string =>
   value
     .replace(/&/g, "&amp;")
@@ -517,10 +549,12 @@ function buildSectionReviews(input: {
       reviewerRole,
       blockingReason: "Emerging roles need posting, taxonomy, or employer validation before client-ready positioning.",
       caveat: "Role radar titles are emerging signals, not official occupations or guaranteed job titles.",
-      sourceIds: ["wef-foj-2025", "anthropic-economic-index", "openai-gdpval", "llm-output"],
+      sourceIds: ["wef-foj-2025", "ai-workforce-consortium-2025", "anthropic-economic-index", "openai-gdpval", "llm-output"],
       evidenceCardIds: evidenceCardIds.filter((id) => id.includes("role")),
       acceptanceCriteria: [
         "Emerging role status is visible",
+        "Role-level review status is visible",
+        "Taxonomy and posting validation status are visible",
         "No role is labeled official unless taxonomy-mapped",
         "Reviewer has validated search terms before client use",
       ],
@@ -744,7 +778,7 @@ export function buildOccupationTransitionProofPack(
     createEvidenceCard({
       id: "ai-era-role-radar",
       claim: "AI-era role options are emerging transition signals, not official occupation promises.",
-      sourceIds: ["wef-foj-2025", "anthropic-economic-index", "openai-gdpval", "llm-output"],
+      sourceIds: ["wef-foj-2025", "ai-workforce-consortium-2025", "anthropic-economic-index", "openai-gdpval", "llm-output"],
       confidence: "medium",
       caveat: "Emerging roles need posting-level validation before being marketed as stable career targets.",
       doesNotProve: "That these titles exist in every region, employer, or industry.",
@@ -962,6 +996,23 @@ function renderSkillActionLabel(action: SkillAction): string {
   return labels[action];
 }
 
+function renderRoleTaxonomyStatusLabel(status: AiEraRoleTaxonomyStatus): string {
+  const labels: Record<AiEraRoleTaxonomyStatus, string> = {
+    "emerging-not-taxonomy-mapped": "Emerging, not taxonomy-mapped",
+    "taxonomy-mapped": "Taxonomy-mapped",
+  };
+  return labels[status];
+}
+
+function renderRoleMarketValidationStatusLabel(status: AiEraRoleMarketValidationStatus): string {
+  const labels: Record<AiEraRoleMarketValidationStatus, string> = {
+    "needs-posting-validation": "Needs posting validation",
+    "posting-validated": "Posting-validated",
+    "provider-validated": "Provider-validated",
+  };
+  return labels[status];
+}
+
 function renderTaskWeighting(task: TaskExposureItem): string {
   const methodLabels: Record<TaskWeightingMethod, string> = {
     seed_score_proxy: "Seed proxy",
@@ -1050,9 +1101,14 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
               <span>${escapeHtml(role.confidence)} confidence</span>
             </div>
             <p>${escapeHtml(role.whyItMatters)}</p>
+            <p><strong>Status:</strong> ${escapeHtml(role.status)} | <strong>Review:</strong> ${escapeHtml(renderReviewStatusLabel(role.reviewStatus))}</p>
+            <p><strong>Role validation:</strong> ${escapeHtml(renderRoleTaxonomyStatusLabel(role.taxonomyStatus))}; ${escapeHtml(renderRoleMarketValidationStatusLabel(role.marketValidationStatus))}</p>
+            <p><strong>Validation note:</strong> ${escapeHtml(role.validationNote)}</p>
             <p><strong>Adjacent from:</strong> ${escapeHtml(role.adjacentRoleHint)}</p>
             <p><strong>Skills:</strong> ${role.skills.map(escapeHtml).join(", ")}</p>
-            <p class="role-caveat">${escapeHtml(role.caveat)}</p>
+            <p><strong>Search terms:</strong> ${role.searchTerms.map(escapeHtml).join(", ")}</p>
+            <p><strong>Sources:</strong> ${role.sourceIds.map(escapeHtml).join(", ")}</p>
+            <p class="role-caveat"><strong>Source caveat:</strong> ${escapeHtml(role.caveat)}</p>
           </article>
         `).join("")}
       </div>

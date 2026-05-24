@@ -232,7 +232,7 @@ async function verifyCoachSampleReport(page, baseUrl) {
   await generateButton.click();
   await verifyPopupReport(
     popupPromise,
-    ['AI Career Resilience Report', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat'],
+    ['AI Career Resilience Report', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat', 'Role validation', 'Needs posting validation'],
     'coach sample report'
   );
   await assertVisible(
@@ -258,7 +258,7 @@ async function verifySeoReportDownload(page, baseUrl) {
   await downloadButton.click();
   await verifyPopupReport(
     popupPromise,
-    ['AI Automation Risk Report', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat'],
+    ['AI Automation Risk Report', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat', 'Role validation', 'Needs posting validation'],
     'SEO occupation report'
   );
   await assertVisible(page.getByText(/Report Downloaded/i), 'SEO report downloaded success state');
