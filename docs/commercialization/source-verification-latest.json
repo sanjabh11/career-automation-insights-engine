@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T05:03:18.404Z",
+  "generatedAt": "2026-05-24T05:18:48.761Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -84,12 +84,32 @@
       "passed": true
     },
     {
+      "id": "oecd-skills-outlook-2025",
+      "label": "OECD Skills Outlook 2025",
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6fa948d709b1a8419295be5dd32ce503296bfedf05dfc627eb7039b8544024a1",
+      "byteLength": 11501856,
+      "evidence": [
+        {
+          "label": "OECD Skills Outlook 2025 title",
+          "matched": true
+        },
+        {
+          "label": "skill and labour-market transition evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "anthropic-economic-index",
       "label": "Anthropic Economic Index",
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "9467be543a9d61f1b9fa85e7470eefe98ca031ca9e9264ad41f678682b36029b",
+      "contentSha256": "ed2c6e068defe1c1f68d1b0646297f01deee885a043acf65db2caa78690a16a5",
       "byteLength": 165940,
       "evidence": [
         {
@@ -109,7 +129,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "85952f0384c371cf681bad5888419db5926a796a52d5bf693e783127201d7bcb",
+      "contentSha256": "767fc4d4a8a02a117737dd8e5d2abac253f19ac5c1b641ecb0a500b9c4f376c0",
       "byteLength": 210582,
       "evidence": [
         {
@@ -229,7 +249,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "796a5895ef8c3a93ceee8e434736a6d111e7744ad44d34e24bb7ea426144def8",
+      "contentSha256": "872cf6c83095ff2e50e89a04b7452babab788ee0350643756fcdab5423eec57b",
       "byteLength": 91198,
       "evidence": [
         {

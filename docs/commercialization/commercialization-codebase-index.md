@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T05:04:10.840Z
+Generated: 2026-05-24T05:19:42.834Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -29,7 +29,7 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 | Workforce CSV exposure audit | HR, L&D, workforce boards, AI transformation consultants | `/enterprise-dashboard` | CSV parsing, role exposure rollup, saved audits, review queue, broader local SOC suggestions, staff mapping boundary, downloadable executive HTML report. | `src/pages/EnterpriseTeamDashboard.tsx`<br/>`src/lib/commercialWorkforceAudits.ts`<br/>`src/lib/socSuggestions.ts`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | Commercial lead operations | Founder, sales, support, pilot operations | `/operations/leads` | Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, and final artifact client-ready approval. | `src/pages/CommercialLeadOpsPage.tsx`<br/>`src/lib/commercialLeadOps.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql`<br/>`supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` |
 | Source provenance and claim boundaries | All buyers, especially institutional and workforce pilots | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest. | `src/lib/sourceManifest.ts`<br/>`src/lib/reportProvenance.ts`<br/>`scripts/verify-source-manifest.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/source-refresh-manifest.md`<br/>`docs/commercialization/data-provenance-checksums.md` |
-| AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger, caveated AI-era role radar, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, and final artifact approval. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`scripts/verify-report-evidence.mjs` |
+| AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, caveated AI-era role radar, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, and final artifact approval. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`scripts/verify-report-evidence.mjs` |
 | Privacy and responsible-use trust boundary | Individuals, coaches, institutional reviewers | `/privacy`, `/tools/resume-analyzer`, `/responsible-ai` | Privacy notice, missing-Supabase fallback, deletion/employment-decision messaging, consent and local-queue guardrail verifier. | `src/pages/PrivacyPage.tsx`<br/>`src/components/ResumeAnalyzer.tsx`<br/>`src/pages/ResponsibleAIPage.tsx`<br/>`src/integrations/supabase/client.ts`<br/>`scripts/verify-commercial-trust-boundaries.mjs` |
 | Counselor report generator | Schools, workforce boards, coaches | `/tools/counselor-reports` | Route exists as institutional wedge; still needs batch consent and commercial artifact integration. | `src/components/CounselorReportGenerator.tsx`<br/>`supabase/migrations/20251213000003_white_label_configs.sql` |
 
@@ -74,6 +74,7 @@ Policies:
 - `lightcast`
 - `llm-output`
 - `nist-ai-rmf`
+- `oecd-skills-outlook-2025`
 - `onet`
 - `openai-gdpval`
 - `serpapi`
@@ -118,7 +119,7 @@ CI boundary:
 - Full repo lint is still legacy-failing outside the commercial proof-pack files.
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
-- Proof-pack output now has static and route-smoke verification plus section-level review metadata and proxy task-weight basis; richer scoring still needs checksum-verified O*NET Task Ratings imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
+- Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, and per-row skill caveats; richer scoring still needs checksum-verified O*NET Task Ratings imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions and final artifact approval are implemented, while live Supabase migration proof and formal signed approval remain Phase 5 hardening work.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
 - GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.

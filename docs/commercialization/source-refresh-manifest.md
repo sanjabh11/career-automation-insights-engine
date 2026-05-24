@@ -12,6 +12,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | BLS Employment Projections | 2024-34 occupational employment projections | Growth/outlook context | Directional labor-market context only; not employer-specific forecasting. |
 | BLS OEWS | May 2025 OEWS tables, published May 2026 | Wage and employment estimates | Use only after SOC/occupation mapping is verified. |
 | WEF Future of Jobs | 2025 edition, 2025-2030 horizon | Macro skill and technology trend framing | Use for directional narrative, not occupation scoring by itself. |
+| OECD Skills Outlook | 2025 edition | Skill-change, task-content change, and reskilling policy context | Use for skill-transition framing, not worker-specific guidance or local demand proof. |
 | Anthropic Economic Index | Initial 2025 index plus 2026 Economic Primitives updates | Observed AI use by O*NET task, automation/augmentation framing, adoption inequality caveats | Use as AI-use benchmark context only until task-level datasets are imported and validated. |
 | Anthropic observed exposure research | 2026 labor-market impacts research | Separates theoretical capability from observed automated, work-related AI use | Use for claim discipline; do not translate exposure directly into job-loss claims. |
 | OpenAI GDPval | First version, September 2025 | Economically valuable knowledge-work capability benchmark | Use for model-capability context only, not as a labor-market forecast. |
@@ -48,7 +49,7 @@ Lead capture now routes through `capture_commercial_lead`, which normalizes repe
 
 Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The script starts Vite on a local open port, verifies commercial routes are registered in `src/App.tsx`, and checks that each route returns a Vite app shell. This is a route smoke gate, not a replacement for browser-level lead capture and PDF/report generation tests.
 
-Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, Anthropic, OpenAI GDPval, WCAG, ADA, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
+Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET, BLS, WEF, OECD, Anthropic, OpenAI GDPval, WCAG, ADA, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
 Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, source registry, and report provenance renderer, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
 
@@ -66,6 +67,7 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - BLS Employment Projections: https://www.bls.gov/emp/
 - BLS OEWS tables: https://www.bls.gov/oes/tables.htm
 - WEF Future of Jobs Report 2025: https://www.weforum.org/publications/the-future-of-jobs-report-2025/
+- OECD Skills Outlook 2025: https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf
 - Anthropic Economic Index: https://www.anthropic.com/research/the-anthropic-economic-index
 - Anthropic labor market impacts / observed exposure: https://www.anthropic.com/research/labor-market-impacts
 - OpenAI GDPval overview: https://openai.com/index/gdpval

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T05:04:11.190Z",
+  "generatedAt": "2026-05-24T05:19:43.257Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T05:03:18.404Z",
+    "generatedAt": "2026-05-24T05:18:48.761Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -85,6 +85,7 @@
         "bls-emp",
         "bls-oews",
         "wef-foj-2025",
+        "oecd-skills-outlook-2025",
         "anthropic-economic-index",
         "anthropic-observed-exposure",
         "openai-gdpval",
@@ -103,9 +104,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 14806,
-      "rows": 273,
-      "sha256": "e021c03cbdf006d38d163f8033e71262afc19de185ff5e599306ccc0b8f35868",
+      "bytes": 15773,
+      "rows": 288,
+      "sha256": "13a149972bc0d6c589453704bb19afeb2d6d948cd2463115ffe1c5e9b9092946",
       "failures": [],
       "passed": true
     },
@@ -141,6 +142,7 @@
       "sourceIds": [
         "onet",
         "wef-foj-2025",
+        "oecd-skills-outlook-2025",
         "anthropic-economic-index",
         "anthropic-observed-exposure",
         "openai-gdpval",
@@ -158,12 +160,13 @@
         "SkillChangeStatus",
         "ProofPackSectionReview",
         "getTransitionProofPackReviewMetadata",
-        "renderTransitionProofPackHtml"
+        "renderTransitionProofPackHtml",
+        "Source caveat"
       ],
       "caveat": "Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.",
-      "bytes": 46634,
-      "rows": 979,
-      "sha256": "cfb4295829b18df5cdb060b61dd3fe62600200f862bfdc848cdd82df008017db",
+      "bytes": 50641,
+      "rows": 1049,
+      "sha256": "7f7980f1398a66f83d8461310af23e3a52a44ae9903c767e3753fb6016e3e052",
       "failures": [],
       "passed": true
     },

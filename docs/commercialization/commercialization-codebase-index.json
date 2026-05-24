@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T05:04:10.840Z",
+  "generatedAt": "2026-05-24T05:19:42.834Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -618,6 +618,7 @@
     "lightcast",
     "llm-output",
     "nist-ai-rmf",
+    "oecd-skills-outlook-2025",
     "onet",
     "openai-gdpval",
     "serpapi",
@@ -762,7 +763,7 @@
         "src/lib/workforceExecutiveReport.ts",
         "scripts/verify-report-evidence.mjs"
       ],
-      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger, caveated AI-era role radar, \"does not prove\" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, and final artifact approval."
+      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, caveated AI-era role radar, \"does not prove\" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, and final artifact approval."
     },
     {
       "feature": "Privacy and responsible-use trust boundary",

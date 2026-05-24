@@ -45,6 +45,9 @@ export interface SkillChangeItem {
   action: SkillAction;
   rationale: string;
   sourceIds: string[];
+  confidence: EvidenceConfidence;
+  reviewStatus: ReportReviewStatus;
+  caveat: string;
 }
 
 export interface AiEraRole {
@@ -652,7 +655,10 @@ export function buildOccupationTransitionProofPack(
       status: "declining" as const,
       action: "replace" as const,
       rationale: "Routine execution should be converted into system ownership, review, or exception handling.",
-      sourceIds: ["anthropic-observed-exposure", "bls-ai-mlr-2025"],
+      sourceIds: ["anthropic-observed-exposure", "bls-ai-mlr-2025", "oecd-skills-outlook-2025"],
+      confidence: "medium" as const,
+      reviewStatus,
+      caveat: "Declining means routine execution is less defensible as a standalone skill; it does not mean the whole occupation or worker is obsolete.",
     })),
     ...data.safeSkills.map((skill) => ({
       skill,
@@ -660,13 +666,39 @@ export function buildOccupationTransitionProofPack(
       action: "protect" as const,
       rationale: "Keep and deepen this skill because it remains tied to human judgment or trust.",
       sourceIds: ["onet", "wef-foj-2025"],
+      confidence: "medium" as const,
+      reviewStatus,
+      caveat: "Stable skills still need role-specific validation because employer workflows and accountability requirements differ.",
     })),
+    {
+      skill: `${data.title} AI workflow supervision`,
+      status: "changing" as const,
+      action: "upgrade" as const,
+      rationale: "The work is likely to shift from manual execution toward AI-assisted review, exception handling, and workflow ownership.",
+      sourceIds: ["wef-foj-2025", "oecd-skills-outlook-2025", "anthropic-observed-exposure"],
+      confidence: "medium" as const,
+      reviewStatus,
+      caveat: "Changing skills need a client or employer workflow check before being turned into a training plan.",
+    },
+    {
+      skill: `Local demand for ${data.bridgeRole} transition skills`,
+      status: "unknown" as const,
+      action: "learn_next" as const,
+      rationale: "Local job-posting demand is not yet validated in this open-data proof pack.",
+      sourceIds: ["lightcast", "esco", "llm-output"],
+      confidence: "low" as const,
+      reviewStatus: "staff_review_required" as const,
+      caveat: "Unknown means the report needs local posting, program, or licensed provider validation before client-ready prioritization.",
+    },
     ...data.reskillingSuggestions.map((skill) => ({
       skill,
       status: "growing" as const,
       action: "learn_next" as const,
       rationale: "Useful next skill for moving from exposure awareness into transition action.",
-      sourceIds: ["wef-foj-2025", "lightcast", "esco"],
+      sourceIds: ["wef-foj-2025", "oecd-skills-outlook-2025", "lightcast", "esco"],
+      confidence: "medium" as const,
+      reviewStatus,
+      caveat: "Growing skill status is directional until checked against local postings, program outcomes, or licensed market data.",
     })),
   ].slice(0, 12);
 
@@ -701,7 +733,7 @@ export function buildOccupationTransitionProofPack(
     createEvidenceCard({
       id: "skill-change-ledger",
       claim: "Skills should be separated into protect, upgrade, replace, and learn-next actions.",
-      sourceIds: ["wef-foj-2025", "esco", "lightcast"],
+      sourceIds: ["wef-foj-2025", "oecd-skills-outlook-2025", "esco", "lightcast"],
       confidence: "medium",
       caveat: "Provider-backed job-posting signals remain adapter-ready until licensed data is integrated.",
       doesNotProve: "That every listed skill is currently demanded in the user's local labor market.",
@@ -773,13 +805,19 @@ export function buildWorkforceTransitionProofPack(
       action: "learn_next",
       rationale: "High-exposure workflows need people who can evaluate generated outputs and catch failure modes.",
       sourceIds: ["anthropic-observed-exposure", "openai-gdpval", "nist-ai-rmf"],
+      confidence: "medium",
+      reviewStatus,
+      caveat: "Growing demand is directional until checked against local role design and current postings.",
     },
     {
       skill: "Exception handling",
       status: "growing",
       action: "upgrade",
       rationale: "Human value shifts toward exceptions when routine workflow becomes automatable.",
-      sourceIds: ["bls-ai-mlr-2025", "wef-foj-2025"],
+      sourceIds: ["bls-ai-mlr-2025", "wef-foj-2025", "oecd-skills-outlook-2025"],
+      confidence: "medium",
+      reviewStatus,
+      caveat: "Exception work must be validated against the team's actual queue design and escalation policy.",
     },
     {
       skill: "AI governance documentation",
@@ -787,6 +825,19 @@ export function buildWorkforceTransitionProofPack(
       action: "learn_next",
       rationale: "Institutional pilots need documented boundaries, review states, and evidence trails.",
       sourceIds: ["nist-ai-rmf", "ada-ai-hiring-guidance", "wcag-22"],
+      confidence: "high",
+      reviewStatus,
+      caveat: "Governance documentation is necessary for pilots but does not certify legal or regulatory compliance.",
+    },
+    {
+      skill: "Role-level workflow redesign",
+      status: "changing",
+      action: "upgrade",
+      rationale: "AI adoption changes task bundles, handoffs, review points, and the skills needed to supervise the work.",
+      sourceIds: ["oecd-skills-outlook-2025", "wef-foj-2025", "nist-ai-rmf"],
+      confidence: "medium",
+      reviewStatus,
+      caveat: "Changing status needs manager and worker validation before being converted into a department plan.",
     },
     {
       skill: "Manual data transfer",
@@ -794,6 +845,9 @@ export function buildWorkforceTransitionProofPack(
       action: "replace",
       rationale: "Manual movement of structured data is often a strong candidate for workflow redesign.",
       sourceIds: ["anthropic-observed-exposure", "bls-ai-mlr-2025"],
+      confidence: "medium",
+      reviewStatus,
+      caveat: "Declining applies to routine manual transfer, not to accountable data stewardship or exception review.",
     },
     {
       skill: "Stakeholder communication",
@@ -801,6 +855,19 @@ export function buildWorkforceTransitionProofPack(
       action: "protect",
       rationale: "Workforce transition still needs human context, trust, and change management.",
       sourceIds: ["wef-foj-2025", "nist-ai-rmf"],
+      confidence: "medium",
+      reviewStatus,
+      caveat: "Stable skills still need team-specific examples before training budgets are assigned.",
+    },
+    {
+      skill: "Local posting demand by department",
+      status: "unknown",
+      action: "learn_next",
+      rationale: "The CSV audit does not include current local postings or licensed provider demand signals.",
+      sourceIds: ["lightcast", "esco", "llm-output"],
+      confidence: "low",
+      reviewStatus: "staff_review_required",
+      caveat: "Unknown status must remain visible until live posting validation or licensed market data is integrated.",
     },
   ];
 
@@ -830,7 +897,7 @@ export function buildWorkforceTransitionProofPack(
     createEvidenceCard({
       id: "workforce-skill-transition",
       claim: "Reskilling priorities should focus on verification, exception handling, and governed AI workflow ownership.",
-      sourceIds: ["wef-foj-2025", "lightcast", "anthropic-economic-index"],
+      sourceIds: ["wef-foj-2025", "oecd-skills-outlook-2025", "lightcast", "anthropic-economic-index"],
       confidence: "medium",
       caveat: "Skill demand needs current job-posting or employer-specific validation before budget allocation.",
       doesNotProve: "That a particular training vendor, course, or redeployment path will succeed.",
@@ -957,7 +1024,7 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
       <h3>Skill Change Ledger</h3>
       <table class="proof-table skill-change-ledger">
         <thead>
-          <tr><th>Skill</th><th>Status</th><th>Action</th><th>Rationale</th></tr>
+          <tr><th>Skill</th><th>Status</th><th>Action</th><th>Confidence</th><th>Review</th><th>Source caveat</th><th>Rationale</th></tr>
         </thead>
         <tbody>
           ${pack.skillLedger.slice(0, 10).map((skill) => `
@@ -965,6 +1032,9 @@ export function renderTransitionProofPackHtml(pack: TransitionProofPack): string
               <td>${escapeHtml(skill.skill)}</td>
               <td><span class="proof-pill proof-pill-${escapeHtml(skill.status)}">${escapeHtml(renderSkillStatusLabel(skill.status))}</span></td>
               <td>${escapeHtml(renderSkillActionLabel(skill.action))}</td>
+              <td>${escapeHtml(skill.confidence)} confidence</td>
+              <td><span class="review-state">${escapeHtml(renderReviewStatusLabel(skill.reviewStatus))}</span></td>
+              <td>${escapeHtml(skill.caveat)}<br/><span>Sources: ${skill.sourceIds.map(escapeHtml).join(", ")}</span></td>
               <td>${escapeHtml(skill.rationale)}</td>
             </tr>
           `).join("")}

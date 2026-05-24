@@ -1,8 +1,8 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T05:04:11.190Z
+Generated: 2026-05-24T05:19:43.257Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
-Source verification generated: 2026-05-24T05:03:18.404Z
+Source verification generated: 2026-05-24T05:18:48.761Z
 All referenced current-source checks passed: yes
 Current-source verification required for this local checksum pass: no
 
@@ -13,9 +13,9 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `wef-economics-csv` | WEF economics CSV seed | `public/data/econ_wef.csv` | csv | 1,740 | `cedb403873db0637...` | `wef-foj-2025` | pass |
 | `occupation-risk-seed` | SEO occupation risk seed | `src/data/occupationRiskData.ts` | typescript-seed | 1,043 | `4b5826d0fb62c3a8...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025` | pass |
 | `onet-ingest-boundary` | O*NET metadata ingestion boundary | `supabase/lib/scripts/ingest_onet_metadata.ts` | ingestion-script | 228 | `8deb7c39cc054a41...` | `onet` | pass |
-| `source-manifest-module` | Source manifest module | `src/lib/sourceManifest.ts` | source-registry | 273 | `e021c03cbdf006d3...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `serpapi`, `llm-output` | pass |
+| `source-manifest-module` | Source manifest module | `src/lib/sourceManifest.ts` | source-registry | 288 | `13a149972bc0d6c5...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `serpapi`, `llm-output` | pass |
 | `report-evidence-card-module` | Report evidence card renderer | `src/lib/reportEvidenceCards.ts` | report-runtime | 91 | `2a82837b74fe7871...` | `onet`, `bls-ai-mlr-2025`, `nist-ai-rmf`, `llm-output` | pass |
-| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 979 | `cfb4295829b18df5...` | `onet`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
+| `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 1,049 | `7f7980f1398a66f8...` | `onet`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |

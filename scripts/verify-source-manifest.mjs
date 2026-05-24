@@ -45,6 +45,15 @@ const checks = [
     ],
   },
   {
+    id: 'oecd-skills-outlook-2025',
+    label: 'OECD Skills Outlook 2025',
+    url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf',
+    expected: [
+      { label: 'OECD Skills Outlook 2025 title', pattern: /OECD Skills Outlook 2025/i },
+      { label: 'skill and labour-market transition evidence', pattern: /skills|labour market|artificial intelligence/i },
+    ],
+  },
+  {
     id: 'anthropic-economic-index',
     label: 'Anthropic Economic Index',
     url: 'https://www.anthropic.com/research/the-anthropic-economic-index',
