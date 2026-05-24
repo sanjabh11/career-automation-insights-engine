@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T10:09:49.851Z",
+  "generatedAt": "2026-05-24T10:16:52.196Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -665,12 +665,14 @@
       "commercial_report_artifacts",
       "commercial_staff",
       "commercial_workforce_audit_rows",
-      "commercial_workforce_audits"
+      "commercial_workforce_audits",
+      "resume_analysis_deletion_receipts"
     ],
     "functions": [
       "capture_commercial_lead",
       "create_commercial_report_artifact",
       "create_commercial_workforce_audit",
+      "delete_resume_analysis_with_receipt",
       "get_commercial_leads",
       "get_commercial_report_artifact",
       "get_commercial_report_artifact_events",
@@ -686,6 +688,7 @@
       "capture_commercial_lead",
       "create_commercial_report_artifact",
       "create_commercial_workforce_audit",
+      "delete_resume_analysis_with_receipt",
       "get_commercial_leads",
       "get_commercial_report_artifact",
       "get_commercial_report_artifact_events",
@@ -699,7 +702,9 @@
     ],
     "policies": [
       "Commercial staff can read own staff record",
-      "Public can create commercial leads"
+      "Public can create commercial leads",
+      "Service role can manage resume deletion receipts",
+      "Users can read own resume deletion receipts"
     ]
   },
   "featureMap": [

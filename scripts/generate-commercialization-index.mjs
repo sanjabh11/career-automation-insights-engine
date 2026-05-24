@@ -280,10 +280,10 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, and non-legal review attestation are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
-- GitHub collaborator access is verified, and the commercial workflow is installed; hosted CI run evidence remains pending until the first GitHub Actions run is inspected.
+- GitHub local tracking shows the commercial branch and workflow, but remote branch/collaborator access and hosted CI run evidence still need re-confirmation when DNS/auth are stable.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 
@@ -294,14 +294,15 @@ See \`${JSON_OUTPUT}\` for the same index as JSON.
 }
 
 async function main() {
-  const [appSource, packageSource, manifestSource, baseSqlSource, reviewSqlSource] = await Promise.all([
+  const [appSource, packageSource, manifestSource, baseSqlSource, reviewSqlSource, resumeDeletionSqlSource] = await Promise.all([
     readFile('src/App.tsx', 'utf8'),
     readFile('package.json', 'utf8'),
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
     readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
+    readFile('supabase/migrations/20260524000400_add_resume_deletion_receipts.sql', 'utf8'),
   ]);
-  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}`;
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${resumeDeletionSqlSource}`;
   const branch = process.env.GIT_BRANCH || 'commercialization-proof-packs';
   const index = {
     generatedAt: new Date().toISOString(),

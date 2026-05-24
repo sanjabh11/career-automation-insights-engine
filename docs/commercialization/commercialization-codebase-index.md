@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T10:09:49.851Z
+Generated: 2026-05-24T10:16:52.196Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -45,11 +45,13 @@ Tables:
 - `public.commercial_staff`
 - `public.commercial_workforce_audit_rows`
 - `public.commercial_workforce_audits`
+- `public.resume_analysis_deletion_receipts`
 
 RPC functions:
 - `public.capture_commercial_lead` (granted)
 - `public.create_commercial_report_artifact` (granted)
 - `public.create_commercial_workforce_audit` (granted)
+- `public.delete_resume_analysis_with_receipt` (granted)
 - `public.get_commercial_leads` (granted)
 - `public.get_commercial_report_artifact` (granted)
 - `public.get_commercial_report_artifact_events` (granted)
@@ -64,6 +66,8 @@ RPC functions:
 Policies:
 - Commercial staff can read own staff record
 - Public can create commercial leads
+- Service role can manage resume deletion receipts
+- Users can read own resume deletion receipts
 
 ## Source Registry Coverage
 
@@ -139,10 +143,10 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, and non-legal review attestation are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
-- GitHub collaborator access is verified, and the commercial workflow is installed; hosted CI run evidence remains pending until the first GitHub Actions run is inspected.
+- GitHub local tracking shows the commercial branch and workflow, but remote branch/collaborator access and hosted CI run evidence still need re-confirmation when DNS/auth are stable.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 
