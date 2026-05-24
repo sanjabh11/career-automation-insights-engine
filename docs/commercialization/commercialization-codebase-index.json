@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:29:12.987Z",
+  "generatedAt": "2026-05-24T04:38:09.173Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -723,9 +723,10 @@
         "src/pages/CommercialLeadOpsPage.tsx",
         "src/lib/commercialLeadOps.ts",
         "src/lib/commercialReportArtifacts.ts",
-        "supabase/migrations/20260523000100_create_commercial_leads.sql"
+        "supabase/migrations/20260523000100_create_commercial_leads.sql",
+        "supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql"
       ],
-      "proof": "Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging."
+      "proof": "Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, and section-level review/client-ready event logging."
     },
     {
       "feature": "Source provenance and claim boundaries",
@@ -761,7 +762,7 @@
         "src/lib/workforceExecutiveReport.ts",
         "scripts/verify-report-evidence.mjs"
       ],
-      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, section-level review workflow, and persisted review metadata."
+      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, \"does not prove\" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, and staff review/client-ready event logging."
     },
     {
       "feature": "Privacy and responsible-use trust boundary",

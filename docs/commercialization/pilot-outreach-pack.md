@@ -62,7 +62,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 12 | BLS/OEWS wage and employment context | Common | Medium | Medium | Adapter-ready |
 | 13 | ESCO skill taxonomy crosswalk | Common in EU/global products | Medium | Medium | Adapter-ready |
 | 14 | Licensed posting-data validation | Common in paid platforms | Medium | Low until licensed | Pending |
-| 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Pending |
+| 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as staff artifact events; live Supabase application pending |
 | 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Pending |
 | 17 | Course/provider recommendation boundary | Common | Medium | Medium | Pending |
 | 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Pending |

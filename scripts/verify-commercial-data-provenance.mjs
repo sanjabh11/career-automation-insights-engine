@@ -81,6 +81,15 @@ const artifacts = [
     expectedSnippets: ['buildWorkforceExecutiveReportHtml', 'downloadWorkforceExecutiveReport', 'Workforce Report Source Provenance'],
     caveat: 'Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.',
   },
+  {
+    id: 'artifact-review-event-migration',
+    label: 'Artifact review event migration',
+    path: 'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
+    type: 'supabase-migration',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'llm-output'],
+    expectedSnippets: ['section_review_updated', 'section_client_ready', 'artifact_client_ready', 'log_commercial_report_artifact_event'],
+    caveat: 'Staff review events create an append-only readiness trail; they do not replace legal, accessibility, or labor-relations review.',
+  },
 ];
 
 function sha256(value) {

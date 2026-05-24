@@ -31,7 +31,13 @@ export interface CommercialReportArtifactDetail extends CommercialReportArtifact
   metadata: Record<string, unknown>;
 }
 
-export type CommercialReportArtifactEventType = "staff_opened" | "staff_downloaded" | "staff_open_failed";
+export type CommercialReportArtifactEventType =
+  | "staff_opened"
+  | "staff_downloaded"
+  | "staff_open_failed"
+  | "section_review_updated"
+  | "section_client_ready"
+  | "artifact_client_ready";
 
 export interface CommercialReportArtifactEventInput {
   artifactId: string;

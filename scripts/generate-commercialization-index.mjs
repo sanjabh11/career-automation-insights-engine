@@ -67,8 +67,9 @@ const featureMap = [
       'src/lib/commercialLeadOps.ts',
       'src/lib/commercialReportArtifacts.ts',
       'supabase/migrations/20260523000100_create_commercial_leads.sql',
+      'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging.',
+    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, and section-level review/client-ready event logging.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -96,7 +97,7 @@ const featureMap = [
       'src/lib/workforceExecutiveReport.ts',
       'scripts/verify-report-evidence.mjs',
     ],
-    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, section-level review workflow, and persisted review metadata.',
+    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, and staff review/client-ready event logging.',
   },
   {
     feature: 'Privacy and responsible-use trust boundary',
@@ -259,12 +260,14 @@ See \`${JSON_OUTPUT}\` for the same index as JSON.
 }
 
 async function main() {
-  const [appSource, packageSource, manifestSource, sqlSource] = await Promise.all([
+  const [appSource, packageSource, manifestSource, baseSqlSource, reviewSqlSource] = await Promise.all([
     readFile('src/App.tsx', 'utf8'),
     readFile('package.json', 'utf8'),
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
+    readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
   ]);
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}`;
   const branch = process.env.GIT_BRANCH || 'commercialization-proof-packs';
   const index = {
     generatedAt: new Date().toISOString(),

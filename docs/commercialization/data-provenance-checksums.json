@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:29:13.570Z",
+  "generatedAt": "2026-05-24T04:38:10.940Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -212,6 +212,29 @@
       "bytes": 10619,
       "rows": 234,
       "sha256": "4ad0baba8eac8298fd19e252acea0abf55ef4a8df31aaca9a764874a46c0ab29",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "artifact-review-event-migration",
+      "label": "Artifact review event migration",
+      "path": "supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "section_review_updated",
+        "section_client_ready",
+        "artifact_client_ready",
+        "log_commercial_report_artifact_event"
+      ],
+      "caveat": "Staff review events create an append-only readiness trail; they do not replace legal, accessibility, or labor-relations review.",
+      "bytes": 2465,
+      "rows": 87,
+      "sha256": "f0179f9e596e98e069bbdf7ebc30eb6e383b3b5c23713b1dfbe598f7713c986a",
       "failures": [],
       "passed": true
     }

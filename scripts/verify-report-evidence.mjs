@@ -84,6 +84,39 @@ const checks = [
     ],
   },
   {
+    id: 'lead-ops-section-review-ui',
+    path: 'src/pages/CommercialLeadOpsPage.tsx',
+    snippets: [
+      'handleReviewSectionTransition',
+      'proof_pack_review_action',
+      'data-proof-pack-review-section',
+      'Mark reviewed',
+      'Mark client-ready',
+      'section_client_ready',
+      'section_review_updated',
+    ],
+  },
+  {
+    id: 'artifact-review-event-types',
+    path: 'src/lib/commercialReportArtifacts.ts',
+    snippets: [
+      '"section_review_updated"',
+      '"section_client_ready"',
+      '"artifact_client_ready"',
+    ],
+  },
+  {
+    id: 'artifact-review-event-migration',
+    path: 'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
+    snippets: [
+      'section_review_updated',
+      'section_client_ready',
+      'artifact_client_ready',
+      'log_commercial_report_artifact_event',
+      'actor_user_id',
+    ],
+  },
+  {
     id: 'nist-source-registered',
     path: 'src/lib/sourceManifest.ts',
     snippets: [

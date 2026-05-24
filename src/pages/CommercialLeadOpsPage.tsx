@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -38,6 +39,31 @@ import {
   listCommercialReportArtifactEvents,
   logCommercialReportArtifactEvent,
 } from "@/lib/commercialReportArtifacts";
+import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
+import type { ProofPackSectionReview } from "@/lib/workTransitionProofPack";
+
+type LeadProofPackReviewSection = Pick<
+  ProofPackSectionReview,
+  | "sectionId"
+  | "sectionTitle"
+  | "reviewStatus"
+  | "requiredForInstitutionalDelivery"
+  | "reviewerRole"
+  | "clientReady"
+  | "blockingReason"
+  | "caveat"
+  | "sourceIds"
+  | "evidenceCardIds"
+  | "acceptanceCriteria"
+  | "allowedNextStatuses"
+>;
+
+interface LeadProofPackReviewWorkflow {
+  reviewStatus?: ReportReviewStatus;
+  clientReady?: boolean;
+  pendingSectionCount?: number;
+  sections: LeadProofPackReviewSection[];
+}
 
 const statusLabels: Record<LeadStatus, string> = {
   new: "New",
@@ -73,7 +99,105 @@ function shortId(value: string): string {
 function eventLabel(eventType: CommercialReportArtifactEvent["eventType"]): string {
   if (eventType === "staff_opened") return "Opened";
   if (eventType === "staff_downloaded") return "Downloaded";
+  if (eventType === "section_review_updated") return "Section reviewed";
+  if (eventType === "section_client_ready") return "Section client-ready";
+  if (eventType === "artifact_client_ready") return "Artifact client-ready";
   return "Open failed";
+}
+
+function reviewStatusLabel(status: ReportReviewStatus): string {
+  return REVIEW_STATUS_LABELS[status] || status;
+}
+
+function reviewStatusBadgeVariant(status: ReportReviewStatus): "default" | "secondary" | "outline" | "destructive" {
+  if (status === "client_ready" || status === "staff_reviewed" || status === "coach_reviewed") return "default";
+  if (status === "staff_review_required") return "destructive";
+  return "outline";
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function isReviewStatus(value: unknown): value is ReportReviewStatus {
+  return (
+    value === "auto_generated" ||
+    value === "staff_review_required" ||
+    value === "staff_reviewed" ||
+    value === "coach_reviewed" ||
+    value === "client_ready"
+  );
+}
+
+function readStringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function normalizeReviewSection(value: unknown): LeadProofPackReviewSection | null {
+  if (!isRecord(value)) return null;
+  const sectionId = typeof value.sectionId === "string" ? value.sectionId : "";
+  const sectionTitle = typeof value.sectionTitle === "string" ? value.sectionTitle : "";
+  const reviewStatus = isReviewStatus(value.reviewStatus) ? value.reviewStatus : "staff_review_required";
+  if (!sectionId || !sectionTitle) return null;
+
+  return {
+    sectionId,
+    sectionTitle,
+    reviewStatus,
+    requiredForInstitutionalDelivery: value.requiredForInstitutionalDelivery === true,
+    reviewerRole: typeof value.reviewerRole === "string" ? value.reviewerRole : "Staff reviewer",
+    clientReady: value.clientReady === true,
+    blockingReason: typeof value.blockingReason === "string" ? value.blockingReason : "Review required before client delivery.",
+    caveat: typeof value.caveat === "string" ? value.caveat : "Review status is specific to this artifact.",
+    sourceIds: readStringList(value.sourceIds),
+    evidenceCardIds: readStringList(value.evidenceCardIds),
+    acceptanceCriteria: readStringList(value.acceptanceCriteria),
+    allowedNextStatuses: readStringList(value.allowedNextStatuses).filter(isReviewStatus),
+  };
+}
+
+function readProofPackReviewWorkflow(lead: CommercialLeadRow): LeadProofPackReviewWorkflow | null {
+  const rawWorkflow = lead.metadata?.proof_pack_review_workflow;
+  if (!isRecord(rawWorkflow) || !Array.isArray(rawWorkflow.sections)) return null;
+  const sections = rawWorkflow.sections.map(normalizeReviewSection).filter((section): section is LeadProofPackReviewSection => section !== null);
+  if (sections.length === 0) return null;
+
+  return {
+    reviewStatus: isReviewStatus(rawWorkflow.reviewStatus) ? rawWorkflow.reviewStatus : undefined,
+    clientReady: rawWorkflow.clientReady === true,
+    pendingSectionCount: typeof rawWorkflow.pendingSectionCount === "number" ? rawWorkflow.pendingSectionCount : undefined,
+    sections,
+  };
+}
+
+function updateWorkflowSectionStatus(
+  workflow: LeadProofPackReviewWorkflow,
+  sectionId: string,
+  reviewStatus: ReportReviewStatus
+): LeadProofPackReviewWorkflow {
+  const sections = workflow.sections.map((section) => {
+    if (section.sectionId !== sectionId) return section;
+    const clientReady = reviewStatus === "client_ready" || reviewStatus === "staff_reviewed" || reviewStatus === "coach_reviewed";
+    return {
+      ...section,
+      reviewStatus,
+      clientReady,
+    };
+  });
+  const pendingSectionCount = sections.filter((section) => !section.clientReady).length;
+
+  return {
+    ...workflow,
+    reviewStatus: pendingSectionCount === 0 ? "client_ready" : "staff_review_required",
+    clientReady: pendingSectionCount === 0,
+    pendingSectionCount,
+    sections,
+  };
+}
+
+function reviewWorkflowSummary(workflow: LeadProofPackReviewWorkflow): string {
+  const pending = workflow.pendingSectionCount ?? workflow.sections.filter((section) => !section.clientReady).length;
+  return `${workflow.sections.length - pending}/${workflow.sections.length} sections ready`;
 }
 
 function artifactFileName(title: string): string {
@@ -108,6 +232,8 @@ export default function CommercialLeadOpsPage() {
   const [loadingEventsArtifactId, setLoadingEventsArtifactId] = useState<string | null>(null);
   const [expandedEventsArtifactId, setExpandedEventsArtifactId] = useState<string | null>(null);
   const [artifactEventsById, setArtifactEventsById] = useState<Record<string, CommercialReportArtifactEvent[]>>({});
+  const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({});
+  const [updatingReviewKey, setUpdatingReviewKey] = useState<string | null>(null);
 
   const mergeLeadDrafts = useCallback((rows: CommercialLeadRow[]) => {
     setLeadStatusDrafts((current) => {
@@ -316,6 +442,76 @@ export default function CommercialLeadOpsPage() {
       });
     } finally {
       setLoadingEventsArtifactId(null);
+    }
+  };
+
+  const handleReviewSectionTransition = async (
+    lead: CommercialLeadRow,
+    section: LeadProofPackReviewSection,
+    nextStatus: ReportReviewStatus
+  ) => {
+    const artifactId = lead.report_artifact_id;
+    const workflow = readProofPackReviewWorkflow(lead);
+    if (!artifactId || !workflow) return;
+
+    const reviewKey = `${artifactId}:${section.sectionId}:${nextStatus}`;
+    const noteKey = `${artifactId}:${section.sectionId}`;
+    const staffNote = (reviewNoteDrafts[noteKey] || "").trim();
+    setUpdatingReviewKey(reviewKey);
+
+    try {
+      const event = await logCommercialReportArtifactEvent({
+        artifactId,
+        leadId: lead.id,
+        eventType: nextStatus === "client_ready" ? "section_client_ready" : "section_review_updated",
+        deliveryChannel: "lead-ops-review",
+        metadata: {
+          proof_pack_review_action: true,
+          lead_email: lead.email,
+          section_id: section.sectionId,
+          section_title: section.sectionTitle,
+          from_status: section.reviewStatus,
+          to_status: nextStatus,
+          staff_note: staffNote || null,
+          reviewer_user_id: userId,
+          reviewer_email: user?.email || null,
+          required_for_institutional_delivery: section.requiredForInstitutionalDelivery,
+          acceptance_criteria: section.acceptanceCriteria,
+          source_ids: section.sourceIds,
+          evidence_card_ids: section.evidenceCardIds,
+          caveat: section.caveat,
+        },
+      });
+      const updatedWorkflow = updateWorkflowSectionStatus(workflow, section.sectionId, nextStatus);
+      setArtifactEventsById((current) => ({
+        ...current,
+        [artifactId]: [event, ...(current[artifactId] || [])].slice(0, 10),
+      }));
+      setLeads((current) =>
+        current.map((candidate) =>
+          candidate.id === lead.id
+            ? {
+              ...candidate,
+              metadata: {
+                ...candidate.metadata,
+                proof_pack_review_workflow: updatedWorkflow,
+              },
+            }
+            : candidate
+        )
+      );
+      toast({
+        title: nextStatus === "client_ready" ? "Section marked client-ready" : "Section review logged",
+        description: `${section.sectionTitle} was logged in the artifact review trail.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Review update failed",
+        description: error instanceof Error ? error.message : "Unable to log this section review event.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingReviewKey(null);
     }
   };
 
@@ -528,6 +724,10 @@ export default function CommercialLeadOpsPage() {
                 const artifactId = lead.report_artifact_id;
                 const artifactEvents = artifactId ? artifactEventsById[artifactId] || [] : [];
                 const isHistoryExpanded = artifactId ? expandedEventsArtifactId === artifactId : false;
+                const reviewWorkflow = readProofPackReviewWorkflow(lead);
+                const pendingReviewCount = reviewWorkflow
+                  ? reviewWorkflow.pendingSectionCount ?? reviewWorkflow.sections.filter((section) => !section.clientReady).length
+                  : null;
 
                 return (
                   <TableRow key={lead.id}>
@@ -548,6 +748,11 @@ export default function CommercialLeadOpsPage() {
                         <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                           <div className="flex flex-wrap items-center gap-2">
                             <span>Artifact: {shortId(artifactId)}</span>
+                            {reviewWorkflow && (
+                              <Badge variant={pendingReviewCount === 0 ? "default" : "secondary"}>
+                                {reviewWorkflowSummary(reviewWorkflow)}
+                              </Badge>
+                            )}
                             <Button
                               type="button"
                               size="sm"
@@ -585,7 +790,12 @@ export default function CommercialLeadOpsPage() {
                                 <div className="space-y-1">
 	                                  {artifactEvents.slice(0, 4).map((event) => (
 	                                    <div key={event.id} className="flex flex-wrap items-center justify-between gap-2">
-	                                      <span>{eventLabel(event.eventType)}</span>
+	                                      <span>
+                                          {eventLabel(event.eventType)}
+                                          {typeof event.metadata?.section_title === "string"
+                                            ? `: ${event.metadata.section_title}`
+                                            : ""}
+                                        </span>
 	                                      <span className="text-slate-500">{formatDate(event.createdAt)}</span>
 	                                      <span className="text-slate-500">
 	                                        {event.actorEmail || event.deliveryChannel || "staff"}
@@ -594,6 +804,80 @@ export default function CommercialLeadOpsPage() {
 	                                  ))}
                                 </div>
                               )}
+                            </div>
+                          )}
+                          {reviewWorkflow && (
+                            <div className="space-y-2 rounded-md border bg-background p-2 text-slate-800">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <div className="font-medium text-slate-900">Proof-pack section review</div>
+                                  <div className="text-slate-500">
+                                    Log reviewer identity, status transition, caveat, and acceptance criteria before client delivery.
+                                  </div>
+                                </div>
+                                <Badge variant={pendingReviewCount === 0 ? "default" : "destructive"}>
+                                  {pendingReviewCount === 0 ? "Client-ready" : `${pendingReviewCount} pending`}
+                                </Badge>
+                              </div>
+                              <div className="space-y-2">
+                                {reviewWorkflow.sections.map((section) => {
+                                  const noteKey = `${artifactId}:${section.sectionId}`;
+                                  const reviewKey = `${artifactId}:${section.sectionId}:staff_reviewed`;
+                                  const clientReadyKey = `${artifactId}:${section.sectionId}:client_ready`;
+                                  return (
+                                    <div
+                                      key={section.sectionId}
+                                      className="space-y-2 rounded border border-slate-200 bg-slate-50 p-2"
+                                      data-proof-pack-review-section={section.sectionId}
+                                    >
+                                      <div className="flex flex-wrap items-start justify-between gap-2">
+                                        <div>
+                                          <div className="font-medium text-slate-900">{section.sectionTitle}</div>
+                                          <div className="text-slate-500">{section.blockingReason || section.caveat}</div>
+                                        </div>
+                                        <Badge variant={reviewStatusBadgeVariant(section.reviewStatus)}>
+                                          {reviewStatusLabel(section.reviewStatus)}
+                                        </Badge>
+                                      </div>
+                                      <div className="text-slate-500">
+                                        Reviewer: {section.reviewerRole}. Required before institutional delivery:{' '}
+                                        {section.requiredForInstitutionalDelivery ? "yes" : "no"}.
+                                      </div>
+                                      <Textarea
+                                        value={reviewNoteDrafts[noteKey] || ""}
+                                        rows={2}
+                                        maxLength={1000}
+                                        placeholder="Reviewer note for this section"
+                                        aria-label={`Reviewer note for ${section.sectionTitle}`}
+                                        onChange={(event) =>
+                                          setReviewNoteDrafts((current) => ({ ...current, [noteKey]: event.target.value }))
+                                        }
+                                      />
+                                      <div className="flex flex-wrap gap-2">
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          variant="outline"
+                                          className="h-7 px-2 text-xs"
+                                          disabled={updatingReviewKey === reviewKey}
+                                          onClick={() => void handleReviewSectionTransition(lead, section, "staff_reviewed")}
+                                        >
+                                          {updatingReviewKey === reviewKey ? "Logging" : "Mark reviewed"}
+                                        </Button>
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          className="h-7 px-2 text-xs"
+                                          disabled={updatingReviewKey === clientReadyKey}
+                                          onClick={() => void handleReviewSectionTransition(lead, section, "client_ready")}
+                                        >
+                                          {updatingReviewKey === clientReadyKey ? "Logging" : "Mark client-ready"}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
                           )}
                         </div>

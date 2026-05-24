@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T04:29:13.570Z
+Generated: 2026-05-24T04:38:10.940Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T04:13:13.797Z
 All referenced current-source checks passed: yes
@@ -18,6 +18,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 899 | `c98d9275196be4dc...` | `onet`, `wef-foj-2025`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `llm-output` | pass |
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
+| `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 
 ## Caveats
 
@@ -29,3 +30,4 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `work-transition-proof-pack-module`: Emerging role radar, skill-change ledger, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.
 - `report-provenance-module`: Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.
 - `workforce-executive-report-module`: Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.
+- `artifact-review-event-migration`: Staff review events create an append-only readiness trail; they do not replace legal, accessibility, or labor-relations review.

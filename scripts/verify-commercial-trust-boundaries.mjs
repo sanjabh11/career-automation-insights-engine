@@ -130,6 +130,28 @@ const checks = [
     ],
   },
   {
+    id: 'commercial-artifact-review-events',
+    file: 'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
+    expected: [
+      /section_review_updated/,
+      /section_client_ready/,
+      /artifact_client_ready/,
+      /actor_user_id/,
+      /log_commercial_report_artifact_event/,
+    ],
+  },
+  {
+    id: 'commercial-lead-ops-review-ui',
+    file: 'src/pages/CommercialLeadOpsPage.tsx',
+    expected: [
+      /handleReviewSectionTransition/,
+      /data-proof-pack-review-section/,
+      /proof_pack_review_action/,
+      /Mark client-ready/,
+      /Reviewer note/,
+    ],
+  },
+  {
     id: 'commercial-ci-workflow-template',
     file: 'docs/commercialization/commercial-proof-pack.workflow.yml',
     expected: [
