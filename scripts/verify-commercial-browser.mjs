@@ -284,6 +284,53 @@ Engineering,Software Developers,8,128000,35,15-1252.00`);
   await assertVisible(page.getByText(/Rows needing SOC\/O\*NET review: 1/i), 'workforce unmapped review count');
 }
 
+async function verifyCounselorCohortProofPack(page, baseUrl) {
+  console.log('checking /tools/counselor-reports');
+  await page.goto(`${baseUrl}/tools/counselor-reports`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
+  await assertVisible(page.getByRole('heading', { name: /Counselor Report Generator/i }), '/tools/counselor-reports heading');
+  await assertVisible(page.locator('[data-career-center-cohort-pack="true"]'), 'career center cohort proof pack');
+  await assertVisible(page.getByText(/aggregate-only/i).first(), 'cohort aggregate-only boundary');
+  await assertVisible(page.getByText(/placement-rate or first-destination outcome report/i), 'cohort outcome boundary');
+
+  const htmlDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Cohort HTML/i }).click();
+  const htmlDownload = await htmlDownloadPromise;
+  if (!htmlDownload.suggestedFilename().includes('career-center-cohort-proof-pack')) {
+    throw new Error(`Unexpected cohort HTML filename: ${htmlDownload.suggestedFilename()}`);
+  }
+  const htmlBody = await htmlDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Cohort HTML stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expected of ['data-career-center-cohort-proof-pack="true"', 'Career Center Cohort Evidence Cards', 'FERPA', 'NACE']) {
+    if (!htmlBody.includes(expected)) {
+      throw new Error(`Cohort HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - career center cohort HTML');
+
+  const csvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Cohort CSV/i }).click();
+  const csvDownload = await csvDownloadPromise;
+  if (!csvDownload.suggestedFilename().includes('career-center-cohort-proof-pack')) {
+    throw new Error(`Unexpected cohort CSV filename: ${csvDownload.suggestedFilename()}`);
+  }
+  const csvBody = await csvDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Cohort CSV stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of ['segment_id', 'source_ids', 'review_state', 'caveat', 'does_not_prove']) {
+    if (!csvBody.includes(expectedColumn)) {
+      throw new Error(`Career-center cohort CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - career center cohort CSV');
+}
+
 async function verifyProofPackGallery(page, baseUrl) {
   console.log('checking /proof-pack-gallery');
   await page.goto(`${baseUrl}/proof-pack-gallery`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
@@ -295,6 +342,7 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.locator('[data-proof-pack-gallery-card="individual-transition-report"]'), 'individual proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="coach-branded-sample"]'), 'coach proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="workforce-csv-audit"]'), 'workforce proof-pack sample card');
+  await assertVisible(page.locator('[data-proof-pack-gallery-card="career-center-cohort-report"]'), 'career-center cohort sample card');
   await assertVisible(page.getByText(/Does not prove boundaries/i), 'gallery does-not-prove boundary');
   await assertVisible(page.getByText(/CRM import pack/i), 'CRM import pack');
   await assertVisible(page.getByRole('button', { name: /CRM CSV/i }), 'CRM CSV export');
@@ -354,6 +402,7 @@ async function runBrowserChecks(baseUrl) {
     await verifyCoachSampleReport(page, baseUrl);
     await verifySeoReportDownload(page, baseUrl);
     await verifyWorkforceAuditBuilder(page, baseUrl);
+    await verifyCounselorCohortProofPack(page, baseUrl);
     await verifyProofPackGallery(page, baseUrl);
 
     if (issues.length > 0) {

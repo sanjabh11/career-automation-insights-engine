@@ -149,6 +149,24 @@ const checks = [
     ],
   },
   {
+    id: 'nace-first-destination',
+    label: 'NACE First-Destination Standards and Protocols',
+    url: 'https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/',
+    expected: [
+      { label: 'first-destination standards title', pattern: /First-Destination.*Standards and Protocols/i },
+      { label: 'career outcome rate evidence', pattern: /Career Outcomes Rate|knowledge rate|salary/i },
+    ],
+  },
+  {
+    id: 'ferpa-student-privacy',
+    label: 'FERPA student privacy guidance',
+    url: 'https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records',
+    expected: [
+      { label: 'PII for education records title', pattern: /Personally Identifiable Information for Education Records/i },
+      { label: 'direct and indirect identifier evidence', pattern: /direct identifiers|indirect identifiers|education records/i },
+    ],
+  },
+  {
     id: 'dol-ai-literacy-framework',
     label: 'DOL AI Literacy Framework',
     url: 'https://www.dol.gov/agencies/eta/advisories/ten-07-25',

@@ -62,6 +62,21 @@ const galleryItems = [
     reviewStatus: "staff_review_required" as const,
     caveat: "Use anonymized role rows for pilots. This is not employee ranking, hiring, firing, or layoff support.",
   },
+  {
+    id: "career-center-cohort-report",
+    title: "Career-center cohort report",
+    buyer: "Career centers, counselors, alumni teams",
+    route: "/tools/counselor-reports?utm_source=proof_pack_gallery&utm_medium=sample&utm_campaign=phase6_pilot",
+    routeLabel: "Open cohort pack",
+    icon: GraduationCap,
+    sample: "Aggregate student and alumni cohort proof pack",
+    output: "Cohort transition segments with privacy, consent, advisor-review, and outcome-reporting boundaries.",
+    evidence: ["Aggregate-only cohort rows", "FERPA-style privacy boundary", "Outcome-reporting caveat"],
+    sourceIds: ["ferpa-student-privacy", "nace-career-readiness", "nace-first-destination", "dol-ai-literacy-framework"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
+    caveat: "Use anonymized aggregate segments only. This is not student ranking, placement-rate reporting, or individual advising replacement.",
+  },
 ];
 
 const occupationSamples = [
@@ -91,16 +106,16 @@ const outreachSegments = [
   {
     segment: "Career centers",
     owner: "Counselor and alumni-services outreach",
-    offer: "One student/alumni occupation pack plus counselor review notes",
-    route: "/automation-risk/accountant",
+    offer: "One aggregate student/alumni cohort pack plus counselor review notes",
+    route: "/tools/counselor-reports",
     opener:
       "I am testing a reviewed career-transition artifact for students and alumni that explains what changed, what to learn next, and what the report does not prove. Could I send a sample for counselor feedback?",
     successMetric: "2 counselor reviews and one workshop-fit discussion",
-    sourceIds: ["nace-career-readiness", "dol-ai-literacy-framework", "wcag-22"],
+    sourceIds: ["nace-career-readiness", "nace-first-destination", "ferpa-student-privacy", "dol-ai-literacy-framework", "wcag-22"],
     confidence: "medium" as const,
     reviewStatus: "staff_review_required" as const,
-    caveat: "Career-center pilots should keep reports educational and advisor-reviewed.",
-    doesNotProve: "That the report can replace institutional advising, accommodation review, or student outcome measurement.",
+    caveat: "Career-center pilots should keep reports aggregate-only, educational, privacy-reviewed, and advisor-reviewed.",
+    doesNotProve: "That the report can replace institutional advising, accommodation review, student outcome measurement, or FERPA/data-governance review.",
   },
   {
     segment: "Workforce boards and L&D",
@@ -124,6 +139,18 @@ const researchSignals = [
     sourceId: "nace-career-readiness",
     url: "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
     takeaway: "Career centers and employers need skills language that connects education, work, and lifelong career management.",
+  },
+  {
+    label: "NACE first-destination standards",
+    sourceId: "nace-first-destination",
+    url: "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
+    takeaway: "Career-center outcome reporting needs standards and must stay separate from planning artifacts until outcomes are collected.",
+  },
+  {
+    label: "FERPA student privacy",
+    sourceId: "ferpa-student-privacy",
+    url: "https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records",
+    takeaway: "Cohort reports must avoid student PII unless institutional consent, access, retention, and disclosure controls are approved.",
   },
   {
     label: "DOL AI literacy framework",
@@ -169,6 +196,14 @@ const outreachEvidenceCards: OutreachEvidence[] = [
     reviewStatus: "auto_generated",
     caveat: "Licensed job-posting or provider-backed validation is not integrated in this repository.",
     doesNotProve: "That role-radar claims are backed by live postings, licensed provider data, or jurisdiction-specific demand.",
+  },
+  {
+    claim: "Career-center cohort proof packs must stay aggregate-only and separate from placement or first-destination outcome reporting.",
+    sourceIds: ["ferpa-student-privacy", "nace-first-destination", "nace-career-readiness"],
+    confidence: "medium",
+    reviewStatus: "staff_review_required",
+    caveat: "Cohort reporting can support workshops and advising planning, but student PII, outcome claims, and institutional reporting require separate governance.",
+    doesNotProve: "That the tool is FERPA-compliant, a placement-rate report, or a validated student outcome measurement system.",
   },
 ];
 
@@ -243,7 +278,7 @@ export default function ProofPackGalleryPage() {
               Proof-pack gallery for coach, career-center, and workforce pilots
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-              Three buyer-ready sample paths show what changed, why it changed, what source supports it, what action to take next, and what the artifact must not be used for.
+              Four buyer-ready sample paths show what changed, why it changed, what source supports it, what action to take next, and what the artifact must not be used for.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-emerald-500 text-slate-950 hover:bg-emerald-400">
@@ -273,7 +308,7 @@ export default function ProofPackGalleryPage() {
           </div>
         </section>
 
-        <section className="mt-12 grid gap-4 md:grid-cols-3">
+        <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {galleryItems.map((item) => {
             const Icon = item.icon;
             return (

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T08:00:00.725Z",
+  "generatedAt": "2026-05-24T08:29:10.246Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,7 +189,7 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "0e1d4c8ca81959f56dbb1179ceaf03c2480ebfe6b85102fbe26887d8f4c33e95",
+      "contentSha256": "cbf33fa7d14a2146cc167066e0e52ee8416f3a7d15e5ed45a1ffb24be51d7d0f",
       "byteLength": 233754,
       "evidence": [
         {
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "ee9c446454ddf539338b71b9ff6d91b3ffd1b814f67944d9f363a4f8788c1b3e",
+      "contentSha256": "6aa9c0f853245671168ac4dedfa881564c00f90d275ea345cf7cc04209bc27a3",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "c20c97619713e1bddbf5ef24f7d0935f9abfa36886f9559c4a8bbde51fbd297a",
+      "contentSha256": "cacd3ef2e673502234024a97c5f8751f00f20d466e485dae23094aab082234b6",
       "byteLength": 303692,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
-      "byteLength": 116284,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "7786b5c5ed57b041d415db733c1ab1b50502a1da9e54ce0071cad20463e46623",
+      "contentSha256": "0a11e320baa4ca09560de9fa2d7be37e0728851ce4849e65aa42612031d7d855",
       "byteLength": 74698,
       "evidence": [
         {
@@ -304,12 +304,52 @@
       "passed": true
     },
     {
+      "id": "nace-first-destination",
+      "label": "NACE First-Destination Standards and Protocols",
+      "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "f13aee41dc29d22730aafe11fad589b719275d9bb108fea2d04d76f837de8d18",
+      "byteLength": 41890,
+      "evidence": [
+        {
+          "label": "first-destination standards title",
+          "matched": true
+        },
+        {
+          "label": "career outcome rate evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ferpa-student-privacy",
+      "label": "FERPA student privacy guidance",
+      "url": "https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "d0eab110bd9d7a665d583b001659cae5beeeb10abf6894adb01ee1ba6f81ccb3",
+      "byteLength": 34707,
+      "evidence": [
+        {
+          "label": "PII for education records title",
+          "matched": true
+        },
+        {
+          "label": "direct and indirect identifier evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "dol-ai-literacy-framework",
       "label": "DOL AI Literacy Framework",
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "262987a34521e8966ad0932b00f571020fb787ab29be4936a504a519feeb13c8",
+      "contentSha256": "d5f14987cb362c1490c6d9a6965d94509f8f50276d17974f58dc854a4ec44ddc",
       "byteLength": 73088,
       "evidence": [
         {
@@ -329,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "30b21a2b3f0101fd0a968f69f7b77cfc16b044de1102f50e7e9581d8a0c71e70",
-      "byteLength": 165940,
+      "contentSha256": "9b6776004259b26eac0f209c3ba70413ef0ba03e85522633fa525ed75848c4be",
+      "byteLength": 164873,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -349,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "83b67b117682958656e741a7597a7feb2e6b026f1705cba6f5516289361599a9",
+      "contentSha256": "dc3e4ef5799e5d6b0841b3605541cdd7a292f964182b433b220b8711819c37bb",
       "byteLength": 210582,
       "evidence": [
         {
@@ -509,7 +549,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "8f298da7a00d949a38222ae22d77ca7bd7159a1cac603ad9acfbcbde5302136d",
+      "contentSha256": "b1cfede250fdb2e5de29bf9bf907a77a0e639167e9264175f61f4ab1cba62058",
       "byteLength": 91197,
       "evidence": [
         {

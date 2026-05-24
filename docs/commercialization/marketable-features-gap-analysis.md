@@ -81,7 +81,7 @@ Fresh market refresh notes from the May 2026 web check:
 | 4 | Source provenance and caveat registry | All buyers | 95% | Shared source manifest and registry added for O*NET, BLS EP/OEWS/LAUS/QCEW, CareerOneStop-ready, Census ACS-ready, WEF, Anthropic Economic Index, Anthropic observed exposure, OpenAI GDPval, BLS AI MLR, WCAG 2.2, ADA AI hiring guidance, ESCO-ready, Lightcast-ready, SerpAPI-ready, LLM output | Builds trust and reduces overclaim risk | Add automated refresh jobs, checksums, per-score evidence cards, local-market snapshots, and imported benchmark adapters only when terms allow. |
 | 5 | Resume-to-automation risk analyzer | Individuals, coaches | 91% | Existing route with trust/deletion messaging strengthened | Strong viral/free tool and coach upsell | Server-side PDF/DOCX parsing, saved report deletion receipts, bias testing, exportable client packet. |
 | 6 | Bridge role and skill transition planner | Individuals, education, workforce | 92% | Existing routes/components in repo | Converts risk insight into action | Add pathway confidence, program/course matching, local labor demand, time/cost estimates. |
-| 7 | Counselor report generator | Schools, workforce boards, coaches | 91% | Route exists | Institutional buyer wedge | Add batch mode, student/client consent, FERPA-style export boundaries, source-labeled PDF. |
+| 7 | Counselor report generator | Schools, workforce boards, coaches | 92% | Route now includes client report generation plus downloadable aggregate-only career-center cohort proof pack with FERPA-style privacy, NACE outcome boundary, source-labeled evidence cards, and CSV/HTML exports | Institutional buyer wedge | Add live batch consent, approved roster import, small-cell suppression policy, artifact persistence, and source-labeled PDF. |
 | 8 | Responsible AI and employment decision guardrails | Enterprise, institutional buyers | 94% | Responsible AI pages and new report notices exist | Required for serious HR/workforce conversations | Add policy checklist, audit logs, model cards, accessibility conformance notes. |
 | 9 | Occupation/industry SEO risk pages | Organic growth | 93% | Many routes already exist | Low-cost inbound acquisition | Add fresh data refresh, structured schema, canonical report download, conversion experiments. |
 | 10 | Skill adjacency and market signal overlays | Workforce, education, individuals | 90% | Existing graph/tooling, data adapters partially present | Differentiates beyond simple risk score | Add ESCO/Lightcast adapter, job posting signals, confidence scoring, stale-data warnings. |
@@ -93,6 +93,7 @@ Fresh market refresh notes from the May 2026 web check:
 | Lead capture | Supabase `commercial_leads` migration, deduping capture RPC, consent text/timestamp fields, client helper, stable artifact IDs, staff-gated ops route, CSV export, staff artifact open/download action, privacy link, and redacted browser retry queue added | Email automation, CRM integration, deployed-domain validation | High |
 | Report persistence | Client-rendered report HTML can be stored as stable `commercial_report_artifacts` records, linked to leads, opened by staff from lead ops, and logged through visible staff delivery/review events | Signed storage URLs, PDF export, resend workflow, and richer delivery analytics | High |
 | Coach workflow | Sample report generator, coach page, saved preview branding, brand colors/footer/contact fields, and optional Supabase lead/artifact capture added | Authenticated white-label account settings, client roster, report-credit fulfillment loop, logo upload | High |
+| Career-center cohort reporting | Counselor route includes an aggregate-only cohort proof pack with segment rows, privacy/outcome boundaries, evidence cards, and downloadable HTML/CSV exports | Live batch consent, approved roster import, small-cell suppression policy, staff persistence, and institution-specific outcome evidence | Medium |
 | Workforce audit | CSV audit skeleton, staff-gated saved imports, role rows, unmapped review queue, broader local deterministic SOC suggestions, confidence-banded suggestion coverage, visible suggestion-catalog count, and downloadable executive HTML report added | Full O*NET-backed candidate ranking, signed PDF/storage delivery, department recommendations | High |
 | Provenance | Shared source manifest and report registry added with verified source versions, timestamps, confidence, caveats, claim boundaries, `npm run verify:sources` official-page checks, and `npm run verify:data-provenance` local artifact checksums. Source coverage now includes O*NET, BLS EP/OEWS/LAUS/QCEW, CareerOneStop-ready, Census ACS-ready, WEF, Anthropic Economic Index, Anthropic observed exposure, OpenAI GDPval, BLS AI MLR, WCAG 2.2, ADA AI hiring guidance, ESCO, NIST, Lightcast-ready, SerpAPI-ready, and LLM output. | Scheduled source freshness checks, live imported-table checksums from Supabase exports, score-level evidence citations, local-market snapshot storage, and imported Anthropic/OpenAI benchmark adapters only when licensing/terms allow | High |
 | Data breadth | O*NET-centered with BLS/WEF/ESCO/Lightcast/SerpAPI-ready registry | Actual ESCO mapping, BLS/OEWS refresh, licensed Lightcast/job-posting adapter | High |
@@ -157,6 +158,7 @@ Uncommon but differentiating:
 | Coach-branded pilot packets | Faster sales path than building a full subscription suite first. |
 | Learning/provider recommendation boundary | Lets the product say what to learn next without pretending to endorse courses, vendors, credentials, or job outcomes. |
 | Local labor-market proof appendix | Lets the product discuss local context while separating OEWS, LAUS, QCEW, ACS, CareerOneStop, postings, and licensed-data boundaries. |
+| Aggregate career-center cohort pack | Turns student/alumni cohort needs into a privacy-bounded workshop and advising artifact instead of an individual ranking tool. |
 | Data-provider adapter boundary | Lets the app expand beyond O*NET without locking into one vendor. |
 
 ## Prioritized Implementation Backlog
@@ -173,6 +175,7 @@ Uncommon but differentiating:
 | High | Commercial codebase index | High | `npm run index:commercial` generates route/module/RPC/source/verification maps as Markdown and JSON for handoff and drift control. |
 | High | Commercial release orchestrator and CI template | High | `npm run verify:commercial` runs the core local commercial proof gate; `docs/commercialization/commercial-proof-pack.workflow.yml` is the GitHub Actions template to install after token reauth with `workflow` scope. |
 | Medium | Server-side resume parser | Medium | Edge function accepts file, extracts text, deletes raw file, returns receipt. |
+| Medium | Career-center cohort persistence | Medium | Approved roster import, aggregate segment builder, small-cell suppression, counselor review notes, and saved cohort proof-pack artifacts. |
 | Medium | Deterministic SOC suggestion service | Medium | Review queue shows ranked local O*NET/SOC candidates before staff approval, with expanded common-role seeds and 50%/75% confidence coverage in the executive skeleton. |
 | Medium | Payment/report credits | Medium | Stripe checkout, credits ledger, report generation decrements credit. |
 | Medium | LinkedIn outreach assets | High | Founder posts, DM scripts, pilot landing page, and sample report link. |
@@ -242,6 +245,8 @@ I am opening a small pilot for coaches: 10 branded sample reports plus feedback 
 - BLS Public Data API: https://www.bls.gov/developers/
 - CareerOneStop API Overview: https://github.com/CareerOneStop/API-Overview
 - Census ACS Data via API: https://www.census.gov/programs-surveys/acs/data/data-via-api.html
+- FERPA PII guidance: https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records
+- NACE First-Destination Standards: https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/
 - ESCO overview: https://esco.ec.europa.eu/en/about-esco/what-esco
 - ESCO Services API: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
 - World Economic Forum Future of Jobs Report 2025: https://www.weforum.org/publications/the-future-of-jobs-report-2025/

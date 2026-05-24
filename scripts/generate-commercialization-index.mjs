@@ -146,9 +146,10 @@ const featureMap = [
     routes: ['/tools/counselor-reports'],
     files: [
       'src/components/CounselorReportGenerator.tsx',
+      'src/lib/careerCenterCohortProofPack.ts',
       'supabase/migrations/20251213000003_white_label_configs.sql',
     ],
-    proof: 'Route exists as institutional wedge; still needs batch consent and commercial artifact integration.',
+    proof: 'Route now includes a downloadable aggregate-only career-center cohort proof pack with source-labeled cohort segments, FERPA-style privacy boundary, NACE first-destination outcome boundary, evidence cards, CSV export, and advisor-review requirements. Live authenticated batch consent and commercial artifact persistence remain pending.',
   },
 ];
 

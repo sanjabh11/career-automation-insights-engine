@@ -20,7 +20,7 @@ Gallery evidence boundary: every buyer path and exported CRM row must carry sour
 | Offer | Buyer | Deliverable | Success Metric | Boundary |
 |---|---|---|---|---|
 | Individual transition report | Career changer, coach client | One occupation proof pack with task split, skill ledger, role radar, learning/provider boundary, local labor-market appendix boundary, evidence cards, and review state. | User can explain three next actions and three caveats after reading. | Not a guarantee of local hiring, future employment, wage, or training outcome. |
-| Coach sample-report bundle | Coach, resume writer, counselor | White-label sample report and client-ready discussion guide. | Coach books 3-5 paid discovery sessions using sample artifact. | Coach review required before client delivery; course/provider choices and local-market claims need separate review. |
+| Coach sample-report bundle | Coach, resume writer, counselor | White-label sample report, client-ready discussion guide, and aggregate cohort sample for institutional buyers. | Coach books 3-5 paid discovery sessions using sample artifact. | Coach/counselor review required before client delivery; course/provider choices, local-market claims, and student/cohort data need separate review. |
 | Workforce CSV audit | Workforce board, L&D, HR | CSV role exposure rollup with executive report skeleton and review queue. | Buyer identifies 2-3 safe pilot roles and review owners. | Not employee ranking, employment decision support, local-demand proof, or training-vendor procurement advice. |
 
 ## LinkedIn Strategy
@@ -69,7 +69,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as section/final artifact events plus downloadable review attestation; live Supabase application pending |
 | 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Implemented as source-labeled appendix boundary; buyer-selected local snapshots pending |
 | 17 | Course/provider recommendation boundary | Common | Medium | Medium | Implemented as source-labeled learning/provider boundary; live provider catalog and outcome validation pending |
-| 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Pending |
+| 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Implemented as aggregate-only sample pack with FERPA-style privacy, NACE outcome boundary, CSV/HTML export, and advisor-review requirements; live batch consent and persistence pending |
 | 19 | CRM/email automation for leads | Common commercial need | High | High | Source-labeled CRM-import CSV implemented; live CRM/email sync pending |
 | 20 | Public sample gallery by occupation | Common marketing pattern | Medium | High | Implemented as `/proof-pack-gallery` with outreach evidence cards; deployed-domain analytics pending |
 

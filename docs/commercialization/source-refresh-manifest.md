@@ -49,7 +49,9 @@ Report artifacts now have an append-only staff event boundary in `commercial_rep
 
 Coach sample reports now use the same source manifest boundary and can persist a branded sample artifact when a coach enters a contact email. Treat this as an outreach proof-pack flow: the preview settings are browser-saved for fast demos, while the generated report HTML and lead record are Supabase-backed when the artifact capture succeeds.
 
-The public proof-pack gallery at `/proof-pack-gallery` packages the bounded outreach surface for coaches, career centers, and workforce buyers. It links to the individual, coach, and workforce sample routes, includes a sample occupation shelf, renders outreach evidence cards with source IDs, caveats, confidence, and review state, and exports a manual CRM-import CSV with the same evidence boundary columns. Treat the CSV as an outreach operations artifact only; live CRM sync, email automation, and deployed-domain analytics remain pending.
+The public proof-pack gallery at `/proof-pack-gallery` packages the bounded outreach surface for coaches, career centers, and workforce buyers. It links to the individual, coach, career-center cohort, and workforce sample routes, includes a sample occupation shelf, renders outreach evidence cards with source IDs, caveats, confidence, and review state, and exports a manual CRM-import CSV with the same evidence boundary columns. Treat the CSV as an outreach operations artifact only; live CRM sync, email automation, and deployed-domain analytics remain pending.
+
+The counselor route at `/tools/counselor-reports` now includes an aggregate-only career-center cohort proof pack for student/alumni workshop planning. The sample exports source-labeled HTML and CSV artifacts with FERPA-style privacy boundaries, NACE first-destination outcome separation, small-cell suppression notes, and advisor-review requirements. Treat this as a pilot sample until live batch consent, approved roster import, artifact persistence, and institution-specific data governance are implemented.
 
 Lead capture now routes through `capture_commercial_lead`, which normalizes repeat captures by email/source/report/occupation and stores consent text plus consent timestamp. SEO report downloads and coach sample artifacts require explicit contact consent before they persist a lead, link to `/privacy`, and lead ops exposes the consent status for staff review. If Supabase is unavailable, the browser retry queue redacts full report HTML, keeps entries for up to seven days, and retries queued lead persistence after later successful captures.
 
@@ -88,6 +90,8 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - OECD Skills Outlook 2025: https://www.oecd.org/en/publications/2025/12/oecd-skills-outlook-2025_ac37c7d4.html
 - AI Workforce Consortium ICT in Motion 2025: https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html
 - NACE Career Readiness Competencies: https://www.naceweb.org/career-readiness/competencies/career-readiness-defined
+- NACE First-Destination Standards and Protocols: https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/
+- FERPA student privacy PII guidance: https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records
 - DOL AI Literacy Framework: https://www.dol.gov/agencies/eta/advisories/ten-07-25
 - Anthropic Economic Index: https://www.anthropic.com/research/the-anthropic-economic-index
 - Anthropic labor market impacts / observed exposure: https://www.anthropic.com/research/labor-market-impacts

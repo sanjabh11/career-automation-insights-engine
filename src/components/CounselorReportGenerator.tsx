@@ -8,11 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Settings, Download, Palette, Search, ShieldCheck, ExternalLink } from 'lucide-react';
+import { Loader2, FileText, Settings, Download, Palette, Search, ShieldCheck, ExternalLink, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { CreditBalance } from '@/components/monetization/CreditBalance';
+import {
+    buildCareerCenterCohortCsv,
+    buildCareerCenterCohortProofPack,
+    renderCareerCenterCohortProofPackHtml,
+} from '@/lib/careerCenterCohortProofPack';
 
 interface WhiteLabelConfig {
     company_name: string;
@@ -60,6 +65,18 @@ function readString(record: Record<string, unknown>, key: string): string | unde
 
 function getErrorMessage(error: unknown, fallback: string): string {
     return error instanceof Error ? error.message : fallback;
+}
+
+function downloadTextFile(filename: string, body: string, type: string) {
+    const blob = new Blob([body], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
 }
 
 function normalizeOccupation(item: unknown): OccupationOption | null {
@@ -325,6 +342,24 @@ export default function CounselorReportGenerator() {
         }
     };
 
+    const downloadCohortProofPackHtml = () => {
+        const pack = buildCareerCenterCohortProofPack();
+        downloadTextFile(
+            'career-center-cohort-proof-pack.html',
+            renderCareerCenterCohortProofPackHtml(pack),
+            'text/html;charset=utf-8'
+        );
+    };
+
+    const downloadCohortProofPackCsv = () => {
+        const pack = buildCareerCenterCohortProofPack();
+        downloadTextFile(
+            'career-center-cohort-proof-pack.csv',
+            `${buildCareerCenterCohortCsv(pack)}\n`,
+            'text/csv;charset=utf-8'
+        );
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center p-12">
@@ -345,6 +380,50 @@ export default function CounselorReportGenerator() {
                     Status: report generation is source-implemented but remains partially usable until auth, report credits, and the print-to-PDF handoff are smoke-tested. Use the sample report for buyer demos before relying on live client credits.
                 </AlertDescription>
             </Alert>
+
+            <Card data-career-center-cohort-pack="true">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Career Center Cohort Proof Pack
+                    </CardTitle>
+                    <CardDescription>
+                        Aggregate-only sample for counselor review, workshop planning, and career-center pilot conversations.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <Alert>
+                        <ShieldCheck className="h-4 w-4" />
+                        <AlertDescription>
+                            Cohort outputs must stay aggregate-only and advisor-reviewed. Do not include student names, IDs, resumes, or education-record PII; do not call this a placement-rate or first-destination outcome report.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid gap-3 md:grid-cols-3">
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Evidence boundary</div>
+                            <p className="mt-1 text-sm text-muted-foreground">FERPA-style privacy, NACE career readiness, local labor-market, and outcome caveats.</p>
+                        </div>
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Review state</div>
+                            <p className="mt-1 text-sm text-muted-foreground">Staff review required before institutional delivery or workshop use.</p>
+                        </div>
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Does not prove</div>
+                            <p className="mt-1 text-sm text-muted-foreground">No individual ranking, placement, salary, admission, or employment decision support.</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                        <Button type="button" variant="outline" onClick={downloadCohortProofPackHtml} className="flex-1">
+                            <Download className="mr-2 h-4 w-4" />
+                            Cohort HTML
+                        </Button>
+                        <Button type="button" variant="outline" onClick={downloadCohortProofPackCsv} className="flex-1">
+                            <Download className="mr-2 h-4 w-4" />
+                            Cohort CSV
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="flex flex-col md:flex-row gap-3">
                 <Button type="button" variant="outline" onClick={() => window.open('/sample-report', '_blank')} className="flex-1">

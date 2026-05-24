@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T08:05:31.044Z",
+  "generatedAt": "2026-05-24T08:34:52.238Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -639,10 +639,12 @@
     "census-acs-api",
     "dol-ai-literacy-framework",
     "esco",
+    "ferpa-student-privacy",
     "iso-42001",
     "lightcast",
     "llm-output",
     "nace-career-readiness",
+    "nace-first-destination",
     "nist-ai-rmf",
     "oecd-skills-outlook-2025",
     "onet",
@@ -853,9 +855,10 @@
       ],
       "files": [
         "src/components/CounselorReportGenerator.tsx",
+        "src/lib/careerCenterCohortProofPack.ts",
         "supabase/migrations/20251213000003_white_label_configs.sql"
       ],
-      "proof": "Route exists as institutional wedge; still needs batch consent and commercial artifact integration."
+      "proof": "Route now includes a downloadable aggregate-only career-center cohort proof pack with source-labeled cohort segments, FERPA-style privacy boundary, NACE first-destination outcome boundary, evidence cards, CSV export, and advisor-review requirements. Live authenticated batch consent and commercial artifact persistence remain pending."
     }
   ]
 }
