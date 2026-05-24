@@ -8,6 +8,7 @@ export const commercialLintFiles = [
   'src/components/ResumeAnalyzer.tsx',
   'src/components/CounselorReportGenerator.tsx',
   'src/components/SEOReportDownload.tsx',
+  'src/components/ShareableScoreBadge.tsx',
   'src/components/ui/progress.tsx',
   'src/integrations/supabase/client.ts',
   'src/pages/AutomationRiskLandingPage.tsx',

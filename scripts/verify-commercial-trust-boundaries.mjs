@@ -56,6 +56,8 @@ const checks = [
     file: 'src/lib/commercialLeads.ts',
     expected: [
       /OFFLINE_QUEUE_TTL_MS = 7 \* 24 \* 60 \* 60 \* 1000/,
+      /isSupabaseConfigured/,
+      /Supabase lead capture is not configured in this environment/,
       /offline_queue_redacted_report_html/,
       /report_html: null/,
       /flushQueuedCommercialLeads/,
@@ -99,14 +101,32 @@ const checks = [
     ],
   },
   {
+    id: 'resume-analysis-proof-boundary-ui',
+    file: 'src/components/ResumeAnalyzer.tsx',
+    expected: [
+      /Resume Analysis Evidence And Review Boundaries/,
+      /data-resume-proof-pack-boundary="true"/,
+      /data-resume-parser-boundary="true"/,
+      /data-resume-proof-evidence-cards="true"/,
+      /resume-risk-score-boundary/,
+      /resume-skill-recommendation-boundary/,
+      /Does not prove:/,
+      /staff_review_required/,
+    ],
+  },
+  {
     id: 'resume-analysis-retention-boundary',
     file: 'supabase/functions/analyze-resume/index.ts',
     expected: [
       /buildRetainedResumeStub/,
+      /buildResumeAnalysisProofPack/,
+      /resume_analysis_proof_boundary/,
+      /proof_pack_summary/,
       /raw_resume_text_stored: false/,
       /saved_record_text_policy/,
       /deletion_receipt_available/,
       /model-provider logs, browser files, exports, and backups are outside this receipt/,
+      /Not a hiring, firing, promotion, compensation, layoff, or eligibility decision system/,
     ],
   },
   {

@@ -225,6 +225,36 @@ const checks = [
     ],
   },
   {
+    id: 'resume-analysis-proof-boundary-ui',
+    path: 'src/components/ResumeAnalyzer.tsx',
+    snippets: [
+      'ResumeProofEvidenceCard',
+      'data-resume-proof-pack-boundary="true"',
+      'Resume Analysis Evidence And Review Boundaries',
+      'data-resume-parser-boundary="true"',
+      'data-resume-proof-evidence-cards="true"',
+      'resume-risk-score-boundary',
+      'resume-rewrite-boundary',
+      'resume-skill-recommendation-boundary',
+      'staff_review_required',
+      'Does not prove:',
+    ],
+  },
+  {
+    id: 'resume-analysis-proof-boundary-edge',
+    path: 'supabase/functions/analyze-resume/index.ts',
+    snippets: [
+      'buildResumeAnalysisProofPack',
+      'resume_analysis_proof_boundary',
+      'resume-risk-score-boundary',
+      'resume-parser-retention-boundary',
+      'proof_pack_summary',
+      'Hard boundaries:',
+      'Do not make hiring, firing, promotion, compensation, layoff, screening',
+      'Recommended skills must be transition themes only',
+    ],
+  },
+  {
     id: 'resume-deletion-receipt-rpc',
     path: 'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
     snippets: [

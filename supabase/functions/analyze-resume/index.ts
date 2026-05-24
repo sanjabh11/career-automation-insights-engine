@@ -11,6 +11,90 @@ function buildRetainedResumeStub(resumeText: string): string {
     return `[raw resume text redacted after analysis; original_length_chars=${resumeText.length}]`;
 }
 
+function buildResumeAnalysisProofPack(generatedAt: string, filename: string, analysisId: string | null) {
+    return {
+        proofPackType: 'resume_analysis_proof_boundary',
+        schemaVersion: '2026-05-24',
+        generatedAt,
+        reviewStatus: 'staff_review_required',
+        sourceIds: ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22'],
+        evidenceCards: [
+            {
+                id: 'resume-risk-score-boundary',
+                claim: 'Resume automation risk score is an LLM-assisted coaching signal about phrasing and skill framing.',
+                sourceIds: ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'],
+                confidence: 'medium',
+                generatedAt,
+                caveat: 'The score depends on extracted resume text, prompt behavior, and model output; it must be reviewed by a qualified human before client delivery.',
+                doesNotProve: 'That the person will lose work, should be screened differently, or is less qualified for any job.',
+                reviewStatus: 'staff_review_required',
+            },
+            {
+                id: 'resume-rewrite-boundary',
+                claim: 'Rewrite suggestions should emphasize judgment, strategy, communication, and human-led outcomes.',
+                sourceIds: ['llm-output', 'nist-ai-rmf'],
+                confidence: 'medium',
+                generatedAt,
+                caveat: 'Rewrites are drafting suggestions, not verified truth about a candidate or employer requirement.',
+                doesNotProve: 'That a rewrite improves hiring outcomes, pay, promotion, or legal compliance.',
+                reviewStatus: 'staff_review_required',
+            },
+            {
+                id: 'resume-skill-recommendation-boundary',
+                claim: 'Recommended skills are transition themes for discussion, not provider-backed training prescriptions.',
+                sourceIds: ['llm-output', 'nist-ai-rmf', 'wcag-22'],
+                confidence: 'medium',
+                generatedAt,
+                caveat: 'Skill recommendations need user goals, local labor-market context, accessibility needs, and provider/course review before becoming a pathway.',
+                doesNotProve: 'That any course, credential, job, wage, or placement outcome is guaranteed.',
+                reviewStatus: 'staff_review_required',
+            },
+            {
+                id: 'resume-employment-decision-boundary',
+                claim: 'Resume analysis is for coaching and self-development only.',
+                sourceIds: ['ada-ai-hiring-guidance', 'nist-ai-rmf'],
+                confidence: 'high',
+                generatedAt,
+                caveat: 'Employment-selection, accommodation, adverse-impact, and disability-discrimination risks require separate validated processes and legal review.',
+                doesNotProve: 'That this output can be used for hiring, firing, promotion, compensation, layoff, or eligibility decisions.',
+                reviewStatus: 'staff_review_required',
+            },
+            {
+                id: 'resume-parser-retention-boundary',
+                claim: 'Saved resume analyses redact raw resume text and can return an app-level deletion receipt.',
+                sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance'],
+                confidence: 'high',
+                generatedAt,
+                caveat: 'The deletion receipt covers the app row only; browser files, user exports, model-provider logs, and backups require separate controls.',
+                doesNotProve: 'That external model-provider logs, browser files, user exports, or backups were deleted.',
+                reviewStatus: 'staff_review_required',
+            },
+        ],
+        parserBoundary: {
+            filename,
+            inputMode: 'server_received_text',
+            rawFileStored: false,
+            rawResumeTextStored: false,
+            savedAnalysisId: analysisId,
+            deletionReceiptAvailable: Boolean(analysisId),
+            productionPdfDocxParser: false,
+            caveat: 'The production-safe path is text submitted to the Edge Function. Browser PDF/DOCX extraction remains degraded until a server-side parser with file deletion proof is integrated.',
+        },
+        decisionBoundaries: [
+            'Not a hiring, firing, promotion, compensation, layoff, or eligibility decision system.',
+            'Not a disability, accommodation, adverse-impact, or candidate-validity assessment.',
+            'Not a guarantee of interview, job, wage, placement, credential, or career outcome.',
+            'Human review is required before client delivery or institutional use.',
+        ],
+        retentionBoundary: {
+            raw_resume_text_stored: false,
+            saved_record_text_policy: 'raw resume text redacted after analysis; saved row stores a length-only stub',
+            deletion_receipt_available: Boolean(analysisId),
+            deletion_receipt_scope: 'resume_analyses saved row only; model-provider logs, browser files, exports, and backups are outside this receipt',
+        },
+    };
+}
+
 /**
  * Analyze Resume for Automation Risk
  * 
@@ -48,7 +132,13 @@ serve(async (req) => {
         }
 
         // Prepare Gemini prompt for automation risk analysis
-        const analysisPrompt = `You are an expert career counselor analyzing resumes for automation risk.
+        const analysisPrompt = `You are an expert career counselor analyzing resumes for automation risk as a bounded coaching signal.
+
+Hard boundaries:
+- Do not make hiring, firing, promotion, compensation, layoff, screening, disability, accommodation, eligibility, or legal-compliance recommendations.
+- Do not predict layoffs or job loss.
+- Treat all outputs as LLM-assisted coaching drafts that require qualified human review before client or institutional delivery.
+- Recommended skills must be transition themes only, not course, vendor, credential, job, wage, or placement guarantees.
 
 Analyze this resume and identify:
 1. Automation-prone phrases (keywords that indicate routine, repetitive, or easily automated work)
@@ -158,14 +248,24 @@ Respond in JSON format:
             }
         }
 
+        const generatedAt = new Date().toISOString();
+        const proofPack = buildResumeAnalysisProofPack(generatedAt, filename, analysisId);
+
         return new Response(
             JSON.stringify({
                 success: true,
                 analysis_id: analysisId,
                 ...analysisResult,
+                proof_pack: proofPack,
                 metadata: {
                     model: geminiModel,
                     processing_time_ms: processingTime,
+                    proof_pack_summary: {
+                        proofPackType: proofPack.proofPackType,
+                        reviewStatus: proofPack.reviewStatus,
+                        sourceIds: proofPack.sourceIds,
+                        evidenceCardIds: proofPack.evidenceCards.map((card) => card.id),
+                    },
                     retention: {
                         raw_resume_text_stored: false,
                         saved_record_text_policy: 'raw resume text redacted after analysis; saved row stores a length-only stub',

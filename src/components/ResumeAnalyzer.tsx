@@ -27,6 +27,41 @@ interface RewriteSuggestion {
     rationale: string;
 }
 
+type ResumeProofConfidence = 'low' | 'medium' | 'high';
+
+interface ResumeProofEvidenceCard {
+    id: string;
+    claim: string;
+    sourceIds: string[];
+    confidence: ResumeProofConfidence | string;
+    generatedAt: string;
+    caveat: string;
+    doesNotProve: string;
+    reviewStatus: string;
+}
+
+interface ResumeParserBoundary {
+    filename: string;
+    inputMode: string;
+    rawFileStored: boolean;
+    rawResumeTextStored: boolean;
+    savedAnalysisId: string | null;
+    deletionReceiptAvailable: boolean;
+    productionPdfDocxParser: boolean;
+    caveat: string;
+}
+
+interface ResumeProofPack {
+    proofPackType: string;
+    schemaVersion?: string;
+    generatedAt: string;
+    reviewStatus: string;
+    sourceIds: string[];
+    evidenceCards: ResumeProofEvidenceCard[];
+    parserBoundary?: ResumeParserBoundary;
+    decisionBoundaries: string[];
+}
+
 interface AnalysisResult {
     analysis_id?: string | null;
     automation_risk_score: number;
@@ -39,10 +74,58 @@ interface AnalysisResult {
         reason: string;
         priority: 'high' | 'medium' | 'low';
     }>;
+    proof_pack?: ResumeProofPack;
 }
 
 const FREE_SCAN_KEY = 'apo:resume_free_scan_used';
 const MAX_FREE_SCANS = 1;
+const REVIEW_STATUS_LABELS: Record<string, string> = {
+    auto_generated: 'Auto-generated',
+    staff_review_required: 'Staff review required',
+    staff_reviewed: 'Staff reviewed',
+    coach_reviewed: 'Coach reviewed',
+    client_ready: 'Client ready',
+};
+
+function formatReviewStatus(status?: string): string {
+    if (!status) return 'Review status unknown';
+    return REVIEW_STATUS_LABELS[status] || status.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+}
+
+function formatConfidence(confidence?: string): string {
+    if (!confidence) return 'Unknown confidence';
+    return `${confidence.charAt(0).toUpperCase()}${confidence.slice(1)} confidence`;
+}
+
+function findResumeEvidenceCard(proofPack: ResumeProofPack | undefined, id: string): ResumeProofEvidenceCard | undefined {
+    return proofPack?.evidenceCards.find((card) => card.id === id);
+}
+
+function ResumeEvidenceBoundaryNote({ card, label }: { card?: ResumeProofEvidenceCard; label: string }) {
+    if (!card) return null;
+
+    return (
+        <Alert data-resume-evidence-note={card.id}>
+            <ShieldCheck className="h-4 w-4" />
+            <AlertDescription>
+                <div className="space-y-1">
+                    <p>
+                        <strong>{label}:</strong> {card.claim}
+                    </p>
+                    <p>
+                        <strong>Sources:</strong> {card.sourceIds.join(', ')}. <strong>{formatConfidence(card.confidence)}.</strong> <strong>Review:</strong> {formatReviewStatus(card.reviewStatus)}.
+                    </p>
+                    <p>
+                        <strong>Caveat:</strong> {card.caveat}
+                    </p>
+                    <p>
+                        <strong>Does not prove:</strong> {card.doesNotProve}
+                    </p>
+                </div>
+            </AlertDescription>
+        </Alert>
+    );
+}
 
 function getFreeScanCount(): number {
     try {
@@ -215,7 +298,7 @@ export default function ResumeAnalyzer() {
 
     const shareScore = (platform: 'twitter' | 'linkedin' | 'copy') => {
         const score = analysisResult?.automation_risk_score ?? 0;
-        const text = `My resume AI-Proof Score: ${100 - score}/100. Find out if your resume is AI-proof:`;
+        const text = `My resume work-transition score: ${100 - score}/100. Review your resume language for AI-era work shifts:`;
         const url = window.location.origin + '/tools/resume-analyzer';
 
         switch (platform) {
@@ -273,6 +356,11 @@ export default function ResumeAnalyzer() {
             default: return 'outline';
         }
     };
+
+    const proofPack = analysisResult?.proof_pack;
+    const riskEvidenceCard = findResumeEvidenceCard(proofPack, 'resume-risk-score-boundary');
+    const rewriteEvidenceCard = findResumeEvidenceCard(proofPack, 'resume-rewrite-boundary');
+    const skillEvidenceCard = findResumeEvidenceCard(proofPack, 'resume-skill-recommendation-boundary');
 
     return (
         <main className="space-y-6">
@@ -410,6 +498,8 @@ export default function ResumeAnalyzer() {
                                 Confidence: {Math.round(analysisResult.confidence_score * 100)}%
                             </Badge>
 
+                            <ResumeEvidenceBoundaryNote card={riskEvidenceCard} label="Risk score evidence" />
+
                             <Alert>
                                 <ShieldCheck className="h-4 w-4" />
                                 <AlertDescription className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -463,6 +553,87 @@ export default function ResumeAnalyzer() {
                         </CardContent>
                     </Card>
 
+                    {proofPack && (
+                        <Card data-resume-proof-pack-boundary="true">
+                            <CardHeader>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                    <div>
+                                        <CardTitle>Resume Analysis Evidence And Review Boundaries</CardTitle>
+                                        <CardDescription>
+                                            Source-labeled proof metadata for this AI-assisted coaching analysis.
+                                        </CardDescription>
+                                    </div>
+                                    <Badge variant="outline">{formatReviewStatus(proofPack.reviewStatus)}</Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
+                                    <div className="rounded-md border p-3">
+                                        <p className="font-medium">Sources</p>
+                                        <p className="text-muted-foreground">{proofPack.sourceIds.join(', ')}</p>
+                                    </div>
+                                    <div className="rounded-md border p-3">
+                                        <p className="font-medium">Generated</p>
+                                        <p className="text-muted-foreground">{new Date(proofPack.generatedAt).toLocaleString()}</p>
+                                    </div>
+                                </div>
+
+                                {proofPack.parserBoundary && (
+                                    <Alert data-resume-parser-boundary="true">
+                                        <FileWarning className="h-4 w-4" />
+                                        <AlertDescription>
+                                            <div className="space-y-1">
+                                                <p>
+                                                    <strong>Parser boundary:</strong> {proofPack.parserBoundary.caveat}
+                                                </p>
+                                                <p>
+                                                    Raw file stored: {proofPack.parserBoundary.rawFileStored ? 'yes' : 'no'}; raw resume text stored: {proofPack.parserBoundary.rawResumeTextStored ? 'yes' : 'no'}; production PDF/DOCX parser ready: {proofPack.parserBoundary.productionPdfDocxParser ? 'yes' : 'no'}.
+                                                </p>
+                                            </div>
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
+
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-semibold">Decision Boundaries</h3>
+                                    <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                                        {proofPack.decisionBoundaries.map((boundary) => (
+                                            <li key={boundary}>{boundary}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="space-y-3" data-resume-proof-evidence-cards="true">
+                                    <h3 className="text-sm font-semibold">Evidence Cards</h3>
+                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        {proofPack.evidenceCards.map((card) => (
+                                            <div
+                                                key={card.id}
+                                                className="rounded-md border p-3 text-sm"
+                                                data-resume-proof-evidence-card={card.id}
+                                            >
+                                                <div className="mb-2 flex flex-wrap items-center gap-2">
+                                                    <Badge variant="secondary">{formatConfidence(card.confidence)}</Badge>
+                                                    <Badge variant="outline">{formatReviewStatus(card.reviewStatus)}</Badge>
+                                                </div>
+                                                <p className="font-medium">{card.claim}</p>
+                                                <p className="mt-2 text-muted-foreground">
+                                                    <strong>Sources:</strong> {card.sourceIds.join(', ')}
+                                                </p>
+                                                <p className="mt-2 text-muted-foreground">
+                                                    <strong>Caveat:</strong> {card.caveat}
+                                                </p>
+                                                <p className="mt-2 text-muted-foreground">
+                                                    <strong>Does not prove:</strong> {card.doesNotProve}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     {/* Automation-Prone Phrases */}
                     {analysisResult.automation_prone_phrases.length > 0 && (
                         <Card>
@@ -476,6 +647,7 @@ export default function ResumeAnalyzer() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-3">
+                                <ResumeEvidenceBoundaryNote card={riskEvidenceCard} label="Phrase evidence" />
                                 {analysisResult.automation_prone_phrases.map((phrase, index) => (
                                     <div key={index} className="p-3 bg-red-50 border border-red-200 rounded-lg">
                                         <div className="flex items-start justify-between mb-2">
@@ -509,6 +681,7 @@ export default function ResumeAnalyzer() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
+                                <ResumeEvidenceBoundaryNote card={rewriteEvidenceCard} label="Rewrite evidence" />
                                 {analysisResult.rewrite_suggestions.map((suggestion, index) => (
                                     <div key={index} className="border rounded-lg overflow-hidden">
                                         <div className="p-3 bg-red-50 border-b">
@@ -563,6 +736,7 @@ export default function ResumeAnalyzer() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-2">
+                                    <ResumeEvidenceBoundaryNote card={skillEvidenceCard} label="Skill recommendation evidence" />
                                     {analysisResult.recommended_skills.slice(0, 5).map((rec, index) => (
                                         <div key={index} className="flex items-start gap-2">
                                             <Badge variant={rec.priority === 'high' ? 'default' : 'outline'} className="mt-0.5">
@@ -579,7 +753,7 @@ export default function ResumeAnalyzer() {
                         </Card>
                     </div>
 
-                    {/* Shareable AI-Proof Score Badge */}
+                    {/* Shareable work-transition score badge */}
                     <ShareableScoreBadge
                         score={100 - (analysisResult?.automation_risk_score ?? 0)}
                         onShareTwitter={() => shareScore('twitter')}

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T11:44:24.400Z",
+  "generatedAt": "2026-05-24T14:44:48.656Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T09:52:12.192Z",
+    "generatedAt": "2026-05-24T14:20:39.352Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -335,12 +335,14 @@
         "proof_pack_delivery_packet",
         "reportHtmlHash",
         "snapshotHash",
-        "legalSignature: false"
+        "legalSignature: false",
+        "isSupabaseConfigured",
+        "Supabase report artifact storage is not configured in this environment"
       ],
       "caveat": "Review attestation and delivery packet are non-legal delivery traceability artifacts, not electronic signatures, compliance certifications, or employment-selection validations.",
-      "bytes": 22894,
-      "rows": 599,
-      "sha256": "092288b45d2ed04f5b26493921bffd6d5105dcd750594ad2a57bd2ed04318519",
+      "bytes": 23048,
+      "rows": 602,
+      "sha256": "d37f7fe4281b618d1c08f35098052aa2af130654eb2f165c443bd5aadc5c29cf",
       "failures": [],
       "passed": true
     },
@@ -405,15 +407,20 @@
       ],
       "expectedSnippets": [
         "buildRetainedResumeStub",
+        "buildResumeAnalysisProofPack",
+        "resume_analysis_proof_boundary",
+        "resume-risk-score-boundary",
+        "resume-parser-retention-boundary",
+        "proof_pack_summary",
         "raw_resume_text_stored: false",
         "saved_record_text_policy",
         "deletion_receipt_available",
         "model-provider logs, browser files, exports, and backups are outside this receipt"
       ],
-      "caveat": "Edge-function retention metadata documents raw-text redaction and receipt availability; live deployment and provider-log controls must still be verified separately.",
-      "bytes": 7177,
-      "rows": 172,
-      "sha256": "e39a79a9d7811d7b6fd81a2ef1ff4a664989bc6460c7140a23f5ead57074c1d0",
+      "caveat": "Edge-function proof metadata documents raw-text redaction, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.",
+      "bytes": 13321,
+      "rows": 269,
+      "sha256": "ecc59aba53a8cd1dc6dd5d45fed7b98c6c52286ec4fdb1d56bff439c2d331902",
       "failures": [],
       "passed": true
     },

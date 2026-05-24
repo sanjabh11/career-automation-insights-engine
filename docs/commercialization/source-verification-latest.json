@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T09:52:12.192Z",
+  "generatedAt": "2026-05-24T14:20:39.352Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "628e13cd710dc3cadf1667717ff7e6da2ee4fdcb4f082e492d5a9fb8d15dfae7",
-      "byteLength": 233754,
+      "contentSha256": "6ea7d973b85e5af59d3f9a2a049d67307713730375c7270d1661dfe737f9836e",
+      "byteLength": 233752,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "e0f2b15c0e6fcd0f31a5f0146d96263d1494df5e2d70f32eed50679b309f1093",
+      "contentSha256": "24b0a9df53c211fffe1020212c71286148bb2d6f7f4624e6e0b1cdcb551a8e0c",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "cacd3ef2e673502234024a97c5f8751f00f20d466e485dae23094aab082234b6",
+      "contentSha256": "6e1293dd78aaab1d013c1ba66bbdb2667b815da31f2513a65ea2c1e7ef9fbd51",
       "byteLength": 303692,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
-      "byteLength": 114397,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "65688956c3ffcfeb7821c0df6f88ac2e022f0f974e933c74b3d9b57738a0d2c5",
+      "contentSha256": "7b6f14ca2f40ee2c3b92569c03fac36e1f3a33ba27a33d938eb47055f506730b",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "12334f75dc9f8765bbf4dfd955c126c85749c1563434167265b18768626cdab9",
+      "contentSha256": "aa4b89b55532f117e961585cc5f862f3c30241911f02faed478800bfe1fd00a9",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,7 +349,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "36a329175f70e221304b9727dcb7dc725e4084235c8964743b93a6a9e43270de",
+      "contentSha256": "d5b9e6e5af528ff19248ba8335132b5cf28fa8dc5c6432107aa71c67729fadd7",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "c2df9d185b56b629c6b52f0acd6c4d23dcf4b9f073b2e7bd9c84f338088804e4",
-      "byteLength": 165940,
+      "contentSha256": "dd36b43e4c78ab2a6573ff2986852eea985a0cd8cfadc5f52299bc62b8227c5f",
+      "byteLength": 164873,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "fcb0bc588c2c063dfefff9c3e029d750f8e9a11da385da964a413000939ca3c4",
+      "contentSha256": "4694b834a0ea0591d18bd784f866ba4ff5bb1b5348dad6415941ea63d58d3810",
       "byteLength": 210582,
       "evidence": [
         {
@@ -489,8 +489,8 @@
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
-      "byteLength": 121777,
+      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
+      "byteLength": 121776,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -549,7 +549,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "c6b0a296300755c2a5be3a472d282fec2be302a8042ab4f7f71090c7e4215276",
+      "contentSha256": "99feb801f877a7f2ccf8e79841a1bea96361e568a08fae34de1b04b82f52430c",
       "byteLength": 91197,
       "evidence": [
         {

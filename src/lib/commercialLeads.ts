@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { createCommercialReportArtifact } from '@/lib/commercialReportArtifacts';
 import { getReportSourceSnapshot } from '@/lib/reportProvenance';
 
@@ -182,6 +182,10 @@ function sanitizePayloadForOfflineQueue(payload: CommercialLeadPayload): Commerc
 async function persistCommercialLeadPayload(
   payload: CommercialLeadPayload
 ): Promise<CommercialLeadCaptureRpcRow | undefined> {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase lead capture is not configured in this environment.');
+  }
+
   const client = supabase as unknown as CommercialLeadCaptureRpcClient;
   const { data, error } = await client.rpc('capture_commercial_lead', {
     p_email: payload.email,

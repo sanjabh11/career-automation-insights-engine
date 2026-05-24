@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import type { ReportReviewStatus } from "@/lib/reportEvidenceCards";
 
 export interface CommercialReportArtifactInput {
@@ -572,6 +572,10 @@ function normalizeArtifactEvent(row: CommercialReportArtifactEventRpcRow): Comme
 export async function createCommercialReportArtifact(
   input: CommercialReportArtifactInput
 ): Promise<CommercialReportArtifact> {
+  if (!isSupabaseConfigured) {
+    throw new Error("Supabase report artifact storage is not configured in this environment.");
+  }
+
   const { data, error } = await artifactClient.rpc("create_commercial_report_artifact", {
     p_artifact_type: input.artifactType,
     p_title: input.title,

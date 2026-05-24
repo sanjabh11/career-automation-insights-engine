@@ -105,7 +105,7 @@ const artifacts = [
     path: 'src/lib/commercialReportArtifacts.ts',
     type: 'report-runtime',
     sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'iso-42001', 'llm-output'],
-    expectedSnippets: ['buildProofPackReviewAttestation', 'human_review_attestation', 'CommercialReportDeliveryPacket', 'buildCommercialReportDeliveryPacket', 'renderCommercialReportDeliveryPacketHtml', 'proof_pack_delivery_packet', 'reportHtmlHash', 'snapshotHash', 'legalSignature: false'],
+    expectedSnippets: ['buildProofPackReviewAttestation', 'human_review_attestation', 'CommercialReportDeliveryPacket', 'buildCommercialReportDeliveryPacket', 'renderCommercialReportDeliveryPacketHtml', 'proof_pack_delivery_packet', 'reportHtmlHash', 'snapshotHash', 'legalSignature: false', 'isSupabaseConfigured', 'Supabase report artifact storage is not configured in this environment'],
     caveat: 'Review attestation and delivery packet are non-legal delivery traceability artifacts, not electronic signatures, compliance certifications, or employment-selection validations.',
   },
   {
@@ -132,8 +132,8 @@ const artifacts = [
     path: 'supabase/functions/analyze-resume/index.ts',
     type: 'edge-function',
     sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'llm-output'],
-    expectedSnippets: ['buildRetainedResumeStub', 'raw_resume_text_stored: false', 'saved_record_text_policy', 'deletion_receipt_available', 'model-provider logs, browser files, exports, and backups are outside this receipt'],
-    caveat: 'Edge-function retention metadata documents raw-text redaction and receipt availability; live deployment and provider-log controls must still be verified separately.',
+    expectedSnippets: ['buildRetainedResumeStub', 'buildResumeAnalysisProofPack', 'resume_analysis_proof_boundary', 'resume-risk-score-boundary', 'resume-parser-retention-boundary', 'proof_pack_summary', 'raw_resume_text_stored: false', 'saved_record_text_policy', 'deletion_receipt_available', 'model-provider logs, browser files, exports, and backups are outside this receipt'],
+    caveat: 'Edge-function proof metadata documents raw-text redaction, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.',
   },
   {
     id: 'proof-pack-gallery-page',
