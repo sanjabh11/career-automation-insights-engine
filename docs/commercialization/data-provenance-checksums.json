@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T04:38:10.940Z",
+  "generatedAt": "2026-05-24T04:51:58.356Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T04:13:13.797Z",
+    "generatedAt": "2026-05-24T04:50:37.786Z",
     "allPassed": true,
     "requiredForPass": false
   },

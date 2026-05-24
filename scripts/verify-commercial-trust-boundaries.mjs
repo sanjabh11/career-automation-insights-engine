@@ -145,9 +145,13 @@ const checks = [
     file: 'src/pages/CommercialLeadOpsPage.tsx',
     expected: [
       /handleReviewSectionTransition/,
+      /handleArtifactClientReady/,
       /data-proof-pack-review-section/,
       /proof_pack_review_action/,
+      /proof_pack_artifact_client_ready/,
       /Mark client-ready/,
+      /Log artifact client-ready/,
+      /artifact_client_ready/,
       /Reviewer note/,
     ],
   },

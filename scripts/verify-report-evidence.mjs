@@ -88,12 +88,16 @@ const checks = [
     path: 'src/pages/CommercialLeadOpsPage.tsx',
     snippets: [
       'handleReviewSectionTransition',
+      'handleArtifactClientReady',
       'proof_pack_review_action',
+      'proof_pack_artifact_client_ready',
       'data-proof-pack-review-section',
       'Mark reviewed',
       'Mark client-ready',
+      'Log artifact client-ready',
       'section_client_ready',
       'section_review_updated',
+      'artifact_client_ready',
     ],
   },
   {

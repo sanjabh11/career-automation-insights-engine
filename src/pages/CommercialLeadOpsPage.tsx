@@ -133,6 +133,10 @@ function readStringList(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
+function uniqueStrings(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort();
+}
+
 function normalizeReviewSection(value: unknown): LeadProofPackReviewSection | null {
   if (!isRecord(value)) return null;
   const sectionId = typeof value.sectionId === "string" ? value.sectionId : "";
@@ -515,6 +519,92 @@ export default function CommercialLeadOpsPage() {
     }
   };
 
+  const handleArtifactClientReady = async (lead: CommercialLeadRow, workflow: LeadProofPackReviewWorkflow) => {
+    const artifactId = lead.report_artifact_id;
+    if (!artifactId) return;
+
+    const pendingSectionCount = workflow.pendingSectionCount ?? workflow.sections.filter((section) => !section.clientReady).length;
+    if (pendingSectionCount > 0) {
+      toast({
+        title: "Artifact is not client-ready",
+        description: "Resolve every proof-pack section before logging final client-ready approval.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reviewKey = `${artifactId}:artifact_client_ready`;
+    const staffNote = (reviewNoteDrafts[reviewKey] || "").trim();
+    setUpdatingReviewKey(reviewKey);
+
+    try {
+      const event = await logCommercialReportArtifactEvent({
+        artifactId,
+        leadId: lead.id,
+        eventType: "artifact_client_ready",
+        deliveryChannel: "lead-ops-review",
+        metadata: {
+          proof_pack_artifact_client_ready: true,
+          lead_email: lead.email,
+          reviewer_user_id: userId,
+          reviewer_email: user?.email || null,
+          staff_note: staffNote || null,
+          section_count: workflow.sections.length,
+          section_ids: workflow.sections.map((section) => section.sectionId),
+          section_statuses: workflow.sections.map((section) => ({
+            section_id: section.sectionId,
+            section_title: section.sectionTitle,
+            review_status: section.reviewStatus,
+            client_ready: section.clientReady,
+          })),
+          source_ids: uniqueStrings(workflow.sections.flatMap((section) => section.sourceIds)),
+          evidence_card_ids: uniqueStrings(workflow.sections.flatMap((section) => section.evidenceCardIds)),
+        },
+      });
+      const clientReadyWorkflow: LeadProofPackReviewWorkflow = {
+        ...workflow,
+        reviewStatus: "client_ready",
+        clientReady: true,
+        pendingSectionCount: 0,
+      };
+      setArtifactEventsById((current) => ({
+        ...current,
+        [artifactId]: [event, ...(current[artifactId] || [])].slice(0, 10),
+      }));
+      setLeads((current) =>
+        current.map((candidate) =>
+          candidate.id === lead.id
+            ? {
+              ...candidate,
+              metadata: {
+                ...candidate.metadata,
+                proof_pack_review_workflow: clientReadyWorkflow,
+                proof_pack_artifact_client_ready: {
+                  event_id: event.id,
+                  logged_at: event.createdAt,
+                  reviewer_user_id: userId,
+                  reviewer_email: user?.email || null,
+                },
+              },
+            }
+            : candidate
+        )
+      );
+      toast({
+        title: "Artifact marked client-ready",
+        description: "Final proof-pack approval was logged in the artifact review trail.",
+      });
+    } catch (error) {
+      toast({
+        title: "Final approval failed",
+        description: error instanceof Error ? error.message : "Unable to log the artifact client-ready event.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingReviewKey(null);
+    }
+  };
+
   const handleSaveLead = async (lead: CommercialLeadRow) => {
     const nextStatus = leadStatusDrafts[lead.id] ?? lead.status;
     const nextNotes = leadNoteDrafts[lead.id] ?? lead.staff_notes ?? "";
@@ -818,6 +908,47 @@ export default function CommercialLeadOpsPage() {
                                 <Badge variant={pendingReviewCount === 0 ? "default" : "destructive"}>
                                   {pendingReviewCount === 0 ? "Client-ready" : `${pendingReviewCount} pending`}
                                 </Badge>
+                              </div>
+                              <div className="rounded border border-emerald-100 bg-emerald-50 p-2 text-slate-800">
+                                <Label htmlFor={`artifact-ready-note-${artifactId}`} className="text-xs font-medium text-emerald-950">
+                                  Final artifact approval note
+                                </Label>
+                                <Textarea
+                                  id={`artifact-ready-note-${artifactId}`}
+                                  value={reviewNoteDrafts[`${artifactId}:artifact_client_ready`] || ""}
+                                  rows={2}
+                                  maxLength={1000}
+                                  placeholder="Client-ready approval note for this proof-pack artifact"
+                                  aria-label={`Final client-ready approval note for ${lead.email}`}
+                                  className="mt-1 bg-background"
+                                  onChange={(event) =>
+                                    setReviewNoteDrafts((current) => ({
+                                      ...current,
+                                      [`${artifactId}:artifact_client_ready`]: event.target.value,
+                                    }))
+                                  }
+                                />
+                                <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                                  <div className="text-xs text-emerald-950">
+                                    {pendingReviewCount === 0
+                                      ? "All proof-pack sections are ready for final artifact approval."
+                                      : "Resolve all section reviews before final client-ready event."}
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs"
+                                    disabled={
+                                      pendingReviewCount !== 0 ||
+                                      updatingReviewKey === `${artifactId}:artifact_client_ready`
+                                    }
+                                    onClick={() => void handleArtifactClientReady(lead, reviewWorkflow)}
+                                  >
+                                    {updatingReviewKey === `${artifactId}:artifact_client_ready`
+                                      ? "Logging"
+                                      : "Log artifact client-ready"}
+                                  </Button>
+                                </div>
                               </div>
                               <div className="space-y-2">
                                 {reviewWorkflow.sections.map((section) => {

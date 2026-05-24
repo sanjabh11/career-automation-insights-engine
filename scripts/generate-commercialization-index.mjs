@@ -69,7 +69,7 @@ const featureMap = [
       'supabase/migrations/20260523000100_create_commercial_leads.sql',
       'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, and section-level review/client-ready event logging.',
+    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, and final artifact client-ready approval.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -97,7 +97,7 @@ const featureMap = [
       'src/lib/workforceExecutiveReport.ts',
       'scripts/verify-report-evidence.mjs',
     ],
-    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, and staff review/client-ready event logging.',
+    proof: 'Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, and final artifact approval.',
   },
   {
     feature: 'Privacy and responsible-use trust boundary',
@@ -247,7 +247,7 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses, but full visual snapshots and formal WCAG audit coverage still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata; richer scoring still needs O*NET task-time imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; reviewer identity, signed approval, and staff UI transitions remain the next Phase 5 hardening layer.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions and final artifact approval are implemented, while live Supabase migration proof and formal signed approval remain Phase 5 hardening work.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
 - GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
