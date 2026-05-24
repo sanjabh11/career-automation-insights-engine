@@ -14,6 +14,7 @@
     "verify:commercial": "node scripts/verify-commercial-release.mjs",
     "verify:commercial-a11y": "node scripts/verify-commercial-accessibility.mjs",
     "verify:commercial-browser": "node scripts/verify-commercial-browser.mjs",
+    "verify:commercial-deployment": "node scripts/generate-commercial-supabase-deployment-packet.mjs",
     "verify:commercial-full": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey",
     "verify:commercial-live-supabase": "node scripts/verify-commercial-live-supabase.mjs --write",
     "verify:commercial-network": "node scripts/verify-commercial-release.mjs --with-network",

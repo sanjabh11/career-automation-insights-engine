@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T16:24:45.435Z",
+  "generatedAt": "2026-05-24T16:55:56.677Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -597,6 +597,10 @@
       "command": "node scripts/verify-commercial-browser.mjs"
     },
     {
+      "name": "verify:commercial-deployment",
+      "command": "node scripts/generate-commercial-supabase-deployment-packet.mjs"
+    },
+    {
       "name": "verify:commercial-full",
       "command": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey"
     },
@@ -753,7 +757,9 @@
       "files": [
         ".github/workflows/commercial-proof-pack.yml",
         "docs/commercialization/commercial-proof-pack.workflow.yml",
+        "docs/commercialization/live-supabase-deployment-runbook.md",
         "scripts/verify-commercial-release.mjs",
+        "scripts/generate-commercial-supabase-deployment-packet.mjs",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-accessibility.mjs"
       ],
@@ -875,6 +881,8 @@
         "supabase/functions/analyze-resume/index.ts",
         "supabase/migrations/20260524000400_add_resume_deletion_receipts.sql",
         "supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql",
+        "docs/commercialization/live-supabase-deployment-runbook.md",
+        "scripts/generate-commercial-supabase-deployment-packet.mjs",
         "scripts/verify-commercial-trust-boundaries.mjs"
       ],
       "proof": "Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier."

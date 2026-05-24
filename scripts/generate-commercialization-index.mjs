@@ -41,7 +41,9 @@ const featureMap = [
     files: [
       '.github/workflows/commercial-proof-pack.yml',
       'docs/commercialization/commercial-proof-pack.workflow.yml',
+      'docs/commercialization/live-supabase-deployment-runbook.md',
       'scripts/verify-commercial-release.mjs',
+      'scripts/generate-commercial-supabase-deployment-packet.mjs',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-accessibility.mjs',
     ],
@@ -142,6 +144,8 @@ const featureMap = [
       'supabase/functions/analyze-resume/index.ts',
       'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
       'supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql',
+      'docs/commercialization/live-supabase-deployment-runbook.md',
+      'scripts/generate-commercial-supabase-deployment-packet.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
     ],
     proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',

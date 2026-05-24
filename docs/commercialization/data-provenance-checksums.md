@@ -1,8 +1,8 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T16:24:47.505Z
+Generated: 2026-05-24T16:58:00.224Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
-Source verification generated: 2026-05-24T16:16:00.829Z
+Source verification generated: 2026-05-24T16:57:56.391Z
 All referenced current-source checks passed: yes
 Current-source verification required for this local checksum pass: no
 
@@ -31,6 +31,8 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 348 | `53d7929634f0785a...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 247 | `24568d9edebbb094...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 63 | `32d87f02d832da68...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 318 | `ea327ab86b977281...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
@@ -58,6 +60,8 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `commercial-proof-pack-ci-workflow-template`: Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.
 - `commercial-proof-pack-ci-workflow-installed`: Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.
 - `commercial-live-supabase-verifier`: Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.
+- `commercial-supabase-deployment-packet`: Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.
+- `commercial-supabase-deployment-runbook`: Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.
 - `onet-task-ratings-live-verifier`: Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.
 - `onet-task-rating-metadata-migration`: Schema support for O*NET Task Ratings does not prove the migration has been applied or populated in the target Supabase project.
 - `artifact-review-event-migration`: Staff review events create an append-only readiness trail; they do not replace legal, accessibility, or labor-relations review.

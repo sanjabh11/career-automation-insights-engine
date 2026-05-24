@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T16:16:00.829Z",
+  "generatedAt": "2026-05-24T16:57:56.391Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,7 +189,7 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "417a4ed9d345dcbb67c047c57e11fdd13dade771856ba79374996804d27fd959",
+      "contentSha256": "23ef252e348407517414176b65ed78495525544d414dae73fba9a5fd441b25a8",
       "byteLength": 233754,
       "evidence": [
         {
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "ab8b085e92aa69f24bb3f27badb4eadb24b4cccfdfd629243f4ecfcf04421e5d",
+      "contentSha256": "3785130cc21616468e91a848c6f4f0ccfca32d09965db5d026a0a2da0665e985",
       "byteLength": 316096,
       "evidence": [
         {
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "83e36ac63953c3e6488283e1cc25770ba7fef3d6975e060fd79a24475ad8eb39",
+      "contentSha256": "a30a57079c397c2dd171307f62f0aa882662040c6ba1a2fe4021e5ac66cd8b9c",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "454f6e4f8272369aa710bc73c6f635ec487cc5ad7cc1b6cfea23f110a891e109",
+      "contentSha256": "9463cdc0010c8ebbdae812b5173137dbdbf91742346c2512d38112b023e73bc4",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "02065626bb955c21850462ea6ebb026d306353a5a67d0cf4682e26563fdd73a6",
-      "byteLength": 73087,
+      "contentSha256": "63597d3ec01417e4d5d4af5d9b52e5fedf65249e2594d23068ad2651e9df373c",
+      "byteLength": 73088,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "0e88259580ad9af7aef4b9ca44fec1b9739988ff0ebefb9424127cc7ac01119c",
+      "contentSha256": "c60f5bc465d6517fabbd7415480d9ff4332dce35358e4610bf03ad7b0cefca04",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "117ee401aeffa5b7fb0fc8562d7480cf936c12877bea5109b7d2573a2eb5b901",
+      "contentSha256": "6c4f7a21cbefb2a272c1ad0ec34465d696d845e4d6bac486ef681a596969be5e",
       "byteLength": 210582,
       "evidence": [
         {
@@ -589,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "0a2d3cbb941c3a422b08e32246ff05b46587420a892a8b2d847573c232c78e98",
+      "contentSha256": "bb459093f96791852bca5288f44309743dc4f21ce8b91768566954b6f98287d2",
       "byteLength": 91197,
       "evidence": [
         {

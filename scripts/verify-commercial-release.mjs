@@ -24,6 +24,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-onet-task-ratings-ingest.mjs'],
   },
   {
+    id: 'deployment-packet',
+    label: 'Generate live Supabase deployment proof packet',
+    command: ['node', 'scripts/generate-commercial-supabase-deployment-packet.mjs'],
+  },
+  {
     id: 'data-provenance',
     label: 'Verify local data provenance checksums',
     command: ['node', 'scripts/verify-commercial-data-provenance.mjs', '--write'],
@@ -115,7 +120,8 @@ Options:
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
 Default gate:
-  index, trust, data provenance, scoped commercial lint, production build, route smoke.
+  index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
+  data provenance, scoped commercial lint, production build, route smoke.
 `);
 }
 

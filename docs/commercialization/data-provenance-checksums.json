@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T16:24:47.505Z",
+  "generatedAt": "2026-05-24T16:58:00.224Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T16:16:00.829Z",
+    "generatedAt": "2026-05-24T16:57:56.391Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -637,6 +637,59 @@
       "bytes": 12369,
       "rows": 348,
       "sha256": "53d7929634f0785a8b0059db6c5434ed9a2aefe3c340ac299194a1280a8f609d",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-supabase-deployment-packet",
+      "label": "Commercial Supabase deployment packet generator",
+      "path": "scripts/generate-commercial-supabase-deployment-packet.mjs",
+      "type": "deployment-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "live-supabase-deployment-packet.json",
+        "live-supabase-deployment-runbook.md",
+        "SUPABASE_DB_PASSWORD",
+        "supabase db push --dry-run",
+        "supabase db push",
+        "NOTIFY pgrst, 'reload schema'",
+        "combinedSqlSha256"
+      ],
+      "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
+      "bytes": 10768,
+      "rows": 247,
+      "sha256": "24568d9edebbb094c06a683f7a197fa3456212f153410d85d0a0f0d6761382a0",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-supabase-deployment-runbook",
+      "label": "Commercial Supabase deployment runbook",
+      "path": "docs/commercialization/live-supabase-deployment-runbook.md",
+      "type": "deployment-runbook",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "Live Supabase Deployment Runbook",
+        "SUPABASE_DB_PASSWORD",
+        "supabase migration list",
+        "supabase db push --dry-run",
+        "supabase db push",
+        "NOTIFY pgrst, 'reload schema'",
+        "npm run verify:commercial-live-supabase",
+        "npm run verify:onet-task-ratings-live"
+      ],
+      "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
+      "bytes": 4241,
+      "rows": 63,
+      "sha256": "32d87f02d832da68a5ef12ff24db9521d8917112123171c5e16f86f8080710d3",
       "failures": [],
       "passed": true
     },
