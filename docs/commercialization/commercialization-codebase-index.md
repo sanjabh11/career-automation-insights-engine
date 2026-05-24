@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T05:46:05.688Z
+Generated: 2026-05-24T06:04:18.276Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -15,6 +15,7 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 | `/operations/leads` | `CommercialLeadOpsPage` | ./pages/CommercialLeadOpsPage |
 | `/pricing` | `PricingPage` | ./pages/PricingPage |
 | `/privacy` | `PrivacyPage` | ./pages/PrivacyPage |
+| `/proof-pack-gallery` | `ProofPackGalleryPage` | ./pages/ProofPackGalleryPage |
 | `/sample-report` | `SampleReportPage` | ./pages/SampleReportPage |
 | `/tools/counselor-reports` | `CounselorReportGenerator` | ./components/CounselorReportGenerator |
 | `/tools/resume-analyzer` | `ResumeAnalyzer` | ./components/ResumeAnalyzer |
@@ -24,6 +25,7 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 
 | Feature | Buyer | Routes | Current Proof | Primary Files |
 | --- | --- | --- | --- | --- |
+| Pilot proof-pack gallery and outreach assets | Coaches, career centers, workforce boards, L&D pilot sponsors | `/proof-pack-gallery`, `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, and downloadable CRM-import outreach CSV. | `src/pages/ProofPackGalleryPage.tsx`<br/>`docs/commercialization/pilot-outreach-pack.md`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-trust-boundaries.mjs` |
 | SEO report lead capture | Individuals, coaches, inbound SEO visitors | `/automation-risk/:occupation` | Consent-gated report download, artifact persistence, deduping RPC, offline retry queue, provenance in report HTML. | `src/components/SEOReportDownload.tsx`<br/>`src/lib/commercialLeads.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | White-label coach sample reports | Career coaches, resume writers, education counselors | `/for-coaches`, `/sample-report` | Brand colors, contact details, consent-gated artifact capture, source/caveat block, sample watermark. | `src/pages/ForCoachesPage.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/commercialLeads.ts`<br/>`src/lib/reportProvenance.ts` |
 | Workforce CSV exposure audit | HR, L&D, workforce boards, AI transformation consultants | `/enterprise-dashboard` | CSV parsing, role exposure rollup, saved audits, review queue, broader local SOC suggestions, staff mapping boundary, downloadable executive HTML report. | `src/pages/EnterpriseTeamDashboard.tsx`<br/>`src/lib/commercialWorkforceAudits.ts`<br/>`src/lib/socSuggestions.ts`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
@@ -123,6 +125,7 @@ CI boundary:
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; richer scoring still needs checksum-verified O*NET Task Ratings imports, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, and non-legal review attestation are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
 - GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.

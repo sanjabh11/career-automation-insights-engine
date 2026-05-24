@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T05:46:06.177Z",
+  "generatedAt": "2026-05-24T06:06:47.332Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T05:42:34.971Z",
+    "generatedAt": "2026-05-24T06:06:30.848Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -243,6 +243,33 @@
       "bytes": 13091,
       "rows": 376,
       "sha256": "f36c7b1c4714ec8dbc129767d891cf1169c43f6506862e1759d13cfff8cc2afc",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "proof-pack-gallery-page",
+      "label": "Phase 6 proof-pack gallery and outreach CSV",
+      "path": "src/pages/ProofPackGalleryPage.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "data-proof-pack-gallery=\"phase-6-outreach\"",
+        "CRM import pack",
+        "buildOutreachCsv",
+        "NACE career readiness",
+        "DOL workforce LMI plan",
+        "Lightcast positioning",
+        "Workera positioning"
+      ],
+      "caveat": "Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.",
+      "bytes": 16199,
+      "rows": 299,
+      "sha256": "8c4c27d9a0356b42b0572b050758eba6b019bcca0361e65412188a2e20c784a3",
       "failures": [],
       "passed": true
     },

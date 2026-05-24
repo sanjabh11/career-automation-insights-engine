@@ -22,6 +22,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 | [WCAG 2.2](https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/) | Accessibility is part of buyer trust and institutional readiness. | A11y verification stays a pre-outreach gate. |
 | [Lightcast Talent Transform](https://lightcast.io/products/software/talent-transform-update), [Gloat](https://gloat.com/use-cases-agents/skill-framework-agent/), [Workera](https://www.workera.ai/product-overview) | Commercial competitors emphasize skills, workforce intelligence, and taxonomy depth. | Use open-source proof packs now; keep licensed-data adapters explicit. |
 | [AI Workforce Consortium ICT in Motion 2025](https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html) | AI-specific and specialized support roles are emerging in G7 ICT job-posting data, but source coverage is bounded. | Use role radar as search-term and learning-path signal with review, taxonomy, and posting-validation status. |
+| [NACE Career Readiness](https://www.naceweb.org/career-readiness/competencies/career-readiness-defined/) and [DOL WLMI 2025-2026 plan](https://www.dol.gov/sites/dolgov/files/ETA/wioa/pdfs/DOL%20Two%20Year%20Plan%20for%20WLMI-FYs-2025-2026.pdf) | Career services and workforce systems need skills, transition, and local labor-market signals that can be explained to stakeholders. | Phase 6 now exposes a proof-pack gallery and CRM-import CSV for bounded coach, career-center, and workforce outreach. |
 
 ## Adversarial Analysis
 
@@ -46,7 +47,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 | Phase 3: Skill Change Ledger | Reports render growing, stable, declining, changing, unknown states and protect, upgrade, replace, learn-next actions with per-row confidence, review state, source IDs, and source caveats. | Live labor-market validation, local posting proof, and licensed provider adapters. | 4 | 10% | 6% | Yes for MVP proof pack; continue before provider-backed skill-market claims. |
 | Phase 4: AI-Era Role Radar | 20+ caveated emerging roles mapped to skills, sources, adjacent roles, confidence, role-level review state, taxonomy status, posting-validation status, search terms, and source caveats. | Live posting-level validation, jurisdiction-specific demand proof, and SOC/O*NET or ESCO taxonomy crosswalk. | 4 | 8% | 6% | Yes for MVP proof pack; continue before marketing roles as validated job targets. |
 | Phase 5: Human Review Workflow | Section-level human-review workflow renders in proof-pack reports; report artifact metadata stores section status, readiness, blocking reasons, acceptance criteria, and allowed next states; workforce audits store review workflow metadata; lead ops can log section-reviewed/client-ready events and final artifact client-ready approval with staff actor identity, notes, source IDs, evidence card IDs, and a downloadable human-review attestation with snapshot hash. | Apply Supabase migration in target project, confirm staff-auth e2e against live data, and add formal e-signature/PDF storage if required by a paying institution. | 4 | 4% | 5% | Yes for bounded outreach pilot; continue before enterprise launch. |
-| Phase 6: Outreach Pack | Pilot outreach doc, LinkedIn sequence, scripts, top 20 product recommendations, sample routes, and proof artifacts exist. | CRM/email automation and deployed sample gallery. | 4 | 20% | 12% | Yes for bounded pilots after auth/CI. |
+| Phase 6: Outreach Pack | Pilot outreach doc, LinkedIn sequence, scripts, top 20 product recommendations, sample routes, proof artifacts, public proof-pack gallery, occupation sample shelf, and CRM-import outreach CSV exist. | Live CRM/email automation, deployed-domain analytics, and hosted sample-gallery proof. | 4 | 10% | 4% | Yes for bounded pilots after auth/CI. |
 
 ## Phase Checklists
 
@@ -58,11 +59,11 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 | 3 | Skills show status, action, confidence, review state, source IDs, and caveat; unknown/local-demand rows stay review-required until validated. |
 | 4 | Role radar avoids official-occupation claims and every role has caveat, confidence, source IDs, review state, taxonomy status, posting-validation status, and search terms. |
 | 5 | Report sections can move through auto-generated, review-required, reviewed, and client-ready states; generated artifacts preserve section review metadata; lead ops can log final artifact client-ready approval only after every section is ready and attach a non-legal human-review attestation. |
-| 6 | Individual, coach, and workforce proof artifacts plus outreach scripts are ready for bounded pilots. |
+| 6 | Individual, coach, and workforce proof artifacts plus outreach scripts are ready for bounded pilots; public gallery and CRM-import pack are route-verified before scaled outreach. |
 
 ## Next Execution Focus
 
 1. Apply the new artifact-review migration in the target Supabase project and confirm staff-auth review/final-approval events against live data.
 2. Re-authenticate GitHub with workflow scope, install `docs/commercialization/commercial-proof-pack.workflow.yml` as `.github/workflows/commercial-proof-pack.yml`, invite `sanjabh1103`, and capture CI evidence.
 3. Replace seed proxy task weights with imported O*NET Task Ratings importance/frequency values and local posting validation before making stronger market-intelligence claims.
-4. Add CRM/email automation and a deployed sample gallery for scaled outreach.
+4. Add live CRM/email automation, deployed-domain analytics, and hosted sample-gallery proof for scaled outreach.

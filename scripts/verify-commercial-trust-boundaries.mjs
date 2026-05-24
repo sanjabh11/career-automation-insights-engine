@@ -18,7 +18,9 @@ const checks = [
     file: 'src/App.tsx',
     expected: [
       /const PrivacyPage = lazy\(\(\) => import\("\.\/pages\/PrivacyPage"\)\)/,
+      /const ProofPackGalleryPage = lazy\(\(\) => import\("\.\/pages\/ProofPackGalleryPage"\)\)/,
       /path="\/privacy"/,
+      /path="\/proof-pack-gallery"/,
     ],
   },
   {
@@ -76,7 +78,25 @@ const checks = [
   {
     id: 'commercial-smoke-privacy-route',
     file: 'scripts/smoke-commercial-routes.mjs',
-    expected: [/path: '\/privacy'/],
+    expected: [/path: '\/privacy'/, /path: '\/proof-pack-gallery'/],
+  },
+  {
+    id: 'proof-pack-gallery-page',
+    file: 'src/pages/ProofPackGalleryPage.tsx',
+    expected: [
+      /data-proof-pack-gallery="phase-6-outreach"/,
+      /individual-transition-report/,
+      /coach-branded-sample/,
+      /workforce-csv-audit/,
+      /CRM import pack/,
+      /CRM CSV/,
+      /Planning artifact only/,
+      /NACE career readiness/,
+      /DOL workforce LMI plan/,
+      /Lightcast positioning/,
+      /Workera positioning/,
+      /must not be used for/,
+    ],
   },
   {
     id: 'commercial-browser-verifier',
@@ -85,8 +105,10 @@ const checks = [
       /verifyCoachSampleReport/,
       /verifySeoReportDownload/,
       /verifyWorkforceAuditBuilder/,
+      /verifyProofPackGallery/,
       /verifyOfflineQueueRedaction/,
       /Weight basis/,
+      /CRM CSV/,
     ],
   },
   {
@@ -120,6 +142,7 @@ const checks = [
     expected: [
       /commercialLintFiles/,
       /src\/components\/SEOReportDownload\.tsx/,
+      /src\/pages\/ProofPackGalleryPage\.tsx/,
       /scripts\/verify-commercial-release\.mjs/,
       /src\/lib\/workforceExecutiveReport\.ts/,
     ],

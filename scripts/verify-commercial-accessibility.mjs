@@ -16,6 +16,7 @@ const routes = [
   { path: '/tools/resume-analyzer', label: 'resume analyzer' },
   { path: '/tools/counselor-reports', label: 'counselor reports' },
   { path: '/enterprise-dashboard', label: 'workforce dashboard' },
+  { path: '/proof-pack-gallery', label: 'proof-pack gallery' },
   { path: '/automation-risk/accountant', label: 'occupation SEO report' },
 ];
 

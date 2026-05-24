@@ -45,6 +45,8 @@ Report artifacts now have an append-only staff event boundary in `commercial_rep
 
 Coach sample reports now use the same source manifest boundary and can persist a branded sample artifact when a coach enters a contact email. Treat this as an outreach proof-pack flow: the preview settings are browser-saved for fast demos, while the generated report HTML and lead record are Supabase-backed when the artifact capture succeeds.
 
+The public proof-pack gallery at `/proof-pack-gallery` packages the bounded outreach surface for coaches, career centers, and workforce buyers. It links to the individual, coach, and workforce sample routes, includes a sample occupation shelf, and exports a manual CRM-import CSV. Treat the CSV as an outreach operations artifact only; live CRM sync, email automation, and deployed-domain analytics remain pending.
+
 Lead capture now routes through `capture_commercial_lead`, which normalizes repeat captures by email/source/report/occupation and stores consent text plus consent timestamp. SEO report downloads and coach sample artifacts require explicit contact consent before they persist a lead, link to `/privacy`, and lead ops exposes the consent status for staff review. If Supabase is unavailable, the browser retry queue redacts full report HTML, keeps entries for up to seven days, and retries queued lead persistence after later successful captures.
 
 ## Current Verification Gate

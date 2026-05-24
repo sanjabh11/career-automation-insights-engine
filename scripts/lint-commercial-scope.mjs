@@ -15,6 +15,7 @@ export const commercialLintFiles = [
   'src/pages/SampleReportPage.tsx',
   'src/pages/CommercialLeadOpsPage.tsx',
   'src/pages/PrivacyPage.tsx',
+  'src/pages/ProofPackGalleryPage.tsx',
   'src/lib/commercialLeadOps.ts',
   'src/lib/commercialLeads.ts',
   'src/lib/commercialReportArtifacts.ts',

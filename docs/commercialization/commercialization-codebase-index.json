@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T05:46:05.688Z",
+  "generatedAt": "2026-05-24T06:04:18.276Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -188,6 +188,11 @@
       "commercial": false
     },
     {
+      "path": "/pilot-outreach",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
       "path": "/pricing",
       "component": "PricingPage",
       "commercial": true
@@ -195,6 +200,11 @@
     {
       "path": "/privacy",
       "component": "PrivacyPage",
+      "commercial": true
+    },
+    {
+      "path": "/proof-pack-gallery",
+      "component": "ProofPackGalleryPage",
       "commercial": true
     },
     {
@@ -449,6 +459,10 @@
       "importPath": "./pages/PrivacyPage"
     },
     {
+      "symbol": "ProofPackGalleryPage",
+      "importPath": "./pages/ProofPackGalleryPage"
+    },
+    {
       "symbol": "QualityPage",
       "importPath": "./pages/QualityPage"
     },
@@ -672,6 +686,23 @@
     ]
   },
   "featureMap": [
+    {
+      "feature": "Pilot proof-pack gallery and outreach assets",
+      "buyer": "Coaches, career centers, workforce boards, L&D pilot sponsors",
+      "routes": [
+        "/proof-pack-gallery",
+        "/sample-report",
+        "/automation-risk/:occupation",
+        "/enterprise-dashboard"
+      ],
+      "files": [
+        "src/pages/ProofPackGalleryPage.tsx",
+        "docs/commercialization/pilot-outreach-pack.md",
+        "scripts/verify-commercial-browser.mjs",
+        "scripts/verify-commercial-trust-boundaries.mjs"
+      ],
+      "proof": "Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, and downloadable CRM-import outreach CSV."
+    },
     {
       "feature": "SEO report lead capture",
       "buyer": "Individuals, coaches, inbound SEO visitors",

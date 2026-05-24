@@ -284,12 +284,40 @@ Engineering,Software Developers,8,128000,35,15-1252.00`);
   await assertVisible(page.getByText(/Rows needing SOC\/O\*NET review: 1/i), 'workforce unmapped review count');
 }
 
+async function verifyProofPackGallery(page, baseUrl) {
+  console.log('checking /proof-pack-gallery');
+  await page.goto(`${baseUrl}/proof-pack-gallery`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
+  await assertVisible(
+    page.getByRole('heading', { name: /Proof-pack gallery for coach, career-center, and workforce pilots/i }),
+    '/proof-pack-gallery heading'
+  );
+  await assertVisible(page.locator('[data-proof-pack-gallery="phase-6-outreach"]'), 'proof-pack gallery marker');
+  await assertVisible(page.locator('[data-proof-pack-gallery-card="individual-transition-report"]'), 'individual proof-pack sample card');
+  await assertVisible(page.locator('[data-proof-pack-gallery-card="coach-branded-sample"]'), 'coach proof-pack sample card');
+  await assertVisible(page.locator('[data-proof-pack-gallery-card="workforce-csv-audit"]'), 'workforce proof-pack sample card');
+  await assertVisible(page.getByText(/Does not prove boundaries/i), 'gallery does-not-prove boundary');
+  await assertVisible(page.getByText(/CRM import pack/i), 'CRM import pack');
+  await assertVisible(page.getByRole('button', { name: /CRM CSV/i }), 'CRM CSV export');
+  await assertVisible(page.getByText(/Planning artifact only/i).first(), 'gallery planning-only boundary');
+
+  const csvButton = page.getByRole('button', { name: /CRM CSV/i });
+  const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await csvButton.click();
+  const download = await downloadPromise;
+  const suggestedFilename = download.suggestedFilename();
+  if (!suggestedFilename.includes('proof-pack-outreach')) {
+    throw new Error(`Unexpected proof-pack gallery CSV filename: ${suggestedFilename}`);
+  }
+  console.log('ok download - proof-pack gallery CRM CSV');
+}
+
 async function runBrowserChecks(baseUrl) {
   console.log('launching Playwright browser');
   const browser = await launchCommercialBrowser();
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1100 },
     ignoreHTTPSErrors: true,
+    acceptDownloads: true,
   });
 
   await context.route('**/*', async (route) => {
@@ -309,6 +337,7 @@ async function runBrowserChecks(baseUrl) {
     await verifyCoachSampleReport(page, baseUrl);
     await verifySeoReportDownload(page, baseUrl);
     await verifyWorkforceAuditBuilder(page, baseUrl);
+    await verifyProofPackGallery(page, baseUrl);
 
     if (issues.length > 0) {
       throw new Error(`Commercial browser issues:\n${issues.map((issue) => `- ${issue}`).join('\n')}`);

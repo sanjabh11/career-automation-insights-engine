@@ -17,6 +17,7 @@ const commercialRoutes = [
   { path: '/enterprise-dashboard', appRoute: 'path="/enterprise-dashboard"', label: 'Enterprise dashboard' },
   { path: '/operations/leads', appRoute: 'path="/operations/leads"', label: 'Commercial lead ops' },
   { path: '/privacy', appRoute: 'path="/privacy"', label: 'Privacy policy' },
+  { path: '/proof-pack-gallery', appRoute: 'path="/proof-pack-gallery"', label: 'Proof-pack gallery' },
   { path: '/automation-risk/accountants', appRoute: 'path="/automation-risk/:occupation"', label: 'Occupation SEO risk page' },
 ];
 

@@ -91,6 +91,15 @@ const artifacts = [
     caveat: 'Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.',
   },
   {
+    id: 'proof-pack-gallery-page',
+    label: 'Phase 6 proof-pack gallery and outreach CSV',
+    path: 'src/pages/ProofPackGalleryPage.tsx',
+    type: 'commercial-page',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22', 'llm-output'],
+    expectedSnippets: ['data-proof-pack-gallery="phase-6-outreach"', 'CRM import pack', 'buildOutreachCsv', 'NACE career readiness', 'DOL workforce LMI plan', 'Lightcast positioning', 'Workera positioning'],
+    caveat: 'Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.',
+  },
+  {
     id: 'artifact-review-event-migration',
     label: 'Artifact review event migration',
     path: 'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
