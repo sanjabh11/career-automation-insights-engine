@@ -117,6 +117,60 @@ export interface ProofPackReviewAttestation {
   caveat: string;
 }
 
+export interface CommercialReportDeliveryPacketLead {
+  id: string;
+  email: string;
+  status: string;
+  buyerSegment: string;
+  reportType: string;
+  occupationTitle?: string | null;
+  occupationSlug?: string | null;
+  consentToContact?: boolean;
+  consentCapturedAt?: string | null;
+}
+
+export interface CommercialReportDeliveryPacketInput {
+  artifact: CommercialReportArtifactDetail;
+  lead: CommercialReportDeliveryPacketLead;
+  attestation: ProofPackReviewAttestation;
+  eventHistory: CommercialReportArtifactEvent[];
+  generatedByUserId?: string | null;
+  generatedByEmail?: string | null;
+  generatedAt?: string;
+}
+
+export interface CommercialReportDeliveryPacket {
+  deliveryPacketType: "proof_pack_delivery_packet";
+  generatedAt: string;
+  generatedByUserId: string | null;
+  generatedByEmail: string | null;
+  artifact: {
+    id: string;
+    title: string;
+    artifactType: string;
+    buyerSegment: string;
+    reportType: string;
+    occupationTitle: string | null;
+    occupationSlug: string | null;
+    occupationCode: string | null;
+    createdAt: string;
+    reportHtmlHash: string;
+    sourceVersions: Record<string, unknown>;
+    metadata: Record<string, unknown>;
+  };
+  lead: CommercialReportDeliveryPacketLead;
+  attestation: ProofPackReviewAttestation;
+  eventHistory: CommercialReportArtifactEvent[];
+  sourceIds: string[];
+  evidenceCardIds: string[];
+  decisionBoundaries: string[];
+  governanceSourceIds: string[];
+  reportHtml: string;
+  snapshotHash: string;
+  legalSignature: false;
+  caveat: string;
+}
+
 interface CommercialReportArtifactRpcRow {
   id: string;
   artifact_type: string;
@@ -216,6 +270,21 @@ function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values.filter(Boolean))).sort();
 }
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAttribute(value: unknown): string {
+  return escapeHtml(value).replace(/"/g, "&quot;");
+}
+
+function sourceVersionIds(sourceVersions: Record<string, unknown>): string[] {
+  return Object.keys(sourceVersions).filter((key) => /^[a-z0-9][a-z0-9-]+$/i.test(key));
+}
+
 async function sha256Hex(value: string): Promise<string> {
   if (globalThis.crypto?.subtle) {
     const bytes = new TextEncoder().encode(value);
@@ -291,6 +360,176 @@ export async function buildProofPackReviewAttestation(
     legalSignature: false,
     caveat: "This is a non-legal human review attestation for proof-pack delivery traceability; it is not an electronic signature, compliance certification, or employment-selection validation.",
   };
+}
+
+export async function buildCommercialReportDeliveryPacket(
+  input: CommercialReportDeliveryPacketInput
+): Promise<CommercialReportDeliveryPacket> {
+  const generatedAt = input.generatedAt || new Date().toISOString();
+  const reportHtmlHash = await sha256Hex(input.artifact.reportHtml);
+  const sourceIds = uniqueSorted([
+    ...sourceVersionIds(input.artifact.sourceVersions),
+    ...input.attestation.sourceIds,
+    ...input.attestation.governanceSourceIds,
+  ]);
+  const eventHistory = input.eventHistory
+    .slice()
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+  const packetSnapshot = {
+    deliveryPacketType: "proof_pack_delivery_packet",
+    generatedAt,
+    artifactId: input.artifact.id,
+    leadId: input.lead.id,
+    attestationId: input.attestation.attestationId,
+    attestationSnapshotHash: input.attestation.snapshotHash,
+    reportHtmlHash,
+    eventIds: eventHistory.map((event) => event.id),
+    sourceIds,
+  };
+  const snapshotHash = await sha256Hex(stableStringify(packetSnapshot));
+
+  return {
+    deliveryPacketType: "proof_pack_delivery_packet",
+    generatedAt,
+    generatedByUserId: input.generatedByUserId || null,
+    generatedByEmail: input.generatedByEmail || null,
+    artifact: {
+      id: input.artifact.id,
+      title: input.artifact.title,
+      artifactType: input.artifact.artifactType,
+      buyerSegment: input.artifact.buyerSegment,
+      reportType: input.artifact.reportType,
+      occupationTitle: input.artifact.occupationTitle,
+      occupationSlug: input.artifact.occupationSlug,
+      occupationCode: input.artifact.occupationCode,
+      createdAt: input.artifact.createdAt,
+      reportHtmlHash,
+      sourceVersions: input.artifact.sourceVersions,
+      metadata: input.artifact.metadata,
+    },
+    lead: input.lead,
+    attestation: input.attestation,
+    eventHistory,
+    sourceIds,
+    evidenceCardIds: input.attestation.evidenceCardIds,
+    decisionBoundaries: input.attestation.decisionBoundaries,
+    governanceSourceIds: input.attestation.governanceSourceIds,
+    reportHtml: input.artifact.reportHtml,
+    snapshotHash,
+    legalSignature: false,
+    caveat:
+      "This proof-pack delivery packet bundles one generated report artifact, human-review attestation, event history, source IDs, and hashes for delivery traceability. It is not a legal signature, employment-selection validation, compliance certification, or proof of labor-market outcomes.",
+  };
+}
+
+export function renderCommercialReportDeliveryPacketHtml(packet: CommercialReportDeliveryPacket): string {
+  const eventRows = packet.eventHistory
+    .map(
+      (event) => `<tr>
+        <td>${escapeHtml(event.eventType)}</td>
+        <td>${escapeHtml(event.createdAt)}</td>
+        <td>${escapeHtml(event.actorEmail || event.actorUserId || event.deliveryChannel || "staff")}</td>
+        <td>${escapeHtml(
+          typeof event.metadata?.section_title === "string"
+            ? event.metadata.section_title
+            : typeof event.metadata?.artifact_title === "string"
+              ? event.metadata.artifact_title
+              : ""
+        )}</td>
+      </tr>`
+    )
+    .join("");
+  const sectionRows = packet.attestation.sectionStatuses
+    .map(
+      (section) => `<tr>
+        <td>${escapeHtml(section.sectionTitle)}</td>
+        <td>${escapeHtml(section.reviewStatus)}</td>
+        <td>${section.clientReady ? "yes" : "no"}</td>
+        <td>${escapeHtml(section.acceptanceCriteria.join("; "))}</td>
+      </tr>`
+    )
+    .join("");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${escapeHtml(packet.artifact.title)} - Proof-Pack Delivery Packet</title>
+  <style>
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; color: #0f172a; background: #f8fafc; }
+    main { max-width: 1120px; margin: 0 auto; padding: 32px 20px; }
+    section { background: #fff; border: 1px solid #dbe3ea; border-radius: 8px; padding: 20px; margin-top: 18px; }
+    h1, h2 { margin: 0 0 10px; }
+    p { line-height: 1.5; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    th, td { border: 1px solid #dbe3ea; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #eef2f7; }
+    code, pre { background: #eef2f7; border-radius: 6px; padding: 2px 5px; }
+    pre { overflow: auto; padding: 12px; white-space: pre-wrap; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .meta-card { border: 1px solid #dbe3ea; border-radius: 8px; padding: 12px; background: #f8fafc; }
+    .pill-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+    .pill-list li { border: 1px solid #cbd5e1; border-radius: 999px; padding: 4px 8px; background: #f8fafc; font-size: 12px; }
+    iframe { width: 100%; min-height: 820px; border: 1px solid #94a3b8; border-radius: 8px; background: #fff; }
+    .caveat { border-color: #fde68a; background: #fffbeb; }
+  </style>
+</head>
+<body>
+  <main data-proof-pack-delivery-packet="true">
+    <section>
+      <h1>Proof-Pack Delivery Packet</h1>
+      <p>${escapeHtml(packet.caveat)}</p>
+      <div class="meta-grid">
+        <div class="meta-card"><strong>Artifact</strong><br />${escapeHtml(packet.artifact.title)}<br /><code>${escapeHtml(packet.artifact.id)}</code></div>
+        <div class="meta-card"><strong>Lead</strong><br />${escapeHtml(packet.lead.email)}<br />${escapeHtml(packet.lead.buyerSegment)} / ${escapeHtml(packet.lead.reportType)}</div>
+        <div class="meta-card"><strong>Generated</strong><br />${escapeHtml(packet.generatedAt)}<br />${escapeHtml(packet.generatedByEmail || packet.generatedByUserId || "staff reviewer")}</div>
+        <div class="meta-card"><strong>Packet hash</strong><br /><code>${escapeHtml(packet.snapshotHash)}</code></div>
+        <div class="meta-card"><strong>Report HTML hash</strong><br /><code>${escapeHtml(packet.artifact.reportHtmlHash)}</code></div>
+        <div class="meta-card"><strong>Attestation</strong><br /><code>${escapeHtml(packet.attestation.attestationId)}</code><br />${packet.attestation.clientReadySectionCount}/${packet.attestation.sectionCount} sections ready</div>
+      </div>
+    </section>
+
+    <section class="caveat">
+      <h2>Decision Boundaries</h2>
+      <ul>${packet.decisionBoundaries.map((boundary) => `<li>${escapeHtml(boundary)}</li>`).join("")}</ul>
+    </section>
+
+    <section>
+      <h2>Source And Evidence IDs</h2>
+      <ul class="pill-list">${packet.sourceIds.map((sourceId) => `<li>${escapeHtml(sourceId)}</li>`).join("")}</ul>
+      <h3>Evidence Cards</h3>
+      <ul class="pill-list">${packet.evidenceCardIds.map((evidenceId) => `<li>${escapeHtml(evidenceId)}</li>`).join("")}</ul>
+    </section>
+
+    <section>
+      <h2>Human Review Sections</h2>
+      <table>
+        <thead><tr><th>Section</th><th>Status</th><th>Client-ready</th><th>Acceptance criteria</th></tr></thead>
+        <tbody>${sectionRows}</tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Artifact Event History</h2>
+      <table>
+        <thead><tr><th>Event</th><th>Timestamp</th><th>Actor/channel</th><th>Subject</th></tr></thead>
+        <tbody>${eventRows || '<tr><td colspan="4">No artifact events were included.</td></tr>'}</tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Human Review Attestation JSON</h2>
+      <pre>${escapeHtml(JSON.stringify(packet.attestation, null, 2))}</pre>
+    </section>
+
+    <section>
+      <h2>Client Report Preview</h2>
+      <iframe title="Client report preview" sandbox="" srcdoc="${escapeAttribute(packet.reportHtml)}"></iframe>
+    </section>
+  </main>
+</body>
+</html>`;
 }
 
 function normalizeArtifact(row: CommercialReportArtifactRpcRow): CommercialReportArtifact {

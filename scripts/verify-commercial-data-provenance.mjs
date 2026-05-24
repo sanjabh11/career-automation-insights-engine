@@ -105,8 +105,8 @@ const artifacts = [
     path: 'src/lib/commercialReportArtifacts.ts',
     type: 'report-runtime',
     sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'iso-42001', 'llm-output'],
-    expectedSnippets: ['buildProofPackReviewAttestation', 'human_review_attestation', 'snapshotHash', 'legalSignature: false'],
-    caveat: 'Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.',
+    expectedSnippets: ['buildProofPackReviewAttestation', 'human_review_attestation', 'CommercialReportDeliveryPacket', 'buildCommercialReportDeliveryPacket', 'renderCommercialReportDeliveryPacketHtml', 'proof_pack_delivery_packet', 'reportHtmlHash', 'snapshotHash', 'legalSignature: false'],
+    caveat: 'Review attestation and delivery packet are non-legal delivery traceability artifacts, not electronic signatures, compliance certifications, or employment-selection validations.',
   },
   {
     id: 'resume-deletion-receipt-client',

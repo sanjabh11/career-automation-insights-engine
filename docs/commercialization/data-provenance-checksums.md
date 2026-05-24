@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T11:26:29.641Z
+Generated: 2026-05-24T11:44:24.400Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-24T09:52:12.192Z
 All referenced current-source checks passed: yes
@@ -20,7 +20,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `work-transition-proof-pack-module` | AI work transition proof pack renderer | `src/lib/workTransitionProofPack.ts` | report-runtime | 1,523 | `c9151cfd5c86de0a...` | `onet`, `wef-foj-2025`, `oecd-skills-outlook-2025`, `ai-workforce-consortium-2025`, `nace-career-readiness`, `dol-ai-literacy-framework`, `anthropic-economic-index`, `anthropic-observed-exposure`, `openai-gdpval`, `bls-ai-mlr-2025`, `bls-oews`, `bls-laus`, `bls-qcew`, `careeronestop-api`, `census-acs-api`, `wcag-22`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `esco`, `lightcast`, `serpapi`, `llm-output` | pass |
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
-| `commercial-report-artifacts-module` | Commercial report artifact review runtime | `src/lib/commercialReportArtifacts.ts` | report-runtime | 376 | `f36c7b1c4714ec8d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
+| `commercial-report-artifacts-module` | Commercial report artifact review runtime | `src/lib/commercialReportArtifacts.ts` | report-runtime | 599 | `092288b45d2ed04f...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `resume-deletion-receipt-client` | Resume analysis deletion receipt client | `src/lib/resumeAnalysisPrivacy.ts` | privacy-runtime | 75 | `dd2d0e3fbe2f4a42...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `resume-deletion-receipt-migration` | Resume analysis deletion receipt migration | `supabase/migrations/20260524000400_add_resume_deletion_receipts.sql` | supabase-migration | 145 | `26cbcd73f5380890...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 172 | `e39a79a9d7811d7b...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
@@ -44,7 +44,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `work-transition-proof-pack-module`: Emerging role radar, skill-change ledger, learning/provider boundary, local labor-market appendix, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.
 - `report-provenance-module`: Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.
 - `workforce-executive-report-module`: Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.
-- `commercial-report-artifacts-module`: Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.
+- `commercial-report-artifacts-module`: Review attestation and delivery packet are non-legal delivery traceability artifacts, not electronic signatures, compliance certifications, or employment-selection validations.
 - `resume-deletion-receipt-client`: Deletion receipt client proves an app-level saved analysis deletion request can return a bounded receipt; it does not prove external provider logs, exports, or backups are deleted.
 - `resume-deletion-receipt-migration`: Deletion receipts are app-level proof for the resume_analyses row and do not certify legal compliance, backup deletion, or model-provider retention behavior.
 - `resume-analysis-edge-retention-boundary`: Edge-function retention metadata documents raw-text redaction and receipt availability; live deployment and provider-log controls must still be verified separately.

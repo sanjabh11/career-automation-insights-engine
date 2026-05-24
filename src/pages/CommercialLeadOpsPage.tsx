@@ -34,11 +34,13 @@ import {
   updateCommercialLeadStatus,
 } from "@/lib/commercialLeadOps";
 import {
+  buildCommercialReportDeliveryPacket,
   buildProofPackReviewAttestation,
   CommercialReportArtifactEvent,
   getCommercialReportArtifact,
   listCommercialReportArtifactEvents,
   logCommercialReportArtifactEvent,
+  renderCommercialReportDeliveryPacketHtml,
   type ProofPackReviewAttestation,
 } from "@/lib/commercialReportArtifacts";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
@@ -223,6 +225,15 @@ function artifactFileName(title: string): string {
   return `${sanitized || "commercial-report-artifact"}.html`;
 }
 
+function deliveryPacketFileName(lead: CommercialLeadRow, title: string): string {
+  const leadSlug = lead.email
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return `${leadSlug || "lead"}-${artifactFileName(title).replace(/\.html$/, "")}-delivery-packet.html`;
+}
+
 function statusBadgeVariant(status: LeadStatus): "default" | "secondary" | "outline" {
   if (status === "converted") return "default";
   if (status === "qualified" || status === "contacted") return "secondary";
@@ -244,6 +255,7 @@ export default function CommercialLeadOpsPage() {
   const [updatingLeadId, setUpdatingLeadId] = useState<string | null>(null);
   const [loadingArtifactId, setLoadingArtifactId] = useState<string | null>(null);
   const [loadingEventsArtifactId, setLoadingEventsArtifactId] = useState<string | null>(null);
+  const [downloadingPacketArtifactId, setDownloadingPacketArtifactId] = useState<string | null>(null);
   const [expandedEventsArtifactId, setExpandedEventsArtifactId] = useState<string | null>(null);
   const [artifactEventsById, setArtifactEventsById] = useState<Record<string, CommercialReportArtifactEvent[]>>({});
   const [reviewNoteDrafts, setReviewNoteDrafts] = useState<Record<string, string>>({});
@@ -342,6 +354,76 @@ export default function CommercialLeadOpsPage() {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
+  };
+
+  const downloadDeliveryPacket = async (lead: CommercialLeadRow, attestation: ProofPackReviewAttestation) => {
+    const artifactId = lead.report_artifact_id;
+    if (!artifactId) return;
+
+    setDownloadingPacketArtifactId(artifactId);
+
+    try {
+      const artifact = await getCommercialReportArtifact(artifactId);
+      const existingEvents = artifactEventsById[artifactId] || (await listCommercialReportArtifactEvents(artifactId, 10));
+      const packetEvent = await logCommercialReportArtifactEvent({
+        artifactId,
+        leadId: lead.id,
+        eventType: "staff_downloaded",
+        deliveryChannel: "lead-ops-delivery-packet",
+        metadata: {
+          proof_pack_delivery_packet: true,
+          lead_email: lead.email,
+          artifact_title: artifact.title,
+          attestation_id: attestation.attestationId,
+          attestation_snapshot_hash: attestation.snapshotHash,
+        },
+      });
+      const eventHistory = [packetEvent, ...existingEvents].slice(0, 12);
+      const packet = await buildCommercialReportDeliveryPacket({
+        artifact,
+        lead: {
+          id: lead.id,
+          email: lead.email,
+          status: lead.status,
+          buyerSegment: lead.buyer_segment,
+          reportType: lead.report_type,
+          occupationTitle: lead.occupation_title,
+          occupationSlug: lead.occupation_slug,
+          consentToContact: lead.consent_to_contact,
+          consentCapturedAt: lead.consent_captured_at,
+        },
+        attestation,
+        eventHistory,
+        generatedByUserId: userId,
+        generatedByEmail: user?.email || null,
+      });
+      const html = renderCommercialReportDeliveryPacketHtml(packet);
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = deliveryPacketFileName(lead, artifact.title);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      setArtifactEventsById((current) => ({
+        ...current,
+        [artifactId]: eventHistory,
+      }));
+      toast({
+        title: "Delivery packet downloaded",
+        description: "The source-labeled report, attestation, hashes, and event history were bundled into a delivery packet.",
+      });
+    } catch (error) {
+      toast({
+        title: "Delivery packet failed",
+        description: error instanceof Error ? error.message : "Unable to build the proof-pack delivery packet.",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingPacketArtifactId(null);
+    }
   };
 
   const openReportArtifact = async (lead: CommercialLeadRow) => {
@@ -951,17 +1033,31 @@ export default function CommercialLeadOpsPage() {
                                     Non-legal attestation only; not an employment-selection validation.
                                   </div>
                                 </div>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-7 px-2 text-xs"
-                                  aria-label={`Download human review attestation for ${lead.email}`}
-                                  onClick={() => downloadReviewAttestation(lead, reviewAttestation)}
-                                >
-                                  <Download className="mr-1 h-3 w-3" />
-                                  Attestation JSON
-                                </Button>
+                                <div className="flex flex-wrap gap-2">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-7 px-2 text-xs"
+                                    aria-label={`Download proof-pack delivery packet for ${lead.email}`}
+                                    disabled={downloadingPacketArtifactId === artifactId}
+                                    onClick={() => void downloadDeliveryPacket(lead, reviewAttestation)}
+                                  >
+                                    <Download className="mr-1 h-3 w-3" />
+                                    {downloadingPacketArtifactId === artifactId ? "Bundling" : "Delivery Packet"}
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-7 px-2 text-xs"
+                                    aria-label={`Download human review attestation for ${lead.email}`}
+                                    onClick={() => downloadReviewAttestation(lead, reviewAttestation)}
+                                  >
+                                    <Download className="mr-1 h-3 w-3" />
+                                    Attestation JSON
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           )}

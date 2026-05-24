@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T11:26:29.641Z",
+  "generatedAt": "2026-05-24T11:44:24.400Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -329,13 +329,18 @@
       "expectedSnippets": [
         "buildProofPackReviewAttestation",
         "human_review_attestation",
+        "CommercialReportDeliveryPacket",
+        "buildCommercialReportDeliveryPacket",
+        "renderCommercialReportDeliveryPacketHtml",
+        "proof_pack_delivery_packet",
+        "reportHtmlHash",
         "snapshotHash",
         "legalSignature: false"
       ],
-      "caveat": "Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.",
-      "bytes": 13091,
-      "rows": 376,
-      "sha256": "f36c7b1c4714ec8dbc129767d891cf1169c43f6506862e1759d13cfff8cc2afc",
+      "caveat": "Review attestation and delivery packet are non-legal delivery traceability artifacts, not electronic signatures, compliance certifications, or employment-selection validations.",
+      "bytes": 22894,
+      "rows": 599,
+      "sha256": "092288b45d2ed04f5b26493921bffd6d5105dcd750594ad2a57bd2ed04318519",
       "failures": [],
       "passed": true
     },
