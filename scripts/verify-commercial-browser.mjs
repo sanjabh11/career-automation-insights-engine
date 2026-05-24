@@ -173,7 +173,7 @@ async function verifyPopupReport(popupPromise, expectedText, label) {
 
 function getMockResumeAnalysisResponse() {
   const generatedAt = '2026-05-24T00:00:00.000Z';
-  const sourceIds = ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+  const sourceIds = ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'owasp-file-upload', 'supabase-edge-functions'];
   return {
     success: true,
     analysis_id: null,
@@ -215,11 +215,16 @@ function getMockResumeAnalysisResponse() {
       parserBoundary: {
         filename: 'pasted-resume.txt',
         inputMode: 'pasted_text',
+        serverParserReceiptId: null,
+        fileSha256: null,
+        detectedFileKind: 'pasted_text',
+        uploadValidation: 'text_submission_without_file_upload',
         rawFileStored: false,
         rawResumeTextStored: false,
         savedAnalysisId: null,
         deletionReceiptAvailable: false,
         productionPdfDocxParser: false,
+        tempFileDeletionStatus: 'not_applicable',
         caveat: 'Browser text input was analyzed for coaching only; production PDF/DOCX parsing requires server-side parser verification.',
       },
       evidenceCards: [
@@ -251,6 +256,16 @@ function getMockResumeAnalysisResponse() {
           generatedAt,
           caveat: 'Skill recommendations need local labor-market and advisor validation.',
           doesNotProve: 'Does not prove market demand or credential value.',
+          reviewStatus: 'staff_review_required',
+        },
+        {
+          id: 'resume-server-parser-boundary',
+          claim: 'Server-side resume parsing must validate file type, size, signature, and storage minimization before paid PDF/DOCX workflows are enabled.',
+          sourceIds: ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf'],
+          confidence: 'medium',
+          generatedAt,
+          caveat: 'Pasted text has no server parser receipt; production PDF/DOCX parsing requires deployed parser verification.',
+          doesNotProve: 'Does not prove uploaded files are malware-free or that PDF/DOCX extraction is complete.',
           reviewStatus: 'staff_review_required',
         },
       ],
@@ -300,6 +315,8 @@ async function verifyResumeProofReportDownload(page, baseUrl) {
     'resume-risk-score-boundary',
     'resume-rewrite-boundary',
     'resume-skill-recommendation-boundary',
+    'resume-server-parser-boundary',
+    'No server parser receipt is attached',
     'Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool',
     'Does not prove',
   ]) {
@@ -590,6 +607,33 @@ async function runBrowserChecks(baseUrl) {
           'content-type': 'application/json',
         },
         body: route.request().method() === 'OPTIONS' ? '' : JSON.stringify(getMockResumeAnalysisResponse()),
+      });
+      return;
+    }
+    if (url.includes('/functions/v1/parse-resume')) {
+      await route.fulfill({
+        status: route.request().method() === 'OPTIONS' ? 204 : 200,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-headers': 'authorization, apikey, content-type, x-client-info',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'content-type': 'application/json',
+        },
+        body: route.request().method() === 'OPTIONS' ? '' : JSON.stringify({
+          success: true,
+          extracted_text: 'Server parsed resume text with human judgment, AI-assisted analytics QA, stakeholder communication, and exception handling.',
+          parser_receipt: {
+            receiptId: 'parser-receipt-browser-smoke',
+            detectedFileKind: 'txt',
+            rawFileStored: false,
+            rawResumeTextStored: false,
+            productionPdfDocxParser: false,
+            tempFileDeletionStatus: 'not_persisted',
+            sourceIds: ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'],
+            caveat: 'Browser smoke parser mock; live parser deployment remains separately verified.',
+            doesNotProve: 'Does not prove malware scanning or full PDF/DOCX extraction.',
+          },
+        }),
       });
       return;
     }

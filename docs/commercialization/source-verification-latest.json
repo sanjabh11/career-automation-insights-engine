@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T18:31:47.945Z",
+  "generatedAt": "2026-05-24T22:50:03.660Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "b9435ee69f4c537dfab2a14efc49b27f43adcf40e770dea4ffbebf54b4d90684",
-      "byteLength": 233746,
+      "contentSha256": "860071f5a497f8734afdf4a4de294e3983821edeb8fb0e28bfbcd7065fb545e7",
+      "byteLength": 233778,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "58cc45ac597af06ecdfc03b782466d53c9f986a2537370634d87eb0ea85f2417",
+      "contentSha256": "65c6cd90baa333f93b28f27997a1a98149305f3afd199fc9ef2ffe238af605c3",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "6948793898adba6d54efc07d36c47d0ec3505d194432391651f2240c688cd883",
+      "contentSha256": "b5599059859aeb086445a124a0e11c9cd2046162dfe27567a473d01ec1405162",
       "byteLength": 303692,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
-      "byteLength": 116284,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "d594429bfac8b9e4f08992d14dcc7a4b8fb930291178ae424275cd1dc78894f4",
+      "contentSha256": "26fefb678b37aa48cad411e506d9943a7d9cdada6ab9b9f31b1513ff89d760ab",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "f59569502cb61b845f8469c0e8466679d93043274cf85b2518645c8210d4486b",
+      "contentSha256": "7f216f74945d0519c8ff9d3fc0714d217e5786723a912eab5468482fcd0b2993",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,7 +349,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "065ff4595d1bcb1468b9ab98d0b324193290bf41d25d048dd3a2c0a0c3485f3a",
+      "contentSha256": "dc8f42521e3c237098f0df6334844c332c130266deaca9b38fa1568a22275c87",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "4e66ea3ec2a0c898bad32fc7078d79b2b8d6df95eac01f9e93cdc108fc882f3a",
-      "byteLength": 164873,
+      "contentSha256": "75b84a0888ee9711c450316d5b509e715833045b493ce1dcf1714d95542d3d02",
+      "byteLength": 165940,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "92132c34a54f055985cd2654f2976ab6b5741a9c4595ad64270f3f1778d2b8c3",
+      "contentSha256": "61437240774aaf515d785cccb60c6ce0ced2d8986223588a67008bc9f08ff9f0",
       "byteLength": 210582,
       "evidence": [
         {
@@ -509,7 +509,7 @@
       "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
       "status": 200,
       "ok": true,
-      "contentSha256": "6cf8247698194d541bca42ada1c2ec99a8b4ca599224c165a7a62fa8a66cb3ca",
+      "contentSha256": "d20246040af183e2b3e6f3db7d4cc66fed14161c2b94e4e542fc422d3d7557c9",
       "byteLength": 183444,
       "evidence": [
         {
@@ -529,8 +529,8 @@
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
-      "byteLength": 121776,
+      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
+      "byteLength": 121777,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -589,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "209414d2bd118c5afefb72a61bebe4bd1503c90f3dfe23e924212e03e07204e2",
+      "contentSha256": "4e74fee8e5b6608778c8c7f5b609ec906b627ee1b8bacb26eb8e92e76db38b8b",
       "byteLength": 91197,
       "evidence": [
         {
@@ -598,6 +598,46 @@
         },
         {
           "label": "NIST source",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "owasp-file-upload",
+      "label": "OWASP File Upload Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "82e9c0306219105db14ecd8180ede240ed698d169682ee550437f3c0456e1317",
+      "byteLength": 76523,
+      "evidence": [
+        {
+          "label": "OWASP file upload title",
+          "matched": true
+        },
+        {
+          "label": "file validation controls",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "supabase-edge-functions",
+      "label": "Supabase Edge Functions",
+      "url": "https://supabase.com/docs/guides/functions",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "3971473b06d86dab14d178045ecb80d312b44fc28e428e8ff6bc69f83c402b4b",
+      "byteLength": 181975,
+      "evidence": [
+        {
+          "label": "Supabase Edge Functions title",
+          "matched": true
+        },
+        {
+          "label": "server-side and multipart evidence",
           "matched": true
         }
       ],

@@ -20,6 +20,9 @@ import {
     type ResumeProofReportArtifactDeletionReceipt,
 } from '@/lib/resumeProofReportArtifacts';
 
+const RESUME_SERVER_PARSER_EVIDENCE_CARD_ID = 'resume-server-parser-boundary';
+const RESUME_SERVER_PARSER_SOURCE_IDS = ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+
 interface AutomationPronePhrase {
     phrase: string;
     context: string;
@@ -49,12 +52,47 @@ interface ResumeProofEvidenceCard {
 interface ResumeParserBoundary {
     filename: string;
     inputMode: string;
+    serverParserReceiptId?: string | null;
+    fileSha256?: string | null;
+    detectedFileKind?: string;
+    uploadValidation?: string;
     rawFileStored: boolean;
     rawResumeTextStored: boolean;
     savedAnalysisId: string | null;
     deletionReceiptAvailable: boolean;
     productionPdfDocxParser: boolean;
+    tempFileDeletionStatus?: string;
     caveat: string;
+}
+
+interface ResumeServerParserReceipt {
+    receiptId: string;
+    generatedAt: string;
+    filename: string;
+    filenameHash: string;
+    fileSha256: string;
+    byteLength: number;
+    declaredMimeType: string;
+    detectedFileKind: string;
+    accepted: boolean;
+    extractedTextAvailable: boolean;
+    inputMode: string;
+    rawFileStored: boolean;
+    rawResumeTextStored: boolean;
+    productionPdfDocxParser: boolean;
+    tempFileDeletionStatus: string;
+    deletionStatus: string;
+    validationControls: string[];
+    sourceIds: string[];
+    caveat: string;
+    doesNotProve: string;
+}
+
+interface ResumeServerParseResponse {
+    success: boolean;
+    extracted_text?: string;
+    error?: string;
+    parser_receipt?: ResumeServerParserReceipt;
 }
 
 interface ResumeProofPack {
@@ -193,6 +231,9 @@ function getResumeProofReportHtml(
         <p><strong>Does not prove:</strong> ${escapeHtml(card.doesNotProve)}</p>
       </section>`).join('');
     const parserBoundary = proofPack?.parserBoundary;
+    const parserReceiptText = parserBoundary?.serverParserReceiptId
+        ? `Server parser receipt ${parserBoundary.serverParserReceiptId} validated ${parserBoundary.detectedFileKind || 'unknown'} upload; file hash prefix: ${(parserBoundary.fileSha256 || '').slice(0, 16)}; upload validation: ${parserBoundary.uploadValidation || 'unknown'}; temp file deletion status: ${parserBoundary.tempFileDeletionStatus || 'unknown'}.`
+        : 'No server parser receipt is attached. Treat pasted text and browser-extracted files as lower-assurance input until server-side parser proof exists.';
     const retentionText = receipt
         ? `Deletion receipt ${receipt.receiptId} recorded ${receipt.deletionStatus} for saved analysis ${receipt.analysisId}. Receipt hash prefix: ${receipt.receiptHash.slice(0, 16)}.`
         : 'No deletion receipt is attached to this downloaded report. Signed-in saved analyses can create an app-level deletion receipt from the resume analyzer.';
@@ -243,6 +284,7 @@ function getResumeProofReportHtml(
   <section class="boundary">
     <p>${escapeHtml(parserBoundary?.caveat || 'The report analyzes text supplied to the app. Production PDF/DOCX parsing requires a separate server-side parser verification.')}</p>
     <p><strong>Raw file stored:</strong> ${parserBoundary?.rawFileStored ? 'yes' : 'no'}; <strong>raw resume text stored:</strong> ${parserBoundary?.rawResumeTextStored ? 'yes' : 'no'}; <strong>production PDF/DOCX parser ready:</strong> ${parserBoundary?.productionPdfDocxParser ? 'yes' : 'no'}.</p>
+    <p>${escapeHtml(parserReceiptText)}</p>
     <p>${escapeHtml(retentionText)}</p>
   </section>
 
@@ -357,6 +399,30 @@ async function extractResumeText(file: File): Promise<{ text: string; warning?: 
     };
 }
 
+async function parseResumeFileServerSide(file: File): Promise<ResumeServerParseResponse> {
+    if (!isSupabaseConfigured) {
+        throw new Error('Supabase parse-resume function is not configured in this environment.');
+    }
+
+    const body = new FormData();
+    body.append('resume_file', file, file.name);
+
+    const { data, error } = await supabase.functions.invoke('parse-resume', {
+        body,
+    });
+
+    if (error && !data) {
+        throw new Error(error.message || 'Server-side resume parser returned no response.');
+    }
+
+    const response = data as ResumeServerParseResponse | null;
+    if (!response) {
+        throw new Error('Server-side resume parser returned an empty response.');
+    }
+
+    return response;
+}
+
 export default function ResumeAnalyzer() {
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
@@ -365,6 +431,7 @@ export default function ResumeAnalyzer() {
     const [analysisId, setAnalysisId] = useState<string | null>(null);
     const [filename, setFilename] = useState('');
     const [fileWarning, setFileWarning] = useState<string | null>(null);
+    const [serverParserReceipt, setServerParserReceipt] = useState<ResumeServerParserReceipt | null>(null);
     const [linkCopied, setLinkCopied] = useState(false);
     const [deletingAnalysis, setDeletingAnalysis] = useState(false);
     const [deletionReceipt, setDeletionReceipt] = useState<ResumeDeletionReceipt | null>(null);
@@ -377,7 +444,7 @@ export default function ResumeAnalyzer() {
     const { session } = useSession();
     const isAuthenticated = !!session?.user;
 
-    const analyzeResume = useCallback(async (text: string, fname: string) => {
+    const analyzeResume = useCallback(async (text: string, fname: string, parserReceipt: ResumeServerParserReceipt | null = null) => {
         const cleanedText = text.trim();
         if (cleanedText.length < 200) {
             toast({
@@ -409,7 +476,8 @@ export default function ResumeAnalyzer() {
                 body: {
                     resume_text: cleanedText,
                     user_id: session?.user?.id,
-                    filename: fname
+                    filename: fname,
+                    parser_receipt: parserReceipt
                 }
             });
 
@@ -448,14 +516,51 @@ export default function ResumeAnalyzer() {
         setFilename(file.name);
         setUploading(true);
         setFileWarning(null);
+        setServerParserReceipt(null);
 
         try {
+            let parserReceipt: ResumeServerParserReceipt | null = null;
+            let parserWarning: string | null = null;
+
+            if (isSupabaseConfigured) {
+                try {
+                    const serverParse = await parseResumeFileServerSide(file);
+                    parserReceipt = serverParse.parser_receipt || null;
+                    setServerParserReceipt(parserReceipt);
+
+                    if (serverParse.success && serverParse.extracted_text) {
+                        setResumeText(serverParse.extracted_text);
+                        setFileWarning(parserReceipt?.caveat || null);
+                        await analyzeResume(serverParse.extracted_text, file.name, parserReceipt);
+                        return;
+                    }
+
+                    parserWarning = [
+                        serverParse.error ? `Server parser status: ${serverParse.error}.` : null,
+                        parserReceipt?.caveat,
+                    ].filter(Boolean).join(' ');
+
+                    if (serverParse.error !== 'parser_adapter_pending') {
+                        const blockedMessage = parserWarning || 'The server parser rejected this upload. Paste clean resume text or upload a validated UTF-8 .txt file.';
+                        setFileWarning(blockedMessage);
+                        toast({
+                            title: 'Upload blocked by parser boundary',
+                            description: blockedMessage,
+                            variant: 'destructive'
+                        });
+                        return;
+                    }
+                } catch (error) {
+                    parserWarning = `Server parser boundary unavailable: ${getErrorMessage(error, 'unable to parse file server-side')}.`;
+                }
+            }
+
             const { text, warning } = await extractResumeText(file);
             setResumeText(text);
-            setFileWarning(warning || null);
+            setFileWarning([parserWarning, warning].filter(Boolean).join(' ') || null);
 
             // Auto-analyze after upload
-            await analyzeResume(text, file.name);
+            await analyzeResume(text, file.name, parserReceipt);
 
         } catch (error) {
             console.error('Error reading file:', error);
@@ -690,7 +795,7 @@ export default function ResumeAnalyzer() {
                     <Alert>
                         <ShieldCheck className="h-4 w-4" />
                         <AlertDescription>
-                            Reliable path today: paste text or upload .txt. PDF/DOCX browser extraction is treated as degraded until server-side parsing is added. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below. {REPORT_TRUST_NOTICES[1]}
+                            Reliable path today: paste text or upload .txt. When Supabase is configured, uploads are first sent through a server-side parser boundary that validates type, size, and file signature without storing the raw file. PDF/DOCX extraction remains adapter-pending until a dedicated parser and deletion evidence are deployed. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below. {REPORT_TRUST_NOTICES[1]}
                         </AlertDescription>
                     </Alert>
 
@@ -739,12 +844,32 @@ export default function ResumeAnalyzer() {
                         </Alert>
                     )}
 
+                    {serverParserReceipt && (
+                        <Alert data-resume-server-parser-receipt="true" data-resume-server-parser-evidence-id={RESUME_SERVER_PARSER_EVIDENCE_CARD_ID}>
+                            <ShieldCheck className="h-4 w-4" />
+                            <AlertDescription>
+                                <div className="space-y-1">
+                                    <p>
+                                        <strong>Server parser receipt:</strong> {serverParserReceipt.receiptId.slice(0, 8)} for {serverParserReceipt.detectedFileKind.toUpperCase()} upload.
+                                    </p>
+                                    <p>
+                                        Raw file stored: {serverParserReceipt.rawFileStored ? 'yes' : 'no'}; raw resume text stored: {serverParserReceipt.rawResumeTextStored ? 'yes' : 'no'}; temp deletion status: {serverParserReceipt.tempFileDeletionStatus}.
+                                    </p>
+                                    <p>
+                                        <strong>Sources:</strong> {(serverParserReceipt.sourceIds.length > 0 ? serverParserReceipt.sourceIds : RESUME_SERVER_PARSER_SOURCE_IDS).join(', ')}. <strong>Does not prove:</strong> {serverParserReceipt.doesNotProve}
+                                    </p>
+                                </div>
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
                     <div className="space-y-3">
                         <Textarea
                             value={resumeText}
                             onChange={(event) => {
                                 setResumeText(event.target.value);
                                 setFileWarning(null);
+                                setServerParserReceipt(null);
                             }}
                             placeholder="Paste resume text here if PDF/DOCX extraction is blocked or incomplete..."
                             rows={8}
@@ -982,6 +1107,11 @@ export default function ResumeAnalyzer() {
                                                 <p>
                                                     Raw file stored: {proofPack.parserBoundary.rawFileStored ? 'yes' : 'no'}; raw resume text stored: {proofPack.parserBoundary.rawResumeTextStored ? 'yes' : 'no'}; production PDF/DOCX parser ready: {proofPack.parserBoundary.productionPdfDocxParser ? 'yes' : 'no'}.
                                                 </p>
+                                                {proofPack.parserBoundary.serverParserReceiptId && (
+                                                    <p data-resume-parser-receipt-boundary="true">
+                                                        Server parser receipt: {proofPack.parserBoundary.serverParserReceiptId.slice(0, 8)}; file kind: {proofPack.parserBoundary.detectedFileKind}; upload validation: {proofPack.parserBoundary.uploadValidation}; temp deletion: {proofPack.parserBoundary.tempFileDeletionStatus}.
+                                                    </p>
+                                                )}
                                             </div>
                                         </AlertDescription>
                                     </Alert>

@@ -283,6 +283,24 @@ const checks = [
       { label: 'NIST source', pattern: /National Institute of Standards and Technology|NIST/i },
     ],
   },
+  {
+    id: 'owasp-file-upload',
+    label: 'OWASP File Upload Cheat Sheet',
+    url: 'https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html',
+    expected: [
+      { label: 'OWASP file upload title', pattern: /File Upload Cheat Sheet|File Upload Protection/i },
+      { label: 'file validation controls', pattern: /Extension Validation|Content-Type Validation|File Signature Validation|Upload and Download Limits/i },
+    ],
+  },
+  {
+    id: 'supabase-edge-functions',
+    label: 'Supabase Edge Functions',
+    url: 'https://supabase.com/docs/guides/functions',
+    expected: [
+      { label: 'Supabase Edge Functions title', pattern: /Edge Functions/i },
+      { label: 'server-side and multipart evidence', pattern: /server-side TypeScript functions|Upload File Process multipart\/form-data|auth headers\/JWT validation/i },
+    ],
+  },
 ];
 
 function normalizeForEvidence(value) {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T18:25:27.235Z",
+  "generatedAt": "2026-05-24T23:07:10.270Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -667,7 +667,9 @@
     "onet-task-ratings",
     "onet-task-statements",
     "openai-gdpval",
+    "owasp-file-upload",
     "serpapi",
+    "supabase-edge-functions",
     "wcag-22",
     "wef-foj-2025",
     "workera-positioning"
@@ -898,6 +900,7 @@
         "src/lib/resumeProofReportArtifacts.ts",
         "src/pages/ResponsibleAIPage.tsx",
         "src/integrations/supabase/client.ts",
+        "supabase/functions/parse-resume/index.ts",
         "supabase/functions/analyze-resume/index.ts",
         "supabase/migrations/20260524000400_add_resume_deletion_receipts.sql",
         "supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql",
@@ -905,7 +908,7 @@
         "scripts/generate-commercial-supabase-deployment-packet.mjs",
         "scripts/verify-commercial-trust-boundaries.mjs"
       ],
-      "proof": "Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier."
+      "proof": "Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier."
     },
     {
       "feature": "Counselor report generator",

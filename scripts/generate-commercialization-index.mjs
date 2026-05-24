@@ -159,6 +159,7 @@ const featureMap = [
       'src/lib/resumeProofReportArtifacts.ts',
       'src/pages/ResponsibleAIPage.tsx',
       'src/integrations/supabase/client.ts',
+      'supabase/functions/parse-resume/index.ts',
       'supabase/functions/analyze-resume/index.ts',
       'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
       'supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql',
@@ -166,7 +167,7 @@ const featureMap = [
       'scripts/generate-commercial-supabase-deployment-packet.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
     ],
-    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
+    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
   },
   {
     feature: 'Counselor report generator',
@@ -304,7 +305,7 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, and the server-side resume parser boundary are implemented, while live Supabase migration proof, paid PDF/DOCX parser adapters, malware scanning, and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
 - GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.

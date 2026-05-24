@@ -11,13 +11,22 @@ function buildRetainedResumeStub(resumeText: string): string {
     return `[raw resume text redacted after analysis; original_length_chars=${resumeText.length}]`;
 }
 
-function buildResumeAnalysisProofPack(generatedAt: string, filename: string, analysisId: string | null) {
+function buildResumeAnalysisProofPack(generatedAt: string, filename: string, analysisId: string | null, parserReceipt: Record<string, unknown> | null = null) {
+    const parserSourceIds = Array.isArray(parserReceipt?.sourceIds)
+        ? parserReceipt.sourceIds.filter((sourceId): sourceId is string => typeof sourceId === 'string')
+        : ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
+    const parserReceiptId = typeof parserReceipt?.receiptId === 'string' ? parserReceipt.receiptId : null;
+    const detectedFileKind = typeof parserReceipt?.detectedFileKind === 'string' ? parserReceipt.detectedFileKind : 'pasted_text';
+    const parserCaveat = typeof parserReceipt?.caveat === 'string'
+        ? parserReceipt.caveat
+        : 'The production-safe path is text submitted to the Edge Function. Browser PDF/DOCX extraction remains degraded until a server-side parser with file deletion proof is integrated.';
+
     return {
         proofPackType: 'resume_analysis_proof_boundary',
         schemaVersion: '2026-05-24',
         generatedAt,
         reviewStatus: 'staff_review_required',
-        sourceIds: ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22'],
+        sourceIds: ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22', ...parserSourceIds],
         evidenceCards: [
             {
                 id: 'resume-risk-score-boundary',
@@ -62,23 +71,38 @@ function buildResumeAnalysisProofPack(generatedAt: string, filename: string, ana
             {
                 id: 'resume-parser-retention-boundary',
                 claim: 'Saved resume analyses redact raw resume text and can return an app-level deletion receipt.',
-                sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance'],
+                sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'owasp-file-upload', 'supabase-edge-functions'],
                 confidence: 'high',
                 generatedAt,
                 caveat: 'The deletion receipt covers the app row only; browser files, user exports, model-provider logs, and backups require separate controls.',
                 doesNotProve: 'That external model-provider logs, browser files, user exports, or backups were deleted.',
                 reviewStatus: 'staff_review_required',
             },
+            {
+                id: 'resume-server-parser-boundary',
+                claim: 'Server-side resume parsing must validate file type, size, signature, and storage minimization before paid PDF/DOCX workflows are enabled.',
+                sourceIds: parserSourceIds,
+                confidence: parserReceiptId ? 'high' : 'medium',
+                generatedAt,
+                caveat: parserCaveat,
+                doesNotProve: 'That the uploaded file is malware-free, that PDF/DOC/DOCX text extraction is complete, or that a production parser has been deployed for every document format.',
+                reviewStatus: 'staff_review_required',
+            },
         ],
         parserBoundary: {
             filename,
-            inputMode: 'server_received_text',
+            inputMode: typeof parserReceipt?.inputMode === 'string' ? parserReceipt.inputMode : 'server_received_text',
+            serverParserReceiptId: parserReceiptId,
+            fileSha256: typeof parserReceipt?.fileSha256 === 'string' ? parserReceipt.fileSha256 : null,
+            detectedFileKind,
+            uploadValidation: parserReceiptId ? 'server_validated_upload_boundary' : 'text_submission_without_file_upload',
             rawFileStored: false,
             rawResumeTextStored: false,
             savedAnalysisId: analysisId,
             deletionReceiptAvailable: Boolean(analysisId),
-            productionPdfDocxParser: false,
-            caveat: 'The production-safe path is text submitted to the Edge Function. Browser PDF/DOCX extraction remains degraded until a server-side parser with file deletion proof is integrated.',
+            productionPdfDocxParser: Boolean(parserReceipt?.productionPdfDocxParser),
+            tempFileDeletionStatus: typeof parserReceipt?.tempFileDeletionStatus === 'string' ? parserReceipt.tempFileDeletionStatus : 'not_applicable',
+            caveat: parserCaveat,
         },
         decisionBoundaries: [
             'Not a hiring, firing, promotion, compensation, layoff, or eligibility decision system.',
@@ -111,7 +135,7 @@ serve(async (req) => {
     }
 
     try {
-        const { resume_text, user_id, filename = 'resume.txt' } = await req.json();
+        const { resume_text, user_id, filename = 'resume.txt', parser_receipt = null } = await req.json();
 
         if (!resume_text) {
             throw new Error('resume_text is required');
@@ -249,7 +273,7 @@ Respond in JSON format:
         }
 
         const generatedAt = new Date().toISOString();
-        const proofPack = buildResumeAnalysisProofPack(generatedAt, filename, analysisId);
+        const proofPack = buildResumeAnalysisProofPack(generatedAt, filename, analysisId, parser_receipt);
 
         return new Response(
             JSON.stringify({
