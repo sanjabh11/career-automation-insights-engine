@@ -63,7 +63,7 @@ export default function NavigationPremium() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             {mainLinks.map((l) => (
               <Link
                 key={l.to}
@@ -153,7 +153,7 @@ export default function NavigationPremium() {
           {/* Mobile Menu Button */}
           <button 
             onClick={() => setIsOpen((v) => !v)} 
-            className={`md:hidden p-2 rounded-lg transition-colors ${
+            className={`lg:hidden p-2 rounded-lg transition-colors ${
               isScrolled ? "text-slate-200 hover:bg-slate-800/50" : "text-white hover:bg-white/10"
             }`}
             aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -167,7 +167,7 @@ export default function NavigationPremium() {
       <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="md:hidden"
+          className="lg:hidden"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}

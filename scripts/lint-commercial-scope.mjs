@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 
 export const commercialLintFiles = [
   'src/App.tsx',
+  'src/components/NavigationPremium.tsx',
   'src/components/ResumeAnalyzer.tsx',
   'src/components/CounselorReportGenerator.tsx',
   'src/components/SEOReportDownload.tsx',
