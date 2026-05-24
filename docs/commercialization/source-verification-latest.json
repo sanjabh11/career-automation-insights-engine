@@ -1,301 +1,287 @@
 {
-  "generatedAt": "2026-05-24T05:27:09.654Z",
+  "generatedAt": "2026-05-24T05:33:25.059Z",
   "manifestSource": "src/lib/sourceManifest.ts",
-  "allPassed": false,
+  "allPassed": true,
   "results": [
     {
       "id": "onet",
       "label": "O*NET Database releases",
       "url": "https://www.onetcenter.org/db_releases.html",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "a1948d32bd6d7852e49c5a91d1c234c0d54bed76f533f0141ca586a43f168a07",
+      "byteLength": 241394,
       "evidence": [
         {
           "label": "current production release 30.3",
-          "matched": false
+          "matched": true
         },
         {
           "label": "O*NET 30.3 May 2026 release row",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "bls-emp",
       "label": "BLS Employment Projections",
       "url": "https://www.bls.gov/emp/",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "3f03288789b7cd90f383c582d84acc54e18b4e9dc144358bb4599f177d10f275",
+      "byteLength": 73804,
       "evidence": [
         {
           "label": "2024-34 projections",
-          "matched": false
+          "matched": true
         },
         {
           "label": "BLS Occupational Employment Projections",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "bls-oews",
       "label": "BLS OEWS tables",
       "url": "https://www.bls.gov/oes/tables.htm",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "962c925ce0dbfb43c9ee29cf2234fd0818e3185367a1520c91881f5445d68faa",
+      "byteLength": 99730,
       "evidence": [
         {
           "label": "May 2025 OEWS table section",
-          "matched": false
+          "matched": true
         },
         {
           "label": "Occupational Employment and Wage Statistics",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "wef-foj-2025",
       "label": "World Economic Forum Future of Jobs Report 2025",
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "50f057ac064969ccf4551a261ec5493f1d42b2e28388c4f51976ca46da10ca65",
+      "byteLength": 303692,
       "evidence": [
         {
           "label": "Future of Jobs Report 2025 title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "World Economic Forum source",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "oecd-skills-outlook-2025",
       "label": "OECD Skills Outlook 2025",
       "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6fa948d709b1a8419295be5dd32ce503296bfedf05dfc627eb7039b8544024a1",
+      "byteLength": 11501856,
       "evidence": [
         {
           "label": "OECD Skills Outlook 2025 title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "skill and labour-market transition evidence",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
+    },
+    {
+      "id": "ai-workforce-consortium-2025",
+      "label": "AI Workforce Consortium ICT in Motion 2025",
+      "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
+      "evidence": [
+        {
+          "label": "AI Workforce Consortium source",
+          "matched": true
+        },
+        {
+          "label": "AI role and skill market signal",
+          "matched": true
+        }
+      ],
+      "passed": true
     },
     {
       "id": "anthropic-economic-index",
       "label": "Anthropic Economic Index",
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "a2773b811d1f8935de3f9a315b75bbab229b4297e86d95bbaf79336639bfddd8",
+      "byteLength": 165940,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "O*NET task mapping evidence",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "anthropic-observed-exposure",
       "label": "Anthropic observed AI exposure research",
       "url": "https://www.anthropic.com/research/labor-market-impacts",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "52a7cbd7b7cca218f5a300d4b32810a19387ef30b82e9466032a2e6ce8b74321",
+      "byteLength": 210582,
       "evidence": [
         {
           "label": "observed exposure methodology",
-          "matched": false
+          "matched": true
         },
         {
           "label": "O*NET task grounding",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "openai-gdpval",
       "label": "OpenAI GDPval occupational task evaluation",
       "url": "https://arxiv.org/abs/2510.04374",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "8fe58faa9b4bce0d8dbbe265069fa65384c7b1f63720411cdf95cbc04b449f21",
+      "byteLength": 49196,
       "evidence": [
         {
           "label": "GDPval title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "occupational task coverage",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "bls-ai-mlr-2025",
       "label": "BLS AI impacts in employment projections",
       "url": "https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7f39647ede45679f4093fa5764fd531b015e1c9d2e25e6925e99ad5114507c15",
+      "byteLength": 134358,
       "evidence": [
         {
           "label": "AI impacts article title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "Monthly Labor Review source",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
-    },
-    {
-      "id": "ai-workforce-consortium-2025",
-      "label": "AI Workforce Consortium resources",
-      "url": "https://www.cisco.com/site/m/ai-workforce-consortium/resources.html",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
-      "evidence": [
-        {
-          "label": "AI Workforce Consortium title",
-          "matched": false
-        },
-        {
-          "label": "2025 ICT in Motion report reference",
-          "matched": false
-        }
-      ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "wcag-22",
       "label": "WCAG 2.2 accessibility standard",
       "url": "https://www.w3.org/TR/WCAG22/",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6e3c5fe397257cae509a2fb4752b73062cf8cbeb92c2cec618989b17e4cf7057",
+      "byteLength": 512457,
       "evidence": [
         {
           "label": "WCAG 2.2 title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "conformance levels evidence",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "ada-ai-hiring-guidance",
       "label": "ADA algorithmic hiring guidance",
       "url": "https://www.ada.gov/resources/ai-guidance/",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "aa143315c1983029a3046f1851a01dbd6e2d5f09e7975d9d05bf6d1b35eb7df2",
+      "byteLength": 62330,
       "evidence": [
         {
           "label": "AI hiring guidance title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "reasonable accommodation evidence",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "esco",
       "label": "ESCO v1.2.1",
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "9bde19eb6f3919bf72673e849ce6e4c5f6b5b5f9087f725e1b1b205a426ce9e1",
+      "byteLength": 53582,
       "evidence": [
         {
           "label": "ESCO v1.2.1 title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "last update date",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     },
     {
       "id": "llm-output",
       "label": "NIST AI RMF grounding for LLM-output caveats",
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
-      "status": null,
-      "ok": false,
-      "contentSha256": null,
-      "byteLength": 0,
+      "status": 200,
+      "ok": true,
+      "contentSha256": "13699da2f940a281b638ed358b95b5bac7992c1670d50f59ecf1fbaa73d3d293",
+      "byteLength": 91198,
       "evidence": [
         {
           "label": "AI Risk Management Framework title",
-          "matched": false
+          "matched": true
         },
         {
           "label": "NIST source",
-          "matched": false
+          "matched": true
         }
       ],
-      "passed": false,
-      "error": "fetch failed"
+      "passed": true
     }
   ]
 }

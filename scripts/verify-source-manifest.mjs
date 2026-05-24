@@ -99,15 +99,6 @@ const checks = [
     ],
   },
   {
-    id: 'ai-workforce-consortium-2025',
-    label: 'AI Workforce Consortium resources',
-    url: 'https://www.cisco.com/site/m/ai-workforce-consortium/resources.html',
-    expected: [
-      { label: 'AI Workforce Consortium title', pattern: /AI Workforce Consortium/i },
-      { label: '2025 ICT in Motion report reference', pattern: /ICT in Motion|Next Wave of AI Integration/i },
-    ],
-  },
-  {
     id: 'wcag-22',
     label: 'WCAG 2.2 accessibility standard',
     url: 'https://www.w3.org/TR/WCAG22/',

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-24T05:28:42.895Z",
+  "generatedAt": "2026-05-24T05:33:33.008Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T05:27:09.654Z",
-    "allPassed": false,
+    "generatedAt": "2026-05-24T05:33:25.059Z",
+    "allPassed": true,
     "requiredForPass": false
   },
   "allPassed": true,
@@ -105,9 +105,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 17956,
-      "rows": 318,
-      "sha256": "93dfcaeab3995ff7ddfd665f97e5d4d5619c4bcee4b231f0a0ef1fb6345ac44a",
+      "bytes": 16921,
+      "rows": 303,
+      "sha256": "b93120d254316172ddcd31890169f22d715e9d623d084bdd77a89fd75d6dabf5",
       "failures": [],
       "passed": true
     },

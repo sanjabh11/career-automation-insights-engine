@@ -77,7 +77,7 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - OpenAI GDPval leaderboard: https://evals.openai.com/gdpval/leaderboard
 - OpenAI GDPval paper record: https://arxiv.org/abs/2510.04374
 - BLS AI impacts in employment projections: https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm
-- AI Workforce Consortium resources: https://www.cisco.com/site/m/ai-workforce-consortium/resources.html
+- AI Workforce Consortium ICT in Motion 2025: https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - ADA AI hiring guidance: https://www.ada.gov/resources/ai-guidance/
 - ESCO Services API: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
