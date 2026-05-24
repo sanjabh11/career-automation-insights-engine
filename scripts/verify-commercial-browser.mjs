@@ -484,6 +484,12 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.locator('[data-proof-pack-gallery-card="workforce-csv-audit"]'), 'workforce proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="career-center-cohort-report"]'), 'career-center cohort sample card');
   await assertVisible(page.getByText(/Does not prove boundaries/i), 'gallery does-not-prove boundary');
+  await assertVisible(page.locator('[data-institutional-readiness-gallery="true"]'), 'institutional readiness packet');
+  await assertVisible(page.getByRole('button', { name: /Trust HTML/i }), 'institutional trust HTML export');
+  await assertVisible(page.getByRole('button', { name: /Risk CSV/i }), 'institutional risk CSV export');
+  await assertVisible(page.locator('[data-ai-rmf-control-map="true"]'), 'institutional AI RMF control map');
+  await assertVisible(page.locator('[data-wcag-accessibility-gate="true"]'), 'institutional WCAG accessibility gate');
+  await assertVisible(page.locator('[data-employment-decision-boundary="true"]'), 'institutional employment decision boundary');
   await assertVisible(page.getByText(/CRM import pack/i), 'CRM import pack');
   await assertVisible(page.getByRole('button', { name: /CRM CSV/i }), 'CRM CSV export');
   await assertVisible(page.getByText(/Planning artifact only/i).first(), 'gallery planning-only boundary');
@@ -514,6 +520,53 @@ async function verifyProofPackGallery(page, baseUrl) {
     }
   }
   console.log('ok download - proof-pack gallery CRM CSV');
+
+  const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Trust HTML/i }).click();
+  const trustDownload = await trustDownloadPromise;
+  if (!trustDownload.suggestedFilename().includes('institutional-readiness-proof-pack')) {
+    throw new Error(`Unexpected institutional readiness HTML filename: ${trustDownload.suggestedFilename()}`);
+  }
+  const trustHtml = await trustDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Institutional readiness HTML stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expected of [
+    'data-institutional-readiness-packet="true"',
+    'Institutional Risk Register',
+    'AI RMF Control Map',
+    'Employment Decision Boundary',
+    'WCAG 2.2 Accessibility Gate',
+    'Institutional Acceptance Gates',
+    'institutional-readiness-not-employment-selection',
+    'Does not prove',
+  ]) {
+    if (!trustHtml.includes(expected)) {
+      throw new Error(`Institutional readiness HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - institutional readiness HTML');
+
+  const riskCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Risk CSV/i }).click();
+  const riskCsvDownload = await riskCsvDownloadPromise;
+  if (!riskCsvDownload.suggestedFilename().includes('institutional-readiness-risk-register')) {
+    throw new Error(`Unexpected institutional readiness CSV filename: ${riskCsvDownload.suggestedFilename()}`);
+  }
+  const riskCsvBody = await riskCsvDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Institutional readiness CSV stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of ['risk_id', 'source_ids', 'confidence', 'review_state', 'caveat', 'does_not_prove', 'next_action']) {
+    if (!riskCsvBody.includes(expectedColumn)) {
+      throw new Error(`Institutional readiness CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - institutional readiness CSV');
 }
 
 async function runBrowserChecks(baseUrl) {

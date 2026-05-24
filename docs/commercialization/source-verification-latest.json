@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T16:57:56.391Z",
+  "generatedAt": "2026-05-24T17:51:27.814Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "23ef252e348407517414176b65ed78495525544d414dae73fba9a5fd441b25a8",
-      "byteLength": 233754,
+      "contentSha256": "2771faa40697146c7f3c9104ee7caee65279aae6523c99a7e2ff2195647ca90c",
+      "byteLength": 233750,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "3785130cc21616468e91a848c6f4f0ccfca32d09965db5d026a0a2da0665e985",
+      "contentSha256": "c7443e6a69377ee50f4979b7d3b8810e042f0b0e3a1d1973160485a538976d21",
       "byteLength": 316096,
       "evidence": [
         {
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "a30a57079c397c2dd171307f62f0aa882662040c6ba1a2fe4021e5ac66cd8b9c",
+      "contentSha256": "ecda13ef1723ce4fc39aa56149e7af071b470e9d994f9c4bb1afa1b00698f380",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "9463cdc0010c8ebbdae812b5173137dbdbf91742346c2512d38112b023e73bc4",
+      "contentSha256": "6ba0babd5891547c4029b51f74686bf1e786fccbb3fdc7b0b1186e659a11bd25",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,7 +349,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "63597d3ec01417e4d5d4af5d9b52e5fedf65249e2594d23068ad2651e9df373c",
+      "contentSha256": "8f98174169e68c5fd6c2ac049af322f794d6169e4f80998e255704680b180211",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "c60f5bc465d6517fabbd7415480d9ff4332dce35358e4610bf03ad7b0cefca04",
+      "contentSha256": "25433b1ae57600355b2053c72c6cdc6d329651c619b357b20e2495d4efd1dfd6",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "6c4f7a21cbefb2a272c1ad0ec34465d696d845e4d6bac486ef681a596969be5e",
+      "contentSha256": "cd880e446d78d0b9c0b7a64dbf594ec3353cb648cfab627782c99b4b89b2c57e",
       "byteLength": 210582,
       "evidence": [
         {
@@ -549,7 +549,7 @@
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
       "status": 200,
       "ok": true,
-      "contentSha256": "9bde19eb6f3919bf72673e849ce6e4c5f6b5b5f9087f725e1b1b205a426ce9e1",
+      "contentSha256": "10597647af94734463742e45fef410a1fb63af98542248babfb22374d3e330f2",
       "byteLength": 53582,
       "evidence": [
         {
@@ -589,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "bb459093f96791852bca5288f44309743dc4f21ce8b91768566954b6f98287d2",
+      "contentSha256": "a31e1176e6fa6be24acb8240e851db47a2fb54853f82e5978bdf114c14992289",
       "byteLength": 91197,
       "evidence": [
         {

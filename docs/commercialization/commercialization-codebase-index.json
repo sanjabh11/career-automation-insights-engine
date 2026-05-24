@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T16:55:56.677Z",
+  "generatedAt": "2026-05-24T17:45:42.781Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -744,11 +744,27 @@
       ],
       "files": [
         "src/pages/ProofPackGalleryPage.tsx",
+        "src/lib/institutionalReadinessPacket.ts",
         "docs/commercialization/pilot-outreach-pack.md",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-trust-boundaries.mjs"
       ],
-      "proof": "Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, and downloadable CRM-import outreach CSV."
+      "proof": "Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV."
+    },
+    {
+      "feature": "Institutional readiness and governance packet",
+      "buyer": "Career centers, workforce boards, L&D teams, institutional pilot reviewers",
+      "routes": [
+        "/proof-pack-gallery"
+      ],
+      "files": [
+        "src/lib/institutionalReadinessPacket.ts",
+        "src/pages/ProofPackGalleryPage.tsx",
+        "scripts/verify-report-evidence.mjs",
+        "scripts/verify-commercial-browser.mjs",
+        "scripts/verify-commercial-data-provenance.mjs"
+      ],
+      "proof": "Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, employment-decision boundary, live proof blockers, evidence cards, and a CSV risk register for buyer review."
     },
     {
       "feature": "Commercial proof-pack CI workflow",

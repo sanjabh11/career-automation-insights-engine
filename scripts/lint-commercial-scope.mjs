@@ -23,6 +23,7 @@ export const commercialLintFiles = [
   'src/lib/commercialReportArtifacts.ts',
   'src/lib/commercialWorkforceAudits.ts',
   'src/lib/careerCenterCohortProofPack.ts',
+  'src/lib/institutionalReadinessPacket.ts',
   'src/lib/reportProvenance.ts',
   'src/lib/reportEvidenceCards.ts',
   'src/lib/resumeAnalysisPrivacy.ts',

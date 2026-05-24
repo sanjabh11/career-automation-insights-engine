@@ -1,8 +1,8 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T16:58:00.224Z
+Generated: 2026-05-24T17:51:40.715Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
-Source verification generated: 2026-05-24T16:57:56.391Z
+Source verification generated: 2026-05-24T17:51:27.814Z
 All referenced current-source checks passed: yes
 Current-source verification required for this local checksum pass: no
 
@@ -27,12 +27,13 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,103 | `653edd2c899f6f61...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `wcag-22`, `llm-output` | pass |
 | `resume-proof-report-artifact-client` | Resume proof-report artifact client | `src/lib/resumeProofReportArtifacts.ts` | privacy-runtime | 152 | `2ff26b17a34b668d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-proof-report-artifact-migration` | Resume proof-report artifact migration | `supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql` | supabase-migration | 282 | `7ca18c1ef3788b23...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
-| `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 455 | `33120b2419a182fd...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
+| `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 538 | `5c0a541f3386081f...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
+| `institutional-readiness-packet-module` | Institutional readiness risk packet | `src/lib/institutionalReadinessPacket.ts` | commercial-page | 432 | `da509116a146492c...` | `nist-ai-rmf`, `iso-42001`, `wcag-22`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `onet-task-ratings`, `lightcast`, `esco`, `serpapi`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 348 | `53d7929634f0785a...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 247 | `24568d9edebbb094...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 63 | `32d87f02d832da68...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 63 | `45e87f98fae5bb08...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 318 | `ea327ab86b977281...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
@@ -56,7 +57,8 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `resume-analyzer-proof-report-ui`: Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live deployment, external provider retention controls, and employment-decision validation remain separate work.
 - `resume-proof-report-artifact-client`: Client helper saves only redacted resume proof-report artifacts when Supabase is configured and the user is authenticated; it does not prove the target Supabase migration is applied or that external provider logs/backups are deleted.
 - `resume-proof-report-artifact-migration`: Schema adds authenticated user-owned redacted artifact persistence and app-level deletion receipts; it does not apply itself to the live Supabase target or certify external retention deletion.
-- `proof-pack-gallery-page`: Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.
+- `proof-pack-gallery-page`: Public sample gallery, institutional readiness packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, or institutional compliance.
+- `institutional-readiness-packet-module`: Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.
 - `commercial-proof-pack-ci-workflow-template`: Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.
 - `commercial-proof-pack-ci-workflow-installed`: Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.
 - `commercial-live-supabase-verifier`: Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.

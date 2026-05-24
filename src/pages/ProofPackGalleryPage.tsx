@@ -4,6 +4,12 @@ import NavigationPremium from "@/components/NavigationPremium";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  buildInstitutionalReadinessCsv,
+  buildInstitutionalReadinessPacket,
+  INSTITUTIONAL_READINESS_STATUS_LABELS,
+  renderInstitutionalReadinessPacketHtml,
+} from "@/lib/institutionalReadinessPacket";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
 
@@ -264,7 +270,36 @@ function downloadOutreachCsv() {
   window.URL.revokeObjectURL(url);
 }
 
+function downloadInstitutionalReadinessHtml() {
+  const packet = buildInstitutionalReadinessPacket();
+  const blob = new Blob([renderInstitutionalReadinessPacketHtml(packet)], { type: "text/html;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "institutional-readiness-proof-pack.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function downloadInstitutionalReadinessCsv() {
+  const packet = buildInstitutionalReadinessPacket();
+  const blob = new Blob([`${buildInstitutionalReadinessCsv(packet)}\n`], { type: "text/csv;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "institutional-readiness-risk-register.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
 export default function ProofPackGalleryPage() {
+  const institutionalPacket = buildInstitutionalReadinessPacket();
+  const topInstitutionalRisks = institutionalPacket.riskRows.slice(0, 4);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <NavigationPremium />
@@ -352,6 +387,61 @@ export default function ProofPackGalleryPage() {
               </Card>
             );
           })}
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-institutional-readiness-gallery="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Institutional readiness packet</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                A buyer-review artifact for AI RMF controls, employment-decision boundaries, accessibility gates, live proof blockers, and source-labeled risk rows.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button type="button" onClick={downloadInstitutionalReadinessHtml} className="bg-emerald-500 text-slate-950 hover:bg-emerald-400">
+                <Download className="mr-2 h-4 w-4" />
+                Trust HTML
+              </Button>
+              <Button type="button" onClick={downloadInstitutionalReadinessCsv} variant="outline" className="border-slate-600 bg-slate-950 text-slate-100 hover:bg-slate-800">
+                <Download className="mr-2 h-4 w-4" />
+                Risk CSV
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100" data-institutional-readiness-boundary="true">
+            {institutionalPacket.statusSummary}
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            {topInstitutionalRisks.map((risk) => (
+              <article key={risk.id} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-institutional-risk-preview={risk.id}>
+                <div className="flex flex-wrap gap-2">
+                  <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{risk.confidence} confidence</Badge>
+                  <Badge variant="outline" className="border-slate-600 text-slate-300">{INSTITUTIONAL_READINESS_STATUS_LABELS[risk.status]}</Badge>
+                </div>
+                <h3 className="mt-4 font-semibold leading-6 text-white">{risk.riskArea}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{risk.buyerConcern}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-400"><span className="font-semibold text-slate-200">Sources:</span> {sourceLabels(risk.sourceIds)}</p>
+                <p className="mt-2 text-xs leading-5 text-amber-100"><span className="font-semibold">Does not prove:</span> {risk.doesNotProve}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-3 text-sm leading-6 text-slate-300 lg:grid-cols-3">
+            <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4" data-ai-rmf-control-map="true">
+              <h3 className="font-semibold text-white">AI RMF control map</h3>
+              <p className="mt-2">Govern, Map, Measure, and Manage rows connect product evidence to remaining buyer gates.</p>
+            </div>
+            <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4" data-wcag-accessibility-gate="true">
+              <h3 className="font-semibold text-white">WCAG 2.2 accessibility gate</h3>
+              <p className="mt-2">Hosted smoke proof is present; manual screen-reader, focus, target-size, contrast, and error-state notes remain required.</p>
+            </div>
+            <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4" data-employment-decision-boundary="true">
+              <h3 className="font-semibold text-white">Employment decision boundary</h3>
+              <p className="mt-2">No hiring, firing, promotion, compensation, layoff, screening, eligibility, or worker-ranking use.</p>
+            </div>
+          </div>
         </section>
 
         <section className="mt-12 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">

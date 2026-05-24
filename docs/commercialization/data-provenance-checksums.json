@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T16:58:00.224Z",
+  "generatedAt": "2026-05-24T17:51:40.715Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T16:57:56.391Z",
+    "generatedAt": "2026-05-24T17:51:27.814Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -544,6 +544,9 @@
       "expectedSnippets": [
         "data-proof-pack-gallery=\"phase-6-outreach\"",
         "career-center-cohort-report",
+        "Institutional readiness packet",
+        "Trust HTML",
+        "Risk CSV",
         "CRM import pack",
         "buildOutreachCsv",
         "outreachEvidenceCards",
@@ -556,10 +559,48 @@
         "Lightcast positioning",
         "Workera positioning"
       ],
-      "caveat": "Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.",
-      "bytes": 25744,
-      "rows": 455,
-      "sha256": "33120b2419a182fdc975cd2491088a74640ad3963f76f44c1e9423b50b785a91",
+      "caveat": "Public sample gallery, institutional readiness packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, or institutional compliance.",
+      "bytes": 30939,
+      "rows": 538,
+      "sha256": "5c0a541f3386081f16ef92ebe991aa22982bc5ecfb2112489a4e01a3dee01703",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "institutional-readiness-packet-module",
+      "label": "Institutional readiness risk packet",
+      "path": "src/lib/institutionalReadinessPacket.ts",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "wcag-22",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "onet-task-ratings",
+        "lightcast",
+        "esco",
+        "serpapi",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "InstitutionalReadinessPacket",
+        "Institutional Risk Register",
+        "AI RMF Control Map",
+        "Employment Decision Boundary",
+        "WCAG 2.2 Accessibility Gate",
+        "Institutional Acceptance Gates",
+        "blocked_live_credentials",
+        "buyer_policy_required",
+        "Do not furnish individual reports to employers for employment purposes",
+        "Do not claim WCAG conformance",
+        "SUPABASE_DB_PASSWORD"
+      ],
+      "caveat": "Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.",
+      "bytes": 23279,
+      "rows": 432,
+      "sha256": "da509116a146492cc4967a5c4a64840c8efdf30effefa3ead26145a035aa6a7e",
       "failures": [],
       "passed": true
     },
@@ -689,7 +730,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 4241,
       "rows": 63,
-      "sha256": "32d87f02d832da68a5ef12ff24db9521d8917112123171c5e16f86f8080710d3",
+      "sha256": "45e87f98fae5bb0852f74f0c78590355251b55a3a112e512ab517856524770a4",
       "failures": [],
       "passed": true
     },
