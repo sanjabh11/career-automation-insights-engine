@@ -97,8 +97,8 @@ Fresh market refresh notes from the May 2026 web check:
 | Workforce audit | CSV audit skeleton, staff-gated saved imports, role rows, unmapped review queue, broader local deterministic SOC suggestions, confidence-banded suggestion coverage, visible suggestion-catalog count, and downloadable executive HTML report added | Full O*NET-backed candidate ranking, signed PDF/storage delivery, department recommendations | High |
 | Provenance | Shared source manifest and report registry added with verified source versions, timestamps, confidence, caveats, claim boundaries, `npm run verify:sources` official-page checks, and `npm run verify:data-provenance` local artifact checksums. Source coverage now includes O*NET, BLS EP/OEWS/LAUS/QCEW, CareerOneStop-ready, Census ACS-ready, WEF, Anthropic Economic Index, Anthropic observed exposure, OpenAI GDPval, BLS AI MLR, WCAG 2.2, ADA AI hiring guidance, ESCO, NIST, Lightcast-ready, SerpAPI-ready, and LLM output. | Scheduled source freshness checks, live imported-table checksums from Supabase exports, score-level evidence citations, local-market snapshot storage, and imported Anthropic/OpenAI benchmark adapters only when licensing/terms allow | High |
 | Data breadth | O*NET-centered with BLS/WEF/ESCO/Lightcast/SerpAPI-ready registry | Actual ESCO mapping, BLS/OEWS refresh, licensed Lightcast/job-posting adapter | High |
-| Trust/compliance | Resume deletion proof and employment decision disclaimers added | Risk register, AI RMF controls, accessibility audit, EEOC-style validation notes | High |
-| Resume parsing | Browser text/paste route with warning | Server-side parser boundary, file storage minimization, deletion receipts | Medium |
+| Trust/compliance | Resume deletion receipt RPC/table, UI receipt display, raw-text redaction metadata, source/caveat boundary, and employment decision disclaimers added | Risk register, AI RMF controls, accessibility audit, EEOC-style validation notes, and live deployment proof | High |
+| Resume parsing | Browser text/paste route with warning; saved analysis deletion now returns a bounded app-level receipt | Server-side parser boundary, file storage minimization for uploaded PDFs/DOCX, and live deletion-receipt e2e proof | Medium |
 | Revenue operations | Pricing and monetization tables exist | Working purchase flow for report credits, invoices, fulfillment states | Medium |
 | Analytics | PostHog events exist | Funnel dashboards for coach report, SEO report, enterprise audit | Medium |
 | Quality gates | Build passes; focused lint on touched files passes; `npm run verify:commercial` orchestrates commercial index, trust, data provenance, scoped lint, production build, and route smoke; `npm run verify:commercial-a11y` covers responsive/accessibility smoke; `npm run verify:commercial-browser` exercises privacy, coach sample, SEO report, and workforce CSV audit journeys; `.github/workflows/commercial-proof-pack.yml` installs the read-only GitHub Actions gate from the maintained template | Repo-wide lint cleanup, full visual snapshots, formal WCAG audit, and first hosted CI run evidence | Medium |
@@ -226,10 +226,10 @@ I am opening a small pilot for coaches: 10 branded sample reports plus feedback 
 ## Immediate Next Build Steps
 
 1. Push the installed `.github/workflows/commercial-proof-pack.yml`, confirm the first hosted GitHub Actions run, and preserve `docs/commercialization/commercial-proof-pack.workflow.yml` as the reference template.
-2. Seed `commercial_staff` in Supabase for the first staff user and connect email/CRM follow-up.
+2. Apply artifact-review and resume-deletion-receipt migrations in Supabase, seed `commercial_staff` for the first staff user, and connect email/CRM follow-up.
 3. Expand SOC/O*NET suggestions from the broadened local seed catalog to a full O*NET occupation index or Supabase search RPC.
 4. Add resend/download history UI, signed storage URL or PDF export, and resend workflow for staff-opened artifacts.
-5. Expand Playwright coverage from current responsive/accessibility smoke to visual snapshots, axe-style rule checks, and resume deletion proof.
+5. Expand Playwright coverage from current responsive/accessibility smoke to visual snapshots, axe-style rule checks, and live resume deletion receipt proof.
 6. Schedule source verification, export live Supabase O*NET/BLS table checksums, and attach per-report evidence cards.
 7. Convert the pilot privacy notice into reviewed legal Terms/Privacy copy before broad paid outreach.
 

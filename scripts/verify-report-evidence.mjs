@@ -205,6 +205,32 @@ const checks = [
     ],
   },
   {
+    id: 'resume-deletion-receipt-boundary',
+    path: 'src/components/ResumeAnalyzer.tsx',
+    snippets: [
+      'deleteResumeAnalysisWithReceipt',
+      'data-resume-deletion-receipt="true"',
+      'Deletion Receipt Created',
+      'Receipt hash:',
+      'Sources:',
+      'Caveat:',
+    ],
+  },
+  {
+    id: 'resume-deletion-receipt-rpc',
+    path: 'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
+    snippets: [
+      'resume_analysis_deletion_receipts',
+      'delete_resume_analysis_with_receipt',
+      'raw_text_retention_policy',
+      'model_provider_boundary',
+      'receipt_hash',
+      'nist-ai-rmf',
+      'ada-ai-hiring-guidance',
+      'Deletion receipt proves app-row deletion only',
+    ],
+  },
+  {
     id: 'nist-source-registered',
     path: 'src/lib/sourceManifest.ts',
     snippets: [

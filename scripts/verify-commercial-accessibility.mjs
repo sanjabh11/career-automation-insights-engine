@@ -293,11 +293,25 @@ async function runChecks(baseUrl) {
   }
 }
 
+function stopServer(server) {
+  if (!server.pid) return;
+  try {
+    if (process.platform !== 'win32') {
+      process.kill(-server.pid, 'SIGTERM');
+      return;
+    }
+  } catch {
+    // Fall back to killing the wrapper process below.
+  }
+  server.kill('SIGTERM');
+}
+
 async function main() {
   const port = Number(process.env.COMMERCIAL_A11Y_PORT || START_PORT);
   const baseUrl = `http://${HOST}:${port}`;
   const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
   const server = spawn(npmCommand, ['run', 'dev', '--', '--host', HOST, '--port', String(port), '--strictPort'], {
+    detached: process.platform !== 'win32',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
@@ -322,7 +336,7 @@ async function main() {
     }
     process.exitCode = 1;
   } finally {
-    server.kill('SIGTERM');
+    stopServer(server);
   }
 }
 

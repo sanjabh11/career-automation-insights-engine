@@ -1,8 +1,8 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-24T09:07:34.972Z
+Generated: 2026-05-24T09:57:28.530Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
-Source verification generated: 2026-05-24T08:44:50.723Z
+Source verification generated: 2026-05-24T09:52:12.192Z
 All referenced current-source checks passed: yes
 Current-source verification required for this local checksum pass: no
 
@@ -21,6 +21,9 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `commercial-report-artifacts-module` | Commercial report artifact review runtime | `src/lib/commercialReportArtifacts.ts` | report-runtime | 376 | `f36c7b1c4714ec8d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
+| `resume-deletion-receipt-client` | Resume analysis deletion receipt client | `src/lib/resumeAnalysisPrivacy.ts` | privacy-runtime | 75 | `dd2d0e3fbe2f4a42...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
+| `resume-deletion-receipt-migration` | Resume analysis deletion receipt migration | `supabase/migrations/20260524000400_add_resume_deletion_receipts.sql` | supabase-migration | 145 | `26cbcd73f5380890...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
+| `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 172 | `e39a79a9d7811d7b...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 455 | `33120b2419a182fd...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 39 | `5e73a97e85f04f4e...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `5e73a97e85f04f4e...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
@@ -40,6 +43,9 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `report-provenance-module`: Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.
 - `workforce-executive-report-module`: Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.
 - `commercial-report-artifacts-module`: Review attestation is a non-legal delivery traceability artifact, not an electronic signature or compliance certification.
+- `resume-deletion-receipt-client`: Deletion receipt client proves an app-level saved analysis deletion request can return a bounded receipt; it does not prove external provider logs, exports, or backups are deleted.
+- `resume-deletion-receipt-migration`: Deletion receipts are app-level proof for the resume_analyses row and do not certify legal compliance, backup deletion, or model-provider retention behavior.
+- `resume-analysis-edge-retention-boundary`: Edge-function retention metadata documents raw-text redaction and receipt availability; live deployment and provider-log controls must still be verified separately.
 - `proof-pack-gallery-page`: Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.
 - `commercial-proof-pack-ci-workflow-template`: Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.
 - `commercial-proof-pack-ci-workflow-installed`: Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.

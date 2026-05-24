@@ -165,7 +165,13 @@ Respond in JSON format:
                 ...analysisResult,
                 metadata: {
                     model: geminiModel,
-                    processing_time_ms: processingTime
+                    processing_time_ms: processingTime,
+                    retention: {
+                        raw_resume_text_stored: false,
+                        saved_record_text_policy: 'raw resume text redacted after analysis; saved row stores a length-only stub',
+                        deletion_receipt_available: Boolean(analysisId),
+                        deletion_receipt_scope: 'resume_analyses saved row only; model-provider logs, browser files, exports, and backups are outside this receipt'
+                    }
                 }
             }),
             {

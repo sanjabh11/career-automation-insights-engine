@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-24T09:07:34.972Z",
+  "generatedAt": "2026-05-24T09:57:28.530Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T08:44:50.723Z",
+    "generatedAt": "2026-05-24T09:52:12.192Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -336,6 +336,79 @@
       "bytes": 13091,
       "rows": 376,
       "sha256": "f36c7b1c4714ec8dbc129767d891cf1169c43f6506862e1759d13cfff8cc2afc",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-deletion-receipt-client",
+      "label": "Resume analysis deletion receipt client",
+      "path": "src/lib/resumeAnalysisPrivacy.ts",
+      "type": "privacy-runtime",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "ResumeDeletionReceipt",
+        "deleteResumeAnalysisWithReceipt",
+        "delete_resume_analysis_with_receipt",
+        "receiptHash",
+        "modelProviderBoundary"
+      ],
+      "caveat": "Deletion receipt client proves an app-level saved analysis deletion request can return a bounded receipt; it does not prove external provider logs, exports, or backups are deleted.",
+      "bytes": 2374,
+      "rows": 75,
+      "sha256": "dd2d0e3fbe2f4a42b738e2db9315e908c9f28b65da964ee7d8ed47dfb6d47df0",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-deletion-receipt-migration",
+      "label": "Resume analysis deletion receipt migration",
+      "path": "supabase/migrations/20260524000400_add_resume_deletion_receipts.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "resume_analysis_deletion_receipts",
+        "delete_resume_analysis_with_receipt",
+        "raw_text_retention_policy",
+        "model_provider_boundary",
+        "receipt_hash",
+        "Deletion receipt proves app-row deletion only"
+      ],
+      "caveat": "Deletion receipts are app-level proof for the resume_analyses row and do not certify legal compliance, backup deletion, or model-provider retention behavior.",
+      "bytes": 5758,
+      "rows": 145,
+      "sha256": "26cbcd73f538089048038293803b0f085726c05f1b6fd47d5a6d09af7afcda26",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-analysis-edge-retention-boundary",
+      "label": "Resume analysis edge-function retention boundary",
+      "path": "supabase/functions/analyze-resume/index.ts",
+      "type": "edge-function",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "buildRetainedResumeStub",
+        "raw_resume_text_stored: false",
+        "saved_record_text_policy",
+        "deletion_receipt_available",
+        "model-provider logs, browser files, exports, and backups are outside this receipt"
+      ],
+      "caveat": "Edge-function retention metadata documents raw-text redaction and receipt availability; live deployment and provider-log controls must still be verified separately.",
+      "bytes": 7177,
+      "rows": 172,
+      "sha256": "e39a79a9d7811d7b6fd81a2ef1ff4a664989bc6460c7140a23f5ead57074c1d0",
       "failures": [],
       "passed": true
     },

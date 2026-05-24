@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T08:44:50.723Z",
+  "generatedAt": "2026-05-24T09:52:12.192Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "9aaa91ca726865a0e7eae3bc6ba0ae25023bc2cf89914fc00f3ce3769966feee",
-      "byteLength": 233752,
+      "contentSha256": "628e13cd710dc3cadf1667717ff7e6da2ee4fdcb4f082e492d5a9fb8d15dfae7",
+      "byteLength": 233754,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "00e949875f9982170a2df67c77dec04a854c1e5651e36d438e86e11012d5fe9a",
+      "contentSha256": "e0f2b15c0e6fcd0f31a5f0146d96263d1494df5e2d70f32eed50679b309f1093",
       "byteLength": 316096,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
-      "byteLength": 116284,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "26844faa2a5e1a70d8ef005966fc5a9dd2b78ade089d15a9b2942e46ecbb50df",
+      "contentSha256": "65688956c3ffcfeb7821c0df6f88ac2e022f0f974e933c74b3d9b57738a0d2c5",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "70e20b5c57b4dd907bc6bc9db4359b8aec7a8d360117143ef45ec0c96222914b",
+      "contentSha256": "12334f75dc9f8765bbf4dfd955c126c85749c1563434167265b18768626cdab9",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "4169e435851ae11930c652f683ebea70e14fe23dd753a6b37c8f53329359052c",
-      "byteLength": 73082,
+      "contentSha256": "36a329175f70e221304b9727dcb7dc725e4084235c8964743b93a6a9e43270de",
+      "byteLength": 73088,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "f6a42623ba764b6d3ea9902ff548d72941f7fda6923d89bf519574149d56e0d1",
+      "contentSha256": "c2df9d185b56b629c6b52f0acd6c4d23dcf4b9f073b2e7bd9c84f338088804e4",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "4df9dbed2e08635fdf2f40dcbf1794542effb948a796e809f648decf9c8b06a5",
+      "contentSha256": "fcb0bc588c2c063dfefff9c3e029d750f8e9a11da385da964a413000939ca3c4",
       "byteLength": 210582,
       "evidence": [
         {
@@ -549,7 +549,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "87cb694f3180e2c9e124831a803c8d3dc9e99d4e00566a8edfa31f674cb5e923",
+      "contentSha256": "c6b0a296300755c2a5be3a472d282fec2be302a8042ab4f7f71090c7e4215276",
       "byteLength": 91197,
       "evidence": [
         {

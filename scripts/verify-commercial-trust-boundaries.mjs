@@ -62,6 +62,54 @@ const checks = [
     ],
   },
   {
+    id: 'resume-deletion-receipt-rpc',
+    file: 'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
+    expected: [
+      /resume_analysis_deletion_receipts/,
+      /delete_resume_analysis_with_receipt/,
+      /receipt_hash/,
+      /raw_text_retention_policy/,
+      /model_provider_boundary/,
+      /Deletion receipt proves app-row deletion only/,
+      /GRANT EXECUTE ON FUNCTION public\.delete_resume_analysis_with_receipt/,
+    ],
+  },
+  {
+    id: 'resume-deletion-receipt-client',
+    file: 'src/lib/resumeAnalysisPrivacy.ts',
+    expected: [
+      /ResumeDeletionReceipt/,
+      /deleteResumeAnalysisWithReceipt/,
+      /delete_resume_analysis_with_receipt/,
+      /sourceIds/,
+      /receiptHash/,
+    ],
+  },
+  {
+    id: 'resume-deletion-receipt-ui',
+    file: 'src/components/ResumeAnalyzer.tsx',
+    expected: [
+      /deleteResumeAnalysisWithReceipt/,
+      /data-resume-deletion-receipt="true"/,
+      /Deletion Receipt Created/,
+      /Receipt hash:/,
+      /modelProviderBoundary/,
+      /Sources:/,
+      /Caveat:/,
+    ],
+  },
+  {
+    id: 'resume-analysis-retention-boundary',
+    file: 'supabase/functions/analyze-resume/index.ts',
+    expected: [
+      /buildRetainedResumeStub/,
+      /raw_resume_text_stored: false/,
+      /saved_record_text_policy/,
+      /deletion_receipt_available/,
+      /model-provider logs, browser files, exports, and backups are outside this receipt/,
+    ],
+  },
+  {
     id: 'expanded-source-guardrails',
     file: 'src/lib/sourceManifest.ts',
     expected: [
@@ -200,6 +248,7 @@ const checks = [
       /commercialLintFiles/,
       /src\/components\/SEOReportDownload\.tsx/,
       /src\/pages\/ProofPackGalleryPage\.tsx/,
+      /src\/lib\/resumeAnalysisPrivacy\.ts/,
       /scripts\/verify-commercial-release\.mjs/,
       /scripts\/verify-onet-task-ratings-ingest\.mjs/,
       /src\/lib\/workforceExecutiveReport\.ts/,

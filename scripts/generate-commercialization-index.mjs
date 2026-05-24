@@ -135,11 +135,14 @@ const featureMap = [
     files: [
       'src/pages/PrivacyPage.tsx',
       'src/components/ResumeAnalyzer.tsx',
+      'src/lib/resumeAnalysisPrivacy.ts',
       'src/pages/ResponsibleAIPage.tsx',
       'src/integrations/supabase/client.ts',
+      'supabase/functions/analyze-resume/index.ts',
+      'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
       'scripts/verify-commercial-trust-boundaries.mjs',
     ],
-    proof: 'Privacy notice, missing-Supabase fallback, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
+    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, raw resume text redaction stub, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
   },
   {
     feature: 'Counselor report generator',

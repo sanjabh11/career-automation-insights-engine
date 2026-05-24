@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { ShareableScoreBadge } from '@/components/ShareableScoreBadge';
 import { REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
+import { deleteResumeAnalysisWithReceipt, type ResumeDeletionReceipt } from '@/lib/resumeAnalysisPrivacy';
 
 interface AutomationPronePhrase {
     phrase: string;
@@ -105,7 +106,7 @@ export default function ResumeAnalyzer() {
     const [fileWarning, setFileWarning] = useState<string | null>(null);
     const [linkCopied, setLinkCopied] = useState(false);
     const [deletingAnalysis, setDeletingAnalysis] = useState(false);
-    const [deletionProof, setDeletionProof] = useState<string | null>(null);
+    const [deletionReceipt, setDeletionReceipt] = useState<ResumeDeletionReceipt | null>(null);
     const { toast } = useToast();
     const { session } = useSession();
     const isAuthenticated = !!session?.user;
@@ -133,7 +134,7 @@ export default function ResumeAnalyzer() {
         setAnalyzing(true);
         setAnalysisResult(null);
         setAnalysisId(null);
-        setDeletionProof(null);
+        setDeletionReceipt(null);
 
         try {
             const { data, error } = await supabase.functions.invoke('analyze-resume', {
@@ -238,20 +239,13 @@ export default function ResumeAnalyzer() {
 
         setDeletingAnalysis(true);
         try {
-            const deletedId = analysisId;
-            const { error } = await supabase
-                .from('resume_analyses')
-                .delete()
-                .eq('id', analysisId)
-                .eq('user_id', session.user.id);
-
-            if (error) throw error;
+            const receipt = await deleteResumeAnalysisWithReceipt(analysisId);
 
             setAnalysisId(null);
-            setDeletionProof(`Deletion confirmed for saved analysis ${deletedId} at ${new Date().toISOString()}.`);
+            setDeletionReceipt(receipt);
             toast({
-                title: 'Saved Analysis Deleted',
-                description: 'The stored resume analysis record was removed from your account.',
+                title: 'Deletion Receipt Created',
+                description: 'The saved resume analysis row was removed and a bounded receipt was recorded.',
             });
         } catch (error: unknown) {
             console.error('Error deleting resume analysis:', error);
@@ -443,10 +437,27 @@ export default function ResumeAnalyzer() {
                                 </AlertDescription>
                             </Alert>
 
-                            {deletionProof && (
-                                <Alert>
+                            {deletionReceipt && (
+                                <Alert data-resume-deletion-receipt="true">
                                     <ShieldCheck className="h-4 w-4" />
-                                    <AlertDescription>{deletionProof}</AlertDescription>
+                                    <AlertDescription>
+                                        <div className="space-y-2">
+                                            <p>
+                                                <strong>Deletion receipt:</strong> {deletionReceipt.receiptId}
+                                            </p>
+                                            <p>
+                                                Saved analysis {deletionReceipt.analysisId} was marked {deletionReceipt.deletionStatus} at {new Date(deletionReceipt.deletedAt).toLocaleString()}.
+                                            </p>
+                                            <p>
+                                                <strong>Receipt hash:</strong> <code>{deletionReceipt.receiptHash.slice(0, 16)}...</code>
+                                            </p>
+                                            <p>{deletionReceipt.rawTextRetentionPolicy}</p>
+                                            <p>{deletionReceipt.modelProviderBoundary}</p>
+                                            <p>
+                                                <strong>Sources:</strong> {deletionReceipt.sourceIds.join(', ')}. <strong>Caveat:</strong> {deletionReceipt.caveat}
+                                            </p>
+                                        </div>
+                                    </AlertDescription>
                                 </Alert>
                             )}
                         </CardContent>

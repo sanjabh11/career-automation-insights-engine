@@ -60,7 +60,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 6 | AI-era role radar with caveated emerging status | Uncommon | High | High | Implemented with role-level review, taxonomy, posting-validation, search-term, source, and caveat boundaries |
 | 7 | Workforce CSV proof pack | Common enterprise need, uncommon bounded proof artifact | High | High | Implemented skeleton |
 | 8 | Coach-branded sample report | Common sales tactic | High | High | Implemented skeleton |
-| 9 | Privacy and deletion proof | Common enterprise requirement | High | Medium | Partly implemented |
+| 9 | Privacy and deletion proof | Common enterprise requirement | High | Medium | Implemented as bounded app-level resume deletion receipt and raw-text redaction boundary; live deployed e2e proof pending |
 | 10 | Accessibility gate before outreach | Common requirement, often skipped | High | Medium | Scripted and passing locally; expand before enterprise launch |
 | 11 | O*NET task-time weighting | Common research need | High | Medium | O*NET 30.3 Task Ratings migration, ingest boundary, runtime weighting helper, and verifier implemented; target Supabase ingest/export checksum pending |
 | 12 | BLS/OEWS wage and employment context | Common | Medium | Medium | Adapter-ready |
@@ -88,8 +88,8 @@ The strongest differentiators are the combination of evidence cards, explicit "d
 | Core commercial gate | `npm run verify:commercial` | Passing locally |
 | Evidence verifier | `npm run verify:report-evidence` | Passing locally |
 | Browser journey | `npm run verify:commercial-browser` | Passing locally |
-| Accessibility smoke | `npm run verify:commercial-a11y` | Passing locally |
-| Source refresh | `npm run verify:sources` | Passing locally |
-| Security audit | `npm audit --omit=dev --audit-level=high` | Passing locally |
+| Accessibility smoke | `npm run verify:commercial-a11y` | Passing locally through `npm run verify:commercial -- --with-a11y --with-journey` |
+| Source refresh | `npm run verify:sources` | Passing through `npm run verify:commercial-network` |
+| Security audit | `npm audit --omit=dev --audit-level=high` | Passing through `npm run verify:commercial-network` |
 | Sample gallery | `/proof-pack-gallery` with source-labeled evidence cards and CRM CSV export | Implemented locally |
 | GitHub CI | Installed commercial proof-pack workflow, pushed branch, and hosted workflow run | Workflow file added; first hosted run evidence pending after push |
