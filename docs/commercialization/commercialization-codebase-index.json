@@ -1,0 +1,796 @@
+{
+  "generatedAt": "2026-05-24T04:13:33.565Z",
+  "branch": "commercialization-proof-packs",
+  "routes": [
+    {
+      "path": "/",
+      "component": "Index",
+      "commercial": true
+    },
+    {
+      "path": "/ai-impact",
+      "component": "AIImpactPage",
+      "commercial": false
+    },
+    {
+      "path": "/ai-impact-planner",
+      "component": "AIImpactPlannerPage",
+      "commercial": false
+    },
+    {
+      "path": "/auth",
+      "component": "Auth",
+      "commercial": false
+    },
+    {
+      "path": "/auth/whop/callback",
+      "component": "Auth",
+      "commercial": false
+    },
+    {
+      "path": "/automation-risk/:occupation",
+      "component": "AutomationRiskLandingPage",
+      "commercial": true
+    },
+    {
+      "path": "/automation-risk/industry",
+      "component": "IndustrySEOPage",
+      "commercial": false
+    },
+    {
+      "path": "/automation-risk/industry/:industry",
+      "component": "IndustrySEOPage",
+      "commercial": false
+    },
+    {
+      "path": "/bootcamp-dashboard",
+      "component": "BootcampDashboardPage",
+      "commercial": false
+    },
+    {
+      "path": "/browse/bright-outlook",
+      "component": "BrowseBrightOutlook",
+      "commercial": false
+    },
+    {
+      "path": "/browse/job-zones",
+      "component": "BrowseJobZones",
+      "commercial": false
+    },
+    {
+      "path": "/browse/stem",
+      "component": "BrowseSTEM",
+      "commercial": false
+    },
+    {
+      "path": "/career-planning",
+      "component": "CareerPlanningPage",
+      "commercial": false
+    },
+    {
+      "path": "/compare/:slugs",
+      "component": "SEOComparisonPage",
+      "commercial": false
+    },
+    {
+      "path": "/contact-sales",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/counselor-reports",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/crosswalk",
+      "component": "CrosswalkPage",
+      "commercial": false
+    },
+    {
+      "path": "/dashboard",
+      "component": "UserDashboardPage",
+      "commercial": false
+    },
+    {
+      "path": "/demo",
+      "component": "DemoSandbox",
+      "commercial": false
+    },
+    {
+      "path": "/docs/methods",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/econ-importer",
+      "component": "EconImporter",
+      "commercial": false
+    },
+    {
+      "path": "/economics",
+      "component": "EconomicsBrowser",
+      "commercial": false
+    },
+    {
+      "path": "/enterprise-dashboard",
+      "component": "EnterpriseTeamDashboard",
+      "commercial": true
+    },
+    {
+      "path": "/for-coaches",
+      "component": "ForCoachesPage",
+      "commercial": true
+    },
+    {
+      "path": "/gap-analysis",
+      "component": "GapAnalysis",
+      "commercial": false
+    },
+    {
+      "path": "/help",
+      "component": "HelpPage",
+      "commercial": false
+    },
+    {
+      "path": "/impact",
+      "component": "ImpactDashboard",
+      "commercial": false
+    },
+    {
+      "path": "/impact-dashboard",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/industry",
+      "component": "IndustryDashboardPage",
+      "commercial": false
+    },
+    {
+      "path": "/job-zone-ladder",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/job-zone-ladders",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/ladders",
+      "component": "JobZoneLaddersPage",
+      "commercial": false
+    },
+    {
+      "path": "/market-map",
+      "component": "MarketMapPage",
+      "commercial": false
+    },
+    {
+      "path": "/occupation/:code",
+      "component": "OccupationDetailPage",
+      "commercial": false
+    },
+    {
+      "path": "/operations",
+      "component": "OperationsPage",
+      "commercial": false
+    },
+    {
+      "path": "/operations/leads",
+      "component": "CommercialLeadOpsPage",
+      "commercial": true
+    },
+    {
+      "path": "/outcomes",
+      "component": "OutcomesPage",
+      "commercial": false
+    },
+    {
+      "path": "/pricing",
+      "component": "PricingPage",
+      "commercial": true
+    },
+    {
+      "path": "/privacy",
+      "component": "PrivacyPage",
+      "commercial": true
+    },
+    {
+      "path": "/quality",
+      "component": "QualityPage",
+      "commercial": false
+    },
+    {
+      "path": "/resources",
+      "component": "ResourcesPage",
+      "commercial": false
+    },
+    {
+      "path": "/responsible-ai",
+      "component": "ResponsibleAIPage",
+      "commercial": false
+    },
+    {
+      "path": "/sample-report",
+      "component": "SampleReportPage",
+      "commercial": true
+    },
+    {
+      "path": "/shared/:shareToken",
+      "component": "SharedAnalysisPage",
+      "commercial": false
+    },
+    {
+      "path": "/skills-builder",
+      "component": "SkillsBuilderPage",
+      "commercial": false
+    },
+    {
+      "path": "/task-search",
+      "component": "TaskSearchPage",
+      "commercial": false
+    },
+    {
+      "path": "/tech-skills",
+      "component": "TechSkillsPage",
+      "commercial": false
+    },
+    {
+      "path": "/test",
+      "component": "Test",
+      "commercial": false
+    },
+    {
+      "path": "/tools/bridge-roles",
+      "component": "BridgeRolePathway",
+      "commercial": false
+    },
+    {
+      "path": "/tools/counselor-reports",
+      "component": "CounselorReportGenerator",
+      "commercial": true
+    },
+    {
+      "path": "/tools/resume-analyzer",
+      "component": "ResumeAnalyzer",
+      "commercial": true
+    },
+    {
+      "path": "/tools/skill-adjacency",
+      "component": "SkillAdjacencyGraph",
+      "commercial": false
+    },
+    {
+      "path": "/usage",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/user-dashboard",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/validation",
+      "component": "ValidationPage",
+      "commercial": false
+    },
+    {
+      "path": "/validation-center",
+      "component": "Navigate",
+      "commercial": false
+    },
+    {
+      "path": "/validation/center",
+      "component": "ValidationCenter",
+      "commercial": false
+    },
+    {
+      "path": "/validation/methods",
+      "component": "ValidationMethodsPage",
+      "commercial": false
+    },
+    {
+      "path": "/veterans",
+      "component": "VeteransPage",
+      "commercial": false
+    },
+    {
+      "path": "/whop/dashboard",
+      "component": "WhopDashboardPage",
+      "commercial": false
+    },
+    {
+      "path": "/whop/discover",
+      "component": "WhopDiscoverPage",
+      "commercial": false
+    },
+    {
+      "path": "/whop/experience",
+      "component": "WhopExperiencePage",
+      "commercial": false
+    },
+    {
+      "path": "/work-dimensions",
+      "component": "WorkDimensionsPage",
+      "commercial": false
+    },
+    {
+      "path": "/workshops",
+      "component": "WorkshopBookingPage",
+      "commercial": true
+    }
+  ],
+  "lazyImports": [
+    {
+      "symbol": "AIImpactPage",
+      "importPath": "./pages/AIImpactPage"
+    },
+    {
+      "symbol": "AIImpactPlannerPage",
+      "importPath": "./pages/AIImpactPlannerPage"
+    },
+    {
+      "symbol": "AutomationRiskLandingPage",
+      "importPath": "./pages/AutomationRiskLandingPage"
+    },
+    {
+      "symbol": "BootcampDashboardPage",
+      "importPath": "./pages/BootcampDashboardPage"
+    },
+    {
+      "symbol": "BridgeRolePathway",
+      "importPath": "./components/BridgeRolePathway"
+    },
+    {
+      "symbol": "BrowseBrightOutlook",
+      "importPath": "./pages/BrowseBrightOutlook"
+    },
+    {
+      "symbol": "BrowseJobZones",
+      "importPath": "./pages/BrowseJobZones"
+    },
+    {
+      "symbol": "BrowseSTEM",
+      "importPath": "./pages/BrowseSTEM"
+    },
+    {
+      "symbol": "CareerPlanningPage",
+      "importPath": "./pages/CareerPlanningPage"
+    },
+    {
+      "symbol": "CommercialLeadOpsPage",
+      "importPath": "./pages/CommercialLeadOpsPage"
+    },
+    {
+      "symbol": "ComparePage",
+      "importPath": "./pages/ComparePage"
+    },
+    {
+      "symbol": "CounselorReportGenerator",
+      "importPath": "./components/CounselorReportGenerator"
+    },
+    {
+      "symbol": "CrosswalkPage",
+      "importPath": "./pages/CrosswalkPage"
+    },
+    {
+      "symbol": "DemoSandbox",
+      "importPath": "./pages/DemoSandbox"
+    },
+    {
+      "symbol": "EconImporter",
+      "importPath": "./pages/EconImporter"
+    },
+    {
+      "symbol": "EconomicsBrowser",
+      "importPath": "./pages/EconomicsBrowser"
+    },
+    {
+      "symbol": "EnterpriseTeamDashboard",
+      "importPath": "./pages/EnterpriseTeamDashboard"
+    },
+    {
+      "symbol": "ForCoachesPage",
+      "importPath": "./pages/ForCoachesPage"
+    },
+    {
+      "symbol": "GapAnalysis",
+      "importPath": "./pages/GapAnalysis"
+    },
+    {
+      "symbol": "HelpPage",
+      "importPath": "./pages/HelpPage"
+    },
+    {
+      "symbol": "ImpactDashboard",
+      "importPath": "./pages/ImpactDashboard"
+    },
+    {
+      "symbol": "IndustryDashboardPage",
+      "importPath": "./pages/IndustryDashboardPage"
+    },
+    {
+      "symbol": "IndustrySEOPage",
+      "importPath": "./pages/IndustrySEOPage"
+    },
+    {
+      "symbol": "JobZoneLaddersPage",
+      "importPath": "./pages/JobZoneLaddersPage"
+    },
+    {
+      "symbol": "MarketMapPage",
+      "importPath": "./pages/MarketMapPage"
+    },
+    {
+      "symbol": "NotFound",
+      "importPath": "./pages/NotFound"
+    },
+    {
+      "symbol": "OccupationDetailPage",
+      "importPath": "./pages/OccupationDetailPage"
+    },
+    {
+      "symbol": "OperationsPage",
+      "importPath": "./pages/OperationsPage"
+    },
+    {
+      "symbol": "OutcomesPage",
+      "importPath": "./pages/OutcomesPage"
+    },
+    {
+      "symbol": "PricingPage",
+      "importPath": "./pages/PricingPage"
+    },
+    {
+      "symbol": "PrivacyPage",
+      "importPath": "./pages/PrivacyPage"
+    },
+    {
+      "symbol": "QualityPage",
+      "importPath": "./pages/QualityPage"
+    },
+    {
+      "symbol": "ResourcesPage",
+      "importPath": "./pages/ResourcesPage"
+    },
+    {
+      "symbol": "ResponsibleAIPage",
+      "importPath": "./pages/ResponsibleAIPage"
+    },
+    {
+      "symbol": "ResumeAnalyzer",
+      "importPath": "./components/ResumeAnalyzer"
+    },
+    {
+      "symbol": "SampleReportPage",
+      "importPath": "./pages/SampleReportPage"
+    },
+    {
+      "symbol": "SEOComparisonPage",
+      "importPath": "./pages/SEOComparisonPage"
+    },
+    {
+      "symbol": "SharedAnalysisPage",
+      "importPath": "./pages/SharedAnalysisPage"
+    },
+    {
+      "symbol": "SkillAdjacencyGraph",
+      "importPath": "./components/SkillAdjacencyGraph"
+    },
+    {
+      "symbol": "SkillsBuilderPage",
+      "importPath": "./pages/SkillsBuilderPage"
+    },
+    {
+      "symbol": "TaskSearchPage",
+      "importPath": "./pages/TaskSearchPage"
+    },
+    {
+      "symbol": "TechSkillsPage",
+      "importPath": "./pages/TechSkillsPage"
+    },
+    {
+      "symbol": "Test",
+      "importPath": "./pages/Test"
+    },
+    {
+      "symbol": "UserDashboardPage",
+      "importPath": "./pages/UserDashboardPage"
+    },
+    {
+      "symbol": "ValidationCenter",
+      "importPath": "./pages/ValidationCenter"
+    },
+    {
+      "symbol": "ValidationMethodsPage",
+      "importPath": "./pages/ValidationMethodsPage"
+    },
+    {
+      "symbol": "ValidationPage",
+      "importPath": "./pages/ValidationPage"
+    },
+    {
+      "symbol": "VeteransPage",
+      "importPath": "./pages/VeteransPage"
+    },
+    {
+      "symbol": "WhopDashboardPage",
+      "importPath": "./pages/whop/DashboardPage"
+    },
+    {
+      "symbol": "WhopDiscoverPage",
+      "importPath": "./pages/whop/DiscoverPage"
+    },
+    {
+      "symbol": "WhopExperiencePage",
+      "importPath": "./pages/whop/ExperiencePage"
+    },
+    {
+      "symbol": "WorkDimensionsPage",
+      "importPath": "./pages/WorkDimensionsPage"
+    },
+    {
+      "symbol": "WorkshopBookingPage",
+      "importPath": "./pages/WorkshopBookingPage"
+    }
+  ],
+  "packageScripts": [
+    {
+      "name": "build",
+      "command": "vite build"
+    },
+    {
+      "name": "build:dev",
+      "command": "vite build --mode development"
+    },
+    {
+      "name": "dev",
+      "command": "vite"
+    },
+    {
+      "name": "index:commercial",
+      "command": "node scripts/generate-commercialization-index.mjs"
+    },
+    {
+      "name": "lint",
+      "command": "eslint ."
+    },
+    {
+      "name": "lint:commercial",
+      "command": "node scripts/lint-commercial-scope.mjs"
+    },
+    {
+      "name": "preview",
+      "command": "vite preview"
+    },
+    {
+      "name": "smoke:commercial",
+      "command": "node scripts/smoke-commercial-routes.mjs"
+    },
+    {
+      "name": "verify:commercial",
+      "command": "node scripts/verify-commercial-release.mjs"
+    },
+    {
+      "name": "verify:commercial-a11y",
+      "command": "node scripts/verify-commercial-accessibility.mjs"
+    },
+    {
+      "name": "verify:commercial-browser",
+      "command": "node scripts/verify-commercial-browser.mjs"
+    },
+    {
+      "name": "verify:commercial-full",
+      "command": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey"
+    },
+    {
+      "name": "verify:commercial-network",
+      "command": "node scripts/verify-commercial-release.mjs --with-network"
+    },
+    {
+      "name": "verify:commercial-trust",
+      "command": "node scripts/verify-commercial-trust-boundaries.mjs"
+    },
+    {
+      "name": "verify:data-provenance",
+      "command": "node scripts/verify-commercial-data-provenance.mjs --write"
+    },
+    {
+      "name": "verify:report-evidence",
+      "command": "node scripts/verify-report-evidence.mjs"
+    },
+    {
+      "name": "verify:sources",
+      "command": "node scripts/verify-source-manifest.mjs --write"
+    }
+  ],
+  "sourceIds": [
+    "ada-ai-hiring-guidance",
+    "anthropic-economic-index",
+    "anthropic-observed-exposure",
+    "bls-ai-mlr-2025",
+    "bls-emp",
+    "bls-oews",
+    "esco",
+    "lightcast",
+    "llm-output",
+    "nist-ai-rmf",
+    "onet",
+    "openai-gdpval",
+    "serpapi",
+    "wcag-22",
+    "wef-foj-2025"
+  ],
+  "sql": {
+    "tables": [
+      "commercial_leads",
+      "commercial_report_artifact_events",
+      "commercial_report_artifacts",
+      "commercial_staff",
+      "commercial_workforce_audit_rows",
+      "commercial_workforce_audits"
+    ],
+    "functions": [
+      "capture_commercial_lead",
+      "create_commercial_report_artifact",
+      "create_commercial_workforce_audit",
+      "get_commercial_leads",
+      "get_commercial_report_artifact",
+      "get_commercial_report_artifact_events",
+      "get_commercial_workforce_audit",
+      "is_commercial_staff",
+      "list_commercial_workforce_audits",
+      "list_commercial_workforce_review_rows",
+      "log_commercial_report_artifact_event",
+      "update_commercial_lead_status",
+      "update_commercial_workforce_row_mapping"
+    ],
+    "grants": [
+      "capture_commercial_lead",
+      "create_commercial_report_artifact",
+      "create_commercial_workforce_audit",
+      "get_commercial_leads",
+      "get_commercial_report_artifact",
+      "get_commercial_report_artifact_events",
+      "get_commercial_workforce_audit",
+      "is_commercial_staff",
+      "list_commercial_workforce_audits",
+      "list_commercial_workforce_review_rows",
+      "log_commercial_report_artifact_event",
+      "update_commercial_lead_status",
+      "update_commercial_workforce_row_mapping"
+    ],
+    "policies": [
+      "Commercial staff can read own staff record",
+      "Public can create commercial leads"
+    ]
+  },
+  "featureMap": [
+    {
+      "feature": "SEO report lead capture",
+      "buyer": "Individuals, coaches, inbound SEO visitors",
+      "routes": [
+        "/automation-risk/:occupation"
+      ],
+      "files": [
+        "src/components/SEOReportDownload.tsx",
+        "src/lib/commercialLeads.ts",
+        "src/lib/commercialReportArtifacts.ts",
+        "supabase/migrations/20260523000100_create_commercial_leads.sql"
+      ],
+      "proof": "Consent-gated report download, artifact persistence, deduping RPC, offline retry queue, provenance in report HTML."
+    },
+    {
+      "feature": "White-label coach sample reports",
+      "buyer": "Career coaches, resume writers, education counselors",
+      "routes": [
+        "/for-coaches",
+        "/sample-report"
+      ],
+      "files": [
+        "src/pages/ForCoachesPage.tsx",
+        "src/pages/SampleReportPage.tsx",
+        "src/lib/commercialLeads.ts",
+        "src/lib/reportProvenance.ts"
+      ],
+      "proof": "Brand colors, contact details, consent-gated artifact capture, source/caveat block, sample watermark."
+    },
+    {
+      "feature": "Workforce CSV exposure audit",
+      "buyer": "HR, L&D, workforce boards, AI transformation consultants",
+      "routes": [
+        "/enterprise-dashboard"
+      ],
+      "files": [
+        "src/pages/EnterpriseTeamDashboard.tsx",
+        "src/lib/commercialWorkforceAudits.ts",
+        "src/lib/socSuggestions.ts",
+        "src/lib/workforceExecutiveReport.ts",
+        "supabase/migrations/20260523000100_create_commercial_leads.sql"
+      ],
+      "proof": "CSV parsing, role exposure rollup, saved audits, review queue, broader local SOC suggestions, staff mapping boundary, downloadable executive HTML report."
+    },
+    {
+      "feature": "Commercial lead operations",
+      "buyer": "Founder, sales, support, pilot operations",
+      "routes": [
+        "/operations/leads"
+      ],
+      "files": [
+        "src/pages/CommercialLeadOpsPage.tsx",
+        "src/lib/commercialLeadOps.ts",
+        "src/lib/commercialReportArtifacts.ts",
+        "supabase/migrations/20260523000100_create_commercial_leads.sql"
+      ],
+      "proof": "Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging."
+    },
+    {
+      "feature": "Source provenance and claim boundaries",
+      "buyer": "All buyers, especially institutional and workforce pilots",
+      "routes": [
+        "/sample-report",
+        "/automation-risk/:occupation",
+        "/enterprise-dashboard"
+      ],
+      "files": [
+        "src/lib/sourceManifest.ts",
+        "src/lib/reportProvenance.ts",
+        "scripts/verify-source-manifest.mjs",
+        "scripts/verify-commercial-data-provenance.mjs",
+        "docs/commercialization/source-refresh-manifest.md",
+        "docs/commercialization/data-provenance-checksums.md"
+      ],
+      "proof": "Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest."
+    },
+    {
+      "feature": "AI Work Transition Proof Pack",
+      "buyer": "Individuals, coaches, career centers, workforce boards, L&D teams",
+      "routes": [
+        "/sample-report",
+        "/automation-risk/:occupation",
+        "/enterprise-dashboard"
+      ],
+      "files": [
+        "src/lib/reportEvidenceCards.ts",
+        "src/lib/workTransitionProofPack.ts",
+        "src/components/SEOReportDownload.tsx",
+        "src/pages/SampleReportPage.tsx",
+        "src/lib/workforceExecutiveReport.ts",
+        "scripts/verify-report-evidence.mjs"
+      ],
+      "proof": "Downloadable reports now include source-labeled evidence cards, task exposure split, skill-change ledger, caveated AI-era role radar, “does not prove” boundaries, generated timestamps, confidence, and review-state markers."
+    },
+    {
+      "feature": "Privacy and responsible-use trust boundary",
+      "buyer": "Individuals, coaches, institutional reviewers",
+      "routes": [
+        "/privacy",
+        "/tools/resume-analyzer",
+        "/responsible-ai"
+      ],
+      "files": [
+        "src/pages/PrivacyPage.tsx",
+        "src/components/ResumeAnalyzer.tsx",
+        "src/pages/ResponsibleAIPage.tsx",
+        "src/integrations/supabase/client.ts",
+        "scripts/verify-commercial-trust-boundaries.mjs"
+      ],
+      "proof": "Privacy notice, missing-Supabase fallback, deletion/employment-decision messaging, consent and local-queue guardrail verifier."
+    },
+    {
+      "feature": "Counselor report generator",
+      "buyer": "Schools, workforce boards, coaches",
+      "routes": [
+        "/tools/counselor-reports"
+      ],
+      "files": [
+        "src/components/CounselorReportGenerator.tsx",
+        "supabase/migrations/20251213000003_white_label_configs.sql"
+      ],
+      "proof": "Route exists as institutional wedge; still needs batch consent and commercial artifact integration."
+    }
+  ]
+}

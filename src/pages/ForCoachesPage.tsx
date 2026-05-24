@@ -29,8 +29,9 @@ export default function ForCoachesPage() {
         setBuyingCredits(true);
         try {
             await redirectToCreditCheckout('starter', session.user.id);
-        } catch (err: any) {
-            toast({ title: 'Error', description: err.message || 'Failed to start checkout', variant: 'destructive' });
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to start checkout';
+            toast({ title: 'Error', description: message, variant: 'destructive' });
         } finally {
             setBuyingCredits(false);
         }
@@ -99,14 +100,10 @@ export default function ForCoachesPage() {
     return (
         <div className="min-h-screen bg-[#0F172A]">
             <NavigationPremium />
+            <main>
 
             {/* Hero Section */}
             <section className="relative pt-24 pb-16 overflow-hidden">
-                <div className="absolute inset-0">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl" />
-                    <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-600/15 rounded-full blur-3xl" />
-                </div>
-
                 <motion.div
                     className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
                     initial={{ opacity: 0, y: 20 }}
@@ -135,7 +132,7 @@ export default function ForCoachesPage() {
                             <Button
                                 size="lg"
                                 onClick={() => navigate("/tools/counselor-reports")}
-                                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg"
+                                className="w-full whitespace-normal bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-6 text-base font-semibold text-white shadow-lg hover:from-emerald-400 hover:to-teal-400 sm:w-auto sm:px-8 sm:text-lg"
                             >
                                 Get Your Free Sample Report
                                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -144,7 +141,7 @@ export default function ForCoachesPage() {
                                 size="lg"
                                 variant="outline"
                                 onClick={() => navigate("/pricing")}
-                                className="border-2 border-slate-600 text-slate-200 hover:bg-slate-800 px-8 py-6 text-lg"
+                                className="w-full whitespace-normal border-2 border-slate-600 px-4 py-6 text-base text-slate-200 hover:bg-slate-800 sm:w-auto sm:px-8 sm:text-lg"
                             >
                                 View Pricing
                             </Button>
@@ -475,13 +472,14 @@ export default function ForCoachesPage() {
                     <Button
                         size="lg"
                         onClick={() => navigate("/tools/counselor-reports")}
-                        className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white px-10 py-6 text-lg font-semibold rounded-xl"
+                        className="w-full whitespace-normal bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-6 text-base font-semibold text-white hover:from-emerald-400 hover:to-teal-400 sm:w-auto sm:px-10 sm:text-lg"
                     >
                         Generate Your First Report Free
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>
             </section>
+            </main>
         </div>
     );
 }

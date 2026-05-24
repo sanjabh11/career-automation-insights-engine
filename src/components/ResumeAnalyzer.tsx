@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { ShareableScoreBadge } from '@/components/ShareableScoreBadge';
+import { REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
 
 interface AutomationPronePhrase {
     phrase: string;
@@ -65,10 +66,19 @@ function printableRatio(text: string): number {
     return printable / text.length;
 }
 
+function getErrorMessage(error: unknown, fallback: string): string {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === 'object' && 'message' in error) {
+        const message = (error as { message?: unknown }).message;
+        if (typeof message === 'string') return message;
+    }
+    return fallback;
+}
+
 async function extractResumeText(file: File): Promise<{ text: string; warning?: string }> {
     const extension = file.name.split('.').pop()?.toLowerCase();
     const rawText = await file.text();
-    const normalizedText = rawText.replace(/\u0000/g, ' ').replace(/\s+/g, ' ').trim();
+    const normalizedText = rawText.replace(new RegExp(String.fromCharCode(0), 'g'), ' ').replace(/\s+/g, ' ').trim();
 
     if (extension === 'txt' || file.type === 'text/plain') {
         return { text: normalizedText };
@@ -95,9 +105,72 @@ export default function ResumeAnalyzer() {
     const [fileWarning, setFileWarning] = useState<string | null>(null);
     const [linkCopied, setLinkCopied] = useState(false);
     const [deletingAnalysis, setDeletingAnalysis] = useState(false);
+    const [deletionProof, setDeletionProof] = useState<string | null>(null);
     const { toast } = useToast();
     const { session } = useSession();
     const isAuthenticated = !!session?.user;
+
+    const analyzeResume = useCallback(async (text: string, fname: string) => {
+        const cleanedText = text.trim();
+        if (cleanedText.length < 200) {
+            toast({
+                title: 'Resume Text Too Short',
+                description: 'Paste or upload enough resume text for a meaningful automation-risk analysis.',
+                variant: 'destructive'
+            });
+            return;
+        }
+
+        // Allow 1 free scan for guests, unlimited for authenticated users
+        if (!isAuthenticated && getFreeScanCount() >= MAX_FREE_SCANS) {
+            toast({
+                title: 'Free scan used',
+                description: 'Sign up for free to unlock more resume scans and full rewrite suggestions.',
+            });
+            return;
+        }
+
+        setAnalyzing(true);
+        setAnalysisResult(null);
+        setAnalysisId(null);
+        setDeletionProof(null);
+
+        try {
+            const { data, error } = await supabase.functions.invoke('analyze-resume', {
+                body: {
+                    resume_text: cleanedText,
+                    user_id: session?.user?.id,
+                    filename: fname
+                }
+            });
+
+            if (error) throw error;
+
+            if (data && data.success) {
+                setAnalysisResult(data as AnalysisResult);
+                setAnalysisId(data.analysis_id || null);
+
+                // Track free scan usage for guests
+                if (!isAuthenticated) {
+                    incrementFreeScanCount();
+                }
+
+                toast({
+                    title: 'Analysis Complete',
+                    description: `Automation Risk Score: ${data.automation_risk_score}/100`,
+                });
+            }
+        } catch (error: unknown) {
+            console.error('Error analyzing resume:', error);
+            toast({
+                title: 'Analysis Error',
+                description: getErrorMessage(error, 'Failed to analyze resume'),
+                variant: 'destructive'
+            });
+        } finally {
+            setAnalyzing(false);
+        }
+    }, [isAuthenticated, session?.user?.id, toast]);
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -125,7 +198,7 @@ export default function ResumeAnalyzer() {
         } finally {
             setUploading(false);
         }
-    }, []);
+    }, [analyzeResume, toast]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -138,67 +211,6 @@ export default function ResumeAnalyzer() {
         maxFiles: 1,
         disabled: uploading || analyzing
     });
-
-    const analyzeResume = async (text: string, fname: string) => {
-        const cleanedText = text.trim();
-        if (cleanedText.length < 200) {
-            toast({
-                title: 'Resume Text Too Short',
-                description: 'Paste or upload enough resume text for a meaningful automation-risk analysis.',
-                variant: 'destructive'
-            });
-            return;
-        }
-
-        // Allow 1 free scan for guests, unlimited for authenticated users
-        if (!isAuthenticated && getFreeScanCount() >= MAX_FREE_SCANS) {
-            toast({
-                title: 'Free scan used',
-                description: 'Sign up for free to unlock more resume scans and full rewrite suggestions.',
-            });
-            return;
-        }
-
-        setAnalyzing(true);
-        setAnalysisResult(null);
-        setAnalysisId(null);
-
-        try {
-            const { data, error } = await supabase.functions.invoke('analyze-resume', {
-                body: {
-                    resume_text: cleanedText,
-                    user_id: session?.user?.id,
-                    filename: fname
-                }
-            });
-
-            if (error) throw error;
-
-            if (data && data.success) {
-                setAnalysisResult(data as AnalysisResult);
-                setAnalysisId(data.analysis_id || null);
-
-                // Track free scan usage for guests
-                if (!isAuthenticated) {
-                    incrementFreeScanCount();
-                }
-
-                toast({
-                    title: 'Analysis Complete',
-                    description: `Automation Risk Score: ${data.automation_risk_score}/100`,
-                });
-            }
-        } catch (error: any) {
-            console.error('Error analyzing resume:', error);
-            toast({
-                title: 'Analysis Error',
-                description: error.message || 'Failed to analyze resume',
-                variant: 'destructive'
-            });
-        } finally {
-            setAnalyzing(false);
-        }
-    };
 
     const shareScore = (platform: 'twitter' | 'linkedin' | 'copy') => {
         const score = analysisResult?.automation_risk_score ?? 0;
@@ -226,6 +238,7 @@ export default function ResumeAnalyzer() {
 
         setDeletingAnalysis(true);
         try {
+            const deletedId = analysisId;
             const { error } = await supabase
                 .from('resume_analyses')
                 .delete()
@@ -235,15 +248,16 @@ export default function ResumeAnalyzer() {
             if (error) throw error;
 
             setAnalysisId(null);
+            setDeletionProof(`Deletion confirmed for saved analysis ${deletedId} at ${new Date().toISOString()}.`);
             toast({
                 title: 'Saved Analysis Deleted',
                 description: 'The stored resume analysis record was removed from your account.',
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error deleting resume analysis:', error);
             toast({
                 title: 'Delete Failed',
-                description: error.message || 'Unable to delete saved analysis',
+                description: getErrorMessage(error, 'Unable to delete saved analysis'),
                 variant: 'destructive',
             });
         } finally {
@@ -267,7 +281,8 @@ export default function ResumeAnalyzer() {
     };
 
     return (
-        <div className="space-y-6">
+        <main className="space-y-6">
+            <h1 className="sr-only">Resume Automation Risk Analyzer</h1>
             {/* Upload Section */}
             <Card>
                 <CardHeader>
@@ -283,7 +298,7 @@ export default function ResumeAnalyzer() {
                     <Alert>
                         <ShieldCheck className="h-4 w-4" />
                         <AlertDescription>
-                            Reliable path today: paste text or upload .txt. PDF/DOCX browser extraction is treated as degraded until server-side parsing is added. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below.
+                            Reliable path today: paste text or upload .txt. PDF/DOCX browser extraction is treated as degraded until server-side parsing is added. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below. {REPORT_TRUST_NOTICES[1]}
                         </AlertDescription>
                     </Alert>
 
@@ -293,7 +308,7 @@ export default function ResumeAnalyzer() {
                         className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${isDragActive ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10' : 'border-gray-300 hover:border-[var(--accent-primary)]'
                             } ${(uploading || analyzing) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        <input {...getInputProps()} />
+                        <input {...getInputProps({ 'aria-label': 'Upload resume file' })} />
                         <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                         {isDragActive ? (
                             <p className="text-lg font-medium">Drop your resume here...</p>
@@ -427,6 +442,13 @@ export default function ResumeAnalyzer() {
                                     )}
                                 </AlertDescription>
                             </Alert>
+
+                            {deletionProof && (
+                                <Alert>
+                                    <ShieldCheck className="h-4 w-4" />
+                                    <AlertDescription>{deletionProof}</AlertDescription>
+                                </Alert>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -594,6 +616,6 @@ export default function ResumeAnalyzer() {
                     </CardContent>
                 </Card>
             )}
-        </div>
+        </main>
     );
 }

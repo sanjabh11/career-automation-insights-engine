@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Download, Mail, CheckCircle2, Loader2 } from 'lucide-react';
 import { trackEvent } from '@/lib/posthog';
+import { captureCommercialLead, type CommercialLeadResult } from '@/lib/commercialLeads';
+import { getReportProvenanceCss, renderReportProvenanceHtml } from '@/lib/reportProvenance';
+import {
+  buildOccupationTransitionProofPack,
+  getTransitionProofPackCss,
+  renderTransitionProofPackHtml,
+} from '@/lib/workTransitionProofPack';
 import type { OccupationRiskData } from '@/data/occupationRiskData';
 
 interface SEOReportDownloadProps {
@@ -14,6 +24,7 @@ interface SEOReportDownloadProps {
 function generateReportHTML(data: OccupationRiskData): string {
   const riskLevel = data.overallRisk <= 30 ? 'Low' : data.overallRisk <= 60 ? 'Medium' : 'High';
   const riskColor = data.overallRisk <= 30 ? '#10b981' : data.overallRisk <= 60 ? '#f59e0b' : '#ef4444';
+  const proofPack = buildOccupationTransitionProofPack(data, 'individual');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -44,6 +55,8 @@ function generateReportHTML(data: OccupationRiskData): string {
     .bridge-title { font-weight: 700; color: #10b981; margin-bottom: 4px; }
     .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
     .footer a { color: #2dd4a8; text-decoration: none; }
+    ${getReportProvenanceCss()}
+    ${getTransitionProofPackCss()}
     @media print { body { padding: 20px; } .no-print { display: none; } }
   </style>
 </head>
@@ -96,8 +109,14 @@ function generateReportHTML(data: OccupationRiskData): string {
     <div>Automation Risk: ${data.bridgeRoleRisk}% &mdash; ${data.bridgeRoleRisk <= 30 ? 'Significantly safer' : 'Lower risk'} than ${data.title}</div>
   </div>
 
+  ${renderTransitionProofPackHtml(proofPack)}
+
+  ${renderReportProvenanceHtml({
+    context: 'This downloadable report is a source-grounded planning artifact for occupation-level discussion. It is not an employment decision system and does not evaluate a specific individual.',
+  })}
+
   <div class="footer">
-    <p>Data sourced from O*NET 29.3 (U.S. Department of Labor) and WEF Future of Jobs 2025</p>
+    <p>Source registry includes O*NET, BLS/OEWS, WEF 2025, ESCO-ready, Lightcast-ready, SerpAPI-ready, and LLM-output caveats.</p>
     <p style="margin-top: 8px;">Get your full personalized analysis at <a href="https://automationinsights.app">automationinsights.app</a></p>
     <p style="margin-top: 4px;">For career coaches: white-label this report &mdash; <a href="https://automationinsights.app/for-coaches">Learn about Coach Pro</a></p>
   </div>
@@ -109,14 +128,37 @@ function generateReportHTML(data: OccupationRiskData): string {
 
 export function SEOReportDownload({ data, occupationSlug }: SEOReportDownloadProps) {
   const [email, setEmail] = useState('');
+  const [consentToContact, setConsentToContact] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [leadStatus, setLeadStatus] = useState<CommercialLeadResult | null>(null);
+  const consentText =
+    'I agree to receive this report and occasional follow-up about AI career risk tools and pilot opportunities.';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !consentToContact) return;
 
     setLoading(true);
+    const html = generateReportHTML(data);
+    const result = await captureCommercialLead({
+      email,
+      source: 'seo-report-download',
+      buyerSegment: 'individual',
+      reportType: 'occupation-risk-pdf',
+      occupationSlug,
+      occupationTitle: data.title,
+      riskScore: data.overallRisk,
+      reportHtml: html,
+      consentToContact,
+      consentText,
+      metadata: {
+        page_path: typeof window !== 'undefined' ? window.location.pathname : null,
+        soc_code: data.code,
+        industry: data.industry,
+      },
+    });
+    setLeadStatus(result);
 
     // Track the lead capture event
     trackEvent('seo_pdf_lead_captured', {
@@ -124,20 +166,16 @@ export function SEOReportDownload({ data, occupationSlug }: SEOReportDownloadPro
       occupation: data.title,
       occupation_slug: occupationSlug,
       risk_score: data.overallRisk,
+      persisted: result.persisted,
+      offline_queued: result.offlineQueued,
+      artifact_persisted: result.artifactPersisted,
+      artifact_id: result.artifactId,
     });
-
-    // Store in localStorage for backup
-    try {
-      const leads = JSON.parse(localStorage.getItem('email_leads') || '[]');
-      leads.push({ email: email.trim(), occupation: occupationSlug, timestamp: new Date().toISOString() });
-      localStorage.setItem('email_leads', JSON.stringify(leads));
-    } catch {}
 
     setSubmitted(true);
     setLoading(false);
 
     // Generate and open the PDF report
-    const html = generateReportHTML(data);
     const reportWindow = window.open('', '_blank');
     if (reportWindow) {
       reportWindow.document.open('text/html');
@@ -154,6 +192,10 @@ export function SEOReportDownload({ data, occupationSlug }: SEOReportDownloadPro
           <h3 className="text-lg font-bold mb-1">Report Downloaded!</h3>
           <p className="text-sm text-muted-foreground mb-4">
             Check your new browser tab. Use File → Save as PDF or Print → Save as PDF.
+            {leadStatus?.persisted && ' The lead and report artifact were saved to Supabase.'}
+            {leadStatus?.artifactId && ` Artifact ID: ${leadStatus.artifactId.slice(0, 8)}.`}
+            {leadStatus?.offlineQueued && ' Supabase was unavailable, so the lead was queued in this browser.'}
+            {leadStatus?.artifactError && ' The immediate download still works, but artifact storage needs retry.'}
           </p>
           <Button
             variant="outline"
@@ -187,29 +229,50 @@ export function SEOReportDownload({ data, occupationSlug }: SEOReportDownloadPro
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="email"
-              required
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10"
-            />
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="email"
+                required
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button type="submit" disabled={loading || !consentToContact} className="whitespace-nowrap">
+              {loading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              Download PDF
+            </Button>
           </div>
-          <Button type="submit" disabled={loading} className="whitespace-nowrap">
-            {loading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4 mr-2" />
-            )}
-            Download PDF
-          </Button>
+
+          <div className="flex items-start gap-2 rounded-md border bg-background/70 p-3">
+            <Checkbox
+              id={`seo-report-consent-${occupationSlug}`}
+              checked={consentToContact}
+              onCheckedChange={(checked) => setConsentToContact(checked === true)}
+              aria-label="Consent to receive report and follow-up"
+            />
+            <Label
+              htmlFor={`seo-report-consent-${occupationSlug}`}
+              className="text-xs font-normal leading-relaxed text-muted-foreground"
+            >
+              {consentText} You can opt out later. See the{' '}
+              <Link to="/privacy" className="underline underline-offset-2">
+                privacy policy
+              </Link>
+              . This report is a planning aid, not an employment decision system.
+            </Label>
+          </div>
         </form>
         <p className="text-xs text-muted-foreground text-center mt-3">
-          No spam. We'll send career insights based on your occupation interest.
+          Lead capture records consent text, timestamp, source versions, and report artifact ID when Supabase is available.
         </p>
       </CardContent>
     </Card>

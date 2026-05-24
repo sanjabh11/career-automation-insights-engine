@@ -2,9 +2,20 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
+type RuntimeEnv = Record<string, string | undefined>;
+type RuntimeWindow = Window & {
+  __CAIE_ENV?: RuntimeEnv;
+  __ENV?: RuntimeEnv;
+  ENV?: RuntimeEnv;
+  env?: RuntimeEnv;
+};
+type RuntimeGlobal = typeof globalThis & {
+  __CAIE_ENV?: RuntimeEnv;
+};
+
 // Resolve environment variables from multiple compatible sources (Vite, Node, global runtime)
-const importMetaEnv = (import.meta as any)?.env as Record<string, string | undefined> | undefined;
-const envSources: Record<string, string | undefined>[] = [];
+const importMetaEnv = (import.meta as ImportMeta & { env?: RuntimeEnv }).env;
+const envSources: RuntimeEnv[] = [];
 
 // When bundled by Vite, import.meta.env is replaced statically. Capture it first.
 if (importMetaEnv) {
@@ -14,10 +25,14 @@ if (importMetaEnv) {
 const processEnv = typeof process !== 'undefined' ? (process.env as Record<string, string | undefined>) : undefined;
 if (processEnv) envSources.push(processEnv);
 
-const globalEnv = typeof globalThis !== 'undefined' ? ((globalThis as any).__CAIE_ENV as Record<string, string | undefined> | undefined) : undefined;
+const runtimeGlobal = globalThis as RuntimeGlobal;
+const globalEnv = typeof globalThis !== 'undefined' ? runtimeGlobal.__CAIE_ENV : undefined;
 if (globalEnv) envSources.push(globalEnv);
 
-const windowEnv = typeof window !== 'undefined' ? ((window as any).__CAIE_ENV || (window as any).__ENV || (window as any).ENV || (window as any).env) as Record<string, string | undefined> | undefined : undefined;
+const runtimeWindow = typeof window !== 'undefined' ? (window as RuntimeWindow) : undefined;
+const windowEnv = runtimeWindow
+  ? runtimeWindow.__CAIE_ENV || runtimeWindow.__ENV || runtimeWindow.ENV || runtimeWindow.env
+  : undefined;
 if (windowEnv) envSources.push(windowEnv);
 
 const resolveEnvVar = (...keys: string[]): string | undefined => {
@@ -36,28 +51,25 @@ const resolveEnvVar = (...keys: string[]): string | undefined => {
 // Prefer Vite-prefixed vars but support common alternatives used in hosting platforms
 const SUPABASE_URL = resolveEnvVar('VITE_SUPABASE_URL', 'PUBLIC_SUPABASE_URL', 'SUPABASE_URL');
 const SUPABASE_PUBLISHABLE_KEY = resolveEnvVar('VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY');
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 
-// Debug logging to help diagnose env issues
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  console.error('❌ Supabase client initialization failed');
-  console.error('Environment sources checked:', {
-    importMetaEnv: !!importMetaEnv,
-    processEnv: !!processEnv,
-    globalEnv: !!globalEnv,
-    windowEnv: !!windowEnv,
-  });
-  console.error('import.meta.env keys:', importMetaEnv ? Object.keys(importMetaEnv) : 'N/A');
-  console.error('Found values:', {
-    SUPABASE_URL: SUPABASE_URL || 'MISSING',
-    SUPABASE_PUBLISHABLE_KEY: SUPABASE_PUBLISHABLE_KEY ? '***' + SUPABASE_PUBLISHABLE_KEY.slice(-8) : 'MISSING'
-  });
-  throw new Error(
-    'Missing Supabase environment variables. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file. See .env.example for reference.\n\n' +
-    'Restart your dev server (npm run dev) after updating .env to ensure Vite picks up the changes.'
+if (!isSupabaseConfigured) {
+  console.warn(
+    'Supabase environment variables are missing. Public pages will render, but Supabase-backed actions will fail gracefully until VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are configured.'
   );
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(
+  SUPABASE_URL || 'https://supabase-disabled.invalid',
+  SUPABASE_PUBLISHABLE_KEY || 'supabase-disabled-anon-key',
+  {
+    auth: {
+      persistSession: isSupabaseConfigured,
+      autoRefreshToken: isSupabaseConfigured,
+      detectSessionInUrl: isSupabaseConfigured,
+    },
+  }
+);

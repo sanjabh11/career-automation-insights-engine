@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,15 +39,40 @@ const REPORT_EXAMPLES: OccupationOption[] = [
     { code: '17-2071.00', title: 'Electrical Engineers' },
 ];
 
-function normalizeOccupation(item: any): OccupationOption | null {
-    const code = item?.occupation_code || item?.code || item?.onetsoc_code;
-    const title = item?.occupation_title || item?.title || item?.name;
+interface SearchOccupationsResponse {
+    occupations?: unknown[];
+}
+
+interface CounselorReportResponse {
+    success?: boolean;
+    html?: string;
+    report_id?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+}
+
+function readString(record: Record<string, unknown>, key: string): string | undefined {
+    const value = record[key];
+    return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+}
+
+function getErrorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
+}
+
+function normalizeOccupation(item: unknown): OccupationOption | null {
+    if (!isRecord(item)) return null;
+
+    const code = readString(item, 'occupation_code') || readString(item, 'code') || readString(item, 'onetsoc_code');
+    const title = readString(item, 'occupation_title') || readString(item, 'title') || readString(item, 'name');
     if (!code || !title) return null;
 
     return {
         code,
         title,
-        description: item?.description || item?.summary || 'O*NET occupation profile',
+        description: readString(item, 'description') || readString(item, 'summary') || 'O*NET occupation profile',
     };
 }
 
@@ -72,11 +97,7 @@ export default function CounselorReportGenerator() {
     const { toast } = useToast();
     const { session } = useSession();
 
-    useEffect(() => {
-        loadWhiteLabelConfig();
-    }, [session?.user?.id]);
-
-    const loadWhiteLabelConfig = async () => {
+    const loadWhiteLabelConfig = useCallback(async () => {
         if (!session?.user?.id) {
             setLoading(false);
             return;
@@ -99,7 +120,11 @@ export default function CounselorReportGenerator() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [session?.user?.id]);
+
+    useEffect(() => {
+        loadWhiteLabelConfig();
+    }, [loadWhiteLabelConfig]);
 
     const searchOccupations = async () => {
         if (occupationQuery.trim().length < 2) {
@@ -120,8 +145,9 @@ export default function CounselorReportGenerator() {
 
             if (error) throw error;
 
-            const occupations = Array.isArray((data as any)?.occupations)
-                ? (data as any).occupations
+            const searchData = data as SearchOccupationsResponse | null;
+            const occupations = Array.isArray(searchData?.occupations)
+                ? searchData.occupations
                 : [];
 
             const normalized = occupations
@@ -134,12 +160,12 @@ export default function CounselorReportGenerator() {
                     ? `Found ${normalized.length} matching occupation${normalized.length === 1 ? '' : 's'}.`
                     : 'No matching occupations found. Try a broader title.'
             );
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Occupation search failed:', error);
             setOccupationResults([]);
             toast({
                 title: 'Occupation Search Failed',
-                description: error.message || 'Unable to search occupations',
+                description: getErrorMessage(error, 'Unable to search occupations'),
                 variant: 'destructive',
             });
         } finally {
@@ -180,11 +206,11 @@ export default function CounselorReportGenerator() {
                 title: 'Settings Saved',
                 description: 'White-label configuration updated successfully'
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error saving config:', error);
             toast({
                 title: 'Save Error',
-                description: error.message || 'Failed to save configuration',
+                description: getErrorMessage(error, 'Failed to save configuration'),
                 variant: 'destructive'
             });
         }
@@ -252,9 +278,10 @@ export default function CounselorReportGenerator() {
 
             if (error) throw error;
 
-            if (data && data.success) {
-                setReportHtml(data.html);
-                setReportId(data.report_id || null);
+            const reportData = data as CounselorReportResponse | null;
+            if (reportData?.success && typeof reportData.html === 'string') {
+                setReportHtml(reportData.html);
+                setReportId(reportData.report_id || null);
                 setStatusMessage('Report generated. Use preview and print/save as PDF before sending to a client.');
 
                 toast({
@@ -263,7 +290,7 @@ export default function CounselorReportGenerator() {
                 });
 
                 // Auto-download or open in new window
-                const blob = new Blob([data.html], { type: 'text/html' });
+                const blob = new Blob([reportData.html], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
@@ -271,12 +298,12 @@ export default function CounselorReportGenerator() {
                 link.click();
                 URL.revokeObjectURL(url);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error generating report:', error);
             setStatusMessage('Report generation failed. If credit was deducted, verify the credit ledger before retrying.');
             toast({
                 title: 'Generation Error',
-                description: error.message || 'Failed to generate report',
+                description: getErrorMessage(error, 'Failed to generate report'),
                 variant: 'destructive'
             });
         } finally {
@@ -307,7 +334,8 @@ export default function CounselorReportGenerator() {
     }
 
     return (
-        <div className="space-y-6">
+        <main className="space-y-6">
+            <h1 className="sr-only">Counselor Report Generator</h1>
             {/* Credit Balance */}
             <CreditBalance showBuyButton={true} />
 
@@ -624,6 +652,6 @@ export default function CounselorReportGenerator() {
                     </CardContent>
                 </Card>
             )}
-        </div>
+        </main>
     );
 }

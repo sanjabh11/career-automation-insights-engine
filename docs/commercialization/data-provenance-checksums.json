@@ -1,0 +1,217 @@
+{
+  "generatedAt": "2026-05-24T04:13:34.451Z",
+  "sourceManifestPath": "src/lib/sourceManifest.ts",
+  "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
+  "sourceVerification": {
+    "generatedAt": "2026-05-24T04:13:13.797Z",
+    "allPassed": true,
+    "requiredForPass": false
+  },
+  "allPassed": true,
+  "artifacts": [
+    {
+      "id": "wef-economics-csv",
+      "label": "WEF economics CSV seed",
+      "path": "public/data/econ_wef.csv",
+      "type": "csv",
+      "sourceIds": [
+        "wef-foj-2025"
+      ],
+      "expectedHeaders": [
+        "source",
+        "source_url",
+        "as_of_year",
+        "evidence_note"
+      ],
+      "caveat": "Local WEF-derived economics seed used for directional macro context; not a complete live labor-market feed.",
+      "bytes": 726394,
+      "rows": 1740,
+      "sha256": "cedb403873db06371e59d1a203c096d1f0c7dd1cfea00663bd8c6d7df8ad3e4d",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "occupation-risk-seed",
+      "label": "SEO occupation risk seed",
+      "path": "src/data/occupationRiskData.ts",
+      "type": "typescript-seed",
+      "sourceIds": [
+        "onet",
+        "bls-emp",
+        "bls-oews",
+        "wef-foj-2025"
+      ],
+      "expectedSnippets": [
+        "export const occupationRiskData",
+        "overallRisk",
+        "bridgeRole",
+        "reskillingSuggestions"
+      ],
+      "caveat": "Hand-curated SEO seed data; do not claim full O*NET 30.3/BLS-backed scoring until refreshed imports are checksum-verified.",
+      "bytes": 37581,
+      "rows": 1043,
+      "sha256": "4b5826d0fb62c3a8eab8a617bd928371a8d2e344921fed8a75931ef74b405b41",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "onet-ingest-boundary",
+      "label": "O*NET metadata ingestion boundary",
+      "path": "supabase/lib/scripts/ingest_onet_metadata.ts",
+      "type": "ingestion-script",
+      "sourceIds": [
+        "onet"
+      ],
+      "expectedSnippets": [
+        "<path-to-onet-csv-root>",
+        "Job Zones.txt",
+        "Tools Used.txt",
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ],
+      "caveat": "Ingestion utility boundary only; it proves import mechanics exist, not that current production tables are refreshed.",
+      "bytes": 8164,
+      "rows": 228,
+      "sha256": "8deb7c39cc054a4189cbeca3e8405b3168548f28eaeb58800c96cb0340cd83f6",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "source-manifest-module",
+      "label": "Source manifest module",
+      "path": "src/lib/sourceManifest.ts",
+      "type": "source-registry",
+      "sourceIds": [
+        "onet",
+        "bls-emp",
+        "bls-oews",
+        "wef-foj-2025",
+        "anthropic-economic-index",
+        "anthropic-observed-exposure",
+        "openai-gdpval",
+        "bls-ai-mlr-2025",
+        "wcag-22",
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "esco",
+        "lightcast",
+        "serpapi",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "export const SOURCE_MANIFEST",
+        "claimBoundary",
+        "adapter-ready"
+      ],
+      "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
+      "bytes": 14732,
+      "rows": 273,
+      "sha256": "96e5ff0af6c50518090ecccbf8a0565981fda55ded09cc0821f65932de6343d0",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "report-evidence-card-module",
+      "label": "Report evidence card renderer",
+      "path": "src/lib/reportEvidenceCards.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "onet",
+        "bls-ai-mlr-2025",
+        "nist-ai-rmf",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "export interface EvidenceCard",
+        "doesNotProve",
+        "reviewStatus",
+        "renderEvidenceCardsHtml"
+      ],
+      "caveat": "Shared report evidence card renderer; evidence cards still depend on correct source assignment in each report flow.",
+      "bytes": 4310,
+      "rows": 91,
+      "sha256": "2a82837b74fe78715914b4aebfb5dd46e10ae0eefaf3239bd397bc386a353b16",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "work-transition-proof-pack-module",
+      "label": "AI work transition proof pack renderer",
+      "path": "src/lib/workTransitionProofPack.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "onet",
+        "wef-foj-2025",
+        "anthropic-economic-index",
+        "anthropic-observed-exposure",
+        "openai-gdpval",
+        "bls-ai-mlr-2025",
+        "wcag-22",
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "esco",
+        "lightcast",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "AI_ERA_ROLE_RADAR",
+        "TaskExposureBucket",
+        "SkillChangeStatus",
+        "renderTransitionProofPackHtml"
+      ],
+      "caveat": "Emerging role radar and skill-change ledger are planning signals; provider-backed market validation remains adapter-ready.",
+      "bytes": 32930,
+      "rows": 695,
+      "sha256": "a2632be756e9f58be1e610abae874440aff88a5e6f254ece97d460db62adc799",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "report-provenance-module",
+      "label": "Report provenance renderer",
+      "path": "src/lib/reportProvenance.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "onet",
+        "bls-emp",
+        "bls-oews",
+        "wef-foj-2025",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "renderReportProvenanceHtml",
+        "REPORT_TRUST_NOTICES",
+        "getReportSourceSnapshot"
+      ],
+      "caveat": "Runtime report trust layer; each generated report still needs its own source snapshot and artifact event history.",
+      "bytes": 5385,
+      "rows": 135,
+      "sha256": "7e022db47a018150e57ae5d41ba99dc4f079db26a407b48051345024398eb68c",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "workforce-executive-report-module",
+      "label": "Workforce executive report artifact renderer",
+      "path": "src/lib/workforceExecutiveReport.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "onet",
+        "bls-emp",
+        "bls-oews",
+        "wef-foj-2025",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "buildWorkforceExecutiveReportHtml",
+        "downloadWorkforceExecutiveReport",
+        "Workforce Report Source Provenance"
+      ],
+      "caveat": "Client-side pilot artifact renderer; final enterprise reporting still needs signed storage, PDF generation, and delivery/audit events.",
+      "bytes": 10619,
+      "rows": 234,
+      "sha256": "4ad0baba8eac8298fd19e252acea0abf55ef4a8df31aaca9a764874a46c0ab29",
+      "failures": [],
+      "passed": true
+    }
+  ]
+}
