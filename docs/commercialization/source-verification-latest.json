@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T08:29:10.246Z",
+  "generatedAt": "2026-05-24T08:44:50.723Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "cbf33fa7d14a2146cc167066e0e52ee8416f3a7d15e5ed45a1ffb24be51d7d0f",
-      "byteLength": 233754,
+      "contentSha256": "9aaa91ca726865a0e7eae3bc6ba0ae25023bc2cf89914fc00f3ce3769966feee",
+      "byteLength": 233752,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "6aa9c0f853245671168ac4dedfa881564c00f90d275ea345cf7cc04209bc27a3",
+      "contentSha256": "00e949875f9982170a2df67c77dec04a854c1e5651e36d438e86e11012d5fe9a",
       "byteLength": 316096,
       "evidence": [
         {
@@ -269,8 +269,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
-      "byteLength": 114397,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "0a11e320baa4ca09560de9fa2d7be37e0728851ce4849e65aa42612031d7d855",
+      "contentSha256": "26844faa2a5e1a70d8ef005966fc5a9dd2b78ade089d15a9b2942e46ecbb50df",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "f13aee41dc29d22730aafe11fad589b719275d9bb108fea2d04d76f837de8d18",
+      "contentSha256": "70e20b5c57b4dd907bc6bc9db4359b8aec7a8d360117143ef45ec0c96222914b",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "d5f14987cb362c1490c6d9a6965d94509f8f50276d17974f58dc854a4ec44ddc",
-      "byteLength": 73088,
+      "contentSha256": "4169e435851ae11930c652f683ebea70e14fe23dd753a6b37c8f53329359052c",
+      "byteLength": 73082,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,8 +369,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "9b6776004259b26eac0f209c3ba70413ef0ba03e85522633fa525ed75848c4be",
-      "byteLength": 164873,
+      "contentSha256": "f6a42623ba764b6d3ea9902ff548d72941f7fda6923d89bf519574149d56e0d1",
+      "byteLength": 165940,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "dc3e4ef5799e5d6b0841b3605541cdd7a292f964182b433b220b8711819c37bb",
+      "contentSha256": "4df9dbed2e08635fdf2f40dcbf1794542effb948a796e809f648decf9c8b06a5",
       "byteLength": 210582,
       "evidence": [
         {
@@ -549,7 +549,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "b1cfede250fdb2e5de29bf9bf907a77a0e639167e9264175f61f4ab1cba62058",
+      "contentSha256": "87cb694f3180e2c9e124831a803c8d3dc9e99d4e00566a8edfa31f674cb5e923",
       "byteLength": 91197,
       "evidence": [
         {

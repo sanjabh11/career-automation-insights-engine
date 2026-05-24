@@ -263,6 +263,25 @@ const checks = [
     ],
   },
   {
+    id: 'commercial-ci-workflow-installed',
+    file: '.github/workflows/commercial-proof-pack.yml',
+    expected: [
+      /name: Commercial Proof Pack/,
+      /pull_request:/,
+      /push:/,
+      /workflow_dispatch:/,
+      /schedule:/,
+      /permissions:\n  contents: read/,
+      /actions\/checkout@v4/,
+      /actions\/setup-node@v4/,
+      /node-version: 20/,
+      /npm ci/,
+      /npx playwright install --with-deps chromium/,
+      /npm run verify:commercial -- --with-a11y --with-journey/,
+      /npm run verify:commercial-network/,
+    ],
+  },
+  {
     id: 'commercial-accessibility-verifier',
     file: 'scripts/verify-commercial-accessibility.mjs',
     expected: [

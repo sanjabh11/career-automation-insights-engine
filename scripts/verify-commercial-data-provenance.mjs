@@ -124,7 +124,16 @@ const artifacts = [
     type: 'ci-workflow-template',
     sourceIds: ['nist-ai-rmf', 'wcag-22', 'llm-output'],
     expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
-    caveat: 'Workflow template is ready to install, but the actual .github workflow and CI run remain blocked until GitHub auth has workflow scope.',
+    caveat: 'Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.',
+  },
+  {
+    id: 'commercial-proof-pack-ci-workflow-installed',
+    label: 'Commercial proof-pack CI workflow installed',
+    path: '.github/workflows/commercial-proof-pack.yml',
+    type: 'ci-workflow',
+    sourceIds: ['nist-ai-rmf', 'wcag-22', 'llm-output'],
+    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
+    caveat: 'Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.',
   },
   {
     id: 'onet-task-rating-metadata-migration',

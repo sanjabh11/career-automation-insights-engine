@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T08:34:52.238Z",
+  "generatedAt": "2026-05-24T08:44:00.791Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -721,16 +721,17 @@
       "proof": "Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, and downloadable CRM-import outreach CSV."
     },
     {
-      "feature": "Commercial proof-pack CI workflow template",
+      "feature": "Commercial proof-pack CI workflow",
       "buyer": "Founder, maintainer, pilot reviewers",
       "routes": [],
       "files": [
+        ".github/workflows/commercial-proof-pack.yml",
         "docs/commercialization/commercial-proof-pack.workflow.yml",
         "scripts/verify-commercial-release.mjs",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-accessibility.mjs"
       ],
-      "proof": "GitHub Actions workflow template is ready with read-only permissions, commercial build/route/evidence checks, Playwright a11y and browser journey checks, plus manual/scheduled source and production audit checks."
+      "proof": "GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y and browser journey checks on push/PR, plus manual/scheduled source and production audit checks."
     },
     {
       "feature": "SEO report lead capture",
