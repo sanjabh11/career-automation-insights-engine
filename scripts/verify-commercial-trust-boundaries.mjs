@@ -328,7 +328,7 @@ const checks = [
       /schedule:/,
       /permissions:\n  contents: read/,
       /actions\/checkout@v6/,
-      /actions\/setup-node@v5/,
+      /actions\/setup-node@v6/,
       /node-version: 20/,
       /npm ci/,
       /npx playwright install --with-deps chromium/,
