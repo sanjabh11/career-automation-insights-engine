@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T11:07:19.043Z
+Generated: 2026-05-24T11:27:17.205Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -123,6 +123,7 @@ Policies:
 | `verify:commercial-trust` | `node scripts/verify-commercial-trust-boundaries.mjs` |
 | `verify:data-provenance` | `node scripts/verify-commercial-data-provenance.mjs --write` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
+| `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
 | `verify:report-evidence` | `node scripts/verify-report-evidence.mjs` |
 | `verify:sources` | `node scripts/verify-source-manifest.mjs --write` |
 

@@ -172,6 +172,15 @@ const artifacts = [
     caveat: 'Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations or seed staff users.',
   },
   {
+    id: 'onet-task-ratings-live-verifier',
+    label: 'Live O*NET Task Ratings deployed proof verifier',
+    path: 'scripts/verify-onet-task-ratings-live.mjs',
+    type: 'live-verifier',
+    sourceIds: ['onet', 'onet-task-statements', 'onet-task-ratings', 'onet-task-categories', 'onet-scales-reference'],
+    expectedSnippets: ['onet_detailed_tasks', 'task_ratings_ingested_at', 'metadata-not-ingested', 'missing-column-or-schema-cache', 'non-mutating-public-api-task-rating-boundary', 'allow-missing-env'],
+    caveat: 'Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.',
+  },
+  {
     id: 'onet-task-rating-metadata-migration',
     label: 'O*NET Task Rating metadata migration',
     path: 'supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql',

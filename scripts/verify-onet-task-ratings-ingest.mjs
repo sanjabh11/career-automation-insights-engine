@@ -75,6 +75,18 @@ const checks = [
       /20260524000300_add_onet_task_rating_metadata\.sql/,
     ],
   },
+  {
+    id: 'live-onet-task-ratings-proof-gate',
+    file: 'scripts/verify-onet-task-ratings-live.mjs',
+    expected: [
+      /onet_detailed_tasks/,
+      /task_ratings_ingested_at/,
+      /metadata-not-ingested/,
+      /missing-column-or-schema-cache/,
+      /non-mutating-public-api-task-rating-boundary/,
+      /allow-missing-env/,
+    ],
+  },
 ];
 
 async function main() {

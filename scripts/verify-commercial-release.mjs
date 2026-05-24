@@ -74,6 +74,14 @@ const LIVE_SUPABASE_STEPS = [
   },
 ];
 
+const LIVE_ONET_STEPS = [
+  {
+    id: 'live-onet-task-ratings',
+    label: 'Verify live Supabase O*NET Task Ratings schema and row proof',
+    command: ['node', 'scripts/verify-onet-task-ratings-live.mjs', '--write'],
+  },
+];
+
 const JOURNEY_STEPS = [
   {
     id: 'browser-journey',
@@ -102,6 +110,7 @@ Options:
   --with-network   Also run official source URL checks and npm production audit.
   --with-live-supabase
                    Also run non-mutating live Supabase object/RPC proof using SUPABASE_URL and SUPABASE_ANON_KEY.
+  --with-live-onet Also run non-mutating live O*NET Task Ratings schema/row proof using SUPABASE_URL and SUPABASE_ANON_KEY.
   --with-a11y      Also run the Playwright responsive/accessibility smoke gate.
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
@@ -118,6 +127,7 @@ async function main() {
 
   const includeNetwork = hasFlag('--with-network');
   const includeLiveSupabase = hasFlag('--with-live-supabase');
+  const includeLiveOnet = hasFlag('--with-live-onet');
   const includeA11y = hasFlag('--with-a11y');
   const includeJourney = hasFlag('--with-journey');
 
@@ -126,6 +136,7 @@ async function main() {
     ...(includeA11y ? A11Y_STEPS : []),
     ...(includeNetwork ? NETWORK_STEPS : []),
     ...(includeLiveSupabase ? LIVE_SUPABASE_STEPS : []),
+    ...(includeLiveOnet ? LIVE_ONET_STEPS : []),
     ...(includeJourney ? JOURNEY_STEPS : []),
   ];
 

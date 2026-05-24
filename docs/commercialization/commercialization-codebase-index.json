@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T11:07:19.043Z",
+  "generatedAt": "2026-05-24T11:27:17.205Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -619,6 +619,10 @@
     {
       "name": "verify:onet-task-ratings",
       "command": "node scripts/verify-onet-task-ratings-ingest.mjs"
+    },
+    {
+      "name": "verify:onet-task-ratings-live",
+      "command": "node scripts/verify-onet-task-ratings-live.mjs --write"
     },
     {
       "name": "verify:report-evidence",

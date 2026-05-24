@@ -38,7 +38,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 ## Next Refresh Work
 
 1. Schedule `npm run verify:sources` and archive each `source-verification-latest.json` output before source-sensitive demos.
-2. Apply `20260524000300_add_onet_task_rating_metadata.sql`, run the O*NET 30.3 Task Statements/Task Ratings ingest, and add checksums for the exported `onet_detailed_tasks` table before replacing proxy task weights.
+2. Apply `20260524000300_add_onet_task_rating_metadata.sql`, run the O*NET 30.3 Task Statements/Task Ratings ingest, rerun `npm run verify:onet-task-ratings-live`, and add checksums for the exported `onet_detailed_tasks` table before replacing proxy task weights.
 3. Attach score-level evidence cards to generated report sections.
 4. Store source manifest snapshots with each generated commercial report artifact.
 5. Block marketing copy from claiming provider-backed scoring when a source is only `adapter-ready`.
@@ -64,6 +64,8 @@ Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The
 Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET release and task dictionary pages, BLS, WEF, OECD, AI Workforce Consortium/Cisco, NACE, DOL AI literacy, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
 Run `npm run verify:onet-task-ratings` after changing O*NET task-rating imports. The script verifies the official 30.3 Task Statements, Task Ratings, Task Categories, and Scales Reference source checks, the Supabase task-rating metadata migration, the Deno ingest boundary, the runtime weighting helper, and data-provenance coverage.
+
+Run `npm run verify:onet-task-ratings-live` after target project credentials are available and after any O*NET Task Ratings migration or ingest attempt. The script uses the public Supabase API with an anon/publishable key, never prints keys, and performs only non-mutating `GET` requests against `onet_detailed_tasks`. It fails if the deployed schema cache is missing the Task Ratings columns or if the table returns no ingested `O*NET 30.3` rating rows. Use `node scripts/verify-commercial-release.mjs --with-live-onet` when you want this live proof included in the release orchestrator. The latest redacted attempt is stored at `docs/commercialization/onet-task-ratings-live-proof-latest.json`; on May 24, 2026 it showed target `kvunnankqgfokeufvsrv` missing `onet_release_version` and `frequency_category`, so O*NET Task Ratings migration/ingest remains a live blocker before task-time or live rating-weight claims.
 
 Run `npm run verify:data-provenance` after changing local commercial seed data, source adapters, privacy boundaries, or provenance code. The script hashes the local WEF economics CSV, occupation-risk seed, O*NET ingestion boundary, O*NET Task Ratings ingest boundary, source registry, report provenance renderer, resume deletion receipt client/migration, and resume retention boundary, then writes `docs/commercialization/data-provenance-checksums.json` and `.md`. This is a local artifact drift guard; full O*NET/BLS table checksums and true O*NET Task Ratings weighting still require a live exported Supabase data snapshot after ingestion.
 

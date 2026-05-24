@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T11:07:19.838Z",
+  "generatedAt": "2026-05-24T11:26:29.641Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -523,6 +523,33 @@
       "bytes": 10729,
       "rows": 312,
       "sha256": "0c3309dbd54e96d36fcd9ee348b1a1582f68b3b32b1749d2f0ef56f0ce780db6",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "onet-task-ratings-live-verifier",
+      "label": "Live O*NET Task Ratings deployed proof verifier",
+      "path": "scripts/verify-onet-task-ratings-live.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "onet",
+        "onet-task-statements",
+        "onet-task-ratings",
+        "onet-task-categories",
+        "onet-scales-reference"
+      ],
+      "expectedSnippets": [
+        "onet_detailed_tasks",
+        "task_ratings_ingested_at",
+        "metadata-not-ingested",
+        "missing-column-or-schema-cache",
+        "non-mutating-public-api-task-rating-boundary",
+        "allow-missing-env"
+      ],
+      "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.",
+      "bytes": 11104,
+      "rows": 318,
+      "sha256": "ea327ab86b9772815eb45e0cb3b8eba57cf5dd6644ccd7bbe30fc434954a4079",
       "failures": [],
       "passed": true
     },
