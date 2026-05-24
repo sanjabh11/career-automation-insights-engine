@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T06:30:55.172Z",
+  "generatedAt": "2026-05-24T06:59:50.426Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
-      "byteLength": 114397,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -204,12 +204,52 @@
       "passed": true
     },
     {
+      "id": "nace-career-readiness",
+      "label": "NACE Career Readiness Competencies",
+      "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ff723db2353f05907cef41bb2f1e718c063d3bd31b0c31069aaa49be7dfdd01e",
+      "byteLength": 74698,
+      "evidence": [
+        {
+          "label": "NACE career readiness definition",
+          "matched": true
+        },
+        {
+          "label": "lifelong career management evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "dol-ai-literacy-framework",
+      "label": "DOL AI Literacy Framework",
+      "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "2748140ed93637da55e127e6ff0a437187126d3ac8e1b2dc575684d3c293b7b0",
+      "byteLength": 73086,
+      "evidence": [
+        {
+          "label": "DOL AI Literacy Framework title",
+          "matched": true
+        },
+        {
+          "label": "workforce and education stakeholder evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "anthropic-economic-index",
       "label": "Anthropic Economic Index",
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "5e595a65f7f12e8fb3ed40c3ba034206a293a7697fa8e4a8ee4458dae03d4fff",
+      "contentSha256": "334f141396f0fed6be6a0e91299c37fa36eef3451159a722e12d3b4d1ddda486",
       "byteLength": 165940,
       "evidence": [
         {
@@ -229,7 +269,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "df9a6af93c83ac0102574f3fc127cb417a4b3141f6bfc9123aea2210f11f7d0c",
+      "contentSha256": "4d9f04114a78d2e442200c6924c6fa8c937d74830e5e8743ed881ecb0b1e8f93",
       "byteLength": 210582,
       "evidence": [
         {
@@ -329,8 +369,8 @@
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
-      "byteLength": 121776,
+      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
+      "byteLength": 121777,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -364,12 +404,32 @@
       "passed": true
     },
     {
+      "id": "workera-positioning",
+      "label": "Workera skills intelligence positioning",
+      "url": "https://www.workera.ai/product-overview",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "974fae85df50b091d3ecd383aaf067acc28a1cbecd5b6a6db2d4f23b15456a09",
+      "byteLength": 177053,
+      "evidence": [
+        {
+          "label": "Workera product page",
+          "matched": true
+        },
+        {
+          "label": "skills intelligence positioning",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "llm-output",
       "label": "NIST AI RMF grounding for LLM-output caveats",
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "47b0240f66d5866ec3ab1e78e8ff858af531bd89bc59adaa8be620c6e20f9767",
+      "contentSha256": "0e7fa28ff854d378ced50a76d2a8fd4a9d7242e8fc8a29fd0e3c2066704b49b1",
       "byteLength": 91198,
       "evidence": [
         {

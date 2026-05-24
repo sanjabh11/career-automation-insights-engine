@@ -113,6 +113,26 @@ const checks = [
     ],
   },
   {
+    id: 'phase6-outreach-evidence-gallery',
+    path: 'src/pages/ProofPackGalleryPage.tsx',
+    snippets: [
+      'data-proof-pack-gallery="phase-6-outreach"',
+      'outreachEvidenceCards',
+      'data-phase6-evidence-cards="true"',
+      'data-phase6-evidence-card="true"',
+      'sourceIds',
+      'confidence',
+      'reviewStatus',
+      'caveat',
+      'doesNotProve',
+      'source_ids',
+      'does_not_prove',
+      'nace-career-readiness',
+      'dol-ai-literacy-framework',
+      'Planning artifact only; not hiring, firing, layoff, or Lightcast-level market intelligence.',
+    ],
+  },
+  {
     id: 'artifact-review-event-types',
     path: 'src/lib/commercialReportArtifacts.ts',
     snippets: [

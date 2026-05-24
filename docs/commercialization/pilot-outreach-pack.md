@@ -15,6 +15,8 @@ Bounded pilot promise: produce reviewed AI work-transition reports for individua
 
 Primary gallery route: `/proof-pack-gallery`
 
+Gallery evidence boundary: every buyer path and exported CRM row must carry source IDs, source labels, confidence, caveat, "does not prove", and human-review state. The gallery is a market-test artifact, not proof of live CRM performance or provider-backed labor-market intelligence.
+
 | Offer | Buyer | Deliverable | Success Metric | Boundary |
 |---|---|---|---|---|
 | Individual transition report | Career changer, coach client | One occupation proof pack with task split, skill ledger, role radar, evidence cards, and review state. | User can explain three next actions and three caveats after reading. | Not a guarantee of future employment. |
@@ -68,8 +70,8 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Pending |
 | 17 | Course/provider recommendation boundary | Common | Medium | Medium | Pending |
 | 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Pending |
-| 19 | CRM/email automation for leads | Common commercial need | High | High | CRM-import CSV implemented; live CRM/email sync pending |
-| 20 | Public sample gallery by occupation | Common marketing pattern | Medium | High | Implemented as `/proof-pack-gallery`; deployed-domain analytics pending |
+| 19 | CRM/email automation for leads | Common commercial need | High | High | Source-labeled CRM-import CSV implemented; live CRM/email sync pending |
+| 20 | Public sample gallery by occupation | Common marketing pattern | Medium | High | Implemented as `/proof-pack-gallery` with outreach evidence cards; deployed-domain analytics pending |
 
 ## Common Recommendations
 
@@ -89,5 +91,5 @@ The strongest differentiators are the combination of evidence cards, explicit "d
 | Accessibility smoke | `npm run verify:commercial-a11y` | Passing locally |
 | Source refresh | `npm run verify:sources` | Passing locally |
 | Security audit | `npm audit --omit=dev --audit-level=high` | Passing locally |
-| Sample gallery | `/proof-pack-gallery` with CRM CSV export | Implemented locally |
+| Sample gallery | `/proof-pack-gallery` with source-labeled evidence cards and CRM CSV export | Implemented locally |
 | GitHub CI | Pushed branch and workflow run | Pending GitHub token with workflow scope |

@@ -15,6 +15,8 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | WEF Future of Jobs | 2025 edition, 2025-2030 horizon | Macro skill and technology trend framing | Use for directional narrative, not occupation scoring by itself. |
 | OECD Skills Outlook | 2025 edition | Skill-change, task-content change, and reskilling policy context | Use for skill-transition framing, not worker-specific guidance or local demand proof. |
 | AI Workforce Consortium ICT in Motion | 2025 report | AI-era role radar market-signal framing for AI-specific and specialized support roles | Use as emerging-role signal context, not title-level proof for every employer or region. |
+| NACE Career Readiness Competencies | Public competency framework reviewed May 2026 | Career-center and coach outreach framing, transferable-skill language, and student/alumni development context | Use to frame buyer workflows and development conversations; do not imply NACE validates the product, scores, or recommendations. |
+| DOL AI Literacy Framework | Training and Employment Notice No. 07-25, published February 13, 2026 | AI literacy, workforce-board, training-provider, and L&D pilot framing for role-specific AI skill development | Use as workforce and education context only; do not claim DOL endorsement, grant eligibility, or employment-outcome proof. |
 | Anthropic Economic Index | Initial 2025 index plus 2026 Economic Primitives updates | Observed AI use by O*NET task, automation/augmentation framing, adoption inequality caveats | Use as AI-use benchmark context only until task-level datasets are imported and validated. |
 | Anthropic observed exposure research | 2026 labor-market impacts research | Separates theoretical capability from observed automated, work-related AI use | Use for claim discipline; do not translate exposure directly into job-loss claims. |
 | OpenAI GDPval | First version, September 2025 | Economically valuable knowledge-work capability benchmark | Use for model-capability context only, not as a labor-market forecast. |
@@ -29,6 +31,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 |---|---|---|
 | ESCO v1.2.1 | Adapter-ready | Needs import, crosswalk, and validation before powering scored U.S. reports. |
 | Lightcast | Adapter-ready | Requires licensed data agreement and ingestion adapter before any backed claims. |
+| Workera public positioning | Adapter-ready | Use only for market-positioning context; do not imply Workera-backed validation, integration, or comparable assessment depth. |
 | SerpAPI-compatible search | Adapter-ready | Requires query log, cache policy, timestamp, and jurisdiction before market-signal claims. |
 | LLM output | Runtime advisory | Needs model/prompt metadata, source grounding, and human review state per artifact. |
 
@@ -46,7 +49,7 @@ Report artifacts now have an append-only staff event boundary in `commercial_rep
 
 Coach sample reports now use the same source manifest boundary and can persist a branded sample artifact when a coach enters a contact email. Treat this as an outreach proof-pack flow: the preview settings are browser-saved for fast demos, while the generated report HTML and lead record are Supabase-backed when the artifact capture succeeds.
 
-The public proof-pack gallery at `/proof-pack-gallery` packages the bounded outreach surface for coaches, career centers, and workforce buyers. It links to the individual, coach, and workforce sample routes, includes a sample occupation shelf, and exports a manual CRM-import CSV. Treat the CSV as an outreach operations artifact only; live CRM sync, email automation, and deployed-domain analytics remain pending.
+The public proof-pack gallery at `/proof-pack-gallery` packages the bounded outreach surface for coaches, career centers, and workforce buyers. It links to the individual, coach, and workforce sample routes, includes a sample occupation shelf, renders outreach evidence cards with source IDs, caveats, confidence, and review state, and exports a manual CRM-import CSV with the same evidence boundary columns. Treat the CSV as an outreach operations artifact only; live CRM sync, email automation, and deployed-domain analytics remain pending.
 
 Lead capture now routes through `capture_commercial_lead`, which normalizes repeat captures by email/source/report/occupation and stores consent text plus consent timestamp. SEO report downloads and coach sample artifacts require explicit contact consent before they persist a lead, link to `/privacy`, and lead ops exposes the consent status for staff review. If Supabase is unavailable, the browser retry queue redacts full report HTML, keeps entries for up to seven days, and retries queued lead persistence after later successful captures.
 
@@ -54,7 +57,7 @@ Lead capture now routes through `capture_commercial_lead`, which normalizes repe
 
 Run `npm run smoke:commercial` before commercial demos or outreach handoffs. The script starts Vite on a local open port, verifies commercial routes are registered in `src/App.tsx`, and checks that each route returns a Vite app shell. This is a route smoke gate, not a replacement for browser-level lead capture and PDF/report generation tests.
 
-Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET release and task dictionary pages, BLS, WEF, OECD, AI Workforce Consortium/Cisco, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
+Run `npm run verify:sources` before changing public source claims. The script fetches official O*NET release and task dictionary pages, BLS, WEF, OECD, AI Workforce Consortium/Cisco, NACE, DOL AI literacy, Anthropic, OpenAI GDPval, WCAG, ADA, ISO/IEC 42001, ESCO, and NIST pages, checks expected evidence strings, writes `docs/commercialization/source-verification-latest.json`, and stores response hashes for audit comparison.
 
 Run `npm run verify:onet-task-ratings` after changing O*NET task-rating imports. The script verifies the official 30.3 Task Statements, Task Ratings, Task Categories, and Scales Reference source checks, the Supabase task-rating metadata migration, the Deno ingest boundary, the runtime weighting helper, and data-provenance coverage.
 
@@ -80,6 +83,8 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - WEF Future of Jobs Report 2025: https://www.weforum.org/publications/the-future-of-jobs-report-2025/
 - OECD Skills Outlook 2025: https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf
 - AI Workforce Consortium ICT in Motion 2025: https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html
+- NACE Career Readiness Competencies: https://www.naceweb.org/career-readiness/competencies/career-readiness-defined
+- DOL AI Literacy Framework: https://www.dol.gov/agencies/eta/advisories/ten-07-25
 - Anthropic Economic Index: https://www.anthropic.com/research/the-anthropic-economic-index
 - Anthropic labor market impacts / observed exposure: https://www.anthropic.com/research/labor-market-impacts
 - OpenAI GDPval overview: https://openai.com/index/gdpval
@@ -91,3 +96,4 @@ Browser QA on May 24, 2026 found and fixed a public-route failure where missing 
 - ISO/IEC 42001: https://www.iso.org/standard/42001
 - ESCO Services API: https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
 - NIST AI RMF: https://www.nist.gov/itl/ai-risk-management-framework
+- Workera product overview: https://www.workera.ai/product-overview

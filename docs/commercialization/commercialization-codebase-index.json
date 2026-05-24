@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T06:41:28.717Z",
+  "generatedAt": "2026-05-24T07:09:31.674Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -633,10 +633,12 @@
     "bls-ai-mlr-2025",
     "bls-emp",
     "bls-oews",
+    "dol-ai-literacy-framework",
     "esco",
     "iso-42001",
     "lightcast",
     "llm-output",
+    "nace-career-readiness",
     "nist-ai-rmf",
     "oecd-skills-outlook-2025",
     "onet",
@@ -647,7 +649,8 @@
     "openai-gdpval",
     "serpapi",
     "wcag-22",
-    "wef-foj-2025"
+    "wef-foj-2025",
+    "workera-positioning"
   ],
   "sql": {
     "tables": [

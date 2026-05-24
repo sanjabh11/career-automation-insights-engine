@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T06:41:28.717Z
+Generated: 2026-05-24T07:09:31.674Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -73,10 +73,12 @@ Policies:
 - `bls-ai-mlr-2025`
 - `bls-emp`
 - `bls-oews`
+- `dol-ai-literacy-framework`
 - `esco`
 - `iso-42001`
 - `lightcast`
 - `llm-output`
+- `nace-career-readiness`
 - `nist-ai-rmf`
 - `oecd-skills-outlook-2025`
 - `onet`
@@ -88,6 +90,7 @@ Policies:
 - `serpapi`
 - `wcag-22`
 - `wef-foj-2025`
+- `workera-positioning`
 
 ## Verification And Run Commands
 

@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
 import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
 
 const MANIFEST_SOURCE = 'src/lib/sourceManifest.ts';
 const OUTPUT_PATH = 'docs/commercialization/source-verification-latest.json';
+const LAST_ATTEMPT_PATH = 'docs/commercialization/source-verification-last-attempt.json';
 const REQUEST_TIMEOUT_MS = 20_000;
+const execFileAsync = promisify(execFile);
 
 const checks = [
   {
@@ -99,6 +103,24 @@ const checks = [
     ],
   },
   {
+    id: 'nace-career-readiness',
+    label: 'NACE Career Readiness Competencies',
+    url: 'https://www.naceweb.org/career-readiness/competencies/career-readiness-defined',
+    expected: [
+      { label: 'NACE career readiness definition', pattern: /Career readiness is a foundation/i },
+      { label: 'lifelong career management evidence', pattern: /lifelong career management/i },
+    ],
+  },
+  {
+    id: 'dol-ai-literacy-framework',
+    label: 'DOL AI Literacy Framework',
+    url: 'https://www.dol.gov/agencies/eta/advisories/ten-07-25',
+    expected: [
+      { label: 'DOL AI Literacy Framework title', pattern: /AI Literacy Framework/i },
+      { label: 'workforce and education stakeholder evidence', pattern: /public workforce and education systems|state and local workforce board/i },
+    ],
+  },
+  {
     id: 'anthropic-economic-index',
     label: 'Anthropic Economic Index',
     url: 'https://www.anthropic.com/research/the-anthropic-economic-index',
@@ -171,6 +193,15 @@ const checks = [
     ],
   },
   {
+    id: 'workera-positioning',
+    label: 'Workera skills intelligence positioning',
+    url: 'https://www.workera.ai/product-overview',
+    expected: [
+      { label: 'Workera product page', pattern: /Workera|Elo/i },
+      { label: 'skills intelligence positioning', pattern: /skills intelligence|verified skills|skills verification/i },
+    ],
+  },
+  {
     id: 'llm-output',
     label: 'NIST AI RMF grounding for LLM-output caveats',
     url: 'https://www.nist.gov/itl/ai-risk-management-framework',
@@ -236,6 +267,41 @@ async function verifyManifestWiring() {
   }
 }
 
+async function readJsonArtifact(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+async function readCommittedJsonArtifact(path) {
+  try {
+    const { stdout } = await execFileAsync('git', ['show', `HEAD:${path}`], {
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    return JSON.parse(stdout);
+  } catch {
+    return null;
+  }
+}
+
+function isNetworkWideFetchFailure(results) {
+  return (
+    results.length > 0 &&
+    results.every((result) =>
+      result.passed === false &&
+      typeof result.error === 'string' &&
+      /fetch failed|getaddrinfo|ENOTFOUND|EAI_AGAIN|network/i.test(result.error)
+    )
+  );
+}
+
+async function writeJson(path, artifact) {
+  await writeFile(`${path}.tmp`, `${JSON.stringify(artifact, null, 2)}\n`);
+  await rename(`${path}.tmp`, path);
+}
+
 async function main() {
   const shouldWrite = process.argv.includes('--write');
   await verifyManifestWiring();
@@ -276,9 +342,27 @@ async function main() {
 
   if (shouldWrite) {
     await mkdir('docs/commercialization', { recursive: true });
-    await writeFile(`${OUTPUT_PATH}.tmp`, `${JSON.stringify(artifact, null, 2)}\n`);
-    await rename(`${OUTPUT_PATH}.tmp`, OUTPUT_PATH);
-    console.log(`wrote ${OUTPUT_PATH}`);
+    if (isNetworkWideFetchFailure(results)) {
+      await writeJson(LAST_ATTEMPT_PATH, artifact);
+      const existingArtifact = await readJsonArtifact(OUTPUT_PATH);
+      const committedArtifact = await readCommittedJsonArtifact(OUTPUT_PATH);
+      const preservedArtifact = existingArtifact?.allPassed === true
+        ? existingArtifact
+        : committedArtifact?.allPassed === true
+          ? committedArtifact
+          : null;
+
+      if (preservedArtifact) {
+        await writeJson(OUTPUT_PATH, preservedArtifact);
+        console.log(`network-wide source fetch failure; wrote ${LAST_ATTEMPT_PATH} and preserved ${OUTPUT_PATH}`);
+      } else {
+        await writeJson(OUTPUT_PATH, artifact);
+        console.log(`network-wide source fetch failure; wrote ${OUTPUT_PATH} because no passing artifact was available to preserve`);
+      }
+    } else {
+      await writeJson(OUTPUT_PATH, artifact);
+      console.log(`wrote ${OUTPUT_PATH}`);
+    }
   }
 
   if (!artifact.allPassed) {

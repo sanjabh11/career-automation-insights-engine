@@ -299,6 +299,10 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.getByText(/CRM import pack/i), 'CRM import pack');
   await assertVisible(page.getByRole('button', { name: /CRM CSV/i }), 'CRM CSV export');
   await assertVisible(page.getByText(/Planning artifact only/i).first(), 'gallery planning-only boundary');
+  await assertVisible(page.locator('[data-phase6-evidence-cards="true"]'), 'phase 6 evidence cards');
+  await assertVisible(page.locator('[data-phase6-evidence-card="true"]').first(), 'phase 6 evidence card item');
+  await assertVisible(page.getByText(/DOL AI literacy framework/i).first(), 'DOL AI literacy source');
+  await assertVisible(page.getByText(/Does not prove:/i).first(), 'gallery evidence does-not-prove field');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
@@ -307,6 +311,19 @@ async function verifyProofPackGallery(page, baseUrl) {
   const suggestedFilename = download.suggestedFilename();
   if (!suggestedFilename.includes('proof-pack-outreach')) {
     throw new Error(`Unexpected proof-pack gallery CSV filename: ${suggestedFilename}`);
+  }
+  const csvBody = await download.createReadStream().then(async (stream) => {
+    if (!stream) {
+      throw new Error('Proof-pack gallery CRM CSV stream was unavailable');
+    }
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of ['source_ids', 'confidence', 'review_state', 'caveat', 'does_not_prove']) {
+    if (!csvBody.includes(expectedColumn)) {
+      throw new Error(`Proof-pack gallery CRM CSV is missing ${expectedColumn}`);
+    }
   }
   console.log('ok download - proof-pack gallery CRM CSV');
 }

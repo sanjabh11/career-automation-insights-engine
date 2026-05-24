@@ -4,6 +4,17 @@ import NavigationPremium from "@/components/NavigationPremium";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
+import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
+
+interface OutreachEvidence {
+  claim: string;
+  sourceIds: string[];
+  confidence: SourceConfidence;
+  reviewStatus: ReportReviewStatus;
+  caveat: string;
+  doesNotProve: string;
+}
 
 const galleryItems = [
   {
@@ -16,6 +27,9 @@ const galleryItems = [
     sample: "Accountant occupation proof pack",
     output: "Task exposure split, skill-change ledger, emerging role radar, evidence cards, and review state.",
     evidence: ["O*NET-backed occupation context", "Task exposure buckets", "Does not prove boundaries"],
+    sourceIds: ["onet", "bls-ai-mlr-2025", "anthropic-observed-exposure"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
     caveat: "Planning signal only. It must not be used as a guarantee of future employment or displacement.",
   },
   {
@@ -28,6 +42,9 @@ const galleryItems = [
     sample: "White-label client proof pack",
     output: "A branded report artifact that can be reviewed before a client conversation or paid discovery call.",
     evidence: ["Evidence-card report body", "Coach consent capture", "Human review workflow"],
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
     caveat: "Coach branding does not remove source caveats, review requirements, or employment-decision limits.",
   },
   {
@@ -40,6 +57,9 @@ const galleryItems = [
     sample: "Role-level CSV executive report",
     output: "CSV role exposure rollup with unmapped-row review, source caveats, and executive report skeleton.",
     evidence: ["Role rollup", "SOC/O*NET review queue", "Non-employment-decision disclaimer"],
+    sourceIds: ["dol-ai-literacy-framework", "bls-emp", "ada-ai-hiring-guidance"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
     caveat: "Use anonymized role rows for pilots. This is not employee ranking, hiring, firing, or layoff support.",
   },
 ];
@@ -62,6 +82,11 @@ const outreachSegments = [
     opener:
       "I am piloting a source-labeled AI work-transition proof pack that separates task exposure, skill changes, and emerging role options with evidence cards. Would you review one sample for a role your clients ask about?",
     successMetric: "3 sample requests, 2 feedback calls, 1 paid pilot conversation",
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
+    caveat: "Coach pilots still need client consent, source caveats, and review before delivery.",
+    doesNotProve: "That a coach should present the report as validated assessment, legal advice, or guaranteed client outcome.",
   },
   {
     segment: "Career centers",
@@ -71,6 +96,11 @@ const outreachSegments = [
     opener:
       "I am testing a reviewed career-transition artifact for students and alumni that explains what changed, what to learn next, and what the report does not prove. Could I send a sample for counselor feedback?",
     successMetric: "2 counselor reviews and one workshop-fit discussion",
+    sourceIds: ["nace-career-readiness", "dol-ai-literacy-framework", "wcag-22"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
+    caveat: "Career-center pilots should keep reports educational and advisor-reviewed.",
+    doesNotProve: "That the report can replace institutional advising, accommodation review, or student outcome measurement.",
   },
   {
     segment: "Workforce boards and L&D",
@@ -80,29 +110,65 @@ const outreachSegments = [
     opener:
       "I am building a workforce CSV audit that summarizes role-level AI exposure without ranking employees or making employment decisions. Would a bounded pilot across 10-25 role titles help your planning team?",
     successMetric: "1 anonymized CSV pilot and one review-owner identified",
+    sourceIds: ["dol-ai-literacy-framework", "bls-ai-mlr-2025", "ada-ai-hiring-guidance"],
+    confidence: "medium" as const,
+    reviewStatus: "staff_review_required" as const,
+    caveat: "Workforce pilots must use anonymized role rows and remain planning artifacts.",
+    doesNotProve: "That any individual employee should be hired, fired, promoted, ranked, or compensated differently.",
   },
 ];
 
 const researchSignals = [
   {
     label: "NACE career readiness",
-    url: "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined/",
+    sourceId: "nace-career-readiness",
+    url: "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
     takeaway: "Career centers and employers need skills language that connects education, work, and lifelong career management.",
   },
   {
-    label: "DOL workforce LMI plan",
-    url: "https://www.dol.gov/sites/dolgov/files/ETA/wioa/pdfs/DOL%20Two%20Year%20Plan%20for%20WLMI-FYs-2025-2026.pdf",
-    takeaway: "Workforce systems need better signals for skill demand, career transitions, AI, and automation impacts.",
+    label: "DOL AI literacy framework",
+    sourceId: "dol-ai-literacy-framework",
+    url: "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
+    takeaway: "Workforce and education systems need role-relevant AI literacy guidance that can adapt to local labor-market context.",
   },
   {
     label: "Lightcast positioning",
+    sourceId: "lightcast",
     url: "https://lightcast.io/",
     takeaway: "Enterprise buyers expect labor-market intelligence, taxonomies, skills, and workforce strategy context.",
   },
   {
     label: "Workera positioning",
+    sourceId: "workera-positioning",
     url: "https://www.workera.ai/product-overview",
     takeaway: "Skills intelligence products compete on evidence, verification, defensibility, and integrations.",
+  },
+];
+
+const outreachEvidenceCards: OutreachEvidence[] = [
+  {
+    claim: "Bounded coach and career-center pilots are the right first buyer motion for reviewed proof packs.",
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+    confidence: "medium",
+    reviewStatus: "staff_review_required",
+    caveat: "The evidence supports career-readiness and trustworthy-review framing; it does not prove conversion rate or willingness to pay.",
+    doesNotProve: "That the tool is a validated assessment, an institutional advising replacement, or a guaranteed paid pilot.",
+  },
+  {
+    claim: "Workforce CSV audits should stay role-level, anonymized, and planning-only until live governance and data validation are complete.",
+    sourceIds: ["dol-ai-literacy-framework", "bls-ai-mlr-2025", "ada-ai-hiring-guidance"],
+    confidence: "medium",
+    reviewStatus: "staff_review_required",
+    caveat: "The source base supports AI-literacy and planning boundaries, not employee-level decisions.",
+    doesNotProve: "That any worker should be ranked, selected, terminated, promoted, or compensated differently.",
+  },
+  {
+    claim: "The public gallery is a market-test artifact, not proof of Lightcast-level market intelligence.",
+    sourceIds: ["lightcast", "serpapi", "llm-output"],
+    confidence: "medium",
+    reviewStatus: "auto_generated",
+    caveat: "Licensed job-posting or provider-backed validation is not integrated in this repository.",
+    doesNotProve: "That role-radar claims are backed by live postings, licensed provider data, or jurisdiction-specific demand.",
   },
 ];
 
@@ -110,8 +176,28 @@ function csvCell(value: string): string {
   return `"${value.replace(/"/g, '""')}"`;
 }
 
+function sourceLabels(sourceIds: string[]): string {
+  return sourceIds
+    .map((sourceId) => REPORT_SOURCE_REGISTRY.find((source) => source.id === sourceId)?.label || sourceId)
+    .join("; ");
+}
+
 function buildOutreachCsv(): string {
-  const header = ["segment", "owner", "offer", "sample_route", "opening_message", "success_metric", "boundary"];
+  const header = [
+    "segment",
+    "owner",
+    "offer",
+    "sample_route",
+    "opening_message",
+    "success_metric",
+    "source_ids",
+    "sources",
+    "confidence",
+    "review_state",
+    "caveat",
+    "does_not_prove",
+    "boundary",
+  ];
   const rows = outreachSegments.map((segment) => [
     segment.segment,
     segment.owner,
@@ -119,6 +205,12 @@ function buildOutreachCsv(): string {
     segment.route,
     segment.opener,
     segment.successMetric,
+    segment.sourceIds.join(";"),
+    sourceLabels(segment.sourceIds),
+    segment.confidence,
+    REVIEW_STATUS_LABELS[segment.reviewStatus],
+    segment.caveat,
+    segment.doesNotProve,
     "Planning artifact only; not hiring, firing, layoff, or Lightcast-level market intelligence.",
   ]);
 
@@ -207,6 +299,11 @@ export default function ProofPackGalleryPage() {
                       </div>
                     ))}
                   </div>
+                  <div className="rounded-md border border-slate-700 bg-slate-950/70 p-3 text-xs leading-5 text-slate-300">
+                    <div><span className="font-semibold text-slate-100">Sources:</span> {sourceLabels(item.sourceIds)}</div>
+                    <div><span className="font-semibold text-slate-100">Confidence:</span> {item.confidence}</div>
+                    <div><span className="font-semibold text-slate-100">Review state:</span> {REVIEW_STATUS_LABELS[item.reviewStatus]}</div>
+                  </div>
                   <p className="rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
                     {item.caveat}
                   </p>
@@ -246,6 +343,12 @@ export default function ProofPackGalleryPage() {
                   </div>
                   <p className="mt-3 text-sm leading-6 text-slate-300">{segment.opener}</p>
                   <div className="mt-3 text-xs text-slate-400">Success point: {segment.successMetric}</div>
+                  <div className="mt-3 grid gap-2 text-xs leading-5 text-slate-300 sm:grid-cols-2">
+                    <div><span className="font-semibold text-slate-100">Sources:</span> {sourceLabels(segment.sourceIds)}</div>
+                    <div><span className="font-semibold text-slate-100">Review state:</span> {REVIEW_STATUS_LABELS[segment.reviewStatus]}</div>
+                    <div><span className="font-semibold text-slate-100">Confidence:</span> {segment.confidence}</div>
+                    <div><span className="font-semibold text-slate-100">Caveat:</span> {segment.caveat}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -304,7 +407,29 @@ export default function ProofPackGalleryPage() {
                   <ExternalLink className="h-4 w-4 text-slate-500" />
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{signal.takeaway}</p>
+                <p className="mt-3 text-xs text-slate-500">Source ID: {signal.sourceId}</p>
               </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-phase6-evidence-cards="true">
+          <h2 className="text-2xl font-semibold text-white">Outreach evidence cards</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            Each commercial recommendation stays source-labeled and review-bound until live CRM, deployed analytics, and buyer feedback prove stronger claims.
+          </p>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {outreachEvidenceCards.map((card) => (
+              <article key={card.claim} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-phase6-evidence-card="true">
+                <div className="flex flex-wrap gap-2">
+                  <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{card.confidence} confidence</Badge>
+                  <Badge variant="outline" className="border-slate-600 text-slate-300">{REVIEW_STATUS_LABELS[card.reviewStatus]}</Badge>
+                </div>
+                <h3 className="mt-4 font-semibold leading-6 text-white">{card.claim}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">Sources:</span> {sourceLabels(card.sourceIds)}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">Caveat:</span> {card.caveat}</p>
+                <p className="mt-3 text-sm leading-6 text-amber-100"><span className="font-semibold">Does not prove:</span> {card.doesNotProve}</p>
+              </article>
             ))}
           </div>
         </section>
