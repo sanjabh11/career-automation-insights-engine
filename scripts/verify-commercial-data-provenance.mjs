@@ -109,6 +109,15 @@ const artifacts = [
     caveat: 'Public sample gallery and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation or deployed-domain analytics.',
   },
   {
+    id: 'commercial-proof-pack-ci-workflow-template',
+    label: 'Commercial proof-pack CI workflow template',
+    path: 'docs/commercialization/commercial-proof-pack.workflow.yml',
+    type: 'ci-workflow-template',
+    sourceIds: ['nist-ai-rmf', 'wcag-22', 'llm-output'],
+    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
+    caveat: 'Workflow template is ready to install, but the actual .github workflow and CI run remain blocked until GitHub auth has workflow scope.',
+  },
+  {
     id: 'onet-task-rating-metadata-migration',
     label: 'O*NET Task Rating metadata migration',
     path: 'supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql',

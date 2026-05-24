@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T07:09:31.764Z",
+  "generatedAt": "2026-05-24T07:21:32.084Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -314,6 +314,30 @@
       "bytes": 23369,
       "rows": 420,
       "sha256": "f629b357aba37fff43fda664d48627a224298dc68d30c08bf0ba1eae6ea48852",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-proof-pack-ci-workflow-template",
+      "label": "Commercial proof-pack CI workflow template",
+      "path": "docs/commercialization/commercial-proof-pack.workflow.yml",
+      "type": "ci-workflow-template",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "name: Commercial Proof Pack",
+        "permissions:",
+        "contents: read",
+        "npm run verify:commercial -- --with-a11y --with-journey",
+        "npm run verify:commercial-network"
+      ],
+      "caveat": "Workflow template is ready to install, but the actual .github workflow and CI run remain blocked until GitHub auth has workflow scope.",
+      "bytes": 1114,
+      "rows": 39,
+      "sha256": "5e73a97e85f04f4e4ebae219c100d69c4c3c430331f5d4db03dd286d2e4a74c9",
       "failures": [],
       "passed": true
     },

@@ -92,4 +92,4 @@ The strongest differentiators are the combination of evidence cards, explicit "d
 | Source refresh | `npm run verify:sources` | Passing locally |
 | Security audit | `npm audit --omit=dev --audit-level=high` | Passing locally |
 | Sample gallery | `/proof-pack-gallery` with source-labeled evidence cards and CRM CSV export | Implemented locally |
-| GitHub CI | Pushed branch and workflow run | Pending GitHub token with workflow scope |
+| GitHub CI | Hardened workflow template, pushed branch, and hosted workflow run | Template ready; workflow installation and hosted run pending GitHub auth with `workflow` scope |

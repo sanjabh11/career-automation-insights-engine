@@ -35,6 +35,18 @@ const featureMap = [
     proof: 'Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, and downloadable CRM-import outreach CSV.',
   },
   {
+    feature: 'Commercial proof-pack CI workflow template',
+    buyer: 'Founder, maintainer, pilot reviewers',
+    routes: [],
+    files: [
+      'docs/commercialization/commercial-proof-pack.workflow.yml',
+      'scripts/verify-commercial-release.mjs',
+      'scripts/verify-commercial-browser.mjs',
+      'scripts/verify-commercial-accessibility.mjs',
+    ],
+    proof: 'GitHub Actions workflow template is ready with read-only permissions, commercial build/route/evidence checks, Playwright a11y and browser journey checks, plus manual/scheduled source and production audit checks.',
+  },
+  {
     feature: 'SEO report lead capture',
     buyer: 'Individuals, coaches, inbound SEO visitors',
     routes: ['/automation-risk/:occupation'],
@@ -255,7 +267,7 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- \`docs/commercialization/commercial-proof-pack.workflow.yml\` is the ready-to-install GitHub Actions workflow template. Move it to \`.github/workflows/commercial-proof-pack.yml\` after GitHub auth has \`workflow\` scope, then confirm the first run.
+- \`docs/commercialization/commercial-proof-pack.workflow.yml\` is the ready-to-install GitHub Actions workflow template. It runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, and runs source verification plus production audit on manual or scheduled runs. Moving it to \`.github/workflows/commercial-proof-pack.yml\` is still blocked until GitHub auth has \`workflow\` scope; a GitHub-hosted green run then needs to be captured.
 
 ## Remaining Index Gaps
 
@@ -266,7 +278,7 @@ CI boundary:
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, and non-legal review attestation are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
-- GitHub collaborator invite and active CI workflow installation remain blocked until GitHub CLI tokens are re-authenticated with the required permissions.
+- GitHub collaborator invite and hosted CI run evidence remain blocked until GitHub CLI tokens are re-authenticated with the required permissions and the first GitHub Actions run is inspected.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 

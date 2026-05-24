@@ -42,7 +42,7 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 
 | Milestone | Done | Pending | Rating /5 | Phase Remaining | Overall Remaining | Move To Next? |
 |---|---|---|---:|---:|---:|---|
-| Phase 0: Stabilize branch and CI | Clean GitHub checkout, branch, commercial scripts, build gate, route smoke, commercial index, trust/data provenance checks, branch pushed. | CI workflow push needs token with `workflow` scope; collaborator invite verification needs GitHub admin/auth. | 4 | 20% | 12% | Yes for local implementation; no for launch. |
+| Phase 0: Stabilize branch and CI | Clean GitHub checkout, branch, commercial scripts, build gate, route smoke, commercial index, trust/data provenance checks, branch pushed, and a hardened GitHub Actions workflow template with read-only permissions plus Playwright journey/a11y gates. | Installing `.github/workflows/commercial-proof-pack.yml`, hosted workflow run evidence, and collaborator invite verification need valid GitHub auth/admin access. | 4 | 12% | 9% | Yes for local implementation; no for launch. |
 | Phase 1: Evidence Card Engine | Shared evidence-card renderer, report integration, NIST source, verifier wired into `verify:commercial`. | Formal CI evidence after workflow push. | 5 | 0% | 12% | Yes. |
 | Phase 2: Task Exposure Split | Individual, coach, and workforce reports render automatable, AI-assisted, human-led, and emerging task buckets with transparent priority weights, importance/frequency proxies, evidence basis, and task-time caveats. O*NET 30.3 Task Ratings migration, ingest boundary, runtime weighting helper, and verifier are implemented. | Apply migration in target Supabase, run O*NET 30.3 Task Statements/Task Ratings ingest, export checksums, then wire live ratings into generated artifacts. | 4 | 8% | 5% | Yes for MVP proof pack; continue before stronger task-time claims. |
 | Phase 3: Skill Change Ledger | Reports render growing, stable, declining, changing, unknown states and protect, upgrade, replace, learn-next actions with per-row confidence, review state, source IDs, and source caveats. | Live labor-market validation, local posting proof, and licensed provider adapters. | 4 | 10% | 6% | Yes for MVP proof pack; continue before provider-backed skill-market claims. |
@@ -65,6 +65,6 @@ This is not positioned as a layoff predictor, hiring/firing decision system, or 
 ## Next Execution Focus
 
 1. Apply the new artifact-review migration in the target Supabase project and confirm staff-auth review/final-approval events against live data.
-2. Re-authenticate GitHub with workflow scope, install `docs/commercialization/commercial-proof-pack.workflow.yml` as `.github/workflows/commercial-proof-pack.yml`, invite `sanjabh1103`, and capture CI evidence.
+2. Re-authenticate GitHub CLI with workflow scope, install `docs/commercialization/commercial-proof-pack.workflow.yml` as `.github/workflows/commercial-proof-pack.yml`, verify `sanjabh1103` collaborator access, and capture the first hosted GitHub Actions run.
 3. Apply the O*NET Task Ratings migration and ingest in the target Supabase project, then attach exported table checksums before replacing seed proxy task weights in generated artifacts.
 4. Add live CRM/email automation, deployed-domain analytics, and hosted sample-gallery proof for scaled outreach.

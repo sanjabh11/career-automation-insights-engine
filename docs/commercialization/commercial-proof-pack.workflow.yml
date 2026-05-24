@@ -7,11 +7,23 @@ on:
   push:
     branches:
       - commercialization-proof-packs
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: commercial-proof-pack-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify-commercial-proof-pack:
+    name: Verify commercial proof pack
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -30,4 +42,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Verify commercial proof pack
-        run: npm run verify:commercial -- --with-a11y
+        run: npm run verify:commercial -- --with-a11y --with-journey
+
+      - name: Verify official sources and production audit
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        run: npm run verify:commercial-network

@@ -214,9 +214,13 @@ const checks = [
     file: 'docs/commercialization/commercial-proof-pack.workflow.yml',
     expected: [
       /name: Commercial Proof Pack/,
+      /workflow_dispatch:/,
+      /schedule:/,
+      /permissions:\s*\n\s+contents: read/,
       /npm ci/,
       /npx playwright install --with-deps chromium/,
-      /npm run verify:commercial -- --with-a11y/,
+      /npm run verify:commercial -- --with-a11y --with-journey/,
+      /npm run verify:commercial-network/,
     ],
   },
   {
