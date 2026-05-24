@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-24T10:16:52.196Z
+Generated: 2026-05-24T10:19:34.916Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -135,7 +135,7 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, and runs source verification plus production audit on manual or scheduled runs. `docs/commercialization/commercial-proof-pack.workflow.yml` remains the reference template. A GitHub-hosted green run still needs to be captured after push.
+- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, and runs source verification plus production audit on manual or scheduled runs. Push run 26358453075 and manual workflow_dispatch run 26358507849 are green on GitHub Actions.
 
 ## Remaining Index Gaps
 
@@ -146,7 +146,7 @@ CI boundary:
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, and resume deletion receipts are implemented, while live Supabase migration proof and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
-- GitHub local tracking shows the commercial branch and workflow, but remote branch/collaborator access and hosted CI run evidence still need re-confirmation when DNS/auth are stable.
+- GitHub remote branch, `sanjabh1103` write access, installed workflow, hosted push CI, and hosted manual source/audit workflow are verified.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
 - Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 

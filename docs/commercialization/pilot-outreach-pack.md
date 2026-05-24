@@ -92,4 +92,4 @@ The strongest differentiators are the combination of evidence cards, explicit "d
 | Source refresh | `npm run verify:sources` | Passing through `npm run verify:commercial-network` |
 | Security audit | `npm audit --omit=dev --audit-level=high` | Passing through `npm run verify:commercial-network` |
 | Sample gallery | `/proof-pack-gallery` with source-labeled evidence cards and CRM CSV export | Implemented locally |
-| GitHub CI | Installed commercial proof-pack workflow, pushed branch, and hosted workflow run | Workflow file added; first hosted run evidence pending after push |
+| GitHub CI | Installed commercial proof-pack workflow, pushed branch, and hosted workflow run | Hosted push run 26358453075 green; hosted manual source/audit run 26358507849 green |
