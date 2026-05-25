@@ -1,0 +1,115 @@
+name: Supabase Commercial Live Closeout
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_parse_resume:
+        description: Deploy parse-resume Edge Function
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      ingest_onet_task_ratings:
+        description: Ingest official O*NET 30.3 Task Ratings
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-commercial-live-closeout-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  closeout:
+    name: Deploy and verify live proof-pack blockers
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      LIVE_SUPABASE_TIMEOUT_MS: "60000"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Deno
+        if: inputs.ingest_onet_task_ratings == 'true'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Validate required secrets
+        run: |
+          missing=0
+          for name in SUPABASE_PROJECT_REF SUPABASE_URL SUPABASE_ANON_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is required"
+              missing=1
+            fi
+          done
+          if [ "${{ inputs.deploy_parse_resume }}" = "true" ] && [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN is required to deploy Edge Functions"
+            missing=1
+          fi
+          if [ "${{ inputs.ingest_onet_task_ratings }}" = "true" ] && [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is required for O*NET Task Ratings ingest"
+            missing=1
+          fi
+          if [ "$SUPABASE_PROJECT_REF" != "kvunnankqgfokeufvsrv" ]; then
+            echo "::error::SUPABASE_PROJECT_REF must be kvunnankqgfokeufvsrv for this closeout workflow"
+            missing=1
+          fi
+          exit "$missing"
+
+      - name: Verify tracked secret hygiene
+        run: npm run verify:secrets
+
+      - name: Deploy parse-resume Edge Function
+        if: inputs.deploy_parse_resume == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: npx supabase functions deploy parse-resume --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Ingest O*NET Task Ratings
+        if: inputs.ingest_onet_task_ratings == 'true'
+        run: npm run ingest:onet-task-ratings -- --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Verify commercial live Supabase proof
+        run: npm run verify:commercial-live-supabase
+
+      - name: Verify live O*NET Task Ratings
+        run: npm run verify:onet-task-ratings-live
+
+      - name: Verify live resume parser
+        run: npm run verify:resume-parser-live
+
+      - name: Upload live proof artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: live-supabase-commercial-proof
+          path: |
+            docs/commercialization/live-supabase-proof-latest.json
+            docs/commercialization/onet-task-ratings-live-proof-latest.json
+            docs/commercialization/resume-parser-live-latest.json
+            docs/commercialization/resume-parser-live-latest.md

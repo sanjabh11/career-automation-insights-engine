@@ -64,7 +64,7 @@
    # 1. Download from: https://www.onetcenter.org/dictionary/28.2/excel/stem_occupations.html
    # 2. Convert to CSV
    # 3. Import using psql:
-   psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" <<EOF
+   psql "$SUPABASE_POSTGRES_URI" <<EOF
    \copy onet_stem_membership(occupation_code, stem_occupation_type, job_family, is_official_stem, data_source) 
    FROM 'stem_occupations.csv' 
    DELIMITER ',' 
@@ -73,7 +73,7 @@
    
    # Option B: Use heuristic from existing data
    # Mark IT, Engineering, Science, Math clusters as STEM
-   psql "postgresql://postgres.kvunnankqgfokeufvsrv:hwqEgOHND8rKkKnT@aws-0-ap-south-1.pooler.supabase.com:6543/postgres" <<EOF
+   psql "$SUPABASE_POSTGRES_URI" <<EOF
    INSERT INTO onet_stem_membership (occupation_code, stem_occupation_type, is_official_stem, data_source)
    SELECT 
      occupation_code,
@@ -93,7 +93,7 @@
    ```bash
    # This function works correctly - test with sample occupation
    curl -X POST "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/sync-knowledge-abilities" \
-     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODYyMTksImV4cCI6MjA2NTQ2MjIxOX0.eFRKKSAWaXQgCCX7UpU0hF0dnEyJ2IXUnaGsc8MEGOU" \
+     -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
      -H "Content-Type: application/json" \
      -d '{"occupationCode":"15-1252.00"}'
    ```

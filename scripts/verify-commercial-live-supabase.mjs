@@ -3,7 +3,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const OUTPUT_PATH = 'docs/commercialization/live-supabase-proof-latest.json';
-const REQUEST_TIMEOUT_MS = 20_000;
+const REQUEST_TIMEOUT_MS = Number(process.env.LIVE_SUPABASE_TIMEOUT_MS || 60_000);
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
 const ENV_FILES = ['.env.local', '.env'];
@@ -333,8 +333,8 @@ async function main() {
     proof.skipped = true;
     proof.skipReason =
       'Missing Supabase URL or anon key. Provide SUPABASE_URL/VITE_SUPABASE_URL and SUPABASE_ANON_KEY/VITE_SUPABASE_ANON_KEY.';
-    if (hasFlag('--write')) await writeProof(proof);
     if (allowMissingEnv) {
+      if (hasFlag('--write')) await writeProof(proof);
       console.log(`skip live-supabase-proof - ${proof.skipReason}`);
       return;
     }

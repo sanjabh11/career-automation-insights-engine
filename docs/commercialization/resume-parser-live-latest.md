@@ -1,11 +1,11 @@
 # Resume Parser Live Proof
 
-Generated: 2026-05-25T01:06:05.560Z
+Generated: 2026-05-25T09:05:19.520Z
 Verifier: `verify-resume-parser-live`
 Mode: `live-edge-function-parser-boundary`
-Target: not configured
-All passed: false
-Skipped: true
+Target: `kvunnankqgfokeufvsrv.supabase.co`
+All passed: true
+Skipped: false
 
 ## Caveat
 
@@ -19,4 +19,6 @@ This does not prove uploaded files are malware-free, that PDF/DOC/DOCX parsing i
 
 | Result | Check | HTTP | Classification | Receipt Sources | Caveat |
 | --- | --- | ---: | --- | --- | --- |
-| skipped | n/a | n/a | n/a | n/a | n/a |
+| pass | `txt-success-boundary` | 200 | text-extracted-non-persistent | owasp-file-upload, supabase-edge-functions, nist-ai-rmf, ada-ai-hiring-guidance | The server validated a text resume upload, extracted text in memory, and did not persist the raw file or raw resume text. PDF/DOC/DOCX parser readiness still requires a dedicated adapter. |
+| pass | `pdf-adapter-pending-boundary` | 422 | pdf-adapter-pending-non-persistent | owasp-file-upload, supabase-edge-functions, nist-ai-rmf, ada-ai-hiring-guidance | The server validated the upload boundary without storing the file, but PDF/DOC/DOCX extraction is adapter-pending. Export to text or deploy a dedicated parser with malware-scan and deletion evidence before selling this workflow. |
+| pass | `unsupported-file-rejection` | 415 | unsupported-file-rejected-non-persistent | owasp-file-upload, supabase-edge-functions, nist-ai-rmf, ada-ai-hiring-guidance | The upload did not match the allowed resume extensions/signatures. Only txt, pdf, doc, and docx are accepted at this boundary. |

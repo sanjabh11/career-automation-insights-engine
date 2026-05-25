@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T01:09:41.284Z",
+  "generatedAt": "2026-05-25T09:09:13.546Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "2921c862bb1fa2de3e43d21ba33470058dd50d77ed71d39eebf7ca0f7cccc1fe",
-      "byteLength": 233747,
+      "contentSha256": "40e58d5c609c512c34529b0f322d7932dc9ef9676284c7e761afd6f424c0851f",
+      "byteLength": 233752,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "f2b874ce53a0b953fb13f90b964bd913471bd8b0bb76b7091356494a7facf1ea",
+      "contentSha256": "ed0c635a2885a0915655ba45ce5da717c32a287da79949befd8b97e9781b4db2",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "cdbfb79900e770c0a863792a1f142b9ffce44b37c6932b704df95994177f3337",
+      "contentSha256": "cce31c1252cc6f871a7e1781a99b1b3f6ea72e5ea430bbfa10555b6ed91f6424",
       "byteLength": 303692,
       "evidence": [
         {
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "fd731421de0a8e931d78ed76a236ff8f053c85270946c56638d8ec5f4717a933",
+      "contentSha256": "3260a5d776ee0558c991e64e0a6c86d51cedf237b7c70ff369eccf82718d7040",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "7d9f338a1e2e6e8d0de335ffc042dd075889b73a9e8995999f54aa7b71ff6d89",
+      "contentSha256": "90eb4893c4688914687d5298b4db72ce522f186d584c00b18392508b8c386425",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "52c87156edaa5bf657a51ff7fe06ccbe9c1c26163498ba29d235afd06b64b7d8",
-      "byteLength": 73086,
+      "contentSha256": "91c6314967d8068cd3a9f905099026d778ecd2496c108325f693a9af0ebecaf6",
+      "byteLength": 73088,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "f06eda0b59ebd30ef4653db6e64b38b36eb60c80837ba4435cce5faf9961e412",
+      "contentSha256": "6284829a069e52dab85ff174909782717593f2b926feebd8227d0524a16c4688",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "d13c230e7b22cc8edd6395b2dc29edc316dcf4e490a421d80f093fa19ce48d86",
+      "contentSha256": "a7eb89c66dcdeec152cf466fb312e13d504af3466911e963a84e01c1b2ba7656",
       "byteLength": 210582,
       "evidence": [
         {
@@ -509,7 +509,7 @@
       "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
       "status": 200,
       "ok": true,
-      "contentSha256": "6cf8247698194d541bca42ada1c2ec99a8b4ca599224c165a7a62fa8a66cb3ca",
+      "contentSha256": "20972fdb75aad4a87adc7ba2e29325d8a4fd0ad987f86f469da430d2a83cfff0",
       "byteLength": 183444,
       "evidence": [
         {
@@ -529,8 +529,8 @@
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
-      "byteLength": 121777,
+      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
+      "byteLength": 121776,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -589,8 +589,8 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "cb162e722d4d8df65272bfde25ca072c0eb1971b9d0432373e8246ad6636cb04",
-      "byteLength": 91197,
+      "contentSha256": "3369dfc8a0aa012fe6a8c06296bdb8e70cfdded0f3e1e98044d1cf32118d50b1",
+      "byteLength": 91198,
       "evidence": [
         {
           "label": "AI Risk Management Framework title",
@@ -629,7 +629,7 @@
       "url": "https://supabase.com/docs/guides/functions",
       "status": 200,
       "ok": true,
-      "contentSha256": "28f9236174f25d4d30cea42cacc58c432cd2c2939f1a22b4bd4eba7295237d28",
+      "contentSha256": "2c0b4bdb8204532aecc6abcbfeefc12eb88e658bc7a02ce682389a9f3b7343b1",
       "byteLength": 181975,
       "evidence": [
         {

@@ -19,17 +19,75 @@ import { getDeviceId } from '@/utils/device';
 import { trackAnalyticsEvent } from '@/hooks/useAnalyticsEvents';
 import { getLocalJSON, setLocalJSON } from '@/lib/storage';
 import { useSubscriptionWithPrompts } from '@/hooks/useSubscriptionWithPrompts';
+import { occupationRiskData } from '@/data/occupationRiskData';
 
 interface SearchInterfaceProps {
-  onOccupationSelect: (occupation: any) => void;
+  onOccupationSelect: (occupation: Record<string, unknown>) => void;
 }
 
-const cache: Record<string, any[]> = {};
+interface SearchResult {
+  code: string;
+  title: string;
+  description: string;
+}
+
+interface OccupationSearchResponse {
+  occupations?: Array<{
+    occupation_code?: string;
+    code?: string;
+    occupation_title?: string;
+    title?: string;
+    description?: string;
+    summary?: string;
+  }>;
+}
+
+const cache: Record<string, SearchResult[]> = {};
+
+const normalizeSearchToken = (token: string) => {
+  const normalized = token.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return normalized.endsWith('s') && normalized.length > 3 ? normalized.slice(0, -1) : normalized;
+};
+
+const searchLocalOccupationRiskData = (term: string, limit: number) => {
+  const queryTokens = term
+    .split(/\s+/)
+    .map(normalizeSearchToken)
+    .filter(Boolean);
+
+  if (queryTokens.length === 0) return [];
+
+  return Object.values(occupationRiskData)
+    .filter((occupation) => {
+      const searchTokens = [
+        occupation.title,
+        occupation.code,
+        occupation.industry,
+        occupation.bridgeRole,
+        ...occupation.safeSkills,
+        ...occupation.reskillingSuggestions,
+      ]
+        .join(' ')
+        .split(/\s+/)
+        .map(normalizeSearchToken)
+        .filter(Boolean);
+
+      return queryTokens.every((queryToken) =>
+        searchTokens.some((searchToken) => searchToken.includes(queryToken) || queryToken.includes(searchToken))
+      );
+    })
+    .slice(0, limit)
+    .map((occupation) => ({
+      code: occupation.code,
+      title: occupation.title,
+      description: occupation.seoDescription || `Automation risk profile for ${occupation.title}.`,
+    }));
+};
 
 export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [isCalculatingAPO, setIsCalculatingAPO] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [maxResults, setMaxResults] = useState<number>(10);
@@ -91,7 +149,9 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       }
 
       const cacheKey = sanitizedTerm + "_" + sanitizedFilter;
-      if (cache[cacheKey]) return cache[cacheKey];
+      if (cache[cacheKey]?.length) return cache[cacheKey];
+
+      const fallbackResults = () => searchLocalOccupationRiskData(sanitizedTerm, Math.max(1, Math.min(100, maxResults)));
 
       const { data, error } = await supabase.functions.invoke('search-occupations', {
         body: {
@@ -101,28 +161,36 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       });
 
       if (error) {
+        const fallback = fallbackResults();
+        if (fallback.length > 0) return fallback;
         throw new Error(error.message ?? 'Search function failed');
       }
 
       if (!data || typeof data !== 'object') {
+        const fallback = fallbackResults();
+        if (fallback.length > 0) return fallback;
         throw new Error('Unexpected response from search-occupations function');
       }
 
-      const occupations = Array.isArray((data as any).occupations)
-        ? (data as any).occupations
+      const searchData = data as OccupationSearchResponse;
+      const occupations = Array.isArray(searchData.occupations)
+        ? searchData.occupations
         : [];
 
-      let normalized = occupations.map((item: any) => ({
+      let normalized = occupations.map((item) => ({
         code: item.occupation_code || item.code,
         title: item.occupation_title || item.title,
         description: item.description || item.summary || 'An occupation from the O*NET database.',
-      })).filter((item: any) => item.code && item.title);
+      })).filter((item): item is SearchResult => Boolean(item.code && item.title));
 
       if (sanitizedFilter) {
-        normalized = normalized.filter((item: any) => item.code === sanitizedFilter);
+        normalized = normalized.filter((item) => item.code === sanitizedFilter);
       }
 
       normalized = normalized.slice(0, maxResults);
+      if (normalized.length === 0) {
+        normalized = fallbackResults();
+      }
 
       cache[cacheKey] = normalized;
       return normalized;
@@ -148,7 +216,9 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
           const next = [term, ...history.filter(t => t !== term)].slice(0, 10);
           setLocalJSON('search:history', next);
         }
-      } catch { }
+      } catch (storageError) {
+        console.warn('Unable to persist local search history', storageError);
+      }
 
       // Update rate limit status after successful search
       const rateKey = user?.id ?? getDeviceId();
@@ -178,7 +248,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
     },
   });
 
-  const handleOccupationClick = async (occupation: any) => {
+  const handleOccupationClick = async (occupation: SearchResult) => {
     trackAnalyticsEvent({
       event_name: 'search_result_click',
       event_category: 'engagement',
@@ -246,7 +316,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
         event_category: 'engagement',
         event_data: { code: occupation.code, title: occupation.title, latency }
       });
-      onOccupationSelect(data);
+      onOccupationSelect(data as Record<string, unknown>);
       toast({
         title: 'APO Analysis Complete',
         description: `Automation potential calculated for ${occupation.title}`,
@@ -319,7 +389,7 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Allow only valid O*NET code characters
-    const sanitized = value.replace(/[^0-9\-\.]/g, '');
+    const sanitized = value.replace(/[^0-9.-]/g, '');
     setFilter(sanitized);
   };
 

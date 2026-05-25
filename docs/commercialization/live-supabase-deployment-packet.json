@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T03:39:54.319Z",
+  "generatedAt": "2026-05-25T09:05:37.545Z",
   "targetProjectRef": "kvunnankqgfokeufvsrv",
   "allPassed": true,
   "versionsAreSorted": true,
@@ -15,6 +15,10 @@
     {
       "name": "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
       "purpose": "Anon/publishable key required by non-mutating live verification scripts; never use or print service-role keys for these checks."
+    },
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "purpose": "Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files."
     }
   ],
   "combinedSqlSha256": "3aeaedfc7ecd50505c49fac62eeee7f3155e4046510267972d5baacdda899591",
@@ -154,6 +158,10 @@
     {
       "label": "Verify live parse-resume Edge Function parser receipts after function deploy",
       "command": "npm run verify:resume-parser-live"
+    },
+    {
+      "label": "Run official O*NET 30.3 Task Ratings ingest after target service-role key is available",
+      "command": "npm run ingest:onet-task-ratings -- --project-ref kvunnankqgfokeufvsrv"
     },
     {
       "label": "Verify live O*NET Task Ratings after migration plus ingest",

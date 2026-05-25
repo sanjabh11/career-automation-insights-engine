@@ -1,6 +1,6 @@
 # Live Supabase Deployment Runbook
 
-Generated: 2026-05-25T03:39:54.319Z
+Generated: 2026-05-25T09:05:37.545Z
 Target project ref: `kvunnankqgfokeufvsrv`
 Packet status: **pass**
 
@@ -23,6 +23,7 @@ Purpose: apply the commercial proof-pack schema changes in the linked Supabase p
 | `SUPABASE_DB_PASSWORD` | Remote database password required by Supabase CLI for migration list, dry run, and db push. |
 | `SUPABASE_URL or VITE_SUPABASE_URL` | Public project URL required by non-mutating live verification scripts. |
 | `SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY` | Anon/publishable key required by non-mutating live verification scripts; never use or print service-role keys for these checks. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files. |
 
 ## Deployment Commands
 
@@ -56,6 +57,11 @@ Verify live parse-resume Edge Function parser receipts after function deploy:
 npm run verify:resume-parser-live
 ```
 
+Run official O*NET 30.3 Task Ratings ingest after target service-role key is available:
+```bash
+npm run ingest:onet-task-ratings -- --project-ref kvunnankqgfokeufvsrv
+```
+
 Verify live O*NET Task Ratings after migration plus ingest:
 ```bash
 npm run verify:onet-task-ratings-live
@@ -86,6 +92,6 @@ npm run verify:onet-task-ratings-live
 - [Supabase CLI db push reference](https://supabase.com/docs/reference/cli/supabase-db-push)
 - [PostgREST schema cache reloading](https://docs.postgrest.org/en/stable/references/schema_cache.html)
 
-## Current Blocker
+## Current Deployment Status
 
-Remote migration application is intentionally not attempted by this packet. The latest local CLI attempt failed because the session did not have the required database password or platform privileges. Provide `SUPABASE_DB_PASSWORD` in a secure shell or CI secret, then run the commands above.
+This packet verifies local migration order, hashes, and guardrails. Remote application is still a credentialed operation: use `SUPABASE_DB_PASSWORD` for database migration checks/pushes, then run the live verifiers. If the commercial schema verifier already passes, the remaining deployment blockers move to Edge Function deploy permissions, O*NET Task Ratings ingest rows, and authenticated end-to-end staff/resume artifact checks.

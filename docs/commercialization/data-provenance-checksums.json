@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-25T03:39:54.515Z",
+  "generatedAt": "2026-05-25T09:05:37.794Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-25T01:09:41.284Z",
+    "generatedAt": "2026-05-25T06:37:55.173Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -72,9 +72,9 @@
         "SUPABASE_SERVICE_ROLE_KEY"
       ],
       "caveat": "Ingestion utility boundary only; it proves import mechanics exist, not that current production tables are refreshed.",
-      "bytes": 15528,
-      "rows": 378,
-      "sha256": "8226fee512c1378c798536a0f120a2babcc85c7ccf4b2b77f520144afbc7a364",
+      "bytes": 16417,
+      "rows": 403,
+      "sha256": "24cf96358f6fc8780bc3d76c66679f81cb0f86ca3cc5f5570af867d97020bd1a",
       "failures": [],
       "passed": true
     },
@@ -98,9 +98,36 @@
         "task_ratings_ingested_at"
       ],
       "caveat": "Task Ratings import can populate O*NET 30.3 importance/frequency metadata, but reports must not claim task-time precision until the target Supabase table export is checksum-verified.",
-      "bytes": 15528,
-      "rows": 378,
-      "sha256": "8226fee512c1378c798536a0f120a2babcc85c7ccf4b2b77f520144afbc7a364",
+      "bytes": 16417,
+      "rows": 403,
+      "sha256": "24cf96358f6fc8780bc3d76c66679f81cb0f86ca3cc5f5570af867d97020bd1a",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "onet-task-ratings-live-ingest-runner",
+      "label": "O*NET Task Ratings live ingest runner",
+      "path": "scripts/run-onet-task-ratings-live-ingest.mjs",
+      "type": "deployment-script",
+      "sourceIds": [
+        "onet",
+        "onet-task-statements",
+        "onet-task-ratings",
+        "onet-task-categories"
+      ],
+      "expectedSnippets": [
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "assertServiceRoleAccepted",
+        "Task Statements",
+        "Task Ratings",
+        "Task Categories",
+        "ingest_onet_metadata.ts",
+        "project-ref"
+      ],
+      "caveat": "Credential-safe runner for the target Supabase ingest; it still requires a valid target service-role key and live row verification before stronger task-time claims.",
+      "bytes": 4797,
+      "rows": 129,
+      "sha256": "22715367116bef35986ca659f8d3948186a137200bd4687842dd07894944d181",
       "failures": [],
       "passed": true
     },
@@ -532,9 +559,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.",
-      "bytes": 17483,
+      "bytes": 17533,
       "rows": 450,
-      "sha256": "0cbcd1d70c80e8b5708d7d1c0e788be9c23bafc8db382130066f367c36929034",
+      "sha256": "9836d44bd881d508990620c1b47b37e687d5a43057721301d71569eb6f316642",
       "failures": [],
       "passed": true
     },
@@ -748,7 +775,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "21eb233abecdc5d9aa9efc345febe6a51fef201bc6cdb6102765bac1f17779b1",
+      "sha256": "513c1131d57569aec67f9e4d07000804009d6fbf7630482e0f465ed0dfbe9554",
       "failures": [],
       "passed": true
     },
@@ -778,7 +805,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "5f54454703cbcc25341abba5a64eb391387f536e7ce78278b9d1def157194e98",
+      "sha256": "659461d3250d73bc2f52955dbb98ca894eff2004b466f9f9f5e71afd86dd0454",
       "failures": [],
       "passed": true
     },
@@ -853,9 +880,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
-      "bytes": 12369,
+      "bytes": 12419,
       "rows": 348,
-      "sha256": "53d7929634f0785a8b0059db6c5434ed9a2aefe3c340ac299194a1280a8f609d",
+      "sha256": "ef29f2b9f45dc1ec45595e98dba23ff4c5224dc9668ef1f4347fb501b3603790",
       "failures": [],
       "passed": true
     },
@@ -879,9 +906,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 11223,
-      "rows": 253,
-      "sha256": "78436bc2d8379f1e7db6e6b7950db101121a53bbc405e7b7004351ed6fd41646",
+      "bytes": 11781,
+      "rows": 261,
+      "sha256": "c428fd5ad9070a2e36750ae41de3fba78e3b20d7a16fbe5330250f1de59cf7ee",
       "failures": [],
       "passed": true
     },
@@ -907,9 +934,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 4641,
-      "rows": 69,
-      "sha256": "b6eb7e8db7534e02172db3f34d12be4f19f11e8fbd423d8be4fd312d114f8359",
+      "bytes": 5128,
+      "rows": 74,
+      "sha256": "64881db10abd3df8eb9786cd694d0275159261d8ca9d39226e1a2bf61440bb27",
       "failures": [],
       "passed": true
     },
@@ -934,9 +961,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.",
-      "bytes": 11104,
+      "bytes": 11154,
       "rows": 318,
-      "sha256": "ea327ab86b9772815eb45e0cb3b8eba57cf5dd6644ccd7bbe30fc434954a4079",
+      "sha256": "ca5f37ff41717d28bb2f1e6dcd6d8a8d21badcf82c0def15fcb813a6729452e8",
       "failures": [],
       "passed": true
     },

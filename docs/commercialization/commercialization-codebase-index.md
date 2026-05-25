@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-25T03:39:53.222Z
+Generated: 2026-05-25T09:05:36.204Z
 Branch: `commercialization-proof-packs`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -138,10 +138,12 @@ Policies:
 | `verify:commercial-network` | `node scripts/verify-commercial-release.mjs --with-network` |
 | `verify:commercial-trust` | `node scripts/verify-commercial-trust-boundaries.mjs` |
 | `verify:data-provenance` | `node scripts/verify-commercial-data-provenance.mjs --write` |
+| `verify:live-closeout-readiness` | `node scripts/verify-live-closeout-readiness.mjs` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
 | `verify:report-evidence` | `node scripts/verify-report-evidence.mjs` |
 | `verify:resume-parser-live` | `node scripts/verify-resume-parser-live.mjs --write` |
+| `verify:secrets` | `node scripts/verify-secret-hygiene.mjs` |
 | `verify:sources` | `node scripts/verify-source-manifest.mjs --write` |
 
 Required commercial pre-demo gate:
@@ -162,7 +164,7 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, and the live parser receipt verifier are implemented, while live Supabase migration proof, paid PDF/DOCX parser adapters, malware scanning, and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, and the live parser receipt verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while Edge Function deploy permission, paid PDF/DOCX parser adapters, malware scanning, authenticated e2e artifact checks, and formal e-signature/PDF storage remain Phase 5 hardening work.
 - Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on `127.0.0.1:54322`.
 - GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.

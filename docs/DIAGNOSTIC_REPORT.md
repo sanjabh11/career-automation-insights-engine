@@ -47,9 +47,9 @@ All claimed UI features **have been implemented in code** but are **not visible*
 **Fix Required**: 🔧 **RUN SEED**
 ```bash
 cd /Users/sanjayb/Documents/newrepo/career-automation-insights-engine
-SUPABASE_DB_PASSWORD=hwqEgOHND8rKkKnT supabase db reset --db-url postgresql://postgres:hwqEgOHND8rKkKnT@db.kvunnankqgfokeufvsrv.supabase.co:5432/postgres
+SUPABASE_DB_PASSWORD="<redacted>" supabase db push --dry-run
 ```
-OR manually insert seed data via SQL editor.
+Do not run destructive database reset commands against production. Manually insert seed data via SQL editor or a reviewed migration.
 
 ---
 
@@ -108,7 +108,7 @@ supabase functions invoke validate-apo --no-verify-jwt --body '{"sinceDays": 90}
 **Fix Required**: 🔧 **SET SECRET + INVOKE**
 ```bash
 # Set secret
-supabase secrets set SERPAPI_API_KEY="7e3aa9cacd93806c7b8f31b3f84e0c31149546f95f97bab73e4b62048dafd256"
+supabase secrets set SERPAPI_API_KEY="<redacted>"
 
 # Populate data
 supabase functions invoke skill-demand-scraper --no-verify-jwt \
