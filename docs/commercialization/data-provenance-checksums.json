@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T13:41:52.173Z",
+  "generatedAt": "2026-05-25T13:55:42.029Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -914,7 +914,7 @@
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
       "bytes": 13081,
       "rows": 362,
-      "sha256": "0763118f1cb5b7d161a1ade72e85dc0f135250e2cb458fe4656c7bd28c6e6cf2",
+      "sha256": "3357909a9c69e0436aa8917128642793e1277851491917a5b3ad32c3fb919f45",
       "failures": [],
       "passed": true
     },
@@ -968,7 +968,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5128,
       "rows": 74,
-      "sha256": "2b914885b99407de8e3376b42d932464926b4e5ccef089c0fbe85ab47bed5879",
+      "sha256": "8db8c35d06efd05dd4cbb833074500629ab7dc1fefd9104217c2217e79824571",
       "failures": [],
       "passed": true
     },
