@@ -133,7 +133,7 @@ export const AutomationRiskLandingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+        <main className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
             {/* Hero Section */}
             <section className="container mx-auto px-4 py-16">
                 <div className="max-w-4xl mx-auto text-center">
@@ -380,7 +380,7 @@ export const AutomationRiskLandingPage: React.FC = () => {
                     </Link>
                 </div>
             </section>
-        </div>
+        </main>
     );
 };
 

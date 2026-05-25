@@ -1,0 +1,647 @@
+{
+  "generatedAt": "2026-05-25T01:09:41.284Z",
+  "manifestSource": "src/lib/sourceManifest.ts",
+  "allPassed": true,
+  "results": [
+    {
+      "id": "onet",
+      "label": "O*NET Database releases",
+      "url": "https://www.onetcenter.org/db_releases.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "a1948d32bd6d7852e49c5a91d1c234c0d54bed76f533f0141ca586a43f168a07",
+      "byteLength": 241394,
+      "evidence": [
+        {
+          "label": "current production release 30.3",
+          "matched": true
+        },
+        {
+          "label": "O*NET 30.3 May 2026 release row",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-statements",
+      "label": "Task Statements - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_statements.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "8fea21f8f674c29ae6344ba06757e0c22376a0baaf8e83fea96ae9bfd4ede71f",
+      "byteLength": 38804,
+      "evidence": [
+        {
+          "label": "Task Statements table",
+          "matched": true
+        },
+        {
+          "label": "task statement fields",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-ratings",
+      "label": "Task Ratings - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_ratings.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7179bd544168da3fe4ffb8e599630f17d75adec6a872f8e54bf429cd56b576d7",
+      "byteLength": 40085,
+      "evidence": [
+        {
+          "label": "Task Ratings table",
+          "matched": true
+        },
+        {
+          "label": "task rating fields",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-task-categories",
+      "label": "Task Categories - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/task_categories.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ec7213d26c8d756319df3f3316a05bb3033525f66a84fc6ca577008817aea20b",
+      "byteLength": 35524,
+      "evidence": [
+        {
+          "label": "Task Categories table",
+          "matched": true
+        },
+        {
+          "label": "frequency category evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "onet-scales-reference",
+      "label": "Scales Reference - O*NET 30.3",
+      "url": "https://www.onetcenter.org/dictionary/30.3/text/scales_reference.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "0b57b6dbe1945c3d1dde3d958b6cfed33849f178be030aaed26990ab8ecd626b",
+      "byteLength": 35898,
+      "evidence": [
+        {
+          "label": "Scales Reference table",
+          "matched": true
+        },
+        {
+          "label": "scale fields and importance example",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-emp",
+      "label": "BLS Employment Projections",
+      "url": "https://www.bls.gov/emp/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "3f03288789b7cd90f383c582d84acc54e18b4e9dc144358bb4599f177d10f275",
+      "byteLength": 73804,
+      "evidence": [
+        {
+          "label": "2024-34 projections",
+          "matched": true
+        },
+        {
+          "label": "BLS Occupational Employment Projections",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-oews",
+      "label": "BLS OEWS tables",
+      "url": "https://www.bls.gov/oes/tables.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "962c925ce0dbfb43c9ee29cf2234fd0818e3185367a1520c91881f5445d68faa",
+      "byteLength": 99730,
+      "evidence": [
+        {
+          "label": "May 2025 OEWS table section",
+          "matched": true
+        },
+        {
+          "label": "Occupational Employment and Wage Statistics",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-laus",
+      "label": "BLS LAUS data overview",
+      "url": "https://www.bls.gov/lau/data-overview.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "5fc0872b479c8996be5e70014bd207d6a82755ff95f45f984db9bbf3a99bd466",
+      "byteLength": 71832,
+      "evidence": [
+        {
+          "label": "LAUS Data Overview title",
+          "matched": true
+        },
+        {
+          "label": "local geography tables and maps evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-qcew",
+      "label": "BLS QCEW data overview",
+      "url": "https://www.bls.gov/cew/data-overview.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "eadf8bcaf13e7de404a77e94fb5a51157d0017b088d1a7f3337656e54ebf7629",
+      "byteLength": 77617,
+      "evidence": [
+        {
+          "label": "QCEW Data Overview title",
+          "matched": true
+        },
+        {
+          "label": "county and open data access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "careeronestop-api",
+      "label": "CareerOneStop Web API Services",
+      "url": "https://github.com/CareerOneStop/API-Overview",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "2921c862bb1fa2de3e43d21ba33470058dd50d77ed71d39eebf7ca0f7cccc1fe",
+      "byteLength": 233747,
+      "evidence": [
+        {
+          "label": "CareerOneStop API services evidence",
+          "matched": true
+        },
+        {
+          "label": "quality-controlled data and access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "census-acs-api",
+      "label": "Census ACS Data API",
+      "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "f2b874ce53a0b953fb13f90b964bd913471bd8b0bb76b7091356494a7facf1ea",
+      "byteLength": 316096,
+      "evidence": [
+        {
+          "label": "ACS Data via API title",
+          "matched": true
+        },
+        {
+          "label": "Census API access evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "wef-foj-2025",
+      "label": "World Economic Forum Future of Jobs Report 2025",
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "cdbfb79900e770c0a863792a1f142b9ffce44b37c6932b704df95994177f3337",
+      "byteLength": 303692,
+      "evidence": [
+        {
+          "label": "Future of Jobs Report 2025 title",
+          "matched": true
+        },
+        {
+          "label": "World Economic Forum source",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "oecd-skills-outlook-2025",
+      "label": "OECD Skills Outlook 2025",
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6fa948d709b1a8419295be5dd32ce503296bfedf05dfc627eb7039b8544024a1",
+      "byteLength": 11501856,
+      "evidence": [
+        {
+          "label": "OECD Skills Outlook 2025 title",
+          "matched": true
+        },
+        {
+          "label": "skill and labour-market transition evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ai-workforce-consortium-2025",
+      "label": "AI Workforce Consortium ICT in Motion 2025",
+      "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
+      "byteLength": 114397,
+      "evidence": [
+        {
+          "label": "AI Workforce Consortium source",
+          "matched": true
+        },
+        {
+          "label": "AI role and skill market signal",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "nace-career-readiness",
+      "label": "NACE Career Readiness Competencies",
+      "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "fd731421de0a8e931d78ed76a236ff8f053c85270946c56638d8ec5f4717a933",
+      "byteLength": 74698,
+      "evidence": [
+        {
+          "label": "NACE career readiness definition",
+          "matched": true
+        },
+        {
+          "label": "lifelong career management evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "nace-first-destination",
+      "label": "NACE First-Destination Standards and Protocols",
+      "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7d9f338a1e2e6e8d0de335ffc042dd075889b73a9e8995999f54aa7b71ff6d89",
+      "byteLength": 41890,
+      "evidence": [
+        {
+          "label": "first-destination standards title",
+          "matched": true
+        },
+        {
+          "label": "career outcome rate evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ferpa-student-privacy",
+      "label": "FERPA student privacy guidance",
+      "url": "https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "d0eab110bd9d7a665d583b001659cae5beeeb10abf6894adb01ee1ba6f81ccb3",
+      "byteLength": 34707,
+      "evidence": [
+        {
+          "label": "PII for education records title",
+          "matched": true
+        },
+        {
+          "label": "direct and indirect identifier evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "dol-ai-literacy-framework",
+      "label": "DOL AI Literacy Framework",
+      "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "52c87156edaa5bf657a51ff7fe06ccbe9c1c26163498ba29d235afd06b64b7d8",
+      "byteLength": 73086,
+      "evidence": [
+        {
+          "label": "DOL AI Literacy Framework title",
+          "matched": true
+        },
+        {
+          "label": "workforce and education stakeholder evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "anthropic-economic-index",
+      "label": "Anthropic Economic Index",
+      "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "f06eda0b59ebd30ef4653db6e64b38b36eb60c80837ba4435cce5faf9961e412",
+      "byteLength": 165940,
+      "evidence": [
+        {
+          "label": "Anthropic Economic Index title",
+          "matched": true
+        },
+        {
+          "label": "O*NET task mapping evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "anthropic-observed-exposure",
+      "label": "Anthropic observed AI exposure research",
+      "url": "https://www.anthropic.com/research/labor-market-impacts",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "d13c230e7b22cc8edd6395b2dc29edc316dcf4e490a421d80f093fa19ce48d86",
+      "byteLength": 210582,
+      "evidence": [
+        {
+          "label": "observed exposure methodology",
+          "matched": true
+        },
+        {
+          "label": "O*NET task grounding",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "openai-gdpval",
+      "label": "OpenAI GDPval occupational task evaluation",
+      "url": "https://arxiv.org/abs/2510.04374",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "8fe58faa9b4bce0d8dbbe265069fa65384c7b1f63720411cdf95cbc04b449f21",
+      "byteLength": 49196,
+      "evidence": [
+        {
+          "label": "GDPval title",
+          "matched": true
+        },
+        {
+          "label": "occupational task coverage",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "bls-ai-mlr-2025",
+      "label": "BLS AI impacts in employment projections",
+      "url": "https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "7f39647ede45679f4093fa5764fd531b015e1c9d2e25e6925e99ad5114507c15",
+      "byteLength": 134358,
+      "evidence": [
+        {
+          "label": "AI impacts article title",
+          "matched": true
+        },
+        {
+          "label": "Monthly Labor Review source",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "wcag-22",
+      "label": "WCAG 2.2 accessibility standard",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6e3c5fe397257cae509a2fb4752b73062cf8cbeb92c2cec618989b17e4cf7057",
+      "byteLength": 512457,
+      "evidence": [
+        {
+          "label": "WCAG 2.2 title",
+          "matched": true
+        },
+        {
+          "label": "conformance levels evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ada-ai-hiring-guidance",
+      "label": "ADA algorithmic hiring guidance",
+      "url": "https://www.ada.gov/resources/ai-guidance/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "aa143315c1983029a3046f1851a01dbd6e2d5f09e7975d9d05bf6d1b35eb7df2",
+      "byteLength": 62330,
+      "evidence": [
+        {
+          "label": "AI hiring guidance title",
+          "matched": true
+        },
+        {
+          "label": "reasonable accommodation evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "eeoc-employment-selection-procedures",
+      "label": "EEOC employment tests and selection procedures",
+      "url": "https://www.eeoc.gov/laws/guidance/employment-tests-and-selection-procedures",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6f5ccb7b5396f2263c99c27c4a9c8c0b5e731fcca2fcd76ed3b522bc2ea1f273",
+      "byteLength": 83674,
+      "evidence": [
+        {
+          "label": "EEOC employment tests title",
+          "matched": true
+        },
+        {
+          "label": "employment selection boundary evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "cfpb-employment-algorithmic-scores",
+      "label": "CFPB employment algorithmic score circular",
+      "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "6cf8247698194d541bca42ada1c2ec99a8b4ca599224c165a7a62fa8a66cb3ca",
+      "byteLength": 183444,
+      "evidence": [
+        {
+          "label": "CFPB circular title",
+          "matched": true
+        },
+        {
+          "label": "employment FCRA purpose evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "iso-42001",
+      "label": "ISO/IEC 42001 AI management system",
+      "url": "https://www.iso.org/standard/42001",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
+      "byteLength": 121777,
+      "evidence": [
+        {
+          "label": "ISO/IEC 42001 title",
+          "matched": true
+        },
+        {
+          "label": "AI management system governance evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "esco",
+      "label": "ESCO v1.2.1",
+      "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "10597647af94734463742e45fef410a1fb63af98542248babfb22374d3e330f2",
+      "byteLength": 53582,
+      "evidence": [
+        {
+          "label": "ESCO v1.2.1 title",
+          "matched": true
+        },
+        {
+          "label": "last update date",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "workera-positioning",
+      "label": "Workera skills intelligence positioning",
+      "url": "https://www.workera.ai/product-overview",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "974fae85df50b091d3ecd383aaf067acc28a1cbecd5b6a6db2d4f23b15456a09",
+      "byteLength": 177053,
+      "evidence": [
+        {
+          "label": "Workera product page",
+          "matched": true
+        },
+        {
+          "label": "skills intelligence positioning",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "llm-output",
+      "label": "NIST AI RMF grounding for LLM-output caveats",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "cb162e722d4d8df65272bfde25ca072c0eb1971b9d0432373e8246ad6636cb04",
+      "byteLength": 91197,
+      "evidence": [
+        {
+          "label": "AI Risk Management Framework title",
+          "matched": true
+        },
+        {
+          "label": "NIST source",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "owasp-file-upload",
+      "label": "OWASP File Upload Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "82e9c0306219105db14ecd8180ede240ed698d169682ee550437f3c0456e1317",
+      "byteLength": 76523,
+      "evidence": [
+        {
+          "label": "OWASP file upload title",
+          "matched": true
+        },
+        {
+          "label": "file validation controls",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "supabase-edge-functions",
+      "label": "Supabase Edge Functions",
+      "url": "https://supabase.com/docs/guides/functions",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "28f9236174f25d4d30cea42cacc58c432cd2c2939f1a22b4bd4eba7295237d28",
+      "byteLength": 181975,
+      "evidence": [
+        {
+          "label": "Supabase Edge Functions title",
+          "matched": true
+        },
+        {
+          "label": "server-side and multipart evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

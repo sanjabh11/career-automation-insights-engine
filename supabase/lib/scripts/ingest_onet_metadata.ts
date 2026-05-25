@@ -1,4 +1,4 @@
-// deno run -A supabase/lib/scripts/ingest_onet_metadata.ts <path-to-onet-csv-root>
+// deno run -A supabase/lib/scripts/ingest_onet_metadata.ts <path-to-onet-csv-root> [onet-release-version]
 // Ingest O*NET classification, descriptor, crosswalk and T2 taxonomy CSVs into Supabase.
 // Requires SUPABASE_SERVICE_ROLE_KEY & SUPABASE_URL env vars.
 // Focuses on Phase-II high-priority tables.
@@ -19,9 +19,9 @@ const logInfo = (...args: unknown[]) => console.log("[INGEST]", ...args);
 const logWarn = (...args: unknown[]) => console.warn("[INGEST][WARN]", ...args);
 
 if (import.meta.main) {
-  const [rootDir] = Deno.args;
+  const [rootDir, onetReleaseVersion = "30.3"] = Deno.args;
   if (!rootDir) {
-    console.error("Usage: deno run -A ingest_onet_metadata.ts <root-onet-folder>");
+    console.error("Usage: deno run -A ingest_onet_metadata.ts <root-onet-folder> [onet-release-version]");
     Deno.exit(1);
   }
 
@@ -43,13 +43,14 @@ if (import.meta.main) {
     ingestCareerClusters,
     ingestIndustries,
     ingestDescriptors,
+    ingestTaskStatementsAndRatings,
     ingestToolsTech,
   ];
   for (const step of steps) {
     try {
       const label = `STEP:${step.name}`;
       console.time(label);
-      await step(client, rootDir);
+      await step(client, rootDir, onetReleaseVersion);
       console.timeEnd(label);
     } catch (e) {
       console.error(`Step ${step.name} failed:`, e);
@@ -58,7 +59,7 @@ if (import.meta.main) {
   console.log("✅ O*NET metadata ingest complete");
 }
 
-async function ingestJobZones(client: SupabaseClient, root: string) {
+async function ingestJobZones(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   const path = join(root, "Job Zones.txt");
   const rows = await readCsv(path);
   for (const r of rows) {
@@ -68,21 +69,15 @@ async function ingestJobZones(client: SupabaseClient, root: string) {
   console.log(`→ job_zones: ${rows.length}`);
 }
 
-async function ingestBrightOutlook(client: SupabaseClient, root: string) {
-  // Bright Outlook not present in O*NET 29.3; skip
-  console.log("→ bright_outlook_flags: skipped (not present in O*NET 29.3)");
+async function ingestBrightOutlook(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
+  // Bright Outlook not present in O*NET 30.3; skip
+  void client;
+  void root;
+  console.log("→ bright_outlook_flags: skipped (not present in O*NET 30.3)");
   return;
-  const rows = await readCsv(path);
-  for (const r of rows) {
-    const id = Number(r.BrightOutlookCode);
-    await client
-      .from("bright_outlook_flags")
-      .upsert({ id, slug: r.BrightOutlookFlag, description: r.Description });
-  }
-  console.log(`→ bright_outlook_flags: ${rows.length}`);
 }
 
-async function ingestStem(client: SupabaseClient, root: string) {
+async function ingestStem(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   const path = join(root, "Stem.txt");
   try {
     const rows = await readCsv(path);
@@ -100,7 +95,7 @@ async function ingestStem(client: SupabaseClient, root: string) {
   }
 }
 
-async function ingestCareerClusters(client: SupabaseClient, root: string) {
+async function ingestCareerClusters(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   const path = join(root, "Career Clusters.txt");
   try {
     const rows = await readCsv(path);
@@ -120,7 +115,7 @@ async function ingestCareerClusters(client: SupabaseClient, root: string) {
   }
 }
 
-async function ingestIndustries(client: SupabaseClient, root: string) {
+async function ingestIndustries(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   const path = join(root, "Industries.txt");
   try {
     const rows = await readCsv(path);
@@ -140,7 +135,7 @@ async function ingestIndustries(client: SupabaseClient, root: string) {
   }
 }
 
-async function ingestDescriptors(client: SupabaseClient, root: string) {
+async function ingestDescriptors(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   // Example for Abilities.txt; extend similarly for each descriptor family
   const abilityPath = join(root, "Abilities.txt");
   try {
@@ -152,16 +147,17 @@ async function ingestDescriptors(client: SupabaseClient, root: string) {
       .upsert({ slug: "abilities", name: "Abilities" })
       .select()
       .single();
-    logDebug("descriptor_families upsert result", { fam, famUpsertErr, hasId: !!(fam as any)?.id });
-    let familyId = (fam as any)?.id;
+    const familyRecord = fam as DescriptorFamilyRecord | null;
+    logDebug("descriptor_families upsert result", { fam, famUpsertErr, hasId: !!familyRecord?.id });
+    let familyId = familyRecord?.id;
     if (!familyId) {
       const { data: fam2, error: famSelErr } = await client
         .from("descriptor_families")
-        .select("id, slug, name")
-        .eq("slug", "abilities")
-        .maybeSingle();
+      .select("id, slug, name")
+      .eq("slug", "abilities")
+      .maybeSingle();
       logWarn("descriptor_families select fallback", { fam2, famSelErr });
-      familyId = (fam2 as any)?.id;
+      familyId = (fam2 as DescriptorFamilyRecord | null)?.id;
     }
     if (!familyId) {
       console.log("→ descriptors.abilities: skipped (descriptor family id unresolved)");
@@ -188,7 +184,179 @@ async function ingestDescriptors(client: SupabaseClient, root: string) {
   }
 }
 
-async function ingestToolsTech(client: SupabaseClient, root: string) {
+type OnetRatingRow = {
+  dataValue: number | null;
+  n: number | null;
+  standardError: number | null;
+  lowerCiBound: number | null;
+  upperCiBound: number | null;
+  recommendSuppress: string | null;
+  date: string | null;
+  domainSource: string | null;
+};
+
+type DominantFrequencyRating = OnetRatingRow & {
+  category: number | null;
+  label: string | null;
+};
+
+type DescriptorFamilyRecord = {
+  id?: string | number | null;
+};
+
+function readField(row: Record<string, string>, ...names: string[]): string {
+  for (const name of names) {
+    const value = row[name];
+    if (value !== undefined) return value;
+  }
+  return "";
+}
+
+function parseNumber(value: string | undefined | null): number | null {
+  if (!value || value === "n/a") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseInteger(value: string | undefined | null): number | null {
+  const parsed = parseNumber(value);
+  return parsed === null ? null : Math.round(parsed);
+}
+
+function ratingMetadata(row: Record<string, string>): OnetRatingRow {
+  return {
+    dataValue: parseNumber(readField(row, "Data Value")),
+    n: parseInteger(readField(row, "N")),
+    standardError: parseNumber(readField(row, "Standard Error")),
+    lowerCiBound: parseNumber(readField(row, "Lower CI Bound")),
+    upperCiBound: parseNumber(readField(row, "Upper CI Bound")),
+    recommendSuppress: readField(row, "Recommend Suppress") || null,
+    date: readField(row, "Date") || null,
+    domainSource: readField(row, "Domain Source") || null,
+  };
+}
+
+async function ingestTaskStatementsAndRatings(client: SupabaseClient, root: string, onetReleaseVersion = "30.3") {
+  const statementsPath = join(root, "Task Statements.txt");
+  const ratingsPath = join(root, "Task Ratings.txt");
+  const categoriesPath = join(root, "Task Categories.txt");
+
+  try {
+    const [statements, ratings, categories] = await Promise.all([
+      readCsv(statementsPath),
+      readCsv(ratingsPath),
+      readCsv(categoriesPath),
+    ]);
+    const categoryLabels = new Map<string, string>();
+    for (const category of categories) {
+      const scaleId = readField(category, "Scale ID");
+      const categoryId = readField(category, "Category");
+      const description = readField(category, "Category Description");
+      if (scaleId && categoryId && description) categoryLabels.set(`${scaleId}:${categoryId}`, description);
+    }
+
+    const ratingsByTask = new Map<string, {
+      importance?: OnetRatingRow;
+      relevance?: OnetRatingRow;
+      frequency?: DominantFrequencyRating;
+    }>();
+
+    for (const rating of ratings) {
+      const onetCode = readField(rating, "O*NET-SOC Code", "ONET-SOC Code");
+      const taskId = readField(rating, "Task ID");
+      const scaleId = readField(rating, "Scale ID");
+      if (!onetCode || !taskId || !scaleId) continue;
+
+      const key = `${onetCode}:${taskId}`;
+      const current = ratingsByTask.get(key) || {};
+      const metadata = ratingMetadata(rating);
+
+      if (scaleId === "IM") {
+        current.importance = metadata;
+      } else if (scaleId === "RT") {
+        current.relevance = metadata;
+      } else if (scaleId === "FT") {
+        const category = parseInteger(readField(rating, "Category"));
+        const frequencyCandidate: DominantFrequencyRating = {
+          ...metadata,
+          category,
+          label: category === null ? null : categoryLabels.get(`FT:${category}`) || null,
+        };
+        if (
+          !current.frequency ||
+          (frequencyCandidate.dataValue ?? -1) > (current.frequency.dataValue ?? -1)
+        ) {
+          current.frequency = frequencyCandidate;
+        }
+      }
+
+      ratingsByTask.set(key, current);
+    }
+
+    const now = new Date().toISOString();
+    let upserted = 0;
+    let missingRatings = 0;
+    for (const statement of statements) {
+      const onetCode = readField(statement, "O*NET-SOC Code", "ONET-SOC Code");
+      const taskId = readField(statement, "Task ID");
+      if (!onetCode || !taskId) continue;
+      const taskRatings = ratingsByTask.get(`${onetCode}:${taskId}`);
+      if (!taskRatings) missingRatings += 1;
+
+      const { error } = await client.from("onet_detailed_tasks").upsert({
+        occupation_code: onetCode,
+        task_id: taskId,
+        task_description: readField(statement, "Task"),
+        task_type: readField(statement, "Task Type") || null,
+        importance: taskRatings?.importance?.dataValue ?? null,
+        frequency: taskRatings?.frequency?.label ?? null,
+        data_source: "onet",
+        onet_release_version: onetReleaseVersion,
+        relevance_value: taskRatings?.relevance?.dataValue ?? null,
+        relevance_n: taskRatings?.relevance?.n ?? null,
+        relevance_standard_error: taskRatings?.relevance?.standardError ?? null,
+        relevance_lower_ci_bound: taskRatings?.relevance?.lowerCiBound ?? null,
+        relevance_upper_ci_bound: taskRatings?.relevance?.upperCiBound ?? null,
+        relevance_recommend_suppress: taskRatings?.relevance?.recommendSuppress ?? null,
+        relevance_date: taskRatings?.relevance?.date ?? (readField(statement, "Date") || null),
+        relevance_domain_source: taskRatings?.relevance?.domainSource ?? (readField(statement, "Domain Source") || null),
+        importance_n: taskRatings?.importance?.n ?? null,
+        importance_standard_error: taskRatings?.importance?.standardError ?? null,
+        importance_lower_ci_bound: taskRatings?.importance?.lowerCiBound ?? null,
+        importance_upper_ci_bound: taskRatings?.importance?.upperCiBound ?? null,
+        importance_recommend_suppress: taskRatings?.importance?.recommendSuppress ?? null,
+        importance_date: taskRatings?.importance?.date ?? (readField(statement, "Date") || null),
+        importance_domain_source: taskRatings?.importance?.domainSource ?? (readField(statement, "Domain Source") || null),
+        frequency_category: taskRatings?.frequency?.category ?? null,
+        frequency_percent: taskRatings?.frequency?.dataValue ?? null,
+        frequency_n: taskRatings?.frequency?.n ?? null,
+        frequency_standard_error: taskRatings?.frequency?.standardError ?? null,
+        frequency_lower_ci_bound: taskRatings?.frequency?.lowerCiBound ?? null,
+        frequency_upper_ci_bound: taskRatings?.frequency?.upperCiBound ?? null,
+        frequency_recommend_suppress: taskRatings?.frequency?.recommendSuppress ?? null,
+        frequency_date: taskRatings?.frequency?.date ?? (readField(statement, "Date") || null),
+        frequency_domain_source: taskRatings?.frequency?.domainSource ?? (readField(statement, "Domain Source") || null),
+        task_ratings_ingested_at: now,
+      });
+
+      if (error) {
+        logWarn("onet_detailed_tasks upsert error", { onetCode, taskId, error });
+        continue;
+      }
+      upserted += 1;
+    }
+
+    console.log(`→ onet_detailed_tasks: ${upserted} task statements, ${ratings.length} rating rows, ${missingRatings} task(s) missing ratings`);
+  } catch (e) {
+    if (e instanceof Deno.errors.NotFound) {
+      console.log("→ onet_detailed_tasks: skipped (Task Statements.txt, Task Ratings.txt, or Task Categories.txt not found)");
+    } else {
+      throw e;
+    }
+  }
+}
+
+async function ingestToolsTech(client: SupabaseClient, root: string, _onetReleaseVersion?: string) {
   const path = join(root, "Tools Used.txt");
   try {
     const rows = await readCsv(path);
@@ -227,8 +395,8 @@ async function readCsv(filePath: string) {
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
       try {
-        const parsed = await parse(header + "\n" + line, { skipFirstRow: false, separator: "\t" });
-        if (parsed && parsed.length > 0) goodRows.push(parsed[0] as Record<string, string>);
+        const parsed = await parse(header + "\n" + line, { skipFirstRow: true, separator: "\t" });
+        if (parsed && parsed.length > 0) goodRows.push(parsed[0] as unknown as Record<string, string>);
       } catch (rowErr) {
         badCount++;
         if (badCount <= 3) {

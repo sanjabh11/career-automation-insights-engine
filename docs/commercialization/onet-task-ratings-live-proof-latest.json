@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-05-24T11:25:00.468Z",
+  "verifier": "verify-onet-task-ratings-live",
+  "mode": "non-mutating-public-api-task-rating-boundary",
+  "target": {
+    "host": "kvunnankqgfokeufvsrv.supabase.co",
+    "projectRef": "kvunnankqgfokeufvsrv",
+    "anonKeyProvided": true
+  },
+  "allPassed": false,
+  "skipped": false,
+  "caveat": "This verifies deployed O*NET Task Rating schema and row presence from the public Supabase API. It does not apply migrations, run the ingest, prove table checksums, or certify task-time allocation.",
+  "checks": [
+    {
+      "id": "onet-task-ratings-schema",
+      "label": "onet_detailed_tasks exposes O*NET Task Rating metadata columns",
+      "method": "GET",
+      "path": "/rest/v1/onet_detailed_tasks?[query-redacted]",
+      "expectedBoundary": "table-and-task-rating-columns-present",
+      "status": 400,
+      "passed": false,
+      "classification": "missing-column-or-schema-cache",
+      "rowCount": null,
+      "message": "column onet_detailed_tasks.onet_release_version does not exist 42703"
+    },
+    {
+      "id": "onet-task-ratings-ingested-rows",
+      "label": "O*NET 30.3 task rating metadata rows are present",
+      "method": "GET",
+      "path": "/rest/v1/onet_detailed_tasks?[query-redacted]",
+      "expectedBoundary": "live-ingest-has-rated-tasks",
+      "status": 400,
+      "passed": false,
+      "classification": "missing-column-or-schema-cache",
+      "rowCount": null,
+      "message": "column onet_detailed_tasks.onet_release_version does not exist 42703"
+    },
+    {
+      "id": "onet-task-ratings-frequency-rows",
+      "label": "Dominant frequency category metadata is populated for rated tasks",
+      "method": "GET",
+      "path": "/rest/v1/onet_detailed_tasks?[query-redacted]",
+      "expectedBoundary": "live-ingest-has-frequency-metadata",
+      "status": 400,
+      "passed": false,
+      "classification": "missing-column-or-schema-cache",
+      "rowCount": null,
+      "message": "column onet_detailed_tasks.frequency_category does not exist 42703"
+    }
+  ]
+}

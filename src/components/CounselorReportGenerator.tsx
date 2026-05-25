@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Settings, Download, Palette, Search, ShieldCheck, ExternalLink } from 'lucide-react';
+import { Loader2, FileText, Settings, Download, Palette, Search, ShieldCheck, ExternalLink, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { CreditBalance } from '@/components/monetization/CreditBalance';
+import {
+    buildCareerCenterCohortCsv,
+    buildCareerCenterCohortProofPack,
+    renderCareerCenterCohortProofPackHtml,
+} from '@/lib/careerCenterCohortProofPack';
 
 interface WhiteLabelConfig {
     company_name: string;
@@ -39,15 +44,52 @@ const REPORT_EXAMPLES: OccupationOption[] = [
     { code: '17-2071.00', title: 'Electrical Engineers' },
 ];
 
-function normalizeOccupation(item: any): OccupationOption | null {
-    const code = item?.occupation_code || item?.code || item?.onetsoc_code;
-    const title = item?.occupation_title || item?.title || item?.name;
+interface SearchOccupationsResponse {
+    occupations?: unknown[];
+}
+
+interface CounselorReportResponse {
+    success?: boolean;
+    html?: string;
+    report_id?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+}
+
+function readString(record: Record<string, unknown>, key: string): string | undefined {
+    const value = record[key];
+    return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+}
+
+function getErrorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
+}
+
+function downloadTextFile(filename: string, body: string, type: string) {
+    const blob = new Blob([body], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
+function normalizeOccupation(item: unknown): OccupationOption | null {
+    if (!isRecord(item)) return null;
+
+    const code = readString(item, 'occupation_code') || readString(item, 'code') || readString(item, 'onetsoc_code');
+    const title = readString(item, 'occupation_title') || readString(item, 'title') || readString(item, 'name');
     if (!code || !title) return null;
 
     return {
         code,
         title,
-        description: item?.description || item?.summary || 'O*NET occupation profile',
+        description: readString(item, 'description') || readString(item, 'summary') || 'O*NET occupation profile',
     };
 }
 
@@ -72,11 +114,7 @@ export default function CounselorReportGenerator() {
     const { toast } = useToast();
     const { session } = useSession();
 
-    useEffect(() => {
-        loadWhiteLabelConfig();
-    }, [session?.user?.id]);
-
-    const loadWhiteLabelConfig = async () => {
+    const loadWhiteLabelConfig = useCallback(async () => {
         if (!session?.user?.id) {
             setLoading(false);
             return;
@@ -99,7 +137,11 @@ export default function CounselorReportGenerator() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [session?.user?.id]);
+
+    useEffect(() => {
+        loadWhiteLabelConfig();
+    }, [loadWhiteLabelConfig]);
 
     const searchOccupations = async () => {
         if (occupationQuery.trim().length < 2) {
@@ -120,8 +162,9 @@ export default function CounselorReportGenerator() {
 
             if (error) throw error;
 
-            const occupations = Array.isArray((data as any)?.occupations)
-                ? (data as any).occupations
+            const searchData = data as SearchOccupationsResponse | null;
+            const occupations = Array.isArray(searchData?.occupations)
+                ? searchData.occupations
                 : [];
 
             const normalized = occupations
@@ -134,12 +177,12 @@ export default function CounselorReportGenerator() {
                     ? `Found ${normalized.length} matching occupation${normalized.length === 1 ? '' : 's'}.`
                     : 'No matching occupations found. Try a broader title.'
             );
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Occupation search failed:', error);
             setOccupationResults([]);
             toast({
                 title: 'Occupation Search Failed',
-                description: error.message || 'Unable to search occupations',
+                description: getErrorMessage(error, 'Unable to search occupations'),
                 variant: 'destructive',
             });
         } finally {
@@ -180,11 +223,11 @@ export default function CounselorReportGenerator() {
                 title: 'Settings Saved',
                 description: 'White-label configuration updated successfully'
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error saving config:', error);
             toast({
                 title: 'Save Error',
-                description: error.message || 'Failed to save configuration',
+                description: getErrorMessage(error, 'Failed to save configuration'),
                 variant: 'destructive'
             });
         }
@@ -252,9 +295,10 @@ export default function CounselorReportGenerator() {
 
             if (error) throw error;
 
-            if (data && data.success) {
-                setReportHtml(data.html);
-                setReportId(data.report_id || null);
+            const reportData = data as CounselorReportResponse | null;
+            if (reportData?.success && typeof reportData.html === 'string') {
+                setReportHtml(reportData.html);
+                setReportId(reportData.report_id || null);
                 setStatusMessage('Report generated. Use preview and print/save as PDF before sending to a client.');
 
                 toast({
@@ -263,7 +307,7 @@ export default function CounselorReportGenerator() {
                 });
 
                 // Auto-download or open in new window
-                const blob = new Blob([data.html], { type: 'text/html' });
+                const blob = new Blob([reportData.html], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
@@ -271,12 +315,12 @@ export default function CounselorReportGenerator() {
                 link.click();
                 URL.revokeObjectURL(url);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error generating report:', error);
             setStatusMessage('Report generation failed. If credit was deducted, verify the credit ledger before retrying.');
             toast({
                 title: 'Generation Error',
-                description: error.message || 'Failed to generate report',
+                description: getErrorMessage(error, 'Failed to generate report'),
                 variant: 'destructive'
             });
         } finally {
@@ -298,6 +342,24 @@ export default function CounselorReportGenerator() {
         }
     };
 
+    const downloadCohortProofPackHtml = () => {
+        const pack = buildCareerCenterCohortProofPack();
+        downloadTextFile(
+            'career-center-cohort-proof-pack.html',
+            renderCareerCenterCohortProofPackHtml(pack),
+            'text/html;charset=utf-8'
+        );
+    };
+
+    const downloadCohortProofPackCsv = () => {
+        const pack = buildCareerCenterCohortProofPack();
+        downloadTextFile(
+            'career-center-cohort-proof-pack.csv',
+            `${buildCareerCenterCohortCsv(pack)}\n`,
+            'text/csv;charset=utf-8'
+        );
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center p-12">
@@ -307,7 +369,8 @@ export default function CounselorReportGenerator() {
     }
 
     return (
-        <div className="space-y-6">
+        <main className="space-y-6">
+            <h1 className="sr-only">Counselor Report Generator</h1>
             {/* Credit Balance */}
             <CreditBalance showBuyButton={true} />
 
@@ -317,6 +380,50 @@ export default function CounselorReportGenerator() {
                     Status: report generation is source-implemented but remains partially usable until auth, report credits, and the print-to-PDF handoff are smoke-tested. Use the sample report for buyer demos before relying on live client credits.
                 </AlertDescription>
             </Alert>
+
+            <Card data-career-center-cohort-pack="true">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Career Center Cohort Proof Pack
+                    </CardTitle>
+                    <CardDescription>
+                        Aggregate-only sample for counselor review, workshop planning, and career-center pilot conversations.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <Alert>
+                        <ShieldCheck className="h-4 w-4" />
+                        <AlertDescription>
+                            Cohort outputs must stay aggregate-only and advisor-reviewed. Do not include student names, IDs, resumes, or education-record PII; do not call this a placement-rate or first-destination outcome report.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid gap-3 md:grid-cols-3">
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Evidence boundary</div>
+                            <p className="mt-1 text-sm text-muted-foreground">FERPA-style privacy, NACE career readiness, local labor-market, and outcome caveats.</p>
+                        </div>
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Review state</div>
+                            <p className="mt-1 text-sm text-muted-foreground">Staff review required before institutional delivery or workshop use.</p>
+                        </div>
+                        <div className="rounded-lg border p-3">
+                            <div className="text-sm font-semibold">Does not prove</div>
+                            <p className="mt-1 text-sm text-muted-foreground">No individual ranking, placement, salary, admission, or employment decision support.</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                        <Button type="button" variant="outline" onClick={downloadCohortProofPackHtml} className="flex-1">
+                            <Download className="mr-2 h-4 w-4" />
+                            Cohort HTML
+                        </Button>
+                        <Button type="button" variant="outline" onClick={downloadCohortProofPackCsv} className="flex-1">
+                            <Download className="mr-2 h-4 w-4" />
+                            Cohort CSV
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="flex flex-col md:flex-row gap-3">
                 <Button type="button" variant="outline" onClick={() => window.open('/sample-report', '_blank')} className="flex-1">
@@ -624,6 +731,6 @@ export default function CounselorReportGenerator() {
                     </CardContent>
                 </Card>
             )}
-        </div>
+        </main>
     );
 }

@@ -5,7 +5,7 @@ import { Download, Share2 } from 'lucide-react';
 import { trackEvent } from '@/lib/posthog';
 
 interface ShareableScoreBadgeProps {
-  score: number; // 0-100 AI-Proof score (inverse of risk)
+  score: number; // 0-100 work-transition score (inverse of risk)
   onShareTwitter?: () => void;
   onShareLinkedIn?: () => void;
 }
@@ -80,7 +80,7 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
       ctx.textAlign = 'left';
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 20px Inter, system-ui, sans-serif';
-      ctx.fillText('My AI-Proof Score', 260, 100);
+      ctx.fillText('My Work Transition Score', 260, 100);
 
       ctx.fillStyle = color;
       ctx.font = 'bold 28px Inter, system-ui, sans-serif';
@@ -88,8 +88,8 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '14px Inter, system-ui, sans-serif';
-      ctx.fillText('How resilient is your resume to AI', 260, 190);
-      ctx.fillText('automation? Get your score free at:', 260, 210);
+      ctx.fillText('Review resume language for AI-era', 260, 190);
+      ctx.fillText('work shifts. Get your score at:', 260, 210);
 
       ctx.fillStyle = '#2dd4a8';
       ctx.font = 'bold 14px Inter, system-ui, sans-serif';
@@ -101,7 +101,7 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
       ctx.fillStyle = '#64748b';
       ctx.font = '12px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Powered by Automation Insights — O*NET data + Gemini AI analysis', 300, 318);
+      ctx.fillText('Powered by Automation Insights - O*NET data + Gemini AI analysis', 300, 318);
 
       canvas.toBlob((blob) => resolve(blob), 'image/png');
     });
@@ -114,7 +114,7 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ai-proof-score-${score}.png`;
+    a.download = `work-transition-score-${score}.png`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -122,7 +122,7 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
   const handleShareTwitter = () => {
     trackEvent('score_badge_shared', { platform: 'twitter', score });
     if (onShareTwitter) { onShareTwitter(); return; }
-    const text = `My AI-Proof Score is ${score}/100 — ${label}. How resilient is YOUR resume to AI automation? Find out free:`;
+    const text = `My work-transition score is ${score}/100 - ${label}. Review your resume language for AI-era work shifts:`;
     const url = window.location.origin + '/tools/resume-analyzer';
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
   };
@@ -167,10 +167,10 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
 
           {/* Score details */}
           <div className="flex-1 text-center sm:text-left">
-            <h3 className="text-lg font-bold text-white mb-1">My AI-Proof Score</h3>
+            <h3 className="text-lg font-bold text-white mb-1">My Work Transition Score</h3>
             <p className="text-2xl font-bold mb-2" style={{ color }}>{label}</p>
             <p className="text-sm text-slate-400 mb-4">
-              Download your badge and share it — challenge your network!
+              Download your badge and share it with your network.
             </p>
             <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
               <Button size="sm" onClick={handleDownloadBadge} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
@@ -178,7 +178,7 @@ export function ShareableScoreBadge({ score, onShareTwitter, onShareLinkedIn }: 
                 Save Badge
               </Button>
               <Button size="sm" onClick={handleShareTwitter} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
-                𝕏 Share
+                X Share
               </Button>
               <Button size="sm" onClick={handleShareLinkedIn} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
                 <Share2 className="h-4 w-4 mr-1" />

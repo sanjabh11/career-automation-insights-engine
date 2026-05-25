@@ -1,0 +1,179 @@
+{
+  "generatedAt": "2026-05-25T03:39:54.319Z",
+  "targetProjectRef": "kvunnankqgfokeufvsrv",
+  "allPassed": true,
+  "versionsAreSorted": true,
+  "requiredEnvironment": [
+    {
+      "name": "SUPABASE_DB_PASSWORD",
+      "purpose": "Remote database password required by Supabase CLI for migration list, dry run, and db push."
+    },
+    {
+      "name": "SUPABASE_URL or VITE_SUPABASE_URL",
+      "purpose": "Public project URL required by non-mutating live verification scripts."
+    },
+    {
+      "name": "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+      "purpose": "Anon/publishable key required by non-mutating live verification scripts; never use or print service-role keys for these checks."
+    }
+  ],
+  "combinedSqlSha256": "3aeaedfc7ecd50505c49fac62eeee7f3155e4046510267972d5baacdda899591",
+  "references": [
+    {
+      "label": "Supabase database migrations",
+      "url": "https://supabase.com/docs/guides/deployment/database-migrations"
+    },
+    {
+      "label": "Supabase managing environments with CI/CD",
+      "url": "https://supabase.com/docs/guides/deployment/managing-environments"
+    },
+    {
+      "label": "Supabase CLI db push reference",
+      "url": "https://supabase.com/docs/reference/cli/supabase-db-push"
+    },
+    {
+      "label": "PostgREST schema cache reloading",
+      "url": "https://docs.postgrest.org/en/stable/references/schema_cache.html"
+    }
+  ],
+  "migrations": [
+    {
+      "phase": "Phase 0/1 commercial persistence",
+      "file": "supabase/migrations/20260523000100_create_commercial_leads.sql",
+      "reason": "Lead capture, commercial artifacts, workforce audit persistence, and staff boundaries.",
+      "expectedSnippets": [
+        "commercial_leads",
+        "capture_commercial_lead",
+        "commercial_report_artifacts",
+        "create_commercial_report_artifact",
+        "commercial_workforce_audits",
+        "create_commercial_workforce_audit"
+      ],
+      "version": "20260523000100",
+      "lineCount": 1148,
+      "sha256": "129290bc2cca692cfe9944508cc1f5903c52696e441ec8f11b27262037ad87fe",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Phase 5 human review events",
+      "file": "supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql",
+      "reason": "Append-only section review, artifact client-ready approval, actor identity, and review attestation trail.",
+      "expectedSnippets": [
+        "commercial_report_artifact_events",
+        "section_review_updated",
+        "section_client_ready",
+        "artifact_client_ready",
+        "log_commercial_report_artifact_event"
+      ],
+      "version": "20260524000200",
+      "lineCount": 96,
+      "sha256": "f0179f9e596e98e069bbdf7ebc30eb6e383b3b5c23713b1dfbe598f7713c986a",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Phase 2 O*NET Task Ratings metadata",
+      "file": "supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql",
+      "reason": "Task Ratings columns needed before replacing proxy task-weight evidence with live O*NET 30.3 metadata.",
+      "expectedSnippets": [
+        "onet_release_version",
+        "relevance_value",
+        "frequency_category",
+        "frequency_percent",
+        "task_ratings_ingested_at"
+      ],
+      "version": "20260524000300",
+      "lineCount": 55,
+      "sha256": "b719ea4ba88bed94ee311d4c6d13d6694d2f26805837a62361cfbd7fd3a357f4",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Phase 5 resume deletion receipts",
+      "file": "supabase/migrations/20260524000400_add_resume_deletion_receipts.sql",
+      "reason": "Authenticated app-level resume analysis deletion receipts with model-provider and backup caveats.",
+      "expectedSnippets": [
+        "resume_analysis_deletion_receipts",
+        "delete_resume_analysis_with_receipt",
+        "raw_text_retention_policy",
+        "model_provider_boundary",
+        "receipt_hash"
+      ],
+      "version": "20260524000400",
+      "lineCount": 163,
+      "sha256": "26cbcd73f538089048038293803b0f085726c05f1b6fd47d5a6d09af7afcda26",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Phase 5 redacted resume proof artifacts",
+      "file": "supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql",
+      "reason": "Authenticated user-owned redacted resume proof-report artifacts and artifact deletion receipts.",
+      "expectedSnippets": [
+        "resume_proof_report_artifacts",
+        "resume_proof_report_artifact_deletion_receipts",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
+        "data-resume-proof-report-redacted=\"true\"",
+        "GRANT SELECT ON public.resume_proof_report_artifacts TO authenticated"
+      ],
+      "version": "20260524000500",
+      "lineCount": 314,
+      "sha256": "7ca18c1ef3788b23b270edffa1f8311f59a2aa9d7af198f48c17b84f4fa0adce",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    }
+  ],
+  "commands": [
+    {
+      "label": "Confirm linked migration history",
+      "command": "SUPABASE_DB_PASSWORD=\"[redacted]\" supabase migration list"
+    },
+    {
+      "label": "Preview pending production migrations without applying them",
+      "command": "SUPABASE_DB_PASSWORD=\"[redacted]\" supabase db push --dry-run"
+    },
+    {
+      "label": "Apply pending migrations after reviewing the dry run",
+      "command": "SUPABASE_DB_PASSWORD=\"[redacted]\" supabase db push"
+    },
+    {
+      "label": "Force PostgREST schema cache reload if new objects are still hidden by schema-cache errors",
+      "command": "NOTIFY pgrst, 'reload schema';"
+    },
+    {
+      "label": "Verify commercial live Supabase boundaries after deployment",
+      "command": "npm run verify:commercial-live-supabase"
+    },
+    {
+      "label": "Verify live parse-resume Edge Function parser receipts after function deploy",
+      "command": "npm run verify:resume-parser-live"
+    },
+    {
+      "label": "Verify live O*NET Task Ratings after migration plus ingest",
+      "command": "npm run verify:onet-task-ratings-live"
+    }
+  ],
+  "guardrails": [
+    "Do not run remote db reset, migration down, table drops, truncation, or manual data deletion for this release.",
+    "Prefer Supabase CLI db push so supabase_migrations.schema_migrations records applied versions.",
+    "Do not print service-role keys, database passwords, JWTs, or raw resume text in logs or proof artifacts.",
+    "Treat live verifier success as object/RPC boundary proof, not as legal compliance or employment-decision validation.",
+    "Treat live parser verifier success as synthetic receipt proof only; malware scanning, production PDF/DOC/DOCX parsing, provider logs, and backups remain separate controls.",
+    "Treat O*NET Task Ratings live proof as schema/row evidence only; exported table checksums are still required before task-time claims."
+  ],
+  "acceptanceCriteria": [
+    "Migration list shows the commercial proof-pack migrations applied to the linked project.",
+    "`npm run verify:commercial-live-supabase` passes against the linked project.",
+    "`npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.",
+    "`npm run verify:onet-task-ratings-live` passes only after Task Ratings migration and ingest produce live O*NET 30.3 rows.",
+    "Resume proof artifact live calls remain authenticated and redaction-gated.",
+    "Report and workforce review RPCs remain protected by staff/auth/RLS boundaries."
+  ]
+}
