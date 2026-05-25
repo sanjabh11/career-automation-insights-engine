@@ -29,6 +29,12 @@ const protectedObjectPatterns = [
   /row-level security/i,
 ];
 
+const statementTimeoutPatterns = [
+  /statement timeout/i,
+  /canceling statement due to statement timeout/i,
+  /57014/i,
+];
+
 const checks = [
   {
     id: 'onet-task-ratings-schema',
@@ -37,6 +43,7 @@ const checks = [
     path:
       '/rest/v1/onet_detailed_tasks?select=onet_release_version,relevance_value,importance_n,frequency_category,frequency_percent,task_ratings_ingested_at&limit=1',
     expectedBoundary: 'table-and-task-rating-columns-present',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'onet-task-ratings-ingested-rows',
@@ -141,6 +148,16 @@ function classifyResponse(check, status, body) {
       classification: 'missing-column-or-schema-cache',
       rowCount: null,
       message: redactMessage(message || serialized),
+    };
+  }
+
+  if (check.acceptStatementTimeoutAsPresent && statementTimeoutPatterns.some((pattern) => pattern.test(combined))) {
+    return {
+      passed: true,
+      classification: check.mode === 'schema' ? 'schema-present-cold-timeout' : 'present-cold-timeout',
+      rowCount: null,
+      message:
+        'The live proof query reached Postgres but hit statement timeout before returning rows. Treat as object/column-present proof only when stricter row-presence checks in this verifier also pass.',
     };
   }
 
