@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BarChart3, Download, ExternalLink, History, Lock, Mail, RefreshCw, ShieldCheck, Users } from "lucide-react";
+import { BarChart3, Calendar, Download, ExternalLink, History, Lock, Mail, RefreshCw, ShieldCheck, Target, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,21 @@ import {
   buildCommercialLeadCsv,
   CommercialLeadRow,
   fetchCommercialLeads,
+  isCommercialLeadFollowUpDue,
   LEAD_STATUSES,
   LeadStatus,
+  OUTREACH_CHANNEL_LABELS,
+  OUTREACH_CHANNELS,
+  OUTREACH_PRIORITIES,
+  OUTREACH_PRIORITY_LABELS,
+  OUTREACH_STAGE_LABELS,
+  OUTREACH_STAGES,
+  OutreachChannel,
+  OutreachPriority,
+  OutreachStage,
+  readCommercialLeadOutreachPlan,
   summarizeCommercialLeads,
+  updateCommercialLeadOutreachPlan,
   updateCommercialLeadStatus,
 } from "@/lib/commercialLeadOps";
 import {
@@ -69,6 +81,16 @@ interface LeadProofPackReviewWorkflow {
   sections: LeadProofPackReviewSection[];
 }
 
+interface LeadOutreachPlanDraft {
+  stage: OutreachStage;
+  channel: OutreachChannel;
+  priority: OutreachPriority;
+  nextFollowUpAt: string;
+  sequenceStep: string;
+  nextAction: string;
+  staffNotes: string;
+}
+
 const statusLabels: Record<LeadStatus, string> = {
   new: "New",
   contacted: "Contacted",
@@ -90,6 +112,20 @@ function formatDate(value: string | null): string {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
+}
+
+function toDateTimeLocal(value: string | null): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "";
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+}
+
+function fromDateTimeLocal(value: string): string | null {
+  if (!value.trim()) return null;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date.toISOString() : null;
 }
 
 function riskLabel(value: number | null): string {
@@ -216,6 +252,32 @@ function reviewWorkflowSummary(workflow: LeadProofPackReviewWorkflow): string {
   return `${workflow.sections.length - pending}/${workflow.sections.length} sections ready`;
 }
 
+function buildOutreachPlanDraft(lead: CommercialLeadRow): LeadOutreachPlanDraft {
+  const plan = readCommercialLeadOutreachPlan(lead);
+  return {
+    stage: plan.stage,
+    channel: plan.channel,
+    priority: plan.priority,
+    nextFollowUpAt: toDateTimeLocal(plan.nextFollowUpAt),
+    sequenceStep: String(plan.sequenceStep),
+    nextAction: plan.nextAction ?? "",
+    staffNotes: lead.staff_notes ?? "",
+  };
+}
+
+function isOutreachDraftChanged(lead: CommercialLeadRow, draft: LeadOutreachPlanDraft): boolean {
+  const existing = buildOutreachPlanDraft(lead);
+  return (
+    draft.stage !== existing.stage ||
+    draft.channel !== existing.channel ||
+    draft.priority !== existing.priority ||
+    draft.nextFollowUpAt !== existing.nextFollowUpAt ||
+    draft.sequenceStep !== existing.sequenceStep ||
+    draft.nextAction !== existing.nextAction ||
+    draft.staffNotes !== existing.staffNotes
+  );
+}
+
 function artifactFileName(title: string): string {
   const sanitized = title
     .toLowerCase()
@@ -252,7 +314,9 @@ export default function CommercialLeadOpsPage() {
   const [segmentFilter, setSegmentFilter] = useState("all");
   const [leadStatusDrafts, setLeadStatusDrafts] = useState<Record<string, LeadStatus>>({});
   const [leadNoteDrafts, setLeadNoteDrafts] = useState<Record<string, string>>({});
+  const [leadOutreachDrafts, setLeadOutreachDrafts] = useState<Record<string, LeadOutreachPlanDraft>>({});
   const [updatingLeadId, setUpdatingLeadId] = useState<string | null>(null);
+  const [updatingOutreachLeadId, setUpdatingOutreachLeadId] = useState<string | null>(null);
   const [loadingArtifactId, setLoadingArtifactId] = useState<string | null>(null);
   const [loadingEventsArtifactId, setLoadingEventsArtifactId] = useState<string | null>(null);
   const [downloadingPacketArtifactId, setDownloadingPacketArtifactId] = useState<string | null>(null);
@@ -273,6 +337,13 @@ export default function CommercialLeadOpsPage() {
       const next = { ...current };
       rows.forEach((row) => {
         if (next[row.id] === undefined) next[row.id] = row.staff_notes ?? "";
+      });
+      return next;
+    });
+    setLeadOutreachDrafts((current) => {
+      const next = { ...current };
+      rows.forEach((row) => {
+        if (!next[row.id]) next[row.id] = buildOutreachPlanDraft(row);
       });
       return next;
     });
@@ -753,6 +824,50 @@ export default function CommercialLeadOpsPage() {
     }
   };
 
+  const patchOutreachDraft = (lead: CommercialLeadRow, patch: Partial<LeadOutreachPlanDraft>) => {
+    setLeadOutreachDrafts((current) => ({
+      ...current,
+      [lead.id]: {
+        ...(current[lead.id] || buildOutreachPlanDraft(lead)),
+        ...patch,
+      },
+    }));
+  };
+
+  const handleSaveOutreachPlan = async (lead: CommercialLeadRow) => {
+    const draft = leadOutreachDrafts[lead.id] || buildOutreachPlanDraft(lead);
+    setUpdatingOutreachLeadId(lead.id);
+
+    try {
+      const updatedLead = await updateCommercialLeadOutreachPlan({
+        leadId: lead.id,
+        stage: draft.stage,
+        channel: draft.channel,
+        priority: draft.priority,
+        nextFollowUpAt: fromDateTimeLocal(draft.nextFollowUpAt),
+        sequenceStep: Number.parseInt(draft.sequenceStep, 10) || 0,
+        nextAction: draft.nextAction,
+        staffNotes: draft.staffNotes,
+      });
+      setLeads((current) => current.map((row) => (row.id === updatedLead.id ? updatedLead : row)));
+      setLeadStatusDrafts((current) => ({ ...current, [updatedLead.id]: updatedLead.status }));
+      setLeadNoteDrafts((current) => ({ ...current, [updatedLead.id]: updatedLead.staff_notes ?? "" }));
+      setLeadOutreachDrafts((current) => ({ ...current, [updatedLead.id]: buildOutreachPlanDraft(updatedLead) }));
+      toast({
+        title: "Outreach plan updated",
+        description: `${updatedLead.email} is now ${OUTREACH_STAGE_LABELS[readCommercialLeadOutreachPlan(updatedLead).stage].toLowerCase()}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Outreach update failed",
+        description: error instanceof Error ? error.message : "Unable to update this outreach plan.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingOutreachLeadId(null);
+    }
+  };
+
   if (sessionLoading) {
     return (
       <main className="container mx-auto min-h-screen px-4 py-8">
@@ -814,7 +929,7 @@ export default function CommercialLeadOpsPage() {
         </div>
       )}
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
         <Card className="p-4">
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm text-muted-foreground">Total leads</span>
@@ -842,6 +957,20 @@ export default function CommercialLeadOpsPage() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="mt-2 text-2xl font-semibold">{summary.workforceLeads}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Follow-up due</span>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{summary.followUpsDue}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Pilot-ready</span>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{summary.pilotReady}</div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center justify-between gap-3">
@@ -1206,7 +1335,7 @@ export default function CommercialLeadOpsPage() {
                         </Select>
                       </div>
                     </TableCell>
-                    <TableCell className="min-w-[240px]">
+                    <TableCell className="min-w-[360px]">
                       <Input
                         value={draftNotes}
                         placeholder="Staff note"
@@ -1218,6 +1347,147 @@ export default function CommercialLeadOpsPage() {
                       <div className="mt-1 text-xs text-muted-foreground">
                         Last contacted: {formatDate(lead.last_contacted_at)}
                       </div>
+                      {(() => {
+                        const outreachDraft = leadOutreachDrafts[lead.id] || buildOutreachPlanDraft(lead);
+                        const outreachPlan = readCommercialLeadOutreachPlan(lead);
+                        const outreachChanged = isOutreachDraftChanged(lead, outreachDraft);
+                        const followUpDue = isCommercialLeadFollowUpDue(lead);
+                        return (
+                          <div
+                            className="mt-3 space-y-2 rounded-md border bg-slate-50 p-3 text-slate-800"
+                            data-outreach-pipeline-control="true"
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="font-medium">Outreach pipeline</div>
+                              <Badge variant={followUpDue ? "destructive" : "outline"}>
+                                {followUpDue ? "Follow-up due" : OUTREACH_STAGE_LABELS[outreachPlan.stage]}
+                              </Badge>
+                            </div>
+                            <div className="grid gap-2 md:grid-cols-3">
+                              <div className="space-y-1">
+                                <Label htmlFor={`outreach-stage-${lead.id}`} className="text-xs">
+                                  Stage
+                                </Label>
+                                <Select
+                                  value={outreachDraft.stage}
+                                  onValueChange={(value) => {
+                                    if (OUTREACH_STAGES.includes(value as OutreachStage)) {
+                                      patchOutreachDraft(lead, { stage: value as OutreachStage });
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger id={`outreach-stage-${lead.id}`} aria-label={`Outreach stage for ${lead.email}`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {OUTREACH_STAGES.map((stage) => (
+                                      <SelectItem key={stage} value={stage}>
+                                        {OUTREACH_STAGE_LABELS[stage]}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="space-y-1">
+                                <Label htmlFor={`outreach-channel-${lead.id}`} className="text-xs">
+                                  Channel
+                                </Label>
+                                <Select
+                                  value={outreachDraft.channel}
+                                  onValueChange={(value) => {
+                                    if (OUTREACH_CHANNELS.includes(value as OutreachChannel)) {
+                                      patchOutreachDraft(lead, { channel: value as OutreachChannel });
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger id={`outreach-channel-${lead.id}`} aria-label={`Outreach channel for ${lead.email}`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {OUTREACH_CHANNELS.map((channel) => (
+                                      <SelectItem key={channel} value={channel}>
+                                        {OUTREACH_CHANNEL_LABELS[channel]}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="space-y-1">
+                                <Label htmlFor={`outreach-priority-${lead.id}`} className="text-xs">
+                                  Priority
+                                </Label>
+                                <Select
+                                  value={outreachDraft.priority}
+                                  onValueChange={(value) => {
+                                    if (OUTREACH_PRIORITIES.includes(value as OutreachPriority)) {
+                                      patchOutreachDraft(lead, { priority: value as OutreachPriority });
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger id={`outreach-priority-${lead.id}`} aria-label={`Outreach priority for ${lead.email}`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {OUTREACH_PRIORITIES.map((priority) => (
+                                      <SelectItem key={priority} value={priority}>
+                                        {OUTREACH_PRIORITY_LABELS[priority]}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="grid gap-2 md:grid-cols-[1fr_90px]">
+                              <div className="space-y-1">
+                                <Label htmlFor={`outreach-follow-up-${lead.id}`} className="text-xs">
+                                  Next follow-up
+                                </Label>
+                                <Input
+                                  id={`outreach-follow-up-${lead.id}`}
+                                  type="datetime-local"
+                                  value={outreachDraft.nextFollowUpAt}
+                                  onChange={(event) => patchOutreachDraft(lead, { nextFollowUpAt: event.target.value })}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label htmlFor={`outreach-step-${lead.id}`} className="text-xs">
+                                  Step
+                                </Label>
+                                <Input
+                                  id={`outreach-step-${lead.id}`}
+                                  type="number"
+                                  min={0}
+                                  value={outreachDraft.sequenceStep}
+                                  onChange={(event) => patchOutreachDraft(lead, { sequenceStep: event.target.value })}
+                                />
+                              </div>
+                            </div>
+                            <Input
+                              value={outreachDraft.nextAction}
+                              maxLength={500}
+                              placeholder="Next action, e.g. send coach sample follow-up"
+                              aria-label={`Next outreach action for ${lead.email}`}
+                              onChange={(event) => patchOutreachDraft(lead, { nextAction: event.target.value })}
+                            />
+                            <Input
+                              value={outreachDraft.staffNotes}
+                              maxLength={2000}
+                              placeholder="Optional CRM note saved with this outreach update"
+                              aria-label={`Outreach CRM note for ${lead.email}`}
+                              onChange={(event) => patchOutreachDraft(lead, { staffNotes: event.target.value })}
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant={outreachChanged ? "default" : "outline"}
+                              disabled={!outreachChanged || updatingOutreachLeadId === lead.id}
+                              onClick={() => void handleSaveOutreachPlan(lead)}
+                            >
+                              {updatingOutreachLeadId === lead.id ? "Saving outreach" : "Save outreach"}
+                            </Button>
+                          </div>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

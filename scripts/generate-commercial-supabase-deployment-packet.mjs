@@ -71,6 +71,19 @@ const migrations = [
       'GRANT SELECT ON public.resume_proof_report_artifacts TO authenticated',
     ],
   },
+  {
+    phase: 'Commercial outreach pipeline',
+    file: 'supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql',
+    reason: 'Staff-only CRM sequence metadata, follow-up scheduling, and outreach launch-gate state for proof-pack leads.',
+    expectedSnippets: [
+      'update_commercial_lead_outreach_plan',
+      'outreach_pipeline',
+      'next_follow_up_at',
+      'sequence_step',
+      'commercial_launch_gate',
+      'GRANT EXECUTE ON FUNCTION public.update_commercial_lead_outreach_plan',
+    ],
+  },
 ];
 
 const unsafePatterns = [

@@ -239,6 +239,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  if (session.metadata?.type === 'credit_purchase') {
+    await handleCreditPurchaseCheckout(session, clientReferenceId);
+    return;
+  }
+
+  if (!subscriptionId) {
+    console.error('No subscription id in checkout session');
+    return;
+  }
+
   // Create initial subscription record
   const tier = session.metadata?.tier || 'explorer';
 
@@ -259,6 +269,55 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   console.log(`Checkout completed for user: ${clientReferenceId}, tier: ${tier}`);
+}
+
+async function handleCreditPurchaseCheckout(session: Stripe.Checkout.Session, userId: string) {
+  const credits = Number.parseInt(session.metadata?.credits || '0', 10);
+  const packageId = session.metadata?.packageId || 'unknown';
+  const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : null;
+  const amount = typeof session.amount_total === 'number' ? session.amount_total / 100 : 0;
+
+  if (!Number.isFinite(credits) || credits <= 0) {
+    console.error('Invalid credit purchase checkout metadata:', session.metadata);
+    return;
+  }
+
+  const { error: creditError } = await supabase.rpc('add_report_credits', {
+    p_user_id: userId,
+    p_credits: credits,
+    p_stripe_id: paymentIntentId,
+    p_description: `Stripe ${packageId} report credit purchase`,
+  });
+
+  if (creditError) {
+    console.error('Error adding report credits:', creditError);
+    throw creditError;
+  }
+
+  const { error: transactionError } = await supabase
+    .from('payment_transactions')
+    .insert({
+      user_id: userId,
+      transaction_type: 'credit_purchase',
+      amount,
+      currency: (session.currency || 'usd').toUpperCase(),
+      status: 'succeeded',
+      stripe_payment_intent_id: paymentIntentId,
+      description: `${credits} report credits purchased`,
+      metadata: {
+        checkout_session_id: session.id,
+        package_id: packageId,
+        credits,
+        stripe_customer_id: session.customer,
+      },
+    });
+
+  if (transactionError) {
+    console.error('Error recording credit purchase transaction:', transactionError);
+    throw transactionError;
+  }
+
+  console.log(`Credit purchase completed for user: ${userId}, credits: ${credits}, package: ${packageId}`);
 }
 
 // ============================================================================

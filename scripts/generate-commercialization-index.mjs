@@ -28,6 +28,7 @@ const featureMap = [
     routes: ['/proof-pack-gallery', '/sample-report', '/automation-risk/:occupation', '/enterprise-dashboard'],
     files: [
       'src/pages/ProofPackGalleryPage.tsx',
+      'src/lib/commercialLaunchGate.ts',
       'src/lib/institutionalReadinessPacket.ts',
       'docs/commercialization/pilot-outreach-pack.md',
       'scripts/verify-commercial-browser.mjs',
@@ -115,8 +116,23 @@ const featureMap = [
       'src/lib/commercialReportArtifacts.ts',
       'supabase/migrations/20260523000100_create_commercial_leads.sql',
       'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
+      'supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+  },
+  {
+    feature: 'Commercial launch gate and payment fulfillment boundary',
+    buyer: 'Founder, pilot operations, paid proof-pack buyers',
+    routes: ['/proof-pack-gallery', '/pricing', '/for-coaches', '/operations/leads'],
+    files: [
+      'src/lib/commercialLaunchGate.ts',
+      'src/lib/stripe.ts',
+      'supabase/functions/create-checkout-session/index.ts',
+      'supabase/functions/stripe-webhook/index.ts',
+      'scripts/verify-report-evidence.mjs',
+      'scripts/verify-commercial-trust-boundaries.mjs',
+    ],
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
   },
   {
     feature: 'Source provenance and claim boundaries',

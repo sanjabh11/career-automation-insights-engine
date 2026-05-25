@@ -279,11 +279,18 @@ export const redirectToCheckout = async (
     throw new Error('VITE_SUPABASE_URL not configured');
   }
 
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token || session.user.id !== userId) {
+    throw new Error('Sign in again before starting checkout.');
+  }
+
   const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${session.access_token}`,
     },
     body: JSON.stringify({
       priceId,
@@ -333,11 +340,18 @@ export const redirectToCreditCheckout = async (
     throw new Error('VITE_SUPABASE_URL not configured');
   }
 
-  const response = await fetch(`${supabaseUrl}/functions/v1/create-credit-checkout`, {
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token || session.user.id !== userId) {
+    throw new Error('Sign in again before buying report credits.');
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${session.access_token}`,
     },
     body: JSON.stringify({
       priceId: pkg.stripePriceId,

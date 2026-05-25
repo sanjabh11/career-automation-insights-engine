@@ -528,6 +528,13 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(outreachPhasePlan, 'outreach phase plan');
   await assertVisible(outreachPhasePlan.getByText('2. Founder-led validation'), 'outreach founder validation phase');
   await assertVisible(outreachPhasePlan.getByText('5. Scaled outreach'), 'outreach scaled phase');
+  const commercialLaunchGate = page.locator('[data-commercial-launch-gate="true"]');
+  await assertVisible(commercialLaunchGate, 'commercial outreach launch gate');
+  await assertVisible(commercialLaunchGate.getByText(/Auth live E2E secrets/i), 'launch gate auth secret row');
+  await assertVisible(commercialLaunchGate.getByText(/Public\/no-JWT function review/i), 'launch gate public function row');
+  await assertVisible(commercialLaunchGate.getByRole('cell', { name: 'Payment fulfillment' }), 'launch gate payment fulfillment row');
+  await assertVisible(page.locator('[data-function-security-review="true"]'), 'function security review');
+  await assertVisible(page.getByText(/Commercial core with JWT/i), 'function security commercial core group');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });

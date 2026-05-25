@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T14:55:57.386Z",
+  "generatedAt": "2026-05-25T17:45:11.471Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -415,6 +415,81 @@
       "passed": true
     },
     {
+      "id": "commercial-launch-gate-module",
+      "label": "Commercial outreach launch gate model",
+      "path": "src/lib/commercialLaunchGate.ts",
+      "type": "commercial-governance",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "supabase-edge-functions",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "commercialLaunchGateItems",
+        "functionSecurityReviewGroups",
+        "Auth live E2E secrets",
+        "Exposed token rotation",
+        "Public/no-JWT function review",
+        "Legacy function sprawl",
+        "Outreach automation",
+        "Payment fulfillment"
+      ],
+      "caveat": "Launch-gate model separates controls already implemented from owner-held secrets, manual function review, provider integration, and payment replay evidence still needed before scaled outreach.",
+      "bytes": 6912,
+      "rows": 122,
+      "sha256": "078a2a0438781229f334dfb190aabdacd8b3c70c4d1d3e1bc90d497e36525e1b",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-outreach-pipeline-migration",
+      "label": "Commercial lead outreach pipeline migration",
+      "path": "supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "update_commercial_lead_outreach_plan",
+        "outreach_pipeline",
+        "next_follow_up_at",
+        "sequence_step",
+        "commercial_launch_gate",
+        "Staff-only commercial outreach pipeline update"
+      ],
+      "caveat": "Staff-only CRM sequence metadata makes founder-led outreach trackable; it does not send emails, guarantee consent compliance, or replace a configured CRM/email provider.",
+      "bytes": 4343,
+      "rows": 127,
+      "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-checkout-auth-boundary",
+      "label": "Commercial checkout authentication boundary",
+      "path": "src/lib/stripe.ts",
+      "type": "payment-runtime",
+      "sourceIds": [
+        "supabase-edge-functions",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "session?.access_token",
+        "Sign in again before starting checkout",
+        "Sign in again before buying report credits",
+        "Authorization",
+        "create-checkout-session"
+      ],
+      "caveat": "Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.",
+      "bytes": 14317,
+      "rows": 427,
+      "sha256": "59ed47cc90ba8cf6bbb101a18d082221ac7935c29aa0d5b97709281194bd4692",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "resume-deletion-receipt-client",
       "label": "Resume analysis deletion receipt client",
       "path": "src/lib/resumeAnalysisPrivacy.ts",
@@ -729,6 +804,9 @@
         "CRM import pack",
         "buildOutreachCsv",
         "outreachEvidenceCards",
+        "data-commercial-launch-gate=\"true\"",
+        "functionSecurityReviewGroups",
+        "Secrets stay owner-action only",
         "source_ids",
         "does_not_prove",
         "NACE career readiness",
@@ -739,9 +817,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 47105,
-      "rows": 803,
-      "sha256": "2913c4eb23ec3c6950d5330ff5c0ca63dbdef29998d22935d2770c550a54dec0",
+      "bytes": 50979,
+      "rows": 864,
+      "sha256": "bcc944953bb717bfc34d47cf98166ea8722711926a356464ee653c6555ee66c8",
       "failures": [],
       "passed": true
     },
@@ -907,14 +985,15 @@
         "create_resume_proof_report_artifact",
         "delete_resume_proof_report_artifact_with_receipt",
         "log_commercial_report_artifact_event",
+        "update_commercial_lead_outreach_plan",
         "non-mutating-public-api-boundary",
         "missing-object-or-schema-cache",
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
-      "bytes": 13296,
-      "rows": 367,
-      "sha256": "1875b11b38e445c518bdd7c9793142a74104484ef2fd8edf2615a2a9ec77ec0a",
+      "bytes": 13914,
+      "rows": 385,
+      "sha256": "055127c97a7ea8854d9900b9bd279cb6d20422e8b5436e26f6521b1b657e23da",
       "failures": [],
       "passed": true
     },
@@ -938,9 +1017,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 11781,
-      "rows": 261,
-      "sha256": "c428fd5ad9070a2e36750ae41de3fba78e3b20d7a16fbe5330250f1de59cf7ee",
+      "bytes": 12307,
+      "rows": 274,
+      "sha256": "b479988e180c80d2d572bce8e243e340f1e05058be3a492da78ce487450b2f6b",
       "failures": [],
       "passed": true
     },
@@ -966,9 +1045,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 5128,
-      "rows": 74,
-      "sha256": "384f985ba4c0171ec59509a2a366bdec2a24c6559d7600af7b1a7b825e331dac",
+      "bytes": 5287,
+      "rows": 75,
+      "sha256": "4d817a91d599135ed10be5e2de2c4e6c8bac7ab9c3b8f3f840f0c9eda525c95f",
       "failures": [],
       "passed": true
     },

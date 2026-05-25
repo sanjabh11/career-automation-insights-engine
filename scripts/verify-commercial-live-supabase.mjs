@@ -135,6 +135,24 @@ const checks = [
     body: { p_artifact_id: ZERO_UUID, p_limit: 1 },
     expectedBoundary: 'staff-required-no-mutation',
   },
+  {
+    id: 'commercial-lead-outreach-plan-rpc',
+    label: 'update_commercial_lead_outreach_plan RPC exists behind staff boundary',
+    method: 'POST',
+    path: '/rest/v1/rpc/update_commercial_lead_outreach_plan',
+    body: {
+      p_lead_id: ZERO_UUID,
+      p_outreach_stage: 'research_ready',
+      p_outreach_channel: 'email',
+      p_priority: 'medium',
+      p_next_follow_up_at: null,
+      p_sequence_step: 0,
+      p_next_action: 'non-mutating live proof',
+      p_staff_notes: null,
+    },
+    expectedBoundary: 'staff-required-or-missing-lead-no-mutation',
+    acceptStatementTimeoutAsPresent: true,
+  },
 ];
 
 function hasFlag(flag) {

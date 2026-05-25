@@ -27,16 +27,43 @@ serve(async (req) => {
       httpClient: Stripe.createFetchHttpClient(),
     });
 
-    const { priceId, userId, tier, billingPeriod } = await req.json();
+    const {
+      priceId,
+      userId: requestedUserId,
+      tier,
+      billingPeriod,
+      packageId,
+      credits,
+    } = await req.json();
 
-    if (!priceId || !userId || !tier) {
-      throw new Error('priceId, userId, and tier are required');
+    const isCreditPurchase = Boolean(packageId || credits);
+    if (!priceId || (!isCreditPurchase && !tier)) {
+      throw new Error('priceId and tier are required');
+    }
+    if (isCreditPurchase && (!packageId || !credits)) {
+      throw new Error('priceId, packageId, and credits are required');
     }
 
-    // Verify user exists via Supabase
+    // Verify the caller from the Supabase JWT. Do not trust client-supplied user ids.
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const authHeader = req.headers.get('authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      throw new Error('Authorization header required');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      throw new Error('Invalid authentication');
+    }
+
+    if (requestedUserId && requestedUserId !== user.id) {
+      throw new Error('Checkout user mismatch');
+    }
+
+    const userId = user.id;
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -56,7 +83,7 @@ serve(async (req) => {
     // Create Stripe customer if needed
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: profile?.email || undefined,
+        email: profile?.email || user.email || undefined,
         metadata: {
           supabase_user_id: userId,
         },
@@ -67,7 +94,38 @@ serve(async (req) => {
     // Determine success/cancel URLs
     const origin = req.headers.get('origin') || Deno.env.get('APP_URL') || 'https://automationinsights.app';
 
-    // Create checkout session
+    if (isCreditPurchase) {
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        client_reference_id: userId,
+        mode: 'payment',
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        metadata: {
+          type: 'credit_purchase',
+          packageId,
+          credits: String(credits),
+          supabase_user_id: userId,
+        },
+        success_url: `${origin}/dashboard?checkout=credit_success&credits=${credits}`,
+        cancel_url: `${origin}/for-coaches?checkout=cancelled`,
+        allow_promotion_codes: true,
+      });
+
+      return new Response(
+        JSON.stringify({ sessionId: session.id, url: session.url }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+    }
+
+    // Create subscription checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       client_reference_id: userId,
@@ -79,6 +137,7 @@ serve(async (req) => {
         },
       ],
       metadata: {
+        type: 'subscription',
         tier,
         billingPeriod: billingPeriod || 'month',
         supabase_user_id: userId,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T14:55:57.008Z",
+  "generatedAt": "2026-05-25T17:45:05.795Z",
   "targetProjectRef": "kvunnankqgfokeufvsrv",
   "allPassed": true,
   "versionsAreSorted": true,
@@ -21,7 +21,7 @@
       "purpose": "Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files."
     }
   ],
-  "combinedSqlSha256": "3aeaedfc7ecd50505c49fac62eeee7f3155e4046510267972d5baacdda899591",
+  "combinedSqlSha256": "6678b89e7283e6ae32320b5ba1e1747b0f232c3221f1b6c053d753d5b9f32e3c",
   "references": [
     {
       "label": "Supabase database migrations",
@@ -129,6 +129,25 @@
       "version": "20260524000500",
       "lineCount": 314,
       "sha256": "7ca18c1ef3788b23b270edffa1f8311f59a2aa9d7af198f48c17b84f4fa0adce",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Commercial outreach pipeline",
+      "file": "supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql",
+      "reason": "Staff-only CRM sequence metadata, follow-up scheduling, and outreach launch-gate state for proof-pack leads.",
+      "expectedSnippets": [
+        "update_commercial_lead_outreach_plan",
+        "outreach_pipeline",
+        "next_follow_up_at",
+        "sequence_step",
+        "commercial_launch_gate",
+        "GRANT EXECUTE ON FUNCTION public.update_commercial_lead_outreach_plan"
+      ],
+      "version": "20260525000100",
+      "lineCount": 136,
+      "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
       "missingSnippets": [],
       "unsafeMatches": [],
       "status": "pass"

@@ -15,6 +15,7 @@ import {
   buildLocalLaborMarketSnapshotPacket,
   renderLocalLaborMarketSnapshotHtml,
 } from "@/lib/localLaborMarketSnapshot";
+import { commercialLaunchGateItems, functionSecurityReviewGroups } from "@/lib/commercialLaunchGate";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
 
@@ -806,6 +807,67 @@ export default function ProofPackGalleryPage() {
                   {phase.maturity.toFixed(1)}/5 maturity
                 </div>
                 <p className="mt-3 text-xs leading-5 text-amber-100">{phase.remaining}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-commercial-launch-gate="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Commercial outreach launch gate</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Operational view of the remaining launch blockers: owner-held secrets, public function review, legacy function sprawl, outreach automation, licensed data, accessibility, and payment fulfillment.
+              </p>
+            </div>
+            <Badge className="border-amber-400/30 bg-amber-400/10 text-amber-100">
+              Secrets stay owner-action only
+            </Badge>
+          </div>
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Gap</th>
+                  <th className="py-3 pr-4 font-semibold">Control now in place</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining action</th>
+                  <th className="py-3 pr-4 font-semibold">Priority</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commercialLaunchGateItems.map((item) => (
+                  <tr key={item.gap} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{item.gap}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.control}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.currentProof}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.remainingAction}</td>
+                    <td className="py-4 pr-4">
+                      <Badge variant="outline" className={item.priority === "high" ? "border-red-400/40 text-red-200" : "border-slate-600 text-slate-300"}>
+                        {item.priority}
+                      </Badge>
+                    </td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {item.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-4" data-function-security-review="true">
+            {functionSecurityReviewGroups.map((group) => (
+              <article key={group.group} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{group.group}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{group.currentControl}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-500">{group.functions.join(", ")}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {group.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{group.remainingRisk}</p>
               </article>
             ))}
           </div>

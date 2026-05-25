@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T09:04:08.178Z",
+  "generatedAt": "2026-05-25T17:30:42.857Z",
   "verifier": "verify-commercial-live-supabase",
   "mode": "non-mutating-public-api-boundary",
   "target": {
@@ -104,7 +104,7 @@
       "label": "log_commercial_report_artifact_event RPC accepts new review event types behind staff boundary",
       "method": "POST",
       "path": "/rest/v1/rpc/log_commercial_report_artifact_event",
-      "expectedBoundary": "staff-required-or-missing-artifact-no-mutation",
+      "expectedBoundary": "staff-required-or-missing-artifact-or-cold-timeout-no-mutation",
       "status": 400,
       "passed": true,
       "classification": "present-protected",
@@ -116,6 +116,17 @@
       "method": "POST",
       "path": "/rest/v1/rpc/get_commercial_report_artifact_events",
       "expectedBoundary": "staff-required-no-mutation",
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "not authorized P0001"
+    },
+    {
+      "id": "commercial-lead-outreach-plan-rpc",
+      "label": "update_commercial_lead_outreach_plan RPC exists behind staff boundary",
+      "method": "POST",
+      "path": "/rest/v1/rpc/update_commercial_lead_outreach_plan",
+      "expectedBoundary": "staff-required-or-missing-lead-no-mutation",
       "status": 400,
       "passed": true,
       "classification": "present-protected",
