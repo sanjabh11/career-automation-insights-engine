@@ -40,10 +40,10 @@ const checks = [
   },
   {
     id: 'onet-task-ratings-ingested-rows',
-    label: 'O*NET 30.3 task rating metadata rows are present',
+    label: 'Known O*NET 30.3 task rating metadata probe row is present',
     mode: 'rows',
     path:
-      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,onet_release_version,importance,frequency_category,frequency_percent,task_ratings_ingested_at&importance=not.is.null&task_ratings_ingested_at=not.is.null&order=importance.desc&limit=5',
+      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,onet_release_version,importance,frequency_category,frequency_percent,task_ratings_ingested_at&occupation_code=eq.11-1011.00&task_id=eq.8823&onet_release_version=eq.30.3&importance=not.is.null&task_ratings_ingested_at=not.is.null&limit=1',
     expectedBoundary: 'live-ingest-has-rated-tasks',
   },
   {
