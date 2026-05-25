@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-25T13:55:35.413Z
+Generated: 2026-05-25T14:04:38.512Z
 Branch: `main`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 

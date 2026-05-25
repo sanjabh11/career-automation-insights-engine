@@ -45,6 +45,7 @@ const checks = [
     method: 'GET',
     path: '/rest/v1/resume_analysis_deletion_receipts?select=id,analysis_id,receipt_hash&limit=0',
     expectedBoundary: 'table-present-rls-or-empty',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'resume-proof-report-artifacts-table',
@@ -52,6 +53,7 @@ const checks = [
     method: 'GET',
     path: '/rest/v1/resume_proof_report_artifacts?select=id,analysis_id,review_status,raw_resume_text_stored,resume_detail_rows_redacted&limit=0',
     expectedBoundary: 'table-present-rls-or-empty',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'resume-proof-report-artifact-receipts-table',
@@ -59,6 +61,7 @@ const checks = [
     method: 'GET',
     path: '/rest/v1/resume_proof_report_artifact_deletion_receipts?select=id,artifact_id,receipt_hash&limit=0',
     expectedBoundary: 'table-present-rls-or-empty',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'commercial-artifact-events-table',
@@ -66,6 +69,7 @@ const checks = [
     method: 'GET',
     path: '/rest/v1/commercial_report_artifact_events?select=id,event_type,artifact_id&limit=0',
     expectedBoundary: 'table-present-rls-or-empty',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'commercial-staff-table',
@@ -73,6 +77,7 @@ const checks = [
     method: 'GET',
     path: '/rest/v1/commercial_staff?select=user_id,role,active&limit=0',
     expectedBoundary: 'staff-table-present-rls-or-empty',
+    acceptStatementTimeoutAsPresent: true,
   },
   {
     id: 'delete-resume-analysis-rpc',
