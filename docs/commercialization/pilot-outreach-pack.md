@@ -15,7 +15,7 @@ Bounded pilot promise: produce reviewed AI work-transition reports for individua
 
 Primary gallery route: `/proof-pack-gallery`
 
-Gallery evidence boundary: every buyer path and exported CRM row must carry source IDs, source labels, confidence, caveat, "does not prove", and human-review state. The gallery is a market-test artifact, not proof of live CRM performance, local hiring demand, course/provider endorsement, or provider-backed labor-market intelligence.
+Gallery evidence boundary: every buyer path, local labor-market snapshot row, and exported CRM row must carry source IDs, source labels, confidence, caveat, "does not prove", and human-review state. The gallery is a market-test artifact, not proof of live CRM performance, local hiring demand, course/provider endorsement, or provider-backed labor-market intelligence.
 
 | Offer | Buyer | Deliverable | Success Metric | Boundary |
 |---|---|---|---|---|
@@ -67,7 +67,7 @@ Hi {name}, I am looking for feedback on an AI work-transition proof pack for stu
 | 13 | ESCO skill taxonomy crosswalk | Common in EU/global products | Medium | Medium | Adapter-ready |
 | 14 | Licensed posting-data validation | Common in paid platforms | Medium | Low until licensed | Pending |
 | 15 | Reviewer identity and approval audit log | Common institutional workflow | High | Medium | Implemented as section/final artifact events plus downloadable review attestation; live Supabase application pending |
-| 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Implemented as source-labeled appendix boundary; buyer-selected local snapshots pending |
+| 16 | Local labor-market proof appendix | Uncommon for public tools | Medium | Medium | Implemented as source-labeled appendix boundary plus proof-pack-gallery HTML/CSV snapshot packet for geography, source vintage, query metadata, reviewer notes, caveats, and does-not-prove boundaries; live buyer source rows pending |
 | 17 | Course/provider recommendation boundary | Common | Medium | Medium | Implemented as source-labeled learning/provider boundary; live provider catalog and outcome validation pending |
 | 18 | Cohort reporting for career centers | Common institutional need | Medium | Medium | Implemented as aggregate-only sample pack with FERPA-style privacy, NACE outcome boundary, CSV/HTML export, and advisor-review requirements; live batch consent and persistence pending |
 | 19 | CRM/email automation for leads | Common commercial need | High | High | Source-labeled CRM-import CSV implemented; live CRM/email sync pending |

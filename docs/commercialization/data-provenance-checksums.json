@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-25T01:06:29.614Z",
+  "generatedAt": "2026-05-25T03:39:54.515Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-24T22:50:03.660Z",
+    "generatedAt": "2026-05-25T01:09:41.284Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -268,6 +268,43 @@
       "bytes": 77559,
       "rows": 1523,
       "sha256": "c9151cfd5c86de0a06f946a29e30b04cbd0f3fa7fcdca6281b3816aa68ea7614",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "local-labor-market-snapshot-module",
+      "label": "Local labor-market snapshot packet",
+      "path": "src/lib/localLaborMarketSnapshot.ts",
+      "type": "report-runtime",
+      "sourceIds": [
+        "bls-oews",
+        "bls-laus",
+        "bls-qcew",
+        "careeronestop-api",
+        "census-acs-api",
+        "serpapi",
+        "lightcast"
+      ],
+      "expectedSnippets": [
+        "LocalMarketSnapshotPacket",
+        "buildLocalLaborMarketSnapshotPacket",
+        "buildLocalLaborMarketSnapshotCsv",
+        "renderLocalLaborMarketSnapshotHtml",
+        "data-local-labor-market-snapshot=\"true\"",
+        "BLS OEWS wage and employment context",
+        "BLS LAUS local labor-force pressure",
+        "BLS QCEW industry employment base",
+        "CareerOneStop occupation and training cross-check",
+        "Census ACS local access context",
+        "Reviewed posting snapshot",
+        "Licensed market-intelligence adapter",
+        "requiredSourceMetadata",
+        "claimBoundaries"
+      ],
+      "caveat": "Buyer-ready local-market snapshot template; it does not prove local hiring demand, wages, placement outcomes, provider quality, or licensed market-intelligence depth until geography, source vintage, query metadata, and reviewer notes are attached.",
+      "bytes": 14045,
+      "rows": 279,
+      "sha256": "5eb754b837a988ca02842fb471dba4da61c3e99f656e7f7dab62c4f3c0bcb889",
       "failures": [],
       "passed": true
     },
@@ -626,6 +663,10 @@
         "Institutional readiness packet",
         "Trust HTML",
         "Risk CSV",
+        "Local market snapshot pack",
+        "Snapshot HTML",
+        "Snapshot CSV",
+        "data-local-market-snapshot-gallery=\"true\"",
         "CRM import pack",
         "buildOutreachCsv",
         "outreachEvidenceCards",
@@ -638,10 +679,10 @@
         "Lightcast positioning",
         "Workera positioning"
       ],
-      "caveat": "Public sample gallery, institutional readiness packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, or institutional compliance.",
-      "bytes": 30939,
-      "rows": 538,
-      "sha256": "5c0a541f3386081f16ef92ebe991aa22982bc5ecfb2112489a4e01a3dee01703",
+      "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
+      "bytes": 35258,
+      "rows": 609,
+      "sha256": "a0bf4ad5d39df65e9a26c1eee9ff9b66fbab357ed021d0ebcd500b08932bbe35",
       "failures": [],
       "passed": true
     },
@@ -707,7 +748,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "3633ae0c418ec8b19583d77200b3a59513f7d663f0fde70c0693f0dea9b1a502",
+      "sha256": "21eb233abecdc5d9aa9efc345febe6a51fef201bc6cdb6102765bac1f17779b1",
       "failures": [],
       "passed": true
     },
@@ -737,7 +778,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "3b51e4834c5c6f574f07d6c9d7cde39dcf67d54df9227a7cee28ac4032dc13f8",
+      "sha256": "5f54454703cbcc25341abba5a64eb391387f536e7ce78278b9d1def157194e98",
       "failures": [],
       "passed": true
     },
@@ -868,7 +909,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 4641,
       "rows": 69,
-      "sha256": "72f0da2cada1e39fb52aad1bb8a091e2f47946cff2dbcc7294ea540e09bbfc02",
+      "sha256": "b6eb7e8db7534e02172db3f34d12be4f19f11e8fbd423d8be4fd312d114f8359",
       "failures": [],
       "passed": true
     },

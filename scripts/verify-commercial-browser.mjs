@@ -507,6 +507,11 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.locator('[data-ai-rmf-control-map="true"]'), 'institutional AI RMF control map');
   await assertVisible(page.locator('[data-wcag-accessibility-gate="true"]'), 'institutional WCAG accessibility gate');
   await assertVisible(page.locator('[data-employment-decision-boundary="true"]'), 'institutional employment decision boundary');
+  await assertVisible(page.locator('[data-local-market-snapshot-gallery="true"]'), 'local market snapshot packet');
+  await assertVisible(page.getByRole('button', { name: /Snapshot HTML/i }), 'local market snapshot HTML export');
+  await assertVisible(page.getByRole('button', { name: /Snapshot CSV/i }), 'local market snapshot CSV export');
+  await assertVisible(page.locator('[data-local-market-snapshot-row]').first(), 'local market snapshot row');
+  await assertVisible(page.getByText(/Local market snapshot pack/i), 'local market snapshot title');
   await assertVisible(page.getByText(/CRM import pack/i), 'CRM import pack');
   await assertVisible(page.getByRole('button', { name: /CRM CSV/i }), 'CRM CSV export');
   await assertVisible(page.getByText(/Planning artifact only/i).first(), 'gallery planning-only boundary');
@@ -584,6 +589,58 @@ async function verifyProofPackGallery(page, baseUrl) {
     }
   }
   console.log('ok download - institutional readiness CSV');
+
+  const snapshotHtmlDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Snapshot HTML/i }).click();
+  const snapshotHtmlDownload = await snapshotHtmlDownloadPromise;
+  if (!snapshotHtmlDownload.suggestedFilename().includes('local-labor-market-snapshot-pack')) {
+    throw new Error(`Unexpected local market snapshot HTML filename: ${snapshotHtmlDownload.suggestedFilename()}`);
+  }
+  const snapshotHtml = await snapshotHtmlDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Local market snapshot HTML stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expected of [
+    'data-local-labor-market-snapshot="true"',
+    'Local Labor-Market Snapshot Packet',
+    'BLS OEWS wage and employment context',
+    'CareerOneStop occupation and training cross-check',
+    'Does not prove',
+  ]) {
+    if (!snapshotHtml.includes(expected)) {
+      throw new Error(`Local market snapshot HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - local market snapshot HTML');
+
+  const snapshotCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Snapshot CSV/i }).click();
+  const snapshotCsvDownload = await snapshotCsvDownloadPromise;
+  if (!snapshotCsvDownload.suggestedFilename().includes('local-labor-market-snapshot-sources')) {
+    throw new Error(`Unexpected local market snapshot CSV filename: ${snapshotCsvDownload.suggestedFilename()}`);
+  }
+  const snapshotCsvBody = await snapshotCsvDownload.createReadStream().then(async (stream) => {
+    if (!stream) throw new Error('Local market snapshot CSV stream was unavailable');
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of [
+    'snapshot_id',
+    'source_id',
+    'required_buyer_input',
+    'required_source_metadata',
+    'validation_status',
+    'review_state',
+    'does_not_prove',
+  ]) {
+    if (!snapshotCsvBody.includes(expectedColumn)) {
+      throw new Error(`Local market snapshot CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - local market snapshot CSV');
 }
 
 async function runBrowserChecks(baseUrl) {

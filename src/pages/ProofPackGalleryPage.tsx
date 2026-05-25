@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, CheckCircle2, Download, ExternalLink, FileText, GraduationCap, Mail, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, Download, ExternalLink, FileText, GraduationCap, Mail, MapPin, ShieldCheck, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import NavigationPremium from "@/components/NavigationPremium";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,11 @@ import {
   INSTITUTIONAL_READINESS_STATUS_LABELS,
   renderInstitutionalReadinessPacketHtml,
 } from "@/lib/institutionalReadinessPacket";
+import {
+  buildLocalLaborMarketSnapshotCsv,
+  buildLocalLaborMarketSnapshotPacket,
+  renderLocalLaborMarketSnapshotHtml,
+} from "@/lib/localLaborMarketSnapshot";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
 
@@ -296,9 +301,37 @@ function downloadInstitutionalReadinessCsv() {
   window.URL.revokeObjectURL(url);
 }
 
+function downloadLocalMarketSnapshotHtml() {
+  const packet = buildLocalLaborMarketSnapshotPacket();
+  const blob = new Blob([renderLocalLaborMarketSnapshotHtml(packet)], { type: "text/html;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "local-labor-market-snapshot-pack.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function downloadLocalMarketSnapshotCsv() {
+  const packet = buildLocalLaborMarketSnapshotPacket();
+  const blob = new Blob([`${buildLocalLaborMarketSnapshotCsv(packet)}\n`], { type: "text/csv;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "local-labor-market-snapshot-sources.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
 export default function ProofPackGalleryPage() {
   const institutionalPacket = buildInstitutionalReadinessPacket();
   const topInstitutionalRisks = institutionalPacket.riskRows.slice(0, 4);
+  const localMarketPacket = buildLocalLaborMarketSnapshotPacket();
+  const localMarketPreviewRows = localMarketPacket.sourceRows.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -445,6 +478,47 @@ export default function ProofPackGalleryPage() {
         </section>
 
         <section className="mt-12 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-local-market-snapshot-gallery="true">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-emerald-400/10 text-emerald-200">
+                  <MapPin className="h-5 w-5" />
+                </div>
+                <h2 className="text-2xl font-semibold text-white">Local market snapshot pack</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Package the exact geography, source vintage, query metadata, caveats, and reviewer notes required before local-demand language becomes client-ready.
+                </p>
+              </div>
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+                <Button type="button" onClick={downloadLocalMarketSnapshotHtml} className="w-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 sm:w-auto">
+                  <Download className="mr-2 h-4 w-4" />
+                  Snapshot HTML
+                </Button>
+                <Button type="button" onClick={downloadLocalMarketSnapshotCsv} variant="outline" className="w-full border-slate-600 bg-slate-950 text-slate-100 hover:bg-slate-800 sm:w-auto">
+                  <Download className="mr-2 h-4 w-4" />
+                  Snapshot CSV
+                </Button>
+              </div>
+            </div>
+            <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100" data-local-market-snapshot-boundary="true">
+              {localMarketPacket.statusSummary}
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {localMarketPreviewRows.map((row) => (
+                <article key={row.id} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-local-market-snapshot-row={row.id}>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{row.confidence} confidence</Badge>
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">{REVIEW_STATUS_LABELS[row.reviewStatus]}</Badge>
+                  </div>
+                  <h3 className="mt-3 font-semibold leading-6 text-white">{row.label}</h3>
+                  <p className="mt-2 text-xs leading-5 text-slate-300"><span className="font-semibold text-slate-100">Source:</span> {sourceLabels([row.sourceId])}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-300"><span className="font-semibold text-slate-100">Caveat:</span> {row.caveat}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100"><span className="font-semibold">Does not prove:</span> {row.doesNotProve}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
           <div className="rounded-lg border border-slate-800 bg-slate-900 p-5">
             <div className="flex items-start justify-between gap-4">
               <div>

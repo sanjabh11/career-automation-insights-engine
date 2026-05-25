@@ -132,6 +132,19 @@ const featureMap = [
     proof: 'Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest.',
   },
   {
+    feature: 'Local labor-market snapshot packet',
+    buyer: 'Career centers, workforce boards, L&D teams, institutional pilot reviewers',
+    routes: ['/proof-pack-gallery'],
+    files: [
+      'src/lib/localLaborMarketSnapshot.ts',
+      'src/pages/ProofPackGalleryPage.tsx',
+      'scripts/verify-commercial-browser.mjs',
+      'scripts/verify-report-evidence.mjs',
+      'scripts/verify-commercial-data-provenance.mjs',
+    ],
+    proof: 'Proof-pack gallery now exports a local labor-market snapshot HTML/CSV packet that lists required geography, source vintage, query metadata, reviewer notes, source IDs, caveats, and does-not-prove boundaries before any local-demand, wage, training, posting, or provider-backed claim becomes client-ready.',
+  },
+  {
     feature: 'AI Work Transition Proof Pack',
     buyer: 'Individuals, coaches, career centers, workforce boards, L&D teams',
     routes: ['/sample-report', '/automation-risk/:occupation', '/enterprise-dashboard'],
@@ -307,11 +320,11 @@ CI boundary:
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, and the live parser receipt verifier are implemented, while live Supabase migration proof, paid PDF/DOCX parser adapters, malware scanning, and formal e-signature/PDF storage remain Phase 5 hardening work.
-- Phase 6 now has a public proof-pack gallery and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
+- Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
 - GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
-- Local seed artifacts and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
+- Local seed artifacts, the local labor-market snapshot packet, and O*NET Task Ratings import boundaries have checksums, but production O*NET/BLS imported database-table checksums and true O*NET Task Ratings task-time weights still need a live Supabase data export.
 
 ## Machine-Readable Companion
 

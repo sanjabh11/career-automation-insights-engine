@@ -82,6 +82,15 @@ const artifacts = [
     caveat: 'Emerging role radar, skill-change ledger, learning/provider boundary, local labor-market appendix, and section-level review workflow are planning signals; provider-backed market validation remains adapter-ready.',
   },
   {
+    id: 'local-labor-market-snapshot-module',
+    label: 'Local labor-market snapshot packet',
+    path: 'src/lib/localLaborMarketSnapshot.ts',
+    type: 'report-runtime',
+    sourceIds: ['bls-oews', 'bls-laus', 'bls-qcew', 'careeronestop-api', 'census-acs-api', 'serpapi', 'lightcast'],
+    expectedSnippets: ['LocalMarketSnapshotPacket', 'buildLocalLaborMarketSnapshotPacket', 'buildLocalLaborMarketSnapshotCsv', 'renderLocalLaborMarketSnapshotHtml', 'data-local-labor-market-snapshot="true"', 'BLS OEWS wage and employment context', 'BLS LAUS local labor-force pressure', 'BLS QCEW industry employment base', 'CareerOneStop occupation and training cross-check', 'Census ACS local access context', 'Reviewed posting snapshot', 'Licensed market-intelligence adapter', 'requiredSourceMetadata', 'claimBoundaries'],
+    caveat: 'Buyer-ready local-market snapshot template; it does not prove local hiring demand, wages, placement outcomes, provider quality, or licensed market-intelligence depth until geography, source vintage, query metadata, and reviewer notes are attached.',
+  },
+  {
     id: 'report-provenance-module',
     label: 'Report provenance renderer',
     path: 'src/lib/reportProvenance.ts',
@@ -186,8 +195,8 @@ const artifacts = [
     path: 'src/pages/ProofPackGalleryPage.tsx',
     type: 'commercial-page',
     sourceIds: ['nace-career-readiness', 'nace-first-destination', 'ferpa-student-privacy', 'dol-ai-literacy-framework', 'nist-ai-rmf', 'ada-ai-hiring-guidance', 'wcag-22', 'lightcast', 'workera-positioning', 'serpapi', 'llm-output'],
-    expectedSnippets: ['data-proof-pack-gallery="phase-6-outreach"', 'career-center-cohort-report', 'Institutional readiness packet', 'Trust HTML', 'Risk CSV', 'CRM import pack', 'buildOutreachCsv', 'outreachEvidenceCards', 'source_ids', 'does_not_prove', 'NACE career readiness', 'NACE first-destination standards', 'FERPA student privacy', 'DOL AI literacy framework', 'Lightcast positioning', 'Workera positioning'],
-    caveat: 'Public sample gallery, institutional readiness packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, or institutional compliance.',
+    expectedSnippets: ['data-proof-pack-gallery="phase-6-outreach"', 'career-center-cohort-report', 'Institutional readiness packet', 'Trust HTML', 'Risk CSV', 'Local market snapshot pack', 'Snapshot HTML', 'Snapshot CSV', 'data-local-market-snapshot-gallery="true"', 'CRM import pack', 'buildOutreachCsv', 'outreachEvidenceCards', 'source_ids', 'does_not_prove', 'NACE career readiness', 'NACE first-destination standards', 'FERPA student privacy', 'DOL AI literacy framework', 'Lightcast positioning', 'Workera positioning'],
+    caveat: 'Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.',
   },
   {
     id: 'institutional-readiness-packet-module',

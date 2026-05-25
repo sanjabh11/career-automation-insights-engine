@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T01:09:01.726Z",
+  "generatedAt": "2026-05-25T03:39:53.222Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -867,6 +867,21 @@
         "docs/commercialization/data-provenance-checksums.md"
       ],
       "proof": "Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest."
+    },
+    {
+      "feature": "Local labor-market snapshot packet",
+      "buyer": "Career centers, workforce boards, L&D teams, institutional pilot reviewers",
+      "routes": [
+        "/proof-pack-gallery"
+      ],
+      "files": [
+        "src/lib/localLaborMarketSnapshot.ts",
+        "src/pages/ProofPackGalleryPage.tsx",
+        "scripts/verify-commercial-browser.mjs",
+        "scripts/verify-report-evidence.mjs",
+        "scripts/verify-commercial-data-provenance.mjs"
+      ],
+      "proof": "Proof-pack gallery now exports a local labor-market snapshot HTML/CSV packet that lists required geography, source vintage, query metadata, reviewer notes, source IDs, caveats, and does-not-prove boundaries before any local-demand, wage, training, posting, or provider-backed claim becomes client-ready."
     },
     {
       "feature": "AI Work Transition Proof Pack",
