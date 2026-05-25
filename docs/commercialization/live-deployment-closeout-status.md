@@ -23,7 +23,8 @@ Netlify site: `career-automation-insights-engine`
 |---|---|---|
 | Local Codex process still contains a stale `SUPABASE_ACCESS_TOKEN` env var | Supabase CLI calls succeed when run as `env -u SUPABASE_ACCESS_TOKEN ...`; the process-level token returned platform 403 before being unset per command | Start a fresh Codex shell or replace the process-level token before future Supabase CLI work |
 | Supabase Data API schema cache is large and can be slow cold | PostGREST returned `PGRST002`/statement-timeout during initial closeout. Migrations `20260525083000` and `20260525084500` now pin exposed schemas and raise authenticator timeouts; live proof passes after cache warm-up | Keep exposed schemas narrow and avoid adding broad public-schema objects without running `npm run verify:commercial-live-supabase` |
-| GitHub workflow has secrets but has not been manually dispatched in this run | Required GitHub secret names are present and `npm run verify:live-closeout-readiness` passes | Trigger `Supabase Commercial Live Closeout` from GitHub Actions before relying on CI as the live closeout proof |
+| Older GitHub failure notifications may still arrive after the fix | Failed run `26398010920` timed out on a broad O*NET live row probe; follow-up run `26398237303` on commit `5825a73` passed commercial live Supabase, O*NET Task Ratings, and resume parser proof | Treat run `26398237303` as the current closeout proof for `main`; rerun the workflow after each future verifier/workflow change |
+| Authenticated live e2e needs a synthetic test user before it can be claimed | The verifier `npm run verify:commercial-live-auth-e2e` is implemented but intentionally requires `LIVE_SUPABASE_TEST_USER_EMAIL` and `LIVE_SUPABASE_TEST_USER_PASSWORD` | Create a dedicated Supabase Auth test user with no real resume/client data, add the two values as secrets/env, then run the authenticated e2e gate |
 | Secret rotation still required | Historical/pasted secrets were redacted in repo files, but exposure happened outside git in chat/local output | Rotate listed values; do not paste replacements into chat or tracked files |
 
 ## Ready-To-Run Closeout Paths
@@ -37,17 +38,21 @@ Use `.github/workflows/supabase-commercial-live-closeout.yml`; these repository 
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `LIVE_SUPABASE_TEST_USER_EMAIL` only when running authenticated e2e
+- `LIVE_SUPABASE_TEST_USER_PASSWORD` only when running authenticated e2e
 
 Run the manual workflow with:
 
 - `deploy_parse_resume=true`
 - `ingest_onet_task_ratings=true`
+- `run_authenticated_e2e=false` until the synthetic test-user secrets are configured
 
-The workflow deploys `parse-resume`, optionally ingests O*NET Task Ratings, then runs:
+The workflow deploys `parse-resume`, optionally ingests O*NET Task Ratings, optionally runs the authenticated synthetic e2e, then runs:
 
 - `npm run verify:commercial-live-supabase`
 - `npm run verify:onet-task-ratings-live`
 - `npm run verify:resume-parser-live`
+- `npm run verify:commercial-live-auth-e2e` when `run_authenticated_e2e=true`
 
 ### Local
 

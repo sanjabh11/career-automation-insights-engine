@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-05-25T12:57:12.727Z",
+  "target": null,
+  "status": "skipped_missing_env",
+  "confidence": "bounded_authenticated_live_e2e",
+  "caveat": "This verifier signs in with a dedicated synthetic test user and exercises user-owned rows/RPCs. It proves the redacted artifact save/delete and saved-analysis deletion receipt path for that test user only; it does not prove malware scanning, PDF/DOCX extraction, provider-log deletion, backups, legal compliance, employment-selection validity, or buyer-specific governance.",
+  "doesNotProve": [
+    "Production PDF/DOCX extraction",
+    "Malware scanning",
+    "External model-provider log deletion",
+    "Browser downloads or exports deletion",
+    "Backups deletion",
+    "Employment-decision validity",
+    "Buyer-specific EEOC/ADA/FCRA review"
+  ],
+  "manualInterventionIfSkipped": [
+    "Create a dedicated Supabase Auth test user that contains no real resume or client data.",
+    "Add LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD as local env values or GitHub Actions secrets.",
+    "Run npm run verify:commercial-live-auth-e2e.",
+    "Rotate the test password if it is ever pasted into chat, logs, or tracked files."
+  ],
+  "checks": [
+    {
+      "id": "auth-e2e-env",
+      "label": "Authenticated live e2e credentials are configured",
+      "passed": false,
+      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD"
+    }
+  ],
+  "missingEnv": [
+    "SUPABASE_URL or VITE_SUPABASE_URL",
+    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+    "LIVE_SUPABASE_TEST_USER_EMAIL",
+    "LIVE_SUPABASE_TEST_USER_PASSWORD"
+  ]
+}

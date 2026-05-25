@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-25T09:05:37.794Z",
+  "generatedAt": "2026-05-25T13:00:56.411Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-25T06:37:55.173Z",
+    "generatedAt": "2026-05-25T09:09:13.546Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -566,6 +566,38 @@
       "passed": true
     },
     {
+      "id": "commercial-live-auth-e2e-verifier",
+      "label": "Authenticated live resume proof artifact e2e verifier",
+      "path": "scripts/verify-commercial-live-auth-e2e.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "LIVE_SUPABASE_TEST_USER_EMAIL",
+        "LIVE_SUPABASE_TEST_USER_PASSWORD",
+        "signInWithPassword",
+        "resume_analyses",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
+        "delete_resume_analysis_with_receipt",
+        "data-resume-proof-report-redacted=\"true\"",
+        "Raw resume text stored: no",
+        "bounded_authenticated_live_e2e",
+        "allow-missing-env"
+      ],
+      "caveat": "Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.",
+      "bytes": 15342,
+      "rows": 358,
+      "sha256": "9ecd6c43fda8af1d689d11ee565e8331f56ac2cf11a0aea8dba5d9a9b8d582ce",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "resume-analyzer-proof-report-ui",
       "label": "Resume analyzer downloadable proof report UI",
       "path": "src/components/ResumeAnalyzer.tsx",
@@ -775,7 +807,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "513c1131d57569aec67f9e4d07000804009d6fbf7630482e0f465ed0dfbe9554",
+      "sha256": "ca002bb18543f0efebcb78065fcaa758665bab6b2bb69c49753cbeb5cf06a163",
       "failures": [],
       "passed": true
     },
@@ -805,7 +837,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "659461d3250d73bc2f52955dbb98ca894eff2004b466f9f9f5e71afd86dd0454",
+      "sha256": "01e09cd575eae4009182a5ec2a2bc12504640dbd6851f52b55bd11da9d6b02d7",
       "failures": [],
       "passed": true
     },
@@ -936,7 +968,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5128,
       "rows": 74,
-      "sha256": "64881db10abd3df8eb9786cd694d0275159261d8ca9d39226e1a2bf61440bb27",
+      "sha256": "ccc96b9797d652aeaf9c5fd40d1393c5fee4376534527ce96136bb98ec4b9bb0",
       "failures": [],
       "passed": true
     },
@@ -961,9 +993,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.",
-      "bytes": 11154,
+      "bytes": 11210,
       "rows": 318,
-      "sha256": "ca5f37ff41717d28bb2f1e6dcd6d8a8d21badcf82c0def15fcb813a6729452e8",
+      "sha256": "3bca1dca626b1c348c77066dd93325c13f5974c5698808ecc79fcecfdc830815",
       "failures": [],
       "passed": true
     },

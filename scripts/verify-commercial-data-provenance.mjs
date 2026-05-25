@@ -172,6 +172,15 @@ const artifacts = [
     caveat: 'Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.',
   },
   {
+    id: 'commercial-live-auth-e2e-verifier',
+    label: 'Authenticated live resume proof artifact e2e verifier',
+    path: 'scripts/verify-commercial-live-auth-e2e.mjs',
+    type: 'live-verifier',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'llm-output'],
+    expectedSnippets: ['LIVE_SUPABASE_TEST_USER_EMAIL', 'LIVE_SUPABASE_TEST_USER_PASSWORD', 'signInWithPassword', 'resume_analyses', 'create_resume_proof_report_artifact', 'delete_resume_proof_report_artifact_with_receipt', 'delete_resume_analysis_with_receipt', 'data-resume-proof-report-redacted="true"', 'Raw resume text stored: no', 'bounded_authenticated_live_e2e', 'allow-missing-env'],
+    caveat: 'Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.',
+  },
+  {
     id: 'resume-analyzer-proof-report-ui',
     label: 'Resume analyzer downloadable proof report UI',
     path: 'src/components/ResumeAnalyzer.tsx',
