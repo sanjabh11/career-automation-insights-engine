@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T13:00:56.411Z",
+  "generatedAt": "2026-05-25T13:15:09.235Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -968,7 +968,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5128,
       "rows": 74,
-      "sha256": "ccc96b9797d652aeaf9c5fd40d1393c5fee4376534527ce96136bb98ec4b9bb0",
+      "sha256": "f48db02dfa3ab968dd6b1fbf76d9d2264616590de33a97560f189c34c3384096",
       "failures": [],
       "passed": true
     },
@@ -993,9 +993,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.",
-      "bytes": 11210,
+      "bytes": 11278,
       "rows": 318,
-      "sha256": "3bca1dca626b1c348c77066dd93325c13f5974c5698808ecc79fcecfdc830815",
+      "sha256": "4e37c0700e4b01d2a1e6bbb7c4aab97815eabc8204b083b09ed1f4614e12dd92",
       "failures": [],
       "passed": true
     },

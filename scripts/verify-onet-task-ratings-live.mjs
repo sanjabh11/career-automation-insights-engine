@@ -48,10 +48,10 @@ const checks = [
   },
   {
     id: 'onet-task-ratings-frequency-rows',
-    label: 'Dominant frequency category metadata is populated for rated tasks',
+    label: 'Known O*NET 30.3 frequency metadata probe row is populated',
     mode: 'rows',
     path:
-      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,frequency,frequency_category,frequency_percent,task_ratings_ingested_at&frequency_category=not.is.null&frequency_percent=not.is.null&task_ratings_ingested_at=not.is.null&limit=5',
+      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,frequency,frequency_category,frequency_percent,task_ratings_ingested_at&occupation_code=eq.11-1011.00&task_id=eq.8823&onet_release_version=eq.30.3&frequency_category=not.is.null&frequency_percent=not.is.null&task_ratings_ingested_at=not.is.null&limit=1',
     expectedBoundary: 'live-ingest-has-frequency-metadata',
   },
 ];
