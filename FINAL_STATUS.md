@@ -14,8 +14,8 @@
 
 ### 2. Secrets Configuration - VERIFIED ✅
 - **GEMINI_API_KEY**: Set and working
-- **ONET_USERNAME**: Set (`ignite_consulting`)
-- **ONET_PASSWORD**: Set (`4675rxg`)
+- **ONET_USERNAME**: Set (`[redacted]`)
+- **ONET_PASSWORD**: Set (`[redacted]`)
 - **SERPAPI_API_KEY**: Set
 - **GEMINI_MODEL**: Updated to `gemini-2.0-flash-exp`
 

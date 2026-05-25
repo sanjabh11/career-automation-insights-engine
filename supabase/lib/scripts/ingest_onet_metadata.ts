@@ -36,16 +36,18 @@ if (import.meta.main) {
     auth: { persistSession: false },
   });
 
-  const steps = [
-    ingestJobZones,
-    ingestBrightOutlook,
-    ingestStem,
-    ingestCareerClusters,
-    ingestIndustries,
-    ingestDescriptors,
-    ingestTaskStatementsAndRatings,
-    ingestToolsTech,
-  ];
+  const steps = Deno.env.get("ONET_TASK_RATINGS_ONLY") === "1"
+    ? [ingestTaskStatementsAndRatings]
+    : [
+      ingestJobZones,
+      ingestBrightOutlook,
+      ingestStem,
+      ingestCareerClusters,
+      ingestIndustries,
+      ingestDescriptors,
+      ingestTaskStatementsAndRatings,
+      ingestToolsTech,
+    ];
   for (const step of steps) {
     try {
       const label = `STEP:${step.name}`;
@@ -296,6 +298,34 @@ async function ingestTaskStatementsAndRatings(client: SupabaseClient, root: stri
     const now = new Date().toISOString();
     let upserted = 0;
     let missingRatings = 0;
+    const batchSize = 500;
+    const batch: Record<string, unknown>[] = [];
+
+    async function flushBatch() {
+      if (!batch.length) return;
+      const currentBatch = batch.splice(0, batch.length);
+      const { error } = await client.from("onet_detailed_tasks").upsert(currentBatch, {
+        onConflict: "occupation_code,task_id",
+      });
+
+      if (error) {
+        logWarn("onet_detailed_tasks batch upsert error", {
+          batchSize: currentBatch.length,
+          firstTask: {
+            occupation_code: currentBatch[0]?.occupation_code,
+            task_id: currentBatch[0]?.task_id,
+          },
+          error,
+        });
+        return;
+      }
+
+      upserted += currentBatch.length;
+      if (upserted % 2500 === 0 || upserted === statements.length) {
+        console.log(`→ onet_detailed_tasks progress: ${upserted}/${statements.length}`);
+      }
+    }
+
     for (const statement of statements) {
       const onetCode = readField(statement, "O*NET-SOC Code", "ONET-SOC Code");
       const taskId = readField(statement, "Task ID");
@@ -303,7 +333,7 @@ async function ingestTaskStatementsAndRatings(client: SupabaseClient, root: stri
       const taskRatings = ratingsByTask.get(`${onetCode}:${taskId}`);
       if (!taskRatings) missingRatings += 1;
 
-      const { error } = await client.from("onet_detailed_tasks").upsert({
+      batch.push({
         occupation_code: onetCode,
         task_id: taskId,
         task_description: readField(statement, "Task"),
@@ -339,12 +369,11 @@ async function ingestTaskStatementsAndRatings(client: SupabaseClient, root: stri
         task_ratings_ingested_at: now,
       });
 
-      if (error) {
-        logWarn("onet_detailed_tasks upsert error", { onetCode, taskId, error });
-        continue;
+      if (batch.length >= batchSize) {
+        await flushBatch();
       }
-      upserted += 1;
     }
+    await flushBatch();
 
     console.log(`→ onet_detailed_tasks: ${upserted} task statements, ${ratings.length} rating rows, ${missingRatings} task(s) missing ratings`);
   } catch (e) {

@@ -20,7 +20,7 @@ This directory contains SQL scripts to seed all O*NET reference data into your S
 **Verification:**
 ```bash
 curl -s -X POST \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU2MzE4NzcsImV4cCI6MjA0MTIwNzg3N30.pU_0Bfx1xqxLCVDXqfCvT1pRvEWcFPGGdxJmqCXPcFg" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
   "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/search-occupations" \
   -d '{"filters":{"stem":true},"limit":5}' | jq '.source, .total'
@@ -37,7 +37,7 @@ Expected: `source: "db"`, `total: 100`
 **Verification:**
 ```bash
 curl -s -X POST \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU2MzE4NzcsImV4cCI6MjA0MTIwNzg3N30.pU_0Bfx1xqxLCVDXqfCvT1pRvEWcFPGGdxJmqCXPcFg" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
   "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/browse-job-zones" \
   -d '{}' | jq '.source, .totalZones'
@@ -65,7 +65,7 @@ Expected: 🟢 Database badge, 16 clusters visible
 **Verification:**
 ```bash
 curl -s -X POST \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU2MzE4NzcsImV4cCI6MjA0MTIwNzg3N30.pU_0Bfx1xqxLCVDXqfCvT1pRvEWcFPGGdxJmqCXPcFg" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
   "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/hot-technologies" \
   -d '{"limit":10}' | jq '.source, .totalCount'

@@ -39,6 +39,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/lint-commercial-scope.mjs'],
   },
   {
+    id: 'secret-hygiene',
+    label: 'Verify tracked files do not contain high-confidence secrets',
+    command: ['node', 'scripts/verify-secret-hygiene.mjs'],
+  },
+  {
     id: 'build',
     label: 'Build production bundle',
     command: ['npm', 'run', 'build'],

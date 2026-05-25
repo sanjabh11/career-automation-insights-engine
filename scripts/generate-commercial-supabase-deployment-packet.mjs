@@ -94,6 +94,10 @@ const requiredEnvironment = [
     name: 'SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY',
     purpose: 'Anon/publishable key required by non-mutating live verification scripts; never use or print service-role keys for these checks.',
   },
+  {
+    name: 'SUPABASE_SERVICE_ROLE_KEY',
+    purpose: 'Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files.',
+  },
 ];
 
 const references = [
@@ -177,9 +181,9 @@ ${acceptanceRows.join('\n')}
 
 ${referenceRows.join('\n')}
 
-## Current Blocker
+## Current Deployment Status
 
-Remote migration application is intentionally not attempted by this packet. The latest local CLI attempt failed because the session did not have the required database password or platform privileges. Provide \`SUPABASE_DB_PASSWORD\` in a secure shell or CI secret, then run the commands above.
+This packet verifies local migration order, hashes, and guardrails. Remote application is still a credentialed operation: use \`SUPABASE_DB_PASSWORD\` for database migration checks/pushes, then run the live verifiers. If the commercial schema verifier already passes, the remaining deployment blockers move to Edge Function deploy permissions, O*NET Task Ratings ingest rows, and authenticated end-to-end staff/resume artifact checks.
 `;
 }
 
@@ -244,6 +248,10 @@ async function main() {
       {
         label: 'Verify live parse-resume Edge Function parser receipts after function deploy',
         command: 'npm run verify:resume-parser-live',
+      },
+      {
+        label: 'Run official O*NET 30.3 Task Ratings ingest after target service-role key is available',
+        command: 'npm run ingest:onet-task-ratings -- --project-ref kvunnankqgfokeufvsrv',
       },
       {
         label: 'Verify live O*NET Task Ratings after migration plus ingest',

@@ -15,7 +15,11 @@ NC='\033[0m' # No Color
 # Configuration
 PROJECT_URL="${1:-http://localhost:54321}"
 FUNCTIONS_URL="${PROJECT_URL}/functions/v1"
-ANON_KEY="${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODYyMTksImV4cCI6MjA2NTQ2MjIxOX0.eFRKKSAWaXQgCCX7UpU0hF0dnEyJ2IXUnaGsc8MEGOU}"
+if [ -z "$SUPABASE_ANON_KEY" ]; then
+    echo "SUPABASE_ANON_KEY is required for endpoint tests."
+    exit 1
+fi
+ANON_KEY="$SUPABASE_ANON_KEY"
 
 echo -e "${YELLOW}========================================${NC}"
 echo -e "${YELLOW}Phase 1 Implementation Test Suite${NC}"

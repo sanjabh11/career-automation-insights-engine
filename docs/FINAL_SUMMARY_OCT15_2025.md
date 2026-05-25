@@ -47,7 +47,7 @@
 ### Test Knowledge/Abilities Sync:
 ```bash
 curl -X POST "https://kvunnankqgfokeufvsrv.supabase.co/functions/v1/sync-knowledge-abilities" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dW5uYW5rcWdmb2tldWZ2c3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODYyMTksImV4cCI6MjA2NTQ2MjIxOX0.eFRKKSAWaXQgCCX7UpU0hF0dnEyJ2IXUnaGsc8MEGOU" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"occupationCode":"15-1252.00"}'
 

@@ -5,7 +5,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const OUTPUT_JSON = 'docs/commercialization/resume-parser-live-latest.json';
 const OUTPUT_MD = 'docs/commercialization/resume-parser-live-latest.md';
-const REQUEST_TIMEOUT_MS = 20_000;
+const REQUEST_TIMEOUT_MS = Number(process.env.LIVE_SUPABASE_TIMEOUT_MS || 60_000);
 const ENV_FILES = ['.env.local', '.env'];
 const REQUIRED_SOURCE_IDS = ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
 const REQUIRED_VALIDATION_CONTROLS = [
@@ -444,8 +444,8 @@ async function main() {
     proof.skipped = true;
     proof.skipReason =
       'Missing Supabase URL or anon/publishable key. Provide SUPABASE_URL/VITE_SUPABASE_URL and SUPABASE_ANON_KEY/VITE_SUPABASE_ANON_KEY.';
-    if (hasFlag('--write')) await writeProof(proof);
     if (allowMissingEnv) {
+      if (hasFlag('--write')) await writeProof(proof);
       console.log(`skip resume-parser-live-proof - ${proof.skipReason}`);
       return;
     }

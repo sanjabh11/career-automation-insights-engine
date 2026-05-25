@@ -162,14 +162,14 @@ O*NET Data (1000+ occupations, tags, relationships)
 
 ### Supabase Secrets (Required)
 ```bash
-supabase secrets set ONET_USERNAME=ignite_consulting
-supabase secrets set ONET_PASSWORD=4675rxg
+supabase secrets set ONET_USERNAME="<redacted>"
+supabase secrets set ONET_PASSWORD="<redacted>"
 ```
 
 ### Netlify Environment Variables (Required)
 ```
 VITE_SUPABASE_URL=https://kvunnankqgfokeufvsrv.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_ANON_KEY=<redacted>
 ```
 
 ### Edge Functions Deployed

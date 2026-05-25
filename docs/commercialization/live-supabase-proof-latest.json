@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T11:05:12.666Z",
+  "generatedAt": "2026-05-25T09:04:08.178Z",
   "verifier": "verify-commercial-live-supabase",
   "mode": "non-mutating-public-api-boundary",
   "target": {
@@ -7,7 +7,7 @@
     "projectRef": "kvunnankqgfokeufvsrv",
     "anonKeyProvided": true
   },
-  "allPassed": false,
+  "allPassed": true,
   "skipped": false,
   "caveat": "This verifies deployed object presence and auth/RLS/staff boundaries from the public Supabase API. It does not apply migrations, seed staff users, or prove authenticated end-to-end deletion/review flows.",
   "checks": [
@@ -17,10 +17,32 @@
       "method": "GET",
       "path": "/rest/v1/resume_analysis_deletion_receipts?[query-redacted]",
       "expectedBoundary": "table-present-rls-or-empty",
-      "status": null,
-      "passed": false,
-      "classification": "timeout",
-      "message": "This operation was aborted"
+      "status": 200,
+      "passed": true,
+      "classification": "present-accessible",
+      "message": "Object is present and request completed without mutation-sensitive payload."
+    },
+    {
+      "id": "resume-proof-report-artifacts-table",
+      "label": "resume_proof_report_artifacts table is exposed or access-denied, not missing",
+      "method": "GET",
+      "path": "/rest/v1/resume_proof_report_artifacts?[query-redacted]",
+      "expectedBoundary": "table-present-rls-or-empty",
+      "status": 200,
+      "passed": true,
+      "classification": "present-accessible",
+      "message": "Object is present and request completed without mutation-sensitive payload."
+    },
+    {
+      "id": "resume-proof-report-artifact-receipts-table",
+      "label": "resume_proof_report_artifact_deletion_receipts table is exposed or access-denied, not missing",
+      "method": "GET",
+      "path": "/rest/v1/resume_proof_report_artifact_deletion_receipts?[query-redacted]",
+      "expectedBoundary": "table-present-rls-or-empty",
+      "status": 200,
+      "passed": true,
+      "classification": "present-accessible",
+      "message": "Object is present and request completed without mutation-sensitive payload."
     },
     {
       "id": "commercial-artifact-events-table",
@@ -28,10 +50,10 @@
       "method": "GET",
       "path": "/rest/v1/commercial_report_artifact_events?[query-redacted]",
       "expectedBoundary": "table-present-rls-or-empty",
-      "status": 404,
-      "passed": false,
-      "classification": "missing-object-or-schema-cache",
-      "message": "relation \"public.commercial_report_artifact_events\" does not exist 42P01"
+      "status": 200,
+      "passed": true,
+      "classification": "present-accessible",
+      "message": "Object is present and request completed without mutation-sensitive payload."
     },
     {
       "id": "commercial-staff-table",
@@ -39,10 +61,10 @@
       "method": "GET",
       "path": "/rest/v1/commercial_staff?[query-redacted]",
       "expectedBoundary": "staff-table-present-rls-or-empty",
-      "status": 404,
-      "passed": false,
-      "classification": "missing-object-or-schema-cache",
-      "message": "relation \"public.commercial_staff\" does not exist 42P01"
+      "status": 200,
+      "passed": true,
+      "classification": "present-accessible",
+      "message": "Object is present and request completed without mutation-sensitive payload."
     },
     {
       "id": "delete-resume-analysis-rpc",
@@ -50,10 +72,32 @@
       "method": "POST",
       "path": "/rest/v1/rpc/delete_resume_analysis_with_receipt",
       "expectedBoundary": "auth-required-or-not-owned-no-mutation",
-      "status": 404,
-      "passed": false,
-      "classification": "missing-object-or-schema-cache",
-      "message": "Could not find the function public.delete_resume_analysis_with_receipt(p_analysis_id) in the schema cache Searched for the function public.delete_resume_analysis_with_receipt with parameter p_analysis_id or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache. Perhaps you meant to call the function public.check_resume_analysis_limit PGRST202"
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "authentication_required P0001"
+    },
+    {
+      "id": "create-resume-proof-report-artifact-rpc",
+      "label": "create_resume_proof_report_artifact RPC exists behind auth and redaction boundary",
+      "method": "POST",
+      "path": "/rest/v1/rpc/create_resume_proof_report_artifact",
+      "expectedBoundary": "auth-required-or-redaction-check-no-mutation",
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "authentication_required P0001"
+    },
+    {
+      "id": "delete-resume-proof-report-artifact-rpc",
+      "label": "delete_resume_proof_report_artifact_with_receipt RPC exists behind auth boundary",
+      "method": "POST",
+      "path": "/rest/v1/rpc/delete_resume_proof_report_artifact_with_receipt",
+      "expectedBoundary": "auth-required-or-not-owned-no-mutation",
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "authentication_required P0001"
     },
     {
       "id": "log-artifact-review-event-rpc",
@@ -61,10 +105,10 @@
       "method": "POST",
       "path": "/rest/v1/rpc/log_commercial_report_artifact_event",
       "expectedBoundary": "staff-required-or-missing-artifact-no-mutation",
-      "status": 404,
-      "passed": false,
-      "classification": "missing-object-or-schema-cache",
-      "message": "Could not find the function public.log_commercial_report_artifact_event(p_artifact_id, p_delivery_channel, p_event_type, p_lead_id, p_metadata) in the schema cache Searched for the function public.log_commercial_report_artifact_event with parameters p_artifact_id, p_delivery_channel, p_event_type, p_lead_id, p_metadata or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache. Perhaps you meant to call the function public.log_security_event PGRST202"
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "not authorized P0001"
     },
     {
       "id": "artifact-event-history-rpc",
@@ -72,10 +116,10 @@
       "method": "POST",
       "path": "/rest/v1/rpc/get_commercial_report_artifact_events",
       "expectedBoundary": "staff-required-no-mutation",
-      "status": 404,
-      "passed": false,
-      "classification": "missing-object-or-schema-cache",
-      "message": "Could not find the function public.get_commercial_report_artifact_events(p_artifact_id, p_limit) in the schema cache Searched for the function public.get_commercial_report_artifact_events with parameters p_artifact_id, p_limit or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache. Perhaps you meant to call the function public.get_user_agent_deployments PGRST202"
+      "status": 400,
+      "passed": true,
+      "classification": "present-protected",
+      "message": "not authorized P0001"
     }
   ]
 }

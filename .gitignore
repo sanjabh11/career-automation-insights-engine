@@ -31,6 +31,7 @@ dist-ssr
 # Local Netlify folder
 .netlify
 public/docs_BACKUP
+supabase/.temp/
 
 # Documentation and artifacts (exclude from git)
 # docs/ - TEMPORARILY ENABLED FOR UPDATES

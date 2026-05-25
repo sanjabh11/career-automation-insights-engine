@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T03:39:53.222Z",
+  "generatedAt": "2026-05-25T09:05:36.204Z",
   "branch": "commercialization-proof-packs",
   "routes": [
     {
@@ -569,6 +569,10 @@
       "command": "node scripts/generate-commercialization-index.mjs"
     },
     {
+      "name": "ingest:onet-task-ratings",
+      "command": "node scripts/run-onet-task-ratings-live-ingest.mjs"
+    },
+    {
       "name": "lint",
       "command": "eslint ."
     },
@@ -621,6 +625,10 @@
       "command": "node scripts/verify-commercial-data-provenance.mjs --write"
     },
     {
+      "name": "verify:live-closeout-readiness",
+      "command": "node scripts/verify-live-closeout-readiness.mjs"
+    },
+    {
       "name": "verify:onet-task-ratings",
       "command": "node scripts/verify-onet-task-ratings-ingest.mjs"
     },
@@ -635,6 +643,10 @@
     {
       "name": "verify:resume-parser-live",
       "command": "node scripts/verify-resume-parser-live.mjs --write"
+    },
+    {
+      "name": "verify:secrets",
+      "command": "node scripts/verify-secret-hygiene.mjs"
     },
     {
       "name": "verify:sources",

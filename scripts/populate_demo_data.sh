@@ -16,9 +16,13 @@ fi
 # 1. Set SerpAPI secret
 echo ""
 echo "📝 Step 1: Setting SERPAPI_API_KEY secret..."
-supabase secrets set SERPAPI_API_KEY="7e3aa9cacd93806c7b8f31b3f84e0c31149546f95f97bab73e4b62048dafd256" || {
+if [ -z "$SERPAPI_API_KEY" ]; then
+    echo "⚠️  SERPAPI_API_KEY is not set. Skipping Supabase secret update."
+else
+  supabase secrets set SERPAPI_API_KEY="$SERPAPI_API_KEY" || {
     echo "⚠️  Failed to set secret (may already exist or need auth)"
-}
+  }
+fi
 
 # 2. Populate BLS employment data (sample for SOC-6 15-1252)
 echo ""
@@ -29,7 +33,10 @@ if ! command -v psql &> /dev/null; then
   exit 1
 fi
 
-: "${PSQL_CONN:=postgresql://postgres:hwqEgOHND8rKkKnT@db.kvunnankqgfokeufvsrv.supabase.co:5432/postgres}"
+if [ -z "$PSQL_CONN" ]; then
+  echo "❌ PSQL_CONN is not set. Export a secure Postgres connection string before running this script."
+  exit 1
+fi
 
 psql "$PSQL_CONN" <<'SQL'
 INSERT INTO public.bls_employment_data (occupation_code_6, occupation_code_8, year, employment_level, projected_growth_10y, median_wage_annual, region)

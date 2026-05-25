@@ -46,6 +46,15 @@ const artifacts = [
     caveat: 'Task Ratings import can populate O*NET 30.3 importance/frequency metadata, but reports must not claim task-time precision until the target Supabase table export is checksum-verified.',
   },
   {
+    id: 'onet-task-ratings-live-ingest-runner',
+    label: 'O*NET Task Ratings live ingest runner',
+    path: 'scripts/run-onet-task-ratings-live-ingest.mjs',
+    type: 'deployment-script',
+    sourceIds: ['onet', 'onet-task-statements', 'onet-task-ratings', 'onet-task-categories'],
+    expectedSnippets: ['SUPABASE_SERVICE_ROLE_KEY', 'assertServiceRoleAccepted', 'Task Statements', 'Task Ratings', 'Task Categories', 'ingest_onet_metadata.ts', 'project-ref'],
+    caveat: 'Credential-safe runner for the target Supabase ingest; it still requires a valid target service-role key and live row verification before stronger task-time claims.',
+  },
+  {
     id: 'source-manifest-module',
     label: 'Source manifest module',
     path: SOURCE_MANIFEST_PATH,
