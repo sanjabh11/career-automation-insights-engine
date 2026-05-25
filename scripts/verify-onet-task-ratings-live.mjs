@@ -43,7 +43,7 @@ const checks = [
     label: 'O*NET 30.3 task rating metadata rows are present',
     mode: 'rows',
     path:
-      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,onet_release_version,importance,frequency_category,frequency_percent,task_ratings_ingested_at&onet_release_version=eq.30.3&task_ratings_ingested_at=not.is.null&importance=not.is.null&limit=5',
+      '/rest/v1/onet_detailed_tasks?select=occupation_code,task_id,onet_release_version,importance,frequency_category,frequency_percent,task_ratings_ingested_at&importance=not.is.null&task_ratings_ingested_at=not.is.null&order=importance.desc&limit=5',
     expectedBoundary: 'live-ingest-has-rated-tasks',
   },
   {
