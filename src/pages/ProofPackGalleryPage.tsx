@@ -183,6 +183,137 @@ const researchSignals = [
   },
 ];
 
+const outreachFunctionalityAssessment = [
+  {
+    capability: "Coach-branded sample reports",
+    laymanValue: "A coach can create a professional sample report for a client conversation.",
+    outreachUse: "Best first outreach offer for coaches, resume writers, and counselors.",
+    currentProof: "/sample-report, consent capture, source-labeled sample HTML, Supabase lead/artifact save when configured.",
+    maturity: 4.3,
+    nextGap: "Add authenticated coach accounts, logo upload, paid report credits, and email follow-up automation.",
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+  },
+  {
+    capability: "Individual occupation proof packs",
+    laymanValue: "A user can see which parts of a job may be automated, assisted by AI, or still human-led.",
+    outreachUse: "Useful for SEO traffic, LinkedIn demos, and lead magnets by occupation.",
+    currentProof: "/automation-risk/:occupation renders proof-pack sections with caveats and evidence cards.",
+    maturity: 4.1,
+    nextGap: "Attach live source snapshots and stronger local labor-market rows before region-specific claims.",
+    sourceIds: ["onet", "bls-ai-mlr-2025", "anthropic-observed-exposure"],
+  },
+  {
+    capability: "Resume work-transition proof report",
+    laymanValue: "A job seeker can turn resume text into a bounded transition report with deletion and review boundaries.",
+    outreachUse: "Strong free tool for coaches and individuals, but must stay privacy-first.",
+    currentProof: "/tools/resume-analyzer, parser boundary, downloadable proof report, redacted artifact persistence for signed-in users.",
+    maturity: 4.0,
+    nextGap: "Run authenticated live e2e with a synthetic test user; add production PDF/DOC/DOCX parser and malware-scan policy.",
+    sourceIds: ["owasp-file-upload", "supabase-edge-functions", "ada-ai-hiring-guidance"],
+  },
+  {
+    capability: "Workforce CSV role audit",
+    laymanValue: "A workforce team can upload role titles and get a role-level exposure summary without ranking employees.",
+    outreachUse: "Best pilot for workforce boards, L&D teams, and small enterprise planning.",
+    currentProof: "/enterprise-dashboard, CSV parser, role rollup, unmapped review queue, executive HTML report.",
+    maturity: 4.0,
+    nextGap: "Add richer SOC matching, department recommendations, signed delivery, and live table checksum proof.",
+    sourceIds: ["dol-ai-literacy-framework", "bls-emp", "ada-ai-hiring-guidance"],
+  },
+  {
+    capability: "Career-center cohort proof pack",
+    laymanValue: "A counselor can discuss aggregate student or alumni transition themes without exposing individual records.",
+    outreachUse: "Good for workshops, alumni services, and career-center feedback pilots.",
+    currentProof: "/tools/counselor-reports exports aggregate-only cohort proof packs with privacy boundaries.",
+    maturity: 3.9,
+    nextGap: "Add roster consent, small-cell suppression enforcement, persistence, and institution-specific review notes.",
+    sourceIds: ["ferpa-student-privacy", "nace-first-destination", "nace-career-readiness"],
+  },
+  {
+    capability: "Source and caveat evidence cards",
+    laymanValue: "Every major claim can show where it came from, how confident it is, and what it does not prove.",
+    outreachUse: "The main differentiator against generic AI career advice.",
+    currentProof: "Shared evidence-card model, report provenance registry, source manifest, and commercial verifiers.",
+    maturity: 4.6,
+    nextGap: "Add scheduled refresh, live imported-table checksums, and provider-backed source snapshots per artifact.",
+    sourceIds: ["nist-ai-rmf", "lightcast", "workera-positioning"],
+  },
+  {
+    capability: "Institutional readiness packet",
+    laymanValue: "A buyer can review risk, accessibility, governance, and employment-decision boundaries before a pilot.",
+    outreachUse: "Helps serious institutions say yes to a bounded pilot without overclaiming compliance.",
+    currentProof: "Downloadable HTML/CSV readiness packet with AI RMF, WCAG, live proof blockers, and buyer risk rows.",
+    maturity: 4.2,
+    nextGap: "Complete manual WCAG evidence, signed buyer acceptable-use signoff, and legal review for employment-adjacent pilots.",
+    sourceIds: ["nist-ai-rmf", "wcag-22", "eeoc-employment-selection-procedures"],
+  },
+  {
+    capability: "Lead capture and lead ops",
+    laymanValue: "People requesting reports can become trackable leads instead of disappearing after a download.",
+    outreachUse: "Turns sample reports and SEO traffic into a sales pipeline.",
+    currentProof: "Supabase lead capture, consent text, offline redacted retry queue, staff lead ops, CSV export.",
+    maturity: 4.0,
+    nextGap: "Add CRM/email integration, deployed-domain analytics, owner assignment, sequence status, and unsubscribe handling.",
+    sourceIds: ["nist-ai-rmf", "wcag-22", "llm-output"],
+  },
+  {
+    capability: "Local labor-market snapshot boundary",
+    laymanValue: "The app can show what local data would be needed before claiming local demand.",
+    outreachUse: "Useful for workforce boards and regional pilots where local context matters.",
+    currentProof: "Downloadable local-market snapshot pack with source vintage, geography, query, caveat, and reviewer fields.",
+    maturity: 3.6,
+    nextGap: "Connect live OEWS, LAUS, QCEW, ACS, CareerOneStop, and licensed posting adapters per buyer geography.",
+    sourceIds: ["bls-oews", "bls-laus", "bls-qcew", "careeronestop-api", "census-acs-api"],
+  },
+  {
+    capability: "Outreach CSV starter pack",
+    laymanValue: "The founder can export pilot segments, messages, offers, and success metrics for manual CRM use.",
+    outreachUse: "Fastest practical way to begin small controlled outreach.",
+    currentProof: "Proof-pack gallery exports a CRM CSV for coach, career-center, and workforce-board pilots.",
+    maturity: 3.8,
+    nextGap: "Add tracked campaign links, response status, follow-up templates, calendar booking, and A/B message results.",
+    sourceIds: ["nace-career-readiness", "dol-ai-literacy-framework", "lightcast"],
+  },
+];
+
+const outreachCampaignPhases = [
+  {
+    phase: "1. Proof refresh",
+    focus: "Make sure claims match live proof.",
+    successPoint: "Commercial gate, live closeout gate, and source/caveat pages are green.",
+    maturity: 4.2,
+    remaining: "Live authenticated e2e and manual WCAG notes.",
+  },
+  {
+    phase: "2. Founder-led validation",
+    focus: "Ask coaches and counselors to review sample artifacts, not buy a large platform.",
+    successPoint: "10 reviews, 3 discovery calls, 1 paid pilot conversation.",
+    maturity: 3.8,
+    remaining: "Tracked links, feedback form, and CRM status updates.",
+  },
+  {
+    phase: "3. Workforce pilot",
+    focus: "Run anonymized role-level CSV audits for planning teams.",
+    successPoint: "One 10-25 role CSV pilot with buyer review-owner identified.",
+    maturity: 3.7,
+    remaining: "SOC review service, signed packet delivery, and local labor-market evidence.",
+  },
+  {
+    phase: "4. Paid proof-pack offer",
+    focus: "Convert validated segments into bounded paid packages.",
+    successPoint: "Pricing page links to report credits or pilot packages with fulfillment state.",
+    maturity: 3.0,
+    remaining: "Stripe/report credit fulfillment and invoice-ready delivery.",
+  },
+  {
+    phase: "5. Scaled outreach",
+    focus: "Move from manual founder outreach to repeatable campaigns.",
+    successPoint: "CRM/email sequences, analytics, unsubscribe, and buyer-specific case-study artifacts.",
+    maturity: 2.5,
+    remaining: "Campaign automation, conversion dashboards, and buyer-specific landing pages.",
+  },
+];
+
 const outreachEvidenceCards: OutreachEvidence[] = [
   {
     claim: "Bounded coach and career-center pilots are the right first buyer motion for reviewed proof packs.",
@@ -608,6 +739,74 @@ export default function ProofPackGalleryPage() {
                 <p className="mt-2 text-sm leading-6 text-slate-300">{signal.takeaway}</p>
                 <p className="mt-3 text-xs text-slate-500">Source ID: {signal.sourceId}</p>
               </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-functionality-assessment="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Outreach functionality assessment</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Plain-language maturity view for what can be marketed now, what proof exists in the app, and what must be finished before scaled outreach.
+              </p>
+            </div>
+            <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">
+              1 = idea, 5 = market-ready
+            </Badge>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Functionality</th>
+                  <th className="py-3 pr-4 font-semibold">Layman value</th>
+                  <th className="py-3 pr-4 font-semibold">Outreach use</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                  <th className="py-3 pr-4 font-semibold">Next gap</th>
+                </tr>
+              </thead>
+              <tbody>
+                {outreachFunctionalityAssessment.map((row) => (
+                  <tr key={row.capability} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{row.capability}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.laymanValue}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.outreachUse}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.currentProof}</td>
+                    <td className="py-4 pr-4">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                          {row.maturity.toFixed(1)}/5
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-slate-500">{sourceLabels(row.sourceIds)}</p>
+                    </td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{row.nextGap}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-phase-plan="true">
+          <h2 className="text-2xl font-semibold text-white">Phase-wise outreach program</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            Start with reviewed proof artifacts and buyer feedback, then move into paid pilots only after live trust gates and campaign tracking are in place.
+          </p>
+          <div className="mt-6 grid gap-4 lg:grid-cols-5">
+            {outreachCampaignPhases.map((phase) => (
+              <article key={phase.phase} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{phase.phase}</div>
+                <h3 className="mt-3 font-semibold leading-6 text-white">{phase.focus}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{phase.successPoint}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {phase.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{phase.remaining}</p>
+              </article>
             ))}
           </div>
         </section>

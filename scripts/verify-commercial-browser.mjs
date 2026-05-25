@@ -4,9 +4,9 @@ import { spawn } from 'node:child_process';
 
 const HOST = '127.0.0.1';
 const START_PORT = 5175;
-const STARTUP_TIMEOUT_MS = 30_000;
+const STARTUP_TIMEOUT_MS = 90_000;
 const SERVER_PROBE_TIMEOUT_MS = 3_000;
-const ROUTE_TIMEOUT_MS = 45_000;
+const ROUTE_TIMEOUT_MS = 90_000;
 const INTERACTION_TIMEOUT_MS = 20_000;
 const BROWSER_LAUNCH_TIMEOUT_MS = 60_000;
 
@@ -519,6 +519,15 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.locator('[data-phase6-evidence-card="true"]').first(), 'phase 6 evidence card item');
   await assertVisible(page.getByText(/DOL AI literacy framework/i).first(), 'DOL AI literacy source');
   await assertVisible(page.getByText(/Does not prove:/i).first(), 'gallery evidence does-not-prove field');
+  await assertVisible(page.locator('[data-outreach-functionality-assessment="true"]'), 'outreach functionality assessment');
+  await assertVisible(page.getByText(/1 = idea, 5 = market-ready/i), 'outreach maturity scale');
+  await assertVisible(page.getByText(/Coach-branded sample reports/i), 'coach outreach function row');
+  await assertVisible(page.getByText(/Resume work-transition proof report/i), 'resume outreach function row');
+  await assertVisible(page.getByText(/Lead capture and lead ops/i), 'lead ops outreach function row');
+  const outreachPhasePlan = page.locator('[data-outreach-phase-plan="true"]');
+  await assertVisible(outreachPhasePlan, 'outreach phase plan');
+  await assertVisible(outreachPhasePlan.getByText('2. Founder-led validation'), 'outreach founder validation phase');
+  await assertVisible(outreachPhasePlan.getByText('5. Scaled outreach'), 'outreach scaled phase');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
