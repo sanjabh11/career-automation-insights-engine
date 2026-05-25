@@ -242,6 +242,10 @@ async function main() {
         command: 'npm run verify:commercial-live-supabase',
       },
       {
+        label: 'Verify live parse-resume Edge Function parser receipts after function deploy',
+        command: 'npm run verify:resume-parser-live',
+      },
+      {
         label: 'Verify live O*NET Task Ratings after migration plus ingest',
         command: 'npm run verify:onet-task-ratings-live',
       },
@@ -251,11 +255,13 @@ async function main() {
       'Prefer Supabase CLI db push so supabase_migrations.schema_migrations records applied versions.',
       'Do not print service-role keys, database passwords, JWTs, or raw resume text in logs or proof artifacts.',
       'Treat live verifier success as object/RPC boundary proof, not as legal compliance or employment-decision validation.',
+      'Treat live parser verifier success as synthetic receipt proof only; malware scanning, production PDF/DOC/DOCX parsing, provider logs, and backups remain separate controls.',
       'Treat O*NET Task Ratings live proof as schema/row evidence only; exported table checksums are still required before task-time claims.',
     ],
     acceptanceCriteria: [
       'Migration list shows the commercial proof-pack migrations applied to the linked project.',
       '`npm run verify:commercial-live-supabase` passes against the linked project.',
+      '`npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.',
       '`npm run verify:onet-task-ratings-live` passes only after Task Ratings migration and ingest produce live O*NET 30.3 rows.',
       'Resume proof artifact live calls remain authenticated and redaction-gated.',
       'Report and workforce review RPCs remain protected by staff/auth/RLS boundaries.',

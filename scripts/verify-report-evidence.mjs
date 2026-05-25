@@ -373,6 +373,24 @@ const checks = [
     ],
   },
   {
+    id: 'resume-parser-live-verifier',
+    path: 'scripts/verify-resume-parser-live.mjs',
+    snippets: [
+      'live-edge-function-parser-boundary',
+      '/functions/v1/parse-resume',
+      'txt-success-boundary',
+      'pdf-adapter-pending-boundary',
+      'unsupported-file-rejection',
+      'rawFileStored must be false',
+      'rawResumeTextStored must be false',
+      'productionPdfDocxParser must be false until adapter proof exists',
+      'doesNotProve',
+      'owasp-file-upload',
+      'supabase-edge-functions',
+      '--allow-missing-env',
+    ],
+  },
+  {
     id: 'resume-deletion-receipt-rpc',
     path: 'supabase/migrations/20260524000400_add_resume_deletion_receipts.sql',
     snippets: [

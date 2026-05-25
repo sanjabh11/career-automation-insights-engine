@@ -145,6 +145,15 @@ const artifacts = [
     caveat: 'Parser boundary validates uploads, extracts text only for UTF-8 text files, and records non-persistence proof; PDF/DOC/DOCX extraction and malware scanning remain adapter-pending before paid upload workflows.',
   },
   {
+    id: 'resume-parser-live-verifier',
+    label: 'Live resume parser receipt verifier',
+    path: 'scripts/verify-resume-parser-live.mjs',
+    type: 'live-verifier',
+    sourceIds: ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'],
+    expectedSnippets: ['live-edge-function-parser-boundary', '/functions/v1/parse-resume', 'txt-success-boundary', 'pdf-adapter-pending-boundary', 'unsupported-file-rejection', 'rawFileStored must be false', 'rawResumeTextStored must be false', 'productionPdfDocxParser must be false until adapter proof exists', 'allow-missing-env'],
+    caveat: 'Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.',
+  },
+  {
     id: 'resume-analyzer-proof-report-ui',
     label: 'Resume analyzer downloadable proof report UI',
     path: 'src/components/ResumeAnalyzer.tsx',
@@ -249,7 +258,7 @@ const artifacts = [
     path: 'docs/commercialization/live-supabase-deployment-runbook.md',
     type: 'deployment-runbook',
     sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
-    expectedSnippets: ['Live Supabase Deployment Runbook', 'SUPABASE_DB_PASSWORD', 'supabase migration list', 'supabase db push --dry-run', 'supabase db push', "NOTIFY pgrst, 'reload schema'", 'npm run verify:commercial-live-supabase', 'npm run verify:onet-task-ratings-live'],
+    expectedSnippets: ['Live Supabase Deployment Runbook', 'SUPABASE_DB_PASSWORD', 'supabase migration list', 'supabase db push --dry-run', 'supabase db push', "NOTIFY pgrst, 'reload schema'", 'npm run verify:commercial-live-supabase', 'npm run verify:resume-parser-live', 'npm run verify:onet-task-ratings-live'],
     caveat: 'Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.',
   },
   {

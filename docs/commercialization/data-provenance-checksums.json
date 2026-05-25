@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T23:07:14.241Z",
+  "generatedAt": "2026-05-25T01:06:29.614Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -473,6 +473,35 @@
       "passed": true
     },
     {
+      "id": "resume-parser-live-verifier",
+      "label": "Live resume parser receipt verifier",
+      "path": "scripts/verify-resume-parser-live.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "owasp-file-upload",
+        "supabase-edge-functions",
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance"
+      ],
+      "expectedSnippets": [
+        "live-edge-function-parser-boundary",
+        "/functions/v1/parse-resume",
+        "txt-success-boundary",
+        "pdf-adapter-pending-boundary",
+        "unsupported-file-rejection",
+        "rawFileStored must be false",
+        "rawResumeTextStored must be false",
+        "productionPdfDocxParser must be false until adapter proof exists",
+        "allow-missing-env"
+      ],
+      "caveat": "Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.",
+      "bytes": 17483,
+      "rows": 450,
+      "sha256": "0cbcd1d70c80e8b5708d7d1c0e788be9c23bafc8db382130066f367c36929034",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "resume-analyzer-proof-report-ui",
       "label": "Resume analyzer downloadable proof report UI",
       "path": "src/components/ResumeAnalyzer.tsx",
@@ -678,7 +707,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "176f6823117b3571ac63931cae167cc8b700f146b11614872d73a1d5819ba390",
+      "sha256": "3633ae0c418ec8b19583d77200b3a59513f7d663f0fde70c0693f0dea9b1a502",
       "failures": [],
       "passed": true
     },
@@ -708,7 +737,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "bc93e2550c1ab51c53a8ed639ea0e962e90f67ad6abdaa77a3fd0d0b6146a268",
+      "sha256": "3b51e4834c5c6f574f07d6c9d7cde39dcf67d54df9227a7cee28ac4032dc13f8",
       "failures": [],
       "passed": true
     },
@@ -809,9 +838,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 10768,
-      "rows": 247,
-      "sha256": "24568d9edebbb094c06a683f7a197fa3456212f153410d85d0a0f0d6761382a0",
+      "bytes": 11223,
+      "rows": 253,
+      "sha256": "78436bc2d8379f1e7db6e6b7950db101121a53bbc405e7b7004351ed6fd41646",
       "failures": [],
       "passed": true
     },
@@ -833,12 +862,13 @@
         "supabase db push",
         "NOTIFY pgrst, 'reload schema'",
         "npm run verify:commercial-live-supabase",
+        "npm run verify:resume-parser-live",
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 4241,
-      "rows": 63,
-      "sha256": "67060c22d9e2781bb94d29c9dfd1c63a1a5c0aea36a9a9a822d5cc775f59304a",
+      "bytes": 4641,
+      "rows": 69,
+      "sha256": "72f0da2cada1e39fb52aad1bb8a091e2f47946cff2dbcc7294ea540e09bbfc02",
       "failures": [],
       "passed": true
     },

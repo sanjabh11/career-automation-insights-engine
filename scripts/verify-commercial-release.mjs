@@ -87,6 +87,14 @@ const LIVE_ONET_STEPS = [
   },
 ];
 
+const LIVE_RESUME_PARSER_STEPS = [
+  {
+    id: 'live-resume-parser',
+    label: 'Verify live parse-resume Edge Function parser receipts',
+    command: ['node', 'scripts/verify-resume-parser-live.mjs', '--write'],
+  },
+];
+
 const JOURNEY_STEPS = [
   {
     id: 'browser-journey',
@@ -116,6 +124,8 @@ Options:
   --with-live-supabase
                    Also run non-mutating live Supabase object/RPC proof using SUPABASE_URL and SUPABASE_ANON_KEY.
   --with-live-onet Also run non-mutating live O*NET Task Ratings schema/row proof using SUPABASE_URL and SUPABASE_ANON_KEY.
+  --with-live-resume-parser
+                   Also run live parse-resume Edge Function receipt proof using SUPABASE_URL and SUPABASE_ANON_KEY.
   --with-a11y      Also run the Playwright responsive/accessibility smoke gate.
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
@@ -134,6 +144,7 @@ async function main() {
   const includeNetwork = hasFlag('--with-network');
   const includeLiveSupabase = hasFlag('--with-live-supabase');
   const includeLiveOnet = hasFlag('--with-live-onet');
+  const includeLiveResumeParser = hasFlag('--with-live-resume-parser');
   const includeA11y = hasFlag('--with-a11y');
   const includeJourney = hasFlag('--with-journey');
 
@@ -143,6 +154,7 @@ async function main() {
     ...(includeNetwork ? NETWORK_STEPS : []),
     ...(includeLiveSupabase ? LIVE_SUPABASE_STEPS : []),
     ...(includeLiveOnet ? LIVE_ONET_STEPS : []),
+    ...(includeLiveResumeParser ? LIVE_RESUME_PARSER_STEPS : []),
     ...(includeJourney ? JOURNEY_STEPS : []),
   ];
 

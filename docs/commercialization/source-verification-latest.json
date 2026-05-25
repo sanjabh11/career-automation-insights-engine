@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T22:50:03.660Z",
+  "generatedAt": "2026-05-25T01:09:41.284Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "860071f5a497f8734afdf4a4de294e3983821edeb8fb0e28bfbcd7065fb545e7",
-      "byteLength": 233778,
+      "contentSha256": "2921c862bb1fa2de3e43d21ba33470058dd50d77ed71d39eebf7ca0f7cccc1fe",
+      "byteLength": 233747,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "65c6cd90baa333f93b28f27997a1a98149305f3afd199fc9ef2ffe238af605c3",
+      "contentSha256": "f2b874ce53a0b953fb13f90b964bd913471bd8b0bb76b7091356494a7facf1ea",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "b5599059859aeb086445a124a0e11c9cd2046162dfe27567a473d01ec1405162",
+      "contentSha256": "cdbfb79900e770c0a863792a1f142b9ffce44b37c6932b704df95994177f3337",
       "byteLength": 303692,
       "evidence": [
         {
@@ -289,7 +289,7 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "26fefb678b37aa48cad411e506d9943a7d9cdada6ab9b9f31b1513ff89d760ab",
+      "contentSha256": "fd731421de0a8e931d78ed76a236ff8f053c85270946c56638d8ec5f4717a933",
       "byteLength": 74698,
       "evidence": [
         {
@@ -309,7 +309,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "7f216f74945d0519c8ff9d3fc0714d217e5786723a912eab5468482fcd0b2993",
+      "contentSha256": "7d9f338a1e2e6e8d0de335ffc042dd075889b73a9e8995999f54aa7b71ff6d89",
       "byteLength": 41890,
       "evidence": [
         {
@@ -349,8 +349,8 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "dc8f42521e3c237098f0df6334844c332c130266deaca9b38fa1568a22275c87",
-      "byteLength": 73088,
+      "contentSha256": "52c87156edaa5bf657a51ff7fe06ccbe9c1c26163498ba29d235afd06b64b7d8",
+      "byteLength": 73086,
       "evidence": [
         {
           "label": "DOL AI Literacy Framework title",
@@ -369,7 +369,7 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "75b84a0888ee9711c450316d5b509e715833045b493ce1dcf1714d95542d3d02",
+      "contentSha256": "f06eda0b59ebd30ef4653db6e64b38b36eb60c80837ba4435cce5faf9961e412",
       "byteLength": 165940,
       "evidence": [
         {
@@ -389,7 +389,7 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "61437240774aaf515d785cccb60c6ce0ced2d8986223588a67008bc9f08ff9f0",
+      "contentSha256": "d13c230e7b22cc8edd6395b2dc29edc316dcf4e490a421d80f093fa19ce48d86",
       "byteLength": 210582,
       "evidence": [
         {
@@ -509,7 +509,7 @@
       "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
       "status": 200,
       "ok": true,
-      "contentSha256": "d20246040af183e2b3e6f3db7d4cc66fed14161c2b94e4e542fc422d3d7557c9",
+      "contentSha256": "6cf8247698194d541bca42ada1c2ec99a8b4ca599224c165a7a62fa8a66cb3ca",
       "byteLength": 183444,
       "evidence": [
         {
@@ -589,7 +589,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "4e74fee8e5b6608778c8c7f5b609ec906b627ee1b8bacb26eb8e92e76db38b8b",
+      "contentSha256": "cb162e722d4d8df65272bfde25ca072c0eb1971b9d0432373e8246ad6636cb04",
       "byteLength": 91197,
       "evidence": [
         {
@@ -629,7 +629,7 @@
       "url": "https://supabase.com/docs/guides/functions",
       "status": 200,
       "ok": true,
-      "contentSha256": "3971473b06d86dab14d178045ecb80d312b44fc28e428e8ff6bc69f83c402b4b",
+      "contentSha256": "28f9236174f25d4d30cea42cacc58c432cd2c2939f1a22b4bd4eba7295237d28",
       "byteLength": 181975,
       "evidence": [
         {

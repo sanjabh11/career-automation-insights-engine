@@ -43,6 +43,7 @@ export const commercialLintFiles = [
   'scripts/verify-commercial-release.mjs',
   'scripts/verify-commercial-trust-boundaries.mjs',
   'scripts/verify-onet-task-ratings-ingest.mjs',
+  'scripts/verify-resume-parser-live.mjs',
   'scripts/verify-report-evidence.mjs',
   'scripts/verify-source-manifest.mjs',
 ];
