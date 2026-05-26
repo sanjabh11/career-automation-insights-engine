@@ -143,6 +143,16 @@ async function assertButtonEnabled(locator, label) {
   console.log(`ok enabled - ${label}`);
 }
 
+async function readDownloadBody(download, label) {
+  const stream = await download.createReadStream();
+  if (!stream) {
+    throw new Error(`${label} stream was unavailable`);
+  }
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 async function verifyPopupReport(popupPromise, expectedText, label) {
   const popup = await popupPromise;
   const expectedTexts = Array.isArray(expectedText) ? expectedText : [expectedText];
@@ -365,6 +375,65 @@ async function verifyPrivacyPage(page, baseUrl) {
   await assertVisible(page.getByRole('heading', { name: /Privacy Policy/i }), '/privacy heading');
   await assertVisible(page.getByText(/Local Fallback Queue/i), '/privacy fallback queue copy');
   await assertVisible(page.getByText(/employment decisions/i).first(), '/privacy employment decision notice');
+}
+
+async function verifyCommercialTrustCenter(page, baseUrl) {
+  console.log('checking /trust-center');
+  await page.goto(`${baseUrl}/trust-center`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
+  await assertVisible(
+    page.getByRole('heading', { name: /Responsible AI and institutional trust boundaries/i }),
+    '/trust-center heading'
+  );
+  await assertVisible(page.locator('[data-commercial-trust-center="true"]'), 'commercial trust center marker');
+  await assertVisible(page.getByText(/Commercial Trust Center/i), 'commercial trust center badge');
+  await assertVisible(page.getByText(/Planning use only/i), 'planning use only badge');
+  await assertVisible(page.locator('[data-trust-employment-boundary="true"]'), 'trust employment boundary');
+  await assertVisible(page.locator('[data-trust-accessibility-boundary="true"]'), 'trust accessibility boundary');
+  await assertVisible(page.locator('[data-trust-launch-readiness="true"]'), 'trust launch readiness table');
+  await assertVisible(page.locator('[data-trust-live-blockers="true"]'), 'trust live blockers');
+  await assertVisible(page.locator('[data-trust-payment-proof="true"]'), 'trust payment proof status');
+  await assertVisible(page.locator('[data-trust-risk-register="true"]'), 'trust risk register');
+  await assertVisible(page.locator('[data-trust-ai-rmf="true"]'), 'trust AI RMF control map');
+  await assertVisible(page.locator('[data-trust-function-review="true"]'), 'trust function governance review');
+  await assertVisible(page.getByText(/Not ready for scaled paid or institutional delivery/i), 'trust launch blocker copy');
+  await assertVisible(page.getByText(/do not certify legal compliance, WCAG conformance/i), 'trust evidence boundary copy');
+  await assertVisible(page.getByRole('button', { name: /Download trust packet/i }), 'trust packet export');
+  await assertVisible(page.getByRole('button', { name: /Download risk CSV/i }), 'risk CSV export');
+
+  const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download trust packet/i }).click();
+  const trustDownload = await trustDownloadPromise;
+  if (!trustDownload.suggestedFilename().includes('ai-work-transition-trust-packet')) {
+    throw new Error(`Unexpected trust-center HTML filename: ${trustDownload.suggestedFilename()}`);
+  }
+  const trustHtml = await readDownloadBody(trustDownload, 'Trust-center HTML');
+  for (const expected of [
+    'data-institutional-readiness-packet="true"',
+    'Institutional Risk Register',
+    'AI RMF Control Map',
+    'Employment Decision Boundary',
+    'WCAG 2.2 Accessibility Gate',
+    'Does not prove',
+  ]) {
+    if (!trustHtml.includes(expected)) {
+      throw new Error(`Trust-center HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - trust center HTML');
+
+  const riskCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download risk CSV/i }).click();
+  const riskCsvDownload = await riskCsvDownloadPromise;
+  if (!riskCsvDownload.suggestedFilename().includes('ai-work-transition-risk-register')) {
+    throw new Error(`Unexpected trust-center CSV filename: ${riskCsvDownload.suggestedFilename()}`);
+  }
+  const riskCsvBody = await readDownloadBody(riskCsvDownload, 'Trust-center risk CSV');
+  for (const expectedColumn of ['risk_id', 'source_ids', 'confidence', 'review_state', 'caveat', 'does_not_prove', 'next_action']) {
+    if (!riskCsvBody.includes(expectedColumn)) {
+      throw new Error(`Trust-center risk CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - trust center risk CSV');
 }
 
 async function verifyCoachSampleReport(page, baseUrl) {
@@ -746,6 +815,7 @@ async function runBrowserChecks(baseUrl) {
 
   try {
     await verifyPrivacyPage(page, baseUrl);
+    await verifyCommercialTrustCenter(page, baseUrl);
     await verifyCoachSampleReport(page, baseUrl);
     await verifySeoReportDownload(page, baseUrl);
     await verifyResumeProofReportDownload(page, baseUrl);

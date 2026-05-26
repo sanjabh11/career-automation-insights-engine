@@ -1,138 +1,326 @@
-import React from "react";
-import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  FileText,
+  Lock,
+  ShieldCheck,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, FileText, ScrollText, Lock, Database, Link as LinkIcon, Activity } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import {
+  commercialLaunchGateItems,
+  functionSecurityReviewGroups,
+} from "@/lib/commercialLaunchGate";
+import {
+  commercialLaunchReadinessMilestones,
+  paymentFulfillmentStatusItems,
+} from "@/lib/commercialLaunchReadiness";
+import {
+  buildInstitutionalReadinessCsv,
+  buildInstitutionalReadinessPacket,
+  INSTITUTIONAL_READINESS_STATUS_LABELS,
+  renderInstitutionalReadinessPacketHtml,
+} from "@/lib/institutionalReadinessPacket";
+import { REVIEW_STATUS_LABELS } from "@/lib/reportEvidenceCards";
+import { supabaseFunctionGovernanceSummary } from "@/lib/supabaseFunctionGovernance";
+
+function downloadTextFile(filename: string, body: string, type: string) {
+  const blob = new Blob([body], { type });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function scoreLabel(value: number): string {
+  return `${value.toFixed(1).replace(/\.0$/, "")}/5`;
+}
 
 export default function ResponsibleAIPage() {
-  const { data: gov, isLoading } = useQuery({
-    queryKey: ["governance-metrics"],
-    queryFn: async () => {
-      const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: logs } = await (supabase as any)
-        .from("apo_logs")
-        .select("id, created_at, validation_warnings")
-        .gte("created_at", d30)
-        .limit(5000);
-      const total = logs?.length || 0;
-      const overrides = (logs || []).filter((r: any) => Array.isArray(r.validation_warnings) && r.validation_warnings.length > 0).length;
-      const overrideRate = total > 0 ? Math.round((overrides / total) * 1000) / 10 : 0;
-      return { total, overrides, overrideRate };
-    },
-    staleTime: 60_000,
-  });
-  return (
-    <div className="container mx-auto p-4 md:p-8 space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Responsible AI</h1>
-        <p className="text-sm text-muted-foreground">Model cards, data sheets, security posture, and governance metrics.</p>
-      </div>
+  const packet = buildInstitutionalReadinessPacket();
+  const blockedGateCount = commercialLaunchGateItems.filter((item) => item.owner !== "codex-implemented").length;
 
-      <Card className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="border rounded-md p-3">
-            <div className="text-xs text-muted-foreground">Security</div>
-            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Lock className="h-4 w-4 text-green-600" /> RLS + Secrets</div>
+  const handleDownloadTrustPacket = () => {
+    downloadTextFile(
+      "ai-work-transition-trust-packet.html",
+      renderInstitutionalReadinessPacketHtml(packet),
+      "text/html;charset=utf-8"
+    );
+  };
+
+  const handleDownloadRiskCsv = () => {
+    downloadTextFile(
+      "ai-work-transition-risk-register.csv",
+      buildInstitutionalReadinessCsv(packet),
+      "text/csv;charset=utf-8"
+    );
+  };
+
+  return (
+    <main className="container mx-auto min-h-screen space-y-8 px-4 py-8" data-commercial-trust-center="true">
+      <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary">Commercial Trust Center</Badge>
+            <Badge variant="outline">Planning use only</Badge>
           </div>
-          <div className="border rounded-md p-3">
-            <div className="text-xs text-muted-foreground">Data Governance</div>
-            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Database className="h-4 w-4 text-indigo-600" /> 90d retention</div>
+          <div className="space-y-3">
+            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+              Responsible AI and institutional trust boundaries
+            </h1>
+            <p className="max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
+              Buyer-facing review surface for source-labeled AI work transition proof packs. It shows what is
+              implemented, what remains blocked, what evidence supports each control, and what the app must not
+              be used for before controlled founder-led outreach.
+            </p>
           </div>
-          <div className="border rounded-md p-3">
-            <div className="text-xs text-muted-foreground">Override Rate</div>
-            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><Activity className="h-4 w-4 text-green-600" /> {isLoading ? "–" : `${gov?.overrideRate ?? 0}%`}</div>
-          </div>
-          <div className="border rounded-md p-3">
-            <div className="text-xs text-muted-foreground">Model Cards</div>
-            <div className="text-lg font-semibold flex items-center gap-2 mt-1"><FileText className="h-4 w-4 text-indigo-600" /> 2 published</div>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={handleDownloadTrustPacket}>
+              <Download className="mr-2 h-4 w-4" />
+              Download trust packet
+            </Button>
+            <Button variant="outline" onClick={handleDownloadRiskCsv}>
+              <Download className="mr-2 h-4 w-4" />
+              Download risk CSV
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/proof-pack-gallery">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Proof-pack gallery
+              </Link>
+            </Button>
           </div>
         </div>
-      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-5 w-5 text-green-600" />
-            <h3 className="font-semibold">Security & Privacy</h3>
-            <Badge variant="secondary">RLS</Badge>
-          </div>
-          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-            <li>Row Level Security (RLS) enforced on user-facing tables</li>
-            <li>Secrets stored in Supabase project settings; no keys in repo</li>
-            <li>CORS restricted for edge functions as applicable</li>
-          </ul>
-          <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
-            <Lock className="h-3.5 w-3.5" /> Audit trail available via `apo_logs`
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="h-5 w-5 text-indigo-600" />
-            <h3 className="font-semibold">Model Cards</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">Describe scope, limitations, and intended use of APO and task classification models.</p>
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <a href="/docs/model_cards/APO_MODEL_CARD.pdf" target="_blank" rel="noreferrer">APO Model Card</a>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href="/docs/model_cards/TASK_MODEL_CARD.pdf" target="_blank" rel="noreferrer">Task Model Card</a>
-            </Button>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <Database className="h-5 w-5 text-indigo-600" />
-            <h3 className="font-semibold">Data Sheets</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">O*NET enrichment, telemetry, and logging data sources and retention.</p>
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <a href="/docs/data_sheets/ONET_ENRICHMENT_SHEET.pdf" target="_blank" rel="noreferrer">O*NET Enrichment</a>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href="/docs/data_sheets/TELEMETRY_SHEET.pdf" target="_blank" rel="noreferrer">Telemetry</a>
-            </Button>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <ScrollText className="h-5 w-5 text-indigo-600" />
-            <h3 className="font-semibold">Governance (last 30 days)</h3>
-            <Badge>beta</Badge>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-            <Activity className="h-4 w-4" />
-            <span>Override rate: {isLoading ? "–" : `${gov?.overrideRate ?? 0}%`} ({isLoading ? "–" : `${gov?.overrides ?? 0}`} of {isLoading ? "–" : `${gov?.total ?? 0}`})</span>
-          </div>
-          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-            <li>Incident count: 0 (public)</li>
-            <li>Prompt updates: tracked in CHANGELOG</li>
-          </ul>
-          <div className="mt-3">
-            <div className="text-sm font-medium mb-1">Security Artifacts</div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" asChild>
-                <a href="/docs/security/THREAT_MODEL.pdf" target="_blank" rel="noreferrer">Threat Model</a>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a href="/docs/security/PEN_TEST_SUMMARY.pdf" target="_blank" rel="noreferrer">Pen-test Summary</a>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a href="/docs/security/RLS_PROOFS.pdf" target="_blank" rel="noreferrer">RLS Proofs</a>
-              </Button>
+        <Card className="border-amber-200 bg-amber-50 p-5 text-amber-950">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-1 h-5 w-5" />
+            <div className="space-y-2">
+              <h2 className="font-semibold">Launch boundary</h2>
+              <p className="text-sm leading-6">
+                Ready for bounded demos and pilot review. Not ready for scaled paid or institutional delivery
+                until live payment proof, authenticated E2E, manual WCAG evidence, secret rotation, and buyer
+                acceptable-use signoff are complete.
+              </p>
             </div>
           </div>
-          <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
-            <LinkIcon className="h-3.5 w-3.5" /> See <a className="underline" href="/validation">Validation</a> for calibration.
+        </Card>
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Commercial trust summary">
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Active Supabase functions</span>
+            <Lock className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{supabaseFunctionGovernanceSummary.activeFunctionCount}</div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT functions classified.
+          </p>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Launch blockers</span>
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{blockedGateCount}</div>
+          <p className="mt-1 text-xs text-muted-foreground">Owner, platform, provider, or staff-review actions.</p>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">AI RMF controls</span>
+            <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{packet.aiRmfControls.length}</div>
+          <p className="mt-1 text-xs text-muted-foreground">Govern, Map, Measure, and Manage mapped to product evidence.</p>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Readiness risks</span>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{packet.riskRows.length}</div>
+          <p className="mt-1 text-xs text-muted-foreground">Each row has sources, caveats, and does-not-prove text.</p>
+        </Card>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5" data-trust-employment-boundary="true">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-emerald-600" />
+            <h2 className="text-xl font-semibold">Allowed use and hard limits</h2>
+          </div>
+          <div className="mt-4 space-y-3">
+            {packet.employmentDecisionBoundary.map((boundary) => (
+              <div key={boundary} className="flex gap-2 text-sm leading-6">
+                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+                <span>{boundary}</span>
+              </div>
+            ))}
           </div>
         </Card>
-      </div>
-    </div>
+
+        <Card className="p-5" data-trust-accessibility-boundary="true">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-indigo-600" />
+            <h2 className="text-xl font-semibold">Accessibility evidence gate</h2>
+          </div>
+          <div className="mt-4 space-y-3">
+            {packet.accessibilityGate.map((gate) => (
+              <div key={gate} className="flex gap-2 text-sm leading-6">
+                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-indigo-600" />
+                <span>{gate}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      <section className="space-y-4" data-trust-launch-readiness="true">
+        <div>
+          <h2 className="text-2xl font-semibold">Commercial launch readiness</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Progress is intentionally split between implemented proof and remaining launch gates.
+          </p>
+        </div>
+        <div className="overflow-x-auto rounded-md border">
+          <table className="min-w-full divide-y text-sm">
+            <thead className="bg-muted/60 text-left">
+              <tr>
+                <th className="px-4 py-3 font-medium">Phase</th>
+                <th className="px-4 py-3 font-medium">Done</th>
+                <th className="px-4 py-3 font-medium">Pending</th>
+                <th className="px-4 py-3 font-medium">Rating</th>
+                <th className="px-4 py-3 font-medium">Remaining</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y bg-background">
+              {commercialLaunchReadinessMilestones.map((milestone) => (
+                <tr key={milestone.phase}>
+                  <td className="px-4 py-3 font-medium">{milestone.phase}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{milestone.done}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{milestone.pending}</td>
+                  <td className="px-4 py-3">{scoreLabel(milestone.rating)}</td>
+                  <td className="px-4 py-3">{milestone.remainingPercent}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5" data-trust-live-blockers="true">
+          <h2 className="text-xl font-semibold">Current live blockers</h2>
+          <div className="mt-4 space-y-3">
+            {commercialLaunchGateItems.map((item) => (
+              <div key={item.gap} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-medium">{item.gap}</h3>
+                  <Badge variant={item.priority === "high" ? "destructive" : "outline"}>{item.priority}</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{item.currentProof}</p>
+                <p className="mt-2 text-sm">{item.remainingAction}</p>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  Owner: {item.owner}; maturity {scoreLabel(item.maturity)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-5" data-trust-payment-proof="true">
+          <h2 className="text-xl font-semibold">Payment proof status</h2>
+          <div className="mt-4 space-y-3">
+            {paymentFulfillmentStatusItems.map((item) => (
+              <div key={item.item} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-medium">{item.item}</h3>
+                  <Badge variant={item.status === "done" ? "default" : item.status === "blocked" ? "destructive" : "outline"}>
+                    {item.status.replace(/_/g, " ")}
+                  </Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{item.currentProof}</p>
+                <p className="mt-2 text-sm">{item.remainingAction}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      <section className="space-y-4" data-trust-risk-register="true">
+        <div>
+          <h2 className="text-2xl font-semibold">Institutional risk register</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            These rows are for buyer review. They do not certify legal compliance, WCAG conformance, or employment-selection validity.
+          </p>
+        </div>
+        <div className="overflow-x-auto rounded-md border">
+          <table className="min-w-full divide-y text-sm">
+            <thead className="bg-muted/60 text-left">
+              <tr>
+                <th className="px-4 py-3 font-medium">Risk area</th>
+                <th className="px-4 py-3 font-medium">Current control</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Review</th>
+                <th className="px-4 py-3 font-medium">Does not prove</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y bg-background">
+              {packet.riskRows.map((risk) => (
+                <tr key={risk.id}>
+                  <td className="px-4 py-3 font-medium">{risk.riskArea}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{risk.currentControl}</td>
+                  <td className="px-4 py-3">{INSTITUTIONAL_READINESS_STATUS_LABELS[risk.status]}</td>
+                  <td className="px-4 py-3">{REVIEW_STATUS_LABELS[risk.reviewStatus]}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{risk.doesNotProve}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5" data-trust-ai-rmf="true">
+          <h2 className="text-xl font-semibold">AI RMF control map</h2>
+          <div className="mt-4 space-y-3">
+            {packet.aiRmfControls.map((control) => (
+              <div key={control.function} className="rounded-md border p-3">
+                <Badge variant="secondary">{control.function}</Badge>
+                <p className="mt-2 text-sm font-medium">{control.control}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{control.productEvidence}</p>
+                <p className="mt-2 text-xs text-muted-foreground">Remaining gate: {control.remainingGate}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-5" data-trust-function-review="true">
+          <h2 className="text-xl font-semibold">Function governance review</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{supabaseFunctionGovernanceSummary.blocker}</p>
+          <div className="mt-4 space-y-3">
+            {functionSecurityReviewGroups.map((group) => (
+              <div key={group.group} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-medium">{group.group}</h3>
+                  <Badge variant="outline">{scoreLabel(group.maturity)}</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{group.currentControl}</p>
+                <p className="mt-2 text-sm">{group.remainingRisk}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+    </main>
   );
 }

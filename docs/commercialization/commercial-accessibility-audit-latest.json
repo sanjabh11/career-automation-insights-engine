@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T14:02:04.488Z",
+  "generatedAt": "2026-05-26T14:32:32.320Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -7,6 +7,10 @@
     {
       "path": "/privacy",
       "label": "privacy policy"
+    },
+    {
+      "path": "/trust-center",
+      "label": "commercial trust center"
     },
     {
       "path": "/for-coaches",
@@ -72,6 +76,24 @@
       "result": "pass",
       "focusableCount": 1,
       "keyboardTabStopsChecked": 1
+    },
+    {
+      "path": "/trust-center",
+      "label": "commercial trust center",
+      "viewport": "mobile",
+      "heading": "Responsible AI and institutional trust boundaries",
+      "bodyLength": 12492,
+      "interactiveCount": 4,
+      "automatedChecks": [
+        "one visible h1",
+        "main landmark present",
+        "visible body text present",
+        "no horizontal overflow above tolerance",
+        "interactive controls have accessible names"
+      ],
+      "result": "pass",
+      "focusableCount": 4,
+      "keyboardTabStopsChecked": 4
     },
     {
       "path": "/for-coaches",
@@ -186,7 +208,7 @@
       "label": "occupation SEO report",
       "viewport": "mobile",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2319,
+      "bodyLength": 2326,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -206,6 +228,22 @@
       "heading": "Privacy Policy",
       "bodyLength": 2559,
       "interactiveCount": 1,
+      "automatedChecks": [
+        "one visible h1",
+        "main landmark present",
+        "visible body text present",
+        "no horizontal overflow above tolerance",
+        "interactive controls have accessible names"
+      ],
+      "result": "pass"
+    },
+    {
+      "path": "/trust-center",
+      "label": "commercial trust center",
+      "viewport": "tablet",
+      "heading": "Responsible AI and institutional trust boundaries",
+      "bodyLength": 12492,
+      "interactiveCount": 4,
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
@@ -316,7 +354,7 @@
       "label": "occupation SEO report",
       "viewport": "tablet",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2310,
+      "bodyLength": 2313,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -334,6 +372,22 @@
       "heading": "Privacy Policy",
       "bodyLength": 2559,
       "interactiveCount": 1,
+      "automatedChecks": [
+        "one visible h1",
+        "main landmark present",
+        "visible body text present",
+        "no horizontal overflow above tolerance",
+        "interactive controls have accessible names"
+      ],
+      "result": "pass"
+    },
+    {
+      "path": "/trust-center",
+      "label": "commercial trust center",
+      "viewport": "desktop",
+      "heading": "Responsible AI and institutional trust boundaries",
+      "bodyLength": 12492,
+      "interactiveCount": 4,
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
@@ -444,7 +498,7 @@
       "label": "occupation SEO report",
       "viewport": "desktop",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2289,
+      "bodyLength": 2353,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T14:01:11.845Z",
+  "generatedAt": "2026-05-26T14:29:28.643Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -888,6 +888,49 @@
       "passed": true
     },
     {
+      "id": "responsible-ai-trust-center",
+      "label": "Responsible AI trust center",
+      "path": "src/pages/ResponsibleAIPage.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "wcag-22",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "supabase-edge-functions",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "data-commercial-trust-center=\"true\"",
+        "Responsible AI and institutional trust boundaries",
+        "Commercial Trust Center",
+        "Planning use only",
+        "buildInstitutionalReadinessPacket",
+        "commercialLaunchReadinessMilestones",
+        "commercialLaunchGateItems",
+        "supabaseFunctionGovernanceSummary",
+        "data-trust-employment-boundary=\"true\"",
+        "data-trust-accessibility-boundary=\"true\"",
+        "data-trust-launch-readiness=\"true\"",
+        "data-trust-live-blockers=\"true\"",
+        "data-trust-payment-proof=\"true\"",
+        "data-trust-risk-register=\"true\"",
+        "data-trust-ai-rmf=\"true\"",
+        "data-trust-function-review=\"true\"",
+        "Download trust packet",
+        "Download risk CSV",
+        "do not certify legal compliance, WCAG conformance, or employment-selection validity"
+      ],
+      "caveat": "Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.",
+      "bytes": 14953,
+      "rows": 310,
+      "sha256": "dcafb10e0b5521f164d0d28ef9c7788ec26a9a3ac0e80ca4db398e889dc4a6de",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "commercial-accessibility-audit-json",
       "label": "Commercial accessibility audit JSON artifact",
       "path": "docs/commercialization/commercial-accessibility-audit-latest.json",
@@ -911,7 +954,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "0867949ab68f7bc1b02e15b03aa063e8bb1f7755a203a1b92e35f9c4dd10b647",
+      "sha256": "51caf26b120399a58c565c37af07c6917b9a8a5e83cbea2df51881078227778f",
       "failures": [],
       "passed": true
     },
@@ -941,7 +984,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "987943649f52b2a79cd1d9b37630886d93dc2d8c5ce1d1904fd28f0ec559e63f",
+      "sha256": "2f48ed446108fd874c44441036bcac71c77844ddff2c0d355f4262591791b1fa",
       "failures": [],
       "passed": true
     },
@@ -1073,7 +1116,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "7634b982b2ab6964fb1357faec25dfea972b4526887aa1b975273c7e6936fa94",
+      "sha256": "bde588cc5fef2307bb912089f5c81cde91a20a4f88bd45f8a9bde9bdc7cfbf40",
       "failures": [],
       "passed": true
     },

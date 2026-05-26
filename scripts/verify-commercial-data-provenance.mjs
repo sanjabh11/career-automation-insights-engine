@@ -262,6 +262,15 @@ const artifacts = [
     caveat: 'Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.',
   },
   {
+    id: 'responsible-ai-trust-center',
+    label: 'Responsible AI trust center',
+    path: 'src/pages/ResponsibleAIPage.tsx',
+    type: 'commercial-page',
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'wcag-22', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'supabase-edge-functions', 'llm-output'],
+    expectedSnippets: ['data-commercial-trust-center="true"', 'Responsible AI and institutional trust boundaries', 'Commercial Trust Center', 'Planning use only', 'buildInstitutionalReadinessPacket', 'commercialLaunchReadinessMilestones', 'commercialLaunchGateItems', 'supabaseFunctionGovernanceSummary', 'data-trust-employment-boundary="true"', 'data-trust-accessibility-boundary="true"', 'data-trust-launch-readiness="true"', 'data-trust-live-blockers="true"', 'data-trust-payment-proof="true"', 'data-trust-risk-register="true"', 'data-trust-ai-rmf="true"', 'data-trust-function-review="true"', 'Download trust packet', 'Download risk CSV', 'do not certify legal compliance, WCAG conformance, or employment-selection validity'],
+    caveat: 'Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.',
+  },
+  {
     id: 'commercial-accessibility-audit-json',
     label: 'Commercial accessibility audit JSON artifact',
     path: 'docs/commercialization/commercial-accessibility-audit-latest.json',

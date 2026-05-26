@@ -191,7 +191,7 @@ const featureMap = [
   {
     feature: 'Privacy and responsible-use trust boundary',
     buyer: 'Individuals, coaches, institutional reviewers',
-    routes: ['/privacy', '/tools/resume-analyzer', '/responsible-ai'],
+    routes: ['/privacy', '/tools/resume-analyzer', '/responsible-ai', '/trust-center'],
     files: [
       'src/pages/PrivacyPage.tsx',
       'src/components/ResumeAnalyzer.tsx',
@@ -209,7 +209,7 @@ const featureMap = [
       'scripts/verify-resume-parser-live.mjs',
       'scripts/verify-commercial-live-auth-e2e.mjs',
     ],
-    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, live parse-resume receipt verifier, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, optional signed-in live synthetic e2e verifier for artifact save/delete and resume-analysis deletion receipts, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
+    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, live parse-resume receipt verifier, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, optional signed-in live synthetic e2e verifier for artifact save/delete and resume-analysis deletion receipts, buyer-facing commercial trust center with AI RMF/risk-register/live-blocker/payment-proof/function-governance sections, downloadable trust packet and risk CSV, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
   },
   {
     feature: 'Counselor report generator',

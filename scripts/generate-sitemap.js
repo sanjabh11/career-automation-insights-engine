@@ -47,6 +47,7 @@ const staticPages = [
   { path: '/skills-builder', priority: '0.7', changefreq: 'monthly' },
   { path: '/help', priority: '0.5', changefreq: 'monthly' },
   { path: '/responsible-ai', priority: '0.5', changefreq: 'monthly' },
+  { path: '/trust-center', priority: '0.6', changefreq: 'monthly' },
   { path: '/validation/methods', priority: '0.5', changefreq: 'monthly' },
   { path: '/quality', priority: '0.5', changefreq: 'monthly' },
 ];
