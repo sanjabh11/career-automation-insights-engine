@@ -86,7 +86,7 @@ export const commercialLaunchGateItems: CommercialLaunchGateItem[] = [
   {
     gap: "Payment fulfillment",
     control: "Stripe checkout now requires authenticated users; credit-purchase webhook path grants report credits and records transactions.",
-    currentProof: "Source is ready: stripe.ts sends Authorization, create-checkout-session verifies caller JWTs for subscription and credit checkout, and stripe-webhook handles credit_purchase metadata. Live create-checkout-session/portal are deployed, but the latest credit/webhook redeploy is blocked by Supabase function-count cap.",
+    currentProof: "Source is ready: stripe.ts sends Authorization, create-checkout-session verifies caller JWTs for subscription and credit checkout, and stripe-webhook handles credit_purchase metadata. Live create-checkout-session/portal are deployed; fresh 2026-05-26 redeploy attempts for checkout/webhook remain blocked by the Supabase function-count cap.",
     remainingAction: "Free function slots or raise the Supabase cap, redeploy create-checkout-session plus stripe-webhook, then run Stripe test-mode webhook replay and confirm report-credit balance changes in a live test account.",
     priority: "medium",
     owner: "staff-review",
@@ -113,7 +113,7 @@ export const functionSecurityReviewGroups: FunctionSecurityReviewGroup[] = [
     group: "Payment and subscription functions",
     functions: ["create-checkout-session", "create-portal-session", "stripe-webhook"],
     currentControl: "New checkout and portal paths require authenticated callers; webhook source verifies Stripe signature and handles credit purchases. Credit checkout is intentionally folded into create-checkout-session to avoid adding another live function.",
-    remainingRisk: "Supabase function-count cap currently blocks redeploying the latest checkout/webhook source; retire legacy payment slugs or raise the cap before production billing launch.",
+    remainingRisk: "Supabase function-count cap still blocks redeploying the latest checkout/webhook source as of 2026-05-26; retire legacy payment slugs with owner approval or raise the cap before production billing launch.",
     maturity: 3.4,
   },
   {

@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-26T13:36:16.762Z
+Generated: 2026-05-26T13:51:08.611Z
 Branch: `live-auth-e2e-closeout`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 

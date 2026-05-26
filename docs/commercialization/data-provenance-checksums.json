@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T13:36:17.398Z",
+  "generatedAt": "2026-05-26T13:51:10.469Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -436,9 +436,9 @@
         "Payment fulfillment"
       ],
       "caveat": "Launch-gate model separates controls already implemented from owner-held secrets, manual function review, provider integration, and payment replay evidence still needed before scaled outreach.",
-      "bytes": 6912,
+      "bytes": 6970,
       "rows": 122,
-      "sha256": "078a2a0438781229f334dfb190aabdacd8b3c70c4d1d3e1bc90d497e36525e1b",
+      "sha256": "4549c1e1a27ef2ea39a368a698eaac98fa1c5349da130807a482b585302bc2bc",
       "failures": [],
       "passed": true
     },
@@ -1073,7 +1073,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "ed61c383bbed992b6d6c469969afdc1685bc457c2ae72b45b9adff31a1b29442",
+      "sha256": "5de783c7d05cd226963d8662d18ed851d08175bf2cce30075dfaef52c7b65991",
       "failures": [],
       "passed": true
     },

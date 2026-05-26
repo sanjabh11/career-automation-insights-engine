@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-26T13:36:17.398Z
+Generated: 2026-05-26T13:51:10.469Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -23,7 +23,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `report-provenance-module` | Report provenance renderer | `src/lib/reportProvenance.ts` | report-runtime | 135 | `7e022db47a018150...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `workforce-executive-report-module` | Workforce executive report artifact renderer | `src/lib/workforceExecutiveReport.ts` | report-runtime | 234 | `4ad0baba8eac8298...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025`, `llm-output` | pass |
 | `commercial-report-artifacts-module` | Commercial report artifact review runtime | `src/lib/commercialReportArtifacts.ts` | report-runtime | 602 | `d37f7fe4281b618d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
-| `commercial-launch-gate-module` | Commercial outreach launch gate model | `src/lib/commercialLaunchGate.ts` | commercial-governance | 122 | `078a2a0438781229...` | `nist-ai-rmf`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
+| `commercial-launch-gate-module` | Commercial outreach launch gate model | `src/lib/commercialLaunchGate.ts` | commercial-governance | 122 | `4549c1e1a27ef2ea...` | `nist-ai-rmf`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
 | `commercial-outreach-pipeline-migration` | Commercial lead outreach pipeline migration | `supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql` | supabase-migration | 127 | `ebbb672d2ec56e54...` | `nist-ai-rmf`, `llm-output` | pass |
 | `commercial-outreach-response-metrics-migration` | Commercial lead outreach response metrics migration | `supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql` | supabase-migration | 165 | `c77b4715c0ad41f9...` | `nist-ai-rmf`, `llm-output` | pass |
 | `commercial-checkout-auth-boundary` | Commercial checkout authentication boundary | `src/lib/stripe.ts` | payment-runtime | 427 | `59ed47cc90ba8cf6...` | `supabase-edge-functions`, `llm-output` | pass |
@@ -44,7 +44,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 289 | `24a4796ffbf79ee7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `ed61c383bbed992b...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `5de783c7d05cd226...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |

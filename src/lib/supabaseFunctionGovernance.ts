@@ -43,11 +43,11 @@ export interface SupabaseFunctionPortfolioGroup {
 
 export const supabaseFunctionGovernanceSummary: SupabaseFunctionGovernanceSummary = {
   projectRef: "kvunnankqgfokeufvsrv",
-  capturedAt: "2026-05-25",
+  capturedAt: "2026-05-26",
   activeFunctionCount: 100,
   noJwtFunctionCount: 20,
   blocker:
-    "Live deploy attempts for create-credit-checkout plus redeploys of create-checkout-session and stripe-webhook returned Supabase 402 function-count/spend-cap errors.",
+    "Fresh 2026-05-26 redeploy attempts for create-checkout-session and stripe-webhook returned Supabase 402 function-count/spend-cap errors.",
   nonDestructiveRule:
     "Do not delete live functions automatically. Delete commands are approval-ready only and must be run one slug at a time after owner review.",
 };
@@ -87,7 +87,7 @@ export const publicNoJwtFunctionReviewItems: SupabaseFunctionGovernanceItem[] = 
     action: "harden",
     launchImpact: "Must remain public for Stripe, but should rely on signature verification only.",
     risk: "Current live version verifies Stripe signature but has not yet received the new credit-purchase fulfillment path.",
-    nextStep: "After two function slots are freed, redeploy stripe-webhook with credit_purchase handling and keep verify_jwt disabled.",
+    nextStep: "After function slots are freed or the cap is raised, redeploy stripe-webhook with credit_purchase handling and keep verify_jwt disabled.",
     maturity: 3.5,
   },
   {
@@ -274,7 +274,7 @@ export const legacyFunctionPortfolioGroups: SupabaseFunctionPortfolioGroup[] = [
     group: "Legacy payment slugs",
     slugs: ["stripe-checkout", "stripe-portal"],
     commercialNeed: "No longer needed once create-checkout-session and create-portal-session are confirmed in production.",
-    recommendedAction: "Delete after owner approval; this frees two slots needed for checkout/webhook redeploy.",
+    recommendedAction: "Delete after owner approval; this frees slots needed for checkout/webhook redeploy.",
     maturity: 4.4,
   },
   {
