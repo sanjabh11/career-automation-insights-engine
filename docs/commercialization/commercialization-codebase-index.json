@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-25T17:44:54.070Z",
-  "branch": "main",
+  "generatedAt": "2026-05-26T06:15:04.352Z",
+  "branch": "live-auth-e2e-closeout",
   "routes": [
     {
       "path": "/",
@@ -655,6 +655,10 @@
     {
       "name": "verify:sources",
       "command": "node scripts/verify-source-manifest.mjs --write"
+    },
+    {
+      "name": "verify:supabase-function-governance",
+      "command": "node scripts/verify-supabase-function-governance.mjs"
     }
   ],
   "sourceIds": [
@@ -721,6 +725,7 @@
       "list_commercial_workforce_audits",
       "list_commercial_workforce_review_rows",
       "log_commercial_report_artifact_event",
+      "update_commercial_lead_outreach_plan",
       "update_commercial_lead_status",
       "update_commercial_workforce_row_mapping",
       "update_resume_proof_report_artifact_updated_at"
@@ -740,6 +745,7 @@
       "list_commercial_workforce_audits",
       "list_commercial_workforce_review_rows",
       "log_commercial_report_artifact_event",
+      "update_commercial_lead_outreach_plan",
       "update_commercial_lead_status",
       "update_commercial_workforce_row_mapping"
     ],
@@ -767,12 +773,15 @@
       "files": [
         "src/pages/ProofPackGalleryPage.tsx",
         "src/lib/commercialLaunchGate.ts",
+        "src/lib/commercialLaunchReadiness.ts",
+        "src/lib/supabaseFunctionGovernance.ts",
         "src/lib/institutionalReadinessPacket.ts",
         "docs/commercialization/pilot-outreach-pack.md",
         "scripts/verify-commercial-browser.mjs",
-        "scripts/verify-commercial-trust-boundaries.mjs"
+        "scripts/verify-commercial-trust-boundaries.mjs",
+        "scripts/verify-supabase-function-governance.mjs"
       ],
-      "proof": "Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV."
+      "proof": "Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV."
     },
     {
       "feature": "Institutional readiness and governance packet",
@@ -880,13 +889,16 @@
       ],
       "files": [
         "src/lib/commercialLaunchGate.ts",
+        "src/lib/commercialLaunchReadiness.ts",
+        "src/lib/supabaseFunctionGovernance.ts",
         "src/lib/stripe.ts",
         "supabase/functions/create-checkout-session/index.ts",
         "supabase/functions/stripe-webhook/index.ts",
         "scripts/verify-report-evidence.mjs",
-        "scripts/verify-commercial-trust-boundaries.mjs"
+        "scripts/verify-commercial-trust-boundaries.mjs",
+        "scripts/verify-supabase-function-governance.mjs"
       ],
-      "proof": "Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records."
+      "proof": "Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records."
     },
     {
       "feature": "Source provenance and claim boundaries",

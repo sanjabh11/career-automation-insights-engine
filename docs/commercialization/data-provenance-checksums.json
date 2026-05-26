@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T17:45:11.471Z",
+  "generatedAt": "2026-05-26T06:15:05.720Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -817,9 +817,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 50979,
-      "rows": 864,
-      "sha256": "bcc944953bb717bfc34d47cf98166ea8722711926a356464ee653c6555ee66c8",
+      "bytes": 70445,
+      "rows": 1156,
+      "sha256": "2b14f6ff58d1da881ef1a31291277259841780ba2a02ee0fe51f948c541fd626",
       "failures": [],
       "passed": true
     },
@@ -885,7 +885,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "ca002bb18543f0efebcb78065fcaa758665bab6b2bb69c49753cbeb5cf06a163",
+      "sha256": "50de85b318301888054e33dab387b08373df0ce9d5fd7730406380d0eb1dfb23",
       "failures": [],
       "passed": true
     },
@@ -915,7 +915,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "01e09cd575eae4009182a5ec2a2bc12504640dbd6851f52b55bd11da9d6b02d7",
+      "sha256": "04af288228be8ea84b99f5a6494ce6a7420252529efcfd9d412944c7d0df7170",
       "failures": [],
       "passed": true
     },
@@ -1047,7 +1047,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5287,
       "rows": 75,
-      "sha256": "4d817a91d599135ed10be5e2de2c4e6c8bac7ab9c3b8f3f840f0c9eda525c95f",
+      "sha256": "6cb0d63c2128698b9b63ac99b35462aad0b3e22ec17bb10b43d7b5cbc84eb601",
       "failures": [],
       "passed": true
     },

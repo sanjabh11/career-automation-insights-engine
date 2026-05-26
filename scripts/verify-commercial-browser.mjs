@@ -496,6 +496,9 @@ async function verifyProofPackGallery(page, baseUrl) {
     '/proof-pack-gallery heading'
   );
   await assertVisible(page.locator('[data-proof-pack-gallery="phase-6-outreach"]'), 'proof-pack gallery marker');
+  await assertVisible(page.locator('[data-launch-readiness-command-center="true"]'), 'launch readiness command center');
+  await assertVisible(page.getByText(/Live governance closeout/i), 'launch readiness governance row');
+  await assertVisible(page.getByText(/Payment proof/i).first(), 'launch readiness payment proof');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="individual-transition-report"]'), 'individual proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="coach-branded-sample"]'), 'coach proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="workforce-csv-audit"]'), 'workforce proof-pack sample card');
@@ -528,6 +531,18 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(outreachPhasePlan, 'outreach phase plan');
   await assertVisible(outreachPhasePlan.getByText('2. Founder-led validation'), 'outreach founder validation phase');
   await assertVisible(outreachPhasePlan.getByText('5. Scaled outreach'), 'outreach scaled phase');
+  await assertVisible(page.locator('[data-payment-fulfillment-status="true"]'), 'payment fulfillment status panel');
+  await assertVisible(page.getByText(/Report-credit checkout/i), 'report credit checkout status');
+  await assertVisible(page.getByText(/Stripe webhook fulfillment/i), 'stripe webhook fulfillment status');
+  await assertVisible(page.locator('[data-outreach-sequence-builder="true"]'), 'outreach sequence builder');
+  await assertVisible(page.getByText(/Career coach/i).first(), 'coach outreach sequence');
+  await assertVisible(page.locator('[data-source-freshness-dashboard="true"]'), 'source freshness dashboard');
+  await assertVisible(page.getByText(/O\*NET task ratings/i).first(), 'source freshness O*NET row');
+  await assertVisible(page.locator('[data-manual-wcag-evidence-workspace="true"]'), 'manual WCAG evidence workspace');
+  await assertVisible(page.getByText(/Keyboard-only path/i), 'manual WCAG keyboard checkpoint');
+  await assertVisible(page.locator('[data-pilot-feedback-capture="true"]'), 'pilot feedback capture');
+  await assertVisible(page.getByText(/Paid pilot signal/i), 'pilot feedback paid signal');
+  await assertVisible(page.locator('[data-buyer-landing-roadmap="true"]'), 'buyer landing roadmap');
   const commercialLaunchGate = page.locator('[data-commercial-launch-gate="true"]');
   await assertVisible(commercialLaunchGate, 'commercial outreach launch gate');
   await assertVisible(commercialLaunchGate.getByText(/Auth live E2E secrets/i), 'launch gate auth secret row');
@@ -535,6 +550,10 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(commercialLaunchGate.getByRole('cell', { name: 'Payment fulfillment' }), 'launch gate payment fulfillment row');
   await assertVisible(page.locator('[data-function-security-review="true"]'), 'function security review');
   await assertVisible(page.getByText(/Commercial core with JWT/i), 'function security commercial core group');
+  await assertVisible(page.locator('[data-supabase-function-governance="true"]'), 'supabase function governance section');
+  await assertVisible(page.getByText(/Owner approval required before deletion/i), 'function governance owner approval boundary');
+  await assertVisible(page.getByText(/stripe-checkout/i).first(), 'stripe checkout retirement candidate');
+  await assertVisible(page.getByText(/stripe-portal/i).first(), 'stripe portal retirement candidate');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });

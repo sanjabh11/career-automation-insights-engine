@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, CheckCircle2, Download, ExternalLink, FileText, GraduationCap, Mail, MapPin, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, CreditCard, Download, ExternalLink, FileText, GraduationCap, ListChecks, Mail, MapPin, RefreshCw, ShieldCheck, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import NavigationPremium from "@/components/NavigationPremium";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,22 @@ import {
   renderLocalLaborMarketSnapshotHtml,
 } from "@/lib/localLaborMarketSnapshot";
 import { commercialLaunchGateItems, functionSecurityReviewGroups } from "@/lib/commercialLaunchGate";
+import {
+  buyerLandingPageRoadmap,
+  commercialLaunchReadinessMilestones,
+  manualWcagEvidenceChecklist,
+  outreachSequenceTemplates,
+  paymentFulfillmentStatusItems,
+  pilotFeedbackCaptureFields,
+  sourceFreshnessDashboardRows,
+} from "@/lib/commercialLaunchReadiness";
+import {
+  functionGovernanceApprovalChecklist,
+  immediateFunctionRetirementCandidates,
+  legacyFunctionPortfolioGroups,
+  publicNoJwtFunctionReviewItems,
+  supabaseFunctionGovernanceSummary,
+} from "@/lib/supabaseFunctionGovernance";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
 
@@ -508,6 +524,76 @@ export default function ProofPackGalleryPage() {
           </div>
         </section>
 
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-launch-readiness-command-center="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Launch readiness command center</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                A milestone view of what is safe for founder-led outreach now and what must stay blocked before paid or institutional scale.
+              </p>
+            </div>
+            <Badge className="border-amber-400/30 bg-amber-400/10 text-amber-100">
+              Controlled outreach only
+            </Badge>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[1060px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Phase</th>
+                  <th className="py-3 pr-4 font-semibold">Focus</th>
+                  <th className="py-3 pr-4 font-semibold">Done</th>
+                  <th className="py-3 pr-4 font-semibold">Pending</th>
+                  <th className="py-3 pr-4 font-semibold">Rating</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining</th>
+                  <th className="py-3 pr-4 font-semibold">Move next</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commercialLaunchReadinessMilestones.map((milestone) => (
+                  <tr key={milestone.phase} className="border-b border-slate-800/80 align-top" data-launch-readiness-phase={milestone.phase}>
+                    <td className="py-4 pr-4 font-semibold text-white">{milestone.phase}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.focus}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.done}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{milestone.pending}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {milestone.rating.toFixed(1)}/5
+                      </span>
+                    </td>
+                    <td className="py-4 pr-4 text-slate-300">{milestone.remainingPercent}%</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.moveNext}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <CreditCard className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Payment proof</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Checkout and portal are live; webhook credit fulfillment still needs redeploy and Stripe replay.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <ListChecks className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Review boundary</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Client-ready reports require section review, caveats, and no employment-decision use.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <RefreshCw className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Source freshness</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">O*NET proof exists; local and licensed labor-market sources remain adapter-bound.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <Users className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Pilot validation</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Manual founder-led outreach can begin with bounded sample artifacts and feedback capture.</p>
+            </article>
+          </div>
+        </section>
+
         <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {galleryItems.map((item) => {
             const Icon = item.icon;
@@ -812,6 +898,137 @@ export default function ProofPackGalleryPage() {
           </div>
         </section>
 
+        <section className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-payment-fulfillment-status="true">
+            <div className="flex items-start gap-3">
+              <CreditCard className="mt-1 h-5 w-5 text-emerald-300" />
+              <div>
+                <h2 className="text-2xl font-semibold text-white">Payment fulfillment status</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Billing can be marketed only after the live webhook and report-credit path are replay-tested.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {paymentFulfillmentStatusItems.map((item) => (
+                <article key={item.item} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-payment-fulfillment-item={item.item}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-white">{item.item}</h3>
+                    <Badge variant="outline" className={item.status === "blocked" ? "border-red-400/40 text-red-200" : "border-slate-600 text-slate-300"}>
+                      {item.status.replace("_", " ")}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{item.currentProof}</p>
+                  <p className="mt-2 text-sm leading-6 text-amber-100">{item.remainingAction}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{item.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-sequence-builder="true">
+            <div className="flex items-start gap-3">
+              <Mail className="mt-1 h-5 w-5 text-emerald-300" />
+              <div>
+                <h2 className="text-2xl font-semibold text-white">Outreach sequence builder</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Manual sequences for the first controlled outreach wave, with source IDs and caveats preserved.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {outreachSequenceTemplates.map((template) => (
+                <article key={template.buyer} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-outreach-sequence-template={template.buyer}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-white">{template.buyer}</h3>
+                    <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{template.confidence} confidence</Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">First touch:</span> {template.firstTouch}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">Follow-up:</span> {template.followUp}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400"><span className="font-semibold text-slate-200">Artifact:</span> {template.proofArtifact} · <span className="font-semibold text-slate-200">Sources:</span> {sourceLabels(template.sourceIds)}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{template.caveat}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-12 grid gap-6 xl:grid-cols-3">
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-source-freshness-dashboard="true">
+            <h2 className="text-2xl font-semibold text-white">Source freshness dashboard</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Current source status before any stronger market-intelligence or local-demand claim is made.
+            </p>
+            <div className="mt-5 space-y-3">
+              {sourceFreshnessDashboardRows.map((row) => (
+                <article key={row.sourceId} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-source-freshness-row={row.sourceId}>
+                  <h3 className="font-semibold text-white">{row.sourceFamily}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{row.currentState}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{row.nextProofNeeded}</p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">{row.sourceId}</Badge>
+                    <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{row.maturity.toFixed(1)}/5</Badge>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-manual-wcag-evidence-workspace="true">
+            <h2 className="text-2xl font-semibold text-white">Manual WCAG evidence workspace</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Automated smoke tests are not full conformance proof; these manual notes are still required.
+            </p>
+            <div className="mt-5 space-y-3">
+              {manualWcagEvidenceChecklist.map((item) => (
+                <article key={item.checkpoint} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-manual-wcag-checkpoint={item.checkpoint}>
+                  <h3 className="font-semibold text-white">{item.checkpoint}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{item.currentProof}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{item.requiredEvidence}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{item.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-pilot-feedback-capture="true">
+            <h2 className="text-2xl font-semibold text-white">Pilot feedback capture</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Feedback fields that turn review calls into market evidence instead of anecdotal reactions.
+            </p>
+            <div className="mt-5 space-y-3">
+              {pilotFeedbackCaptureFields.map((field) => (
+                <article key={field.field} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-pilot-feedback-field={field.field}>
+                  <h3 className="font-semibold text-white">{field.field}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{field.whyItMatters}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{field.captureMethod}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{field.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-buyer-landing-roadmap="true">
+          <h2 className="text-2xl font-semibold text-white">Buyer-specific landing roadmap</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            Landing pages should be split only after pilot evidence confirms the exact buyer language and conversion path.
+          </p>
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            {buyerLandingPageRoadmap.map((item) => (
+              <article key={item.buyer} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-buyer-landing-roadmap-item={item.buyer}>
+                <h3 className="font-semibold text-white">{item.buyer}</h3>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{item.currentRoute}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{item.missingUi}</p>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{item.nextAction}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {item.maturity.toFixed(1)}/5 maturity
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-commercial-launch-gate="true">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -870,6 +1087,96 @@ export default function ProofPackGalleryPage() {
                 <p className="mt-3 text-xs leading-5 text-amber-100">{group.remainingRisk}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-supabase-function-governance="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Supabase function governance and retirement plan</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Live project <span className="font-semibold text-slate-100">{supabaseFunctionGovernanceSummary.projectRef}</span> has {supabaseFunctionGovernanceSummary.activeFunctionCount} active functions and {supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT functions. This plan frees capacity without deleting production functions automatically.
+              </p>
+            </div>
+            <Badge className="border-red-400/30 bg-red-400/10 text-red-100">
+              Owner approval required before deletion
+            </Badge>
+          </div>
+
+          <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100" data-function-cap-blocker="true">
+            {supabaseFunctionGovernanceSummary.blocker}
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm" data-function-retirement-candidates="true">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Immediate candidate</th>
+                  <th className="py-3 pr-4 font-semibold">Live JWT</th>
+                  <th className="py-3 pr-4 font-semibold">Launch impact</th>
+                  <th className="py-3 pr-4 font-semibold">Risk</th>
+                  <th className="py-3 pr-4 font-semibold">Next action</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {immediateFunctionRetirementCandidates.map((item) => (
+                  <tr key={item.slug} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{item.slug}</td>
+                    <td className="py-4 pr-4 text-red-200">{item.liveVerifyJwt ? "yes" : "no"}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.launchImpact}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.risk}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.nextStep}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {item.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {publicNoJwtFunctionReviewItems.slice(0, 6).map((item) => (
+              <article key={item.slug} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-public-function-review={item.slug}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="border-red-400/40 text-red-200">no JWT</Badge>
+                  <Badge variant="outline" className="border-slate-600 text-slate-300">{item.action}</Badge>
+                </div>
+                <h3 className="mt-3 font-semibold text-white">{item.slug}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{item.launchImpact}</p>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{item.risk}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-400">{item.nextStep}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4" data-legacy-function-portfolio="true">
+            {legacyFunctionPortfolioGroups.map((group) => (
+              <article key={group.group} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{group.group}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{group.commercialNeed}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-500">{group.slugs.join(", ")}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {group.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{group.recommendedAction}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-md border border-slate-800 bg-slate-950/70 p-4">
+            <h3 className="font-semibold text-white">Deletion approval checklist</h3>
+            <ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-300 md:grid-cols-2">
+              {functionGovernanceApprovalChecklist.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
+import { execFile } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
 
 const OUTPUT_DIR = 'docs/commercialization';
 const JSON_OUTPUT = `${OUTPUT_DIR}/commercialization-codebase-index.json`;
 const MD_OUTPUT = `${OUTPUT_DIR}/commercialization-codebase-index.md`;
+const execFileAsync = promisify(execFile);
 
 const commercialRoutePaths = new Set([
   '/',
@@ -29,12 +32,15 @@ const featureMap = [
     files: [
       'src/pages/ProofPackGalleryPage.tsx',
       'src/lib/commercialLaunchGate.ts',
+      'src/lib/commercialLaunchReadiness.ts',
+      'src/lib/supabaseFunctionGovernance.ts',
       'src/lib/institutionalReadinessPacket.ts',
       'docs/commercialization/pilot-outreach-pack.md',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
+      'scripts/verify-supabase-function-governance.mjs',
     ],
-    proof: 'Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV.',
+    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV.',
   },
   {
     feature: 'Institutional readiness and governance packet',
@@ -126,13 +132,16 @@ const featureMap = [
     routes: ['/proof-pack-gallery', '/pricing', '/for-coaches', '/operations/leads'],
     files: [
       'src/lib/commercialLaunchGate.ts',
+      'src/lib/commercialLaunchReadiness.ts',
+      'src/lib/supabaseFunctionGovernance.ts',
       'src/lib/stripe.ts',
       'supabase/functions/create-checkout-session/index.ts',
       'supabase/functions/stripe-webhook/index.ts',
       'scripts/verify-report-evidence.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
+      'scripts/verify-supabase-function-governance.mjs',
     ],
-    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -261,6 +270,18 @@ function extractSqlObjects(sqlSource) {
   };
 }
 
+async function getCurrentBranch() {
+  const envBranch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || process.env.GIT_BRANCH;
+  if (envBranch) return envBranch;
+
+  try {
+    const { stdout } = await execFileAsync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+    return stdout.trim() || 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
 function formatTable(headers, rows) {
   const headerRow = `| ${headers.join(' | ')} |`;
   const divider = `| ${headers.map(() => '---').join(' | ')} |`;
@@ -357,6 +378,7 @@ async function main() {
     manifestSource,
     baseSqlSource,
     reviewSqlSource,
+    outreachSqlSource,
     resumeDeletionSqlSource,
     resumeProofArtifactSqlSource,
   ] = await Promise.all([
@@ -365,11 +387,12 @@ async function main() {
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
     readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
+    readFile('supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql', 'utf8'),
     readFile('supabase/migrations/20260524000400_add_resume_deletion_receipts.sql', 'utf8'),
     readFile('supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql', 'utf8'),
   ]);
-  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
-  const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || process.env.GIT_BRANCH || 'main';
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${outreachSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
+  const branch = await getCurrentBranch();
   const index = {
     generatedAt: new Date().toISOString(),
     branch,
