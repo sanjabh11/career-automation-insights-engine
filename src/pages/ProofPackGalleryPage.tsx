@@ -26,6 +26,7 @@ import {
   sourceFreshnessDashboardRows,
 } from "@/lib/commercialLaunchReadiness";
 import {
+  classifiedPublicNoJwtFunctionCount,
   functionGovernanceApprovalChecklist,
   immediateFunctionRetirementCandidates,
   legacyFunctionPortfolioGroups,
@@ -1098,9 +1099,14 @@ export default function ProofPackGalleryPage() {
                 Live project <span className="font-semibold text-slate-100">{supabaseFunctionGovernanceSummary.projectRef}</span> has {supabaseFunctionGovernanceSummary.activeFunctionCount} active functions and {supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT functions. This plan frees capacity without deleting production functions automatically.
               </p>
             </div>
-            <Badge className="border-red-400/30 bg-red-400/10 text-red-100">
-              Owner approval required before deletion
-            </Badge>
+            <div className="flex flex-wrap gap-2">
+              <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-100" data-public-function-classification-count="true">
+                {classifiedPublicNoJwtFunctionCount}/{supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT classified
+              </Badge>
+              <Badge className="border-red-400/30 bg-red-400/10 text-red-100">
+                Owner approval required before deletion
+              </Badge>
+            </div>
           </div>
 
           <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100" data-function-cap-blocker="true">
@@ -1139,7 +1145,7 @@ export default function ProofPackGalleryPage() {
           </div>
 
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {publicNoJwtFunctionReviewItems.slice(0, 6).map((item) => (
+            {publicNoJwtFunctionReviewItems.map((item) => (
               <article key={item.slug} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-public-function-review={item.slug}>
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline" className="border-red-400/40 text-red-200">no JWT</Badge>

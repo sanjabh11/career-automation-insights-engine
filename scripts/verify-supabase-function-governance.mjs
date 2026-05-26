@@ -17,6 +17,17 @@ const checks = [
       'retire-after-approval',
       'create-checkout-session',
       'create-portal-session',
+      'allPublicNoJwtFunctionGovernanceItems',
+      'classifiedPublicNoJwtFunctionCount',
+      'ai-skill-analysis',
+      'calculate-learning-roi',
+      'content-moderation',
+      'cron-stream-processor',
+      'generate-executive-report',
+      'generate-roadmap',
+      'hris-sync',
+      'market-intelligence',
+      'skill-gap-analysis',
       'functionGovernanceApprovalChecklist',
     ],
   },
@@ -54,6 +65,8 @@ const checks = [
       'supabaseFunctionGovernanceSummary.activeFunctionCount',
       'immediateFunctionRetirementCandidates',
       'publicNoJwtFunctionReviewItems',
+      'classifiedPublicNoJwtFunctionCount',
+      'data-public-function-classification-count="true"',
     ],
   },
   {
@@ -94,6 +107,45 @@ async function main() {
   const deleteCommandCount = (governanceSource.match(/supabase functions delete/g) || []).length;
   if (deleteCommandCount !== 2) {
     throw new Error(`Expected exactly two approval-ready legacy payment delete commands, found ${deleteCommandCount}.`);
+  }
+
+  const expectedPublicNoJwtSlugs = [
+    'ai-career-coach',
+    'ai-skill-analysis',
+    'analyze-occupation-tasks',
+    'calculate-apo',
+    'calculate-learning-roi',
+    'cancel-subscription',
+    'content-moderation',
+    'cron-stream-processor',
+    'generate-executive-report',
+    'generate-roadmap',
+    'hris-sync',
+    'market-intelligence',
+    'resume-subscription',
+    'search-occupations',
+    'serpapi-jobs',
+    'skill-gap-analysis',
+    'skill-recommendations',
+    'stripe-checkout',
+    'stripe-portal',
+    'stripe-webhook',
+  ];
+
+  const classifiedSlugs = new Set(
+    [...governanceSource.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1])
+  );
+
+  for (const slug of expectedPublicNoJwtSlugs) {
+    if (!classifiedSlugs.has(slug)) {
+      throw new Error(`Missing public/no-JWT classification for live function: ${slug}`);
+    }
+  }
+
+  if (classifiedSlugs.size !== expectedPublicNoJwtSlugs.length) {
+    throw new Error(
+      `Expected ${expectedPublicNoJwtSlugs.length} classified public/no-JWT functions, found ${classifiedSlugs.size}.`
+    );
   }
 
   for (const slug of ['stripe-checkout', 'stripe-portal']) {

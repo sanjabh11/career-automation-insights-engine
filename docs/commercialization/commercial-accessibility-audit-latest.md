@@ -1,6 +1,6 @@
 # Commercial WCAG 2.2 Accessibility Audit Packet
 
-Generated: 2026-05-26T06:14:12.984Z
+Generated: 2026-05-26T12:43:38.263Z
 Target: http://127.0.0.1:5176
 Status: **automated_smoke_passed_manual_wcag_required**
 
@@ -18,24 +18,24 @@ This packet proves automated responsive/accessibility smoke for the scoped comme
 | `/tools/resume-analyzer` | resume analyzer | mobile | Resume Automation Risk Analyzer | 4 | 884 | 4 | pass |
 | `/tools/counselor-reports` | counselor reports | mobile | Counselor Report Generator | 25 | 1518 | 5 | pass |
 | `/enterprise-dashboard` | workforce dashboard | mobile | Workforce Planning Dashboard | 10 | 482 | 5 | pass |
-| `/proof-pack-gallery` | proof-pack gallery | mobile | Proof-pack gallery for coach, career-center, and workforce pilots | 28 | 38348 | 5 | pass |
-| `/automation-risk/accountant` | occupation SEO report | mobile | Will AI Replace Accountants? | 25 | 2332 | 5 | pass |
+| `/proof-pack-gallery` | proof-pack gallery | mobile | Proof-pack gallery for coach, career-center, and workforce pilots | 28 | 41787 | 5 | pass |
+| `/automation-risk/accountant` | occupation SEO report | mobile | Will AI Replace Accountants? | 25 | 2298 | 5 | pass |
 | `/privacy` | privacy policy | tablet | Privacy Policy | 1 | 2559 | n/a | pass |
 | `/for-coaches` | coach landing page | tablet | Generate "Future-Proof" Client Reports in 30 Seconds | 10 | 3134 | n/a | pass |
 | `/sample-report` | coach sample report | tablet | Generate a Free AI Career Report | 27 | 1568 | n/a | pass |
 | `/tools/resume-analyzer` | resume analyzer | tablet | Resume Automation Risk Analyzer | 4 | 884 | n/a | pass |
 | `/tools/counselor-reports` | counselor reports | tablet | Counselor Report Generator | 25 | 1518 | n/a | pass |
 | `/enterprise-dashboard` | workforce dashboard | tablet | Workforce Planning Dashboard | 10 | 482 | n/a | pass |
-| `/proof-pack-gallery` | proof-pack gallery | tablet | Proof-pack gallery for coach, career-center, and workforce pilots | 28 | 38348 | n/a | pass |
-| `/automation-risk/accountant` | occupation SEO report | tablet | Will AI Replace Accountants? | 25 | 2323 | n/a | pass |
+| `/proof-pack-gallery` | proof-pack gallery | tablet | Proof-pack gallery for coach, career-center, and workforce pilots | 28 | 41787 | n/a | pass |
+| `/automation-risk/accountant` | occupation SEO report | tablet | Will AI Replace Accountants? | 25 | 2332 | n/a | pass |
 | `/privacy` | privacy policy | desktop | Privacy Policy | 1 | 2559 | n/a | pass |
 | `/for-coaches` | coach landing page | desktop | Generate "Future-Proof" Client Reports in 30 Seconds | 16 | 3191 | n/a | pass |
 | `/sample-report` | coach sample report | desktop | Generate a Free AI Career Report | 27 | 1568 | n/a | pass |
 | `/tools/resume-analyzer` | resume analyzer | desktop | Resume Automation Risk Analyzer | 4 | 884 | n/a | pass |
 | `/tools/counselor-reports` | counselor reports | desktop | Counselor Report Generator | 25 | 1518 | n/a | pass |
 | `/enterprise-dashboard` | workforce dashboard | desktop | Workforce Planning Dashboard | 10 | 482 | n/a | pass |
-| `/proof-pack-gallery` | proof-pack gallery | desktop | Proof-pack gallery for coach, career-center, and workforce pilots | 34 | 38405 | n/a | pass |
-| `/automation-risk/accountant` | occupation SEO report | desktop | Will AI Replace Accountants? | 25 | 2312 | n/a | pass |
+| `/proof-pack-gallery` | proof-pack gallery | desktop | Proof-pack gallery for coach, career-center, and workforce pilots | 34 | 41844 | n/a | pass |
+| `/automation-risk/accountant` | occupation SEO report | desktop | Will AI Replace Accountants? | 25 | 2284 | n/a | pass |
 
 ## Manual WCAG 2.2 Review Checklist
 

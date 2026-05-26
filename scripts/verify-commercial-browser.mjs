@@ -552,8 +552,13 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.getByText(/Commercial core with JWT/i), 'function security commercial core group');
   await assertVisible(page.locator('[data-supabase-function-governance="true"]'), 'supabase function governance section');
   await assertVisible(page.getByText(/Owner approval required before deletion/i), 'function governance owner approval boundary');
+  await assertVisible(page.locator('[data-public-function-classification-count="true"]'), 'public function classification count');
+  await assertVisible(page.getByText(/20\/20 public\/no-JWT classified/i), 'all public functions classified');
   await assertVisible(page.getByText(/stripe-checkout/i).first(), 'stripe checkout retirement candidate');
   await assertVisible(page.getByText(/stripe-portal/i).first(), 'stripe portal retirement candidate');
+  await assertVisible(page.getByText(/market-intelligence/i).first(), 'market intelligence function classification');
+  await assertVisible(page.getByText(/generate-executive-report/i).first(), 'executive report function classification');
+  await assertVisible(page.getByText(/hris-sync/i).first(), 'HRIS sync function classification');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });

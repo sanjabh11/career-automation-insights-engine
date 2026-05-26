@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T06:15:05.720Z",
+  "generatedAt": "2026-05-26T12:41:35.561Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -817,9 +817,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 70445,
-      "rows": 1156,
-      "sha256": "2b14f6ff58d1da881ef1a31291277259841780ba2a02ee0fe51f948c541fd626",
+      "bytes": 70843,
+      "rows": 1162,
+      "sha256": "62ccb617c840e0295bc371dc4b021ac94bbbf8ec5bdc291e7e256f25cba94293",
       "failures": [],
       "passed": true
     },
@@ -1047,7 +1047,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5287,
       "rows": 75,
-      "sha256": "6cb0d63c2128698b9b63ac99b35462aad0b3e22ec17bb10b43d7b5cbc84eb601",
+      "sha256": "459cc8b594bf40c1f4adc0ba7c83da75128a5e9411082b282db41f0075978fe3",
       "failures": [],
       "passed": true
     },

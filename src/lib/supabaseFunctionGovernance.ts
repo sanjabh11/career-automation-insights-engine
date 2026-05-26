@@ -91,6 +91,16 @@ export const publicNoJwtFunctionReviewItems: SupabaseFunctionGovernanceItem[] = 
     maturity: 3.5,
   },
   {
+    slug: "ai-skill-analysis",
+    liveVerifyJwt: false,
+    scope: "public-utility",
+    action: "review",
+    launchImpact: "Supports skill analysis experiences that can feed proof-pack recommendations.",
+    risk: "Public AI analysis needs cost ceilings, prompt-injection controls, and evidence-card boundaries before outreach scale.",
+    nextStep: "Keep public only if throttling, logging, and source/caveat response fields are verified.",
+    maturity: 3.0,
+  },
+  {
     slug: "calculate-apo",
     liveVerifyJwt: false,
     scope: "public-utility",
@@ -129,6 +139,86 @@ export const publicNoJwtFunctionReviewItems: SupabaseFunctionGovernanceItem[] = 
     risk: "Could be used as uncaveated career advice if detached from proof-pack boundaries.",
     nextStep: "Keep public only with source/caveat response fields and cost controls.",
     maturity: 3.2,
+  },
+  {
+    slug: "calculate-learning-roi",
+    liveVerifyJwt: false,
+    scope: "public-utility",
+    action: "review",
+    launchImpact: "Can support buyer-facing learning ROI narratives if bounded as planning guidance.",
+    risk: "Public ROI calculations can be overread as validated financial outcomes without assumptions and caveats.",
+    nextStep: "Require assumption display, rate limits, and a clear does-not-prove boundary before marketing it.",
+    maturity: 3.0,
+  },
+  {
+    slug: "content-moderation",
+    liveVerifyJwt: false,
+    scope: "public-utility",
+    action: "review",
+    launchImpact: "Can help keep user-submitted outreach or report text within safety boundaries.",
+    risk: "A public moderation endpoint may expose cost or become an abuse target if not scoped.",
+    nextStep: "Document caller surface, throttling, and whether this should be server-only.",
+    maturity: 3.1,
+  },
+  {
+    slug: "cron-stream-processor",
+    liveVerifyJwt: false,
+    scope: "legacy-archive",
+    action: "separate-project",
+    launchImpact: "No direct proof-pack launch need has been established.",
+    risk: "Public legacy processor adds function-count pressure and unclear attack surface.",
+    nextStep: "Move to its original streaming project or retire after owner dependency review.",
+    maturity: 2.4,
+  },
+  {
+    slug: "generate-executive-report",
+    liveVerifyJwt: false,
+    scope: "commercial-core",
+    action: "harden",
+    launchImpact: "Potentially valuable for workforce executive proof-pack artifacts.",
+    risk: "A public report-generation endpoint can expose paid-report value and uncaveated institutional outputs.",
+    nextStep: "Redeploy with JWT or staff-only checks before using it in paid workforce pilots.",
+    maturity: 3.0,
+  },
+  {
+    slug: "generate-roadmap",
+    liveVerifyJwt: false,
+    scope: "commercial-core",
+    action: "harden",
+    launchImpact: "Can support transition-roadmap deliverables for individuals and workforce pilots.",
+    risk: "Public roadmap generation can create uncaveated advice and provider-cost exposure.",
+    nextStep: "Gate behind auth or enforce strict rate, source, caveat, and review-state controls.",
+    maturity: 3.0,
+  },
+  {
+    slug: "hris-sync",
+    liveVerifyJwt: false,
+    scope: "commercial-core",
+    action: "harden",
+    launchImpact: "Could support future workforce/L&D integrations.",
+    risk: "HRIS sync should never be public/no-JWT because it can touch sensitive workforce data.",
+    nextStep: "Disable public access or move behind authenticated enterprise integration controls before any buyer pilot.",
+    maturity: 2.3,
+  },
+  {
+    slug: "market-intelligence",
+    liveVerifyJwt: false,
+    scope: "external-review",
+    action: "harden",
+    launchImpact: "Can strengthen local labor-market evidence if provider keys and provenance are controlled.",
+    risk: "Public market-intelligence proxies can leak cost, quota, or unsupported market claims.",
+    nextStep: "Require server-side caller controls and source freshness metadata before using it in sales claims.",
+    maturity: 2.9,
+  },
+  {
+    slug: "skill-gap-analysis",
+    liveVerifyJwt: false,
+    scope: "commercial-core",
+    action: "harden",
+    launchImpact: "Supports the core skill-change ledger and transition proof-pack value proposition.",
+    risk: "Public skill-gap analysis can become uncaveated career assessment without human review and source metadata.",
+    nextStep: "Gate behind auth or enforce evidence cards, review states, and rate limits before scaled outreach.",
+    maturity: 3.1,
   },
   {
     slug: "serpapi-jobs",
@@ -171,6 +261,13 @@ export const publicNoJwtFunctionReviewItems: SupabaseFunctionGovernanceItem[] = 
     maturity: 2.5,
   },
 ];
+
+export const allPublicNoJwtFunctionGovernanceItems: SupabaseFunctionGovernanceItem[] = [
+  ...immediateFunctionRetirementCandidates,
+  ...publicNoJwtFunctionReviewItems,
+];
+
+export const classifiedPublicNoJwtFunctionCount = allPublicNoJwtFunctionGovernanceItems.length;
 
 export const legacyFunctionPortfolioGroups: SupabaseFunctionPortfolioGroup[] = [
   {
@@ -229,4 +326,3 @@ export const functionGovernanceApprovalChecklist = [
   "Delete one approved slug at a time and immediately rerun supabase functions list.",
   "Redeploy the blocked checkout/webhook source and run live payment proof before claiming billing readiness.",
 ];
-
