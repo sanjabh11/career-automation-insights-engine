@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T14:32:32.320Z",
+  "generatedAt": "2026-05-26T15:02:24.044Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -82,8 +82,8 @@
       "label": "commercial trust center",
       "viewport": "mobile",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 12492,
-      "interactiveCount": 4,
+      "bodyLength": 16689,
+      "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
@@ -92,8 +92,8 @@
         "interactive controls have accessible names"
       ],
       "result": "pass",
-      "focusableCount": 4,
-      "keyboardTabStopsChecked": 4
+      "focusableCount": 5,
+      "keyboardTabStopsChecked": 5
     },
     {
       "path": "/for-coaches",
@@ -190,7 +190,7 @@
       "label": "proof-pack gallery",
       "viewport": "mobile",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 42343,
+      "bodyLength": 42467,
       "interactiveCount": 28,
       "automatedChecks": [
         "one visible h1",
@@ -208,7 +208,7 @@
       "label": "occupation SEO report",
       "viewport": "mobile",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2326,
+      "bodyLength": 2317,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -242,8 +242,8 @@
       "label": "commercial trust center",
       "viewport": "tablet",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 12492,
-      "interactiveCount": 4,
+      "bodyLength": 16689,
+      "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
@@ -338,7 +338,7 @@
       "label": "proof-pack gallery",
       "viewport": "tablet",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 42343,
+      "bodyLength": 42467,
       "interactiveCount": 28,
       "automatedChecks": [
         "one visible h1",
@@ -354,7 +354,7 @@
       "label": "occupation SEO report",
       "viewport": "tablet",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2313,
+      "bodyLength": 2331,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -386,8 +386,8 @@
       "label": "commercial trust center",
       "viewport": "desktop",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 12492,
-      "interactiveCount": 4,
+      "bodyLength": 16689,
+      "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
@@ -482,7 +482,7 @@
       "label": "proof-pack gallery",
       "viewport": "desktop",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 42400,
+      "bodyLength": 42524,
       "interactiveCount": 34,
       "automatedChecks": [
         "one visible h1",
@@ -498,7 +498,7 @@
       "label": "occupation SEO report",
       "viewport": "desktop",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2353,
+      "bodyLength": 2265,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",

@@ -20,6 +20,7 @@ import {
   paymentFulfillmentStatusItems,
 } from "@/lib/commercialLaunchReadiness";
 import {
+  buildInstitutionalAcceptanceChecklistCsv,
   buildInstitutionalReadinessCsv,
   buildInstitutionalReadinessPacket,
   INSTITUTIONAL_READINESS_STATUS_LABELS,
@@ -64,6 +65,14 @@ export default function ResponsibleAIPage() {
     );
   };
 
+  const handleDownloadAcceptanceChecklist = () => {
+    downloadTextFile(
+      "ai-work-transition-acceptance-checklist.csv",
+      buildInstitutionalAcceptanceChecklistCsv(packet),
+      "text/csv;charset=utf-8"
+    );
+  };
+
   return (
     <main className="container mx-auto min-h-screen space-y-8 px-4 py-8" data-commercial-trust-center="true">
       <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
@@ -90,6 +99,10 @@ export default function ResponsibleAIPage() {
             <Button variant="outline" onClick={handleDownloadRiskCsv}>
               <Download className="mr-2 h-4 w-4" />
               Download risk CSV
+            </Button>
+            <Button variant="outline" onClick={handleDownloadAcceptanceChecklist}>
+              <Download className="mr-2 h-4 w-4" />
+              Download acceptance checklist
             </Button>
             <Button variant="outline" asChild>
               <Link to="/proof-pack-gallery">
@@ -287,6 +300,50 @@ export default function ResponsibleAIPage() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5" data-trust-manual-wcag-worksheet="true">
+          <h2 className="text-xl font-semibold">Manual WCAG evidence worksheet</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Automated smoke evidence is not a WCAG conformance claim. These rows define the manual proof still
+            required before institution-facing delivery.
+          </p>
+          <div className="mt-4 space-y-3">
+            {packet.manualWcagEvidenceRows.map((row) => (
+              <div key={row.id} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-medium">{row.checkpoint}</h3>
+                  <Badge variant="outline">{INSTITUTIONAL_READINESS_STATUS_LABELS[row.status]}</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{row.currentAutomatedProof}</p>
+                <p className="mt-2 text-sm">{row.manualEvidenceNeeded}</p>
+                <p className="mt-2 text-xs text-muted-foreground">Does not prove: {row.doesNotProve}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-5" data-trust-buyer-signoff-checklist="true">
+          <h2 className="text-xl font-semibold">Buyer acceptable-use signoff checklist</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Controlled pilots need explicit buyer confirmation before any client delivery. This checklist is
+            governance evidence, not legal advice or compliance certification.
+          </p>
+          <div className="mt-4 space-y-3">
+            {packet.buyerAcceptableUseSignoffRows.map((row) => (
+              <div key={row.id} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-medium">{row.gate}</h3>
+                  <Badge variant="outline">{INSTITUTIONAL_READINESS_STATUS_LABELS[row.status]}</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">{row.buyerQuestion}</p>
+                <p className="mt-2 text-sm">{row.requiredConfirmation}</p>
+                <p className="mt-2 text-xs text-muted-foreground">Does not prove: {row.doesNotProve}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">

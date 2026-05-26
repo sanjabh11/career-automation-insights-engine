@@ -393,12 +393,17 @@ async function verifyCommercialTrustCenter(page, baseUrl) {
   await assertVisible(page.locator('[data-trust-live-blockers="true"]'), 'trust live blockers');
   await assertVisible(page.locator('[data-trust-payment-proof="true"]'), 'trust payment proof status');
   await assertVisible(page.locator('[data-trust-risk-register="true"]'), 'trust risk register');
+  await assertVisible(page.locator('[data-trust-manual-wcag-worksheet="true"]'), 'trust manual WCAG worksheet');
+  await assertVisible(page.locator('[data-trust-buyer-signoff-checklist="true"]'), 'trust buyer acceptable-use checklist');
   await assertVisible(page.locator('[data-trust-ai-rmf="true"]'), 'trust AI RMF control map');
   await assertVisible(page.locator('[data-trust-function-review="true"]'), 'trust function governance review');
   await assertVisible(page.getByText(/Not ready for scaled paid or institutional delivery/i), 'trust launch blocker copy');
   await assertVisible(page.getByText(/do not certify legal compliance, WCAG conformance/i), 'trust evidence boundary copy');
+  await assertVisible(page.getByText(/Manual WCAG evidence worksheet/i), 'trust manual WCAG worksheet heading');
+  await assertVisible(page.getByText(/Buyer acceptable-use signoff checklist/i), 'trust buyer signoff heading');
   await assertVisible(page.getByRole('button', { name: /Download trust packet/i }), 'trust packet export');
   await assertVisible(page.getByRole('button', { name: /Download risk CSV/i }), 'risk CSV export');
+  await assertVisible(page.getByRole('button', { name: /Download acceptance checklist/i }), 'acceptance checklist CSV export');
 
   const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
   await page.getByRole('button', { name: /Download trust packet/i }).click();
@@ -413,6 +418,8 @@ async function verifyCommercialTrustCenter(page, baseUrl) {
     'AI RMF Control Map',
     'Employment Decision Boundary',
     'WCAG 2.2 Accessibility Gate',
+    'Manual WCAG Evidence Worksheet',
+    'Buyer Acceptable-Use Signoff Checklist',
     'Does not prove',
   ]) {
     if (!trustHtml.includes(expected)) {
@@ -434,6 +441,25 @@ async function verifyCommercialTrustCenter(page, baseUrl) {
     }
   }
   console.log('ok download - trust center risk CSV');
+
+  const acceptanceCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download acceptance checklist/i }).click();
+  const acceptanceCsvDownload = await acceptanceCsvDownloadPromise;
+  if (!acceptanceCsvDownload.suggestedFilename().includes('ai-work-transition-acceptance-checklist')) {
+    throw new Error(`Unexpected trust-center acceptance CSV filename: ${acceptanceCsvDownload.suggestedFilename()}`);
+  }
+  const acceptanceCsvBody = await readDownloadBody(acceptanceCsvDownload, 'Trust-center acceptance checklist CSV');
+  for (const expectedColumn of ['checklist_type', 'item_id', 'current_or_required_proof', 'reviewer_or_owner', 'status', 'does_not_prove']) {
+    if (!acceptanceCsvBody.includes(expectedColumn)) {
+      throw new Error(`Trust-center acceptance checklist CSV is missing ${expectedColumn}`);
+    }
+  }
+  for (const expectedValue of ['manual_wcag_evidence', 'buyer_acceptable_use_signoff']) {
+    if (!acceptanceCsvBody.includes(expectedValue)) {
+      throw new Error(`Trust-center acceptance checklist CSV is missing ${expectedValue}`);
+    }
+  }
+  console.log('ok download - trust center acceptance checklist CSV');
 }
 
 async function verifyCoachSampleReport(page, baseUrl) {

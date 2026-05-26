@@ -56,7 +56,7 @@ const featureMap = [
       'docs/commercialization/commercial-accessibility-audit-latest.md',
       'docs/commercialization/commercial-accessibility-audit-latest.json',
     ],
-    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, and a CSV risk register for buyer review.',
+    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review.',
   },
   {
     feature: 'Commercial proof-pack CI workflow',
