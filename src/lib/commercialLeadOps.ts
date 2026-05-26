@@ -23,6 +23,7 @@ export const OUTREACH_OBJECTION_CATEGORIES = [
   "not_priority",
   "other",
 ] as const;
+export const OUTREACH_CAMPAIGN_VARIANTS = ["evidence_first", "workflow_first"] as const;
 
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 export type OutreachStage = (typeof OUTREACH_STAGES)[number];
@@ -30,6 +31,7 @@ export type OutreachChannel = (typeof OUTREACH_CHANNELS)[number];
 export type OutreachPriority = (typeof OUTREACH_PRIORITIES)[number];
 export type OutreachReplySentiment = (typeof OUTREACH_REPLY_SENTIMENTS)[number];
 export type OutreachObjectionCategory = (typeof OUTREACH_OBJECTION_CATEGORIES)[number];
+export type OutreachCampaignVariant = (typeof OUTREACH_CAMPAIGN_VARIANTS)[number];
 
 export const OUTREACH_STAGE_LABELS: Record<OutreachStage, string> = {
   not_started: "Not started",
@@ -74,6 +76,11 @@ export const OUTREACH_OBJECTION_CATEGORY_LABELS: Record<OutreachObjectionCategor
   integration: "Integration",
   not_priority: "Not a priority",
   other: "Other",
+};
+
+export const OUTREACH_CAMPAIGN_VARIANT_LABELS: Record<OutreachCampaignVariant, string> = {
+  evidence_first: "A: Evidence-first",
+  workflow_first: "B: Workflow-first",
 };
 
 export interface CommercialLeadRow {
@@ -150,16 +157,36 @@ export interface CommercialOutreachCampaignSummary {
   notInterested: number;
 }
 
+export interface CommercialOutreachExperimentVariantSummary {
+  variant: OutreachCampaignVariant;
+  variantLabel: string;
+  hypothesis: string;
+  total: number;
+  sendAllowed: number;
+  responsesLogged: number;
+  positiveReplies: number;
+  meetingsBooked: number;
+  paidPilotSignals: number;
+  averageUsefulnessScore: number | null;
+  caveat: string;
+  doesNotProve: string;
+}
+
 export interface CommercialOutreachCampaignRow {
   email: string;
   buyerSegment: string;
   sequenceName: string;
   sequenceStep: number;
+  campaignVariant: OutreachCampaignVariant;
+  variantLabel: string;
+  variantHypothesis: string;
   channel: OutreachChannel;
   priority: OutreachPriority;
   sendAllowed: boolean;
   suppressionReason: string;
   trackedLink: string;
+  analyticsEventName: string;
+  conversionGoal: string;
   subject: string;
   firstTouch: string;
   followUp: string;
@@ -440,6 +467,47 @@ function normalizeSegment(segment: string): string {
   return segment.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 }
 
+function deterministicVariantSeed(value: string): number {
+  return value.split("").reduce((sum, character) => sum + character.charCodeAt(0), 0);
+}
+
+function assignCampaignVariant(row: CommercialLeadRow): OutreachCampaignVariant {
+  const seed = deterministicVariantSeed(row.id || row.email || row.created_at);
+  return seed % 2 === 0 ? "evidence_first" : "workflow_first";
+}
+
+function getCampaignVariantProfile(variant: OutreachCampaignVariant): {
+  hypothesis: string;
+  subjectPrefix: string;
+  firstTouchFrame: string;
+  followUpFrame: string;
+  conversionGoal: string;
+  caveat: string;
+  doesNotProve: string;
+} {
+  if (variant === "workflow_first") {
+    return {
+      hypothesis: "Workflow-first copy should perform better when the buyer already feels AI pressure and needs a practical pilot path.",
+      subjectPrefix: "Pilot workflow review:",
+      firstTouchFrame: "Lead with the bounded pilot workflow, expected review owner, and next action before sharing the proof artifact.",
+      followUpFrame: "Ask whether the proposed pilot workflow fits their decision cycle and what governance blocker would stop a review.",
+      conversionGoal: "meeting_booked_or_review_owner_named",
+      caveat: "Variant assignment supports founder-led learning only; it is not statistically powered without sufficient real responses.",
+      doesNotProve: "Does not prove channel fit, market demand, deliverability, or message superiority.",
+    };
+  }
+
+  return {
+    hypothesis: "Evidence-first copy should perform better when trust, source provenance, and compliance boundaries are the main objection.",
+    subjectPrefix: "Evidence review:",
+    firstTouchFrame: "Lead with evidence cards, source caveats, and does-not-prove boundaries before asking for a pilot review.",
+    followUpFrame: "Ask whether the evidence and caveat language improves trust enough to schedule a review.",
+    conversionGoal: "reply_or_feedback_call",
+    caveat: "Variant assignment supports founder-led learning only; it is not statistically powered without sufficient real responses.",
+    doesNotProve: "Does not prove channel fit, market demand, deliverability, or message superiority.",
+  };
+}
+
 function getCampaignProfile(row: CommercialLeadRow): Pick<
   CommercialOutreachCampaignRow,
   "sequenceName" | "subject" | "firstTouch" | "followUp" | "proofArtifact" | "sourceIds" | "caveat" | "doesNotProve"
@@ -489,14 +557,23 @@ function getCampaignProfile(row: CommercialLeadRow): Pick<
   };
 }
 
-function buildTrackedCampaignLink(row: CommercialLeadRow, proofArtifact: string, baseUrl: string): string {
+function buildTrackedCampaignLink(
+  row: CommercialLeadRow,
+  proofArtifact: string,
+  baseUrl: string,
+  variant: OutreachCampaignVariant
+): string {
   const root = baseUrl.replace(/\/+$/, "") || "https://automationinsights.app";
   const url = new URL(proofArtifact, `${root}/`);
   const plan = readCommercialLeadOutreachPlan(row);
   url.searchParams.set("utm_source", "commercial_lead_ops");
   url.searchParams.set("utm_medium", plan.channel || "email");
   url.searchParams.set("utm_campaign", "founder_led_pilot");
-  url.searchParams.set("utm_content", `${normalizeSegment(row.buyer_segment || "unknown") || "unknown"}_step_${plan.sequenceStep}`);
+  url.searchParams.set(
+    "utm_content",
+    `${normalizeSegment(row.buyer_segment || "unknown") || "unknown"}_${variant}_step_${Math.max(1, plan.sequenceStep || 1)}`
+  );
+  url.searchParams.set("utm_term", variant);
   url.searchParams.set("lead_id", row.id);
   return url.toString();
 }
@@ -520,28 +597,37 @@ export function buildCommercialOutreachCampaignRows(
   return rows.map((row) => {
     const plan = readCommercialLeadOutreachPlan(row);
     const profile = getCampaignProfile(row);
+    const campaignVariant = assignCampaignVariant(row);
+    const variantProfile = getCampaignVariantProfile(campaignVariant);
     const suppressionReason = readSuppressionReason(row);
     const sendAllowed = suppressionReason === "";
     const sequenceStep = Math.max(1, plan.sequenceStep || 1);
+    const firstTouch = `${variantProfile.firstTouchFrame} ${profile.firstTouch}`;
+    const followUp = `${variantProfile.followUpFrame} ${profile.followUp}`;
     return {
       email: row.email,
       buyerSegment: row.buyer_segment,
       sequenceName: profile.sequenceName,
       sequenceStep,
+      campaignVariant,
+      variantLabel: OUTREACH_CAMPAIGN_VARIANT_LABELS[campaignVariant],
+      variantHypothesis: variantProfile.hypothesis,
       channel: plan.channel,
       priority: plan.priority,
       sendAllowed,
       suppressionReason,
-      trackedLink: buildTrackedCampaignLink(row, profile.proofArtifact, baseUrl),
-      subject: profile.subject,
-      firstTouch: profile.firstTouch,
-      followUp: profile.followUp,
+      trackedLink: buildTrackedCampaignLink(row, profile.proofArtifact, baseUrl, campaignVariant),
+      analyticsEventName: "founder_led_pilot_outreach_click",
+      conversionGoal: variantProfile.conversionGoal,
+      subject: `${variantProfile.subjectPrefix} ${profile.subject}`,
+      firstTouch,
+      followUp,
       proofArtifact: profile.proofArtifact,
-      nextAction: plan.nextAction || (sequenceStep <= 1 ? profile.firstTouch : profile.followUp),
+      nextAction: plan.nextAction || (sequenceStep <= 1 ? firstTouch : followUp),
       nextFollowUpAt: plan.nextFollowUpAt,
       sourceIds: profile.sourceIds,
-      caveat: profile.caveat,
-      doesNotProve: profile.doesNotProve,
+      caveat: `${profile.caveat} ${variantProfile.caveat}`,
+      doesNotProve: `${profile.doesNotProve} ${variantProfile.doesNotProve}`,
     };
   });
 }
@@ -558,6 +644,34 @@ export function summarizeCommercialOutreachCampaign(rows: CommercialLeadRow[]): 
     pausedOrConverted: campaignRows.filter((row) => row.suppressionReason === "outreach_stage_nurture_paused" || row.suppressionReason === "outreach_stage_paid_converted").length,
     notInterested: campaignRows.filter((row) => row.suppressionReason === "reply_not_interested").length,
   };
+}
+
+export function summarizeCommercialOutreachExperiment(
+  rows: CommercialLeadRow[]
+): CommercialOutreachExperimentVariantSummary[] {
+  return OUTREACH_CAMPAIGN_VARIANTS.map((variant) => {
+    const variantRows = rows.filter((row) => assignCampaignVariant(row) === variant);
+    const campaignRows = buildCommercialOutreachCampaignRows(variantRows);
+    const responseMetrics = variantRows.map(readCommercialLeadResponseMetrics);
+    const scoredUsefulness = responseMetrics.filter((metrics) => typeof metrics.usefulnessScore === "number");
+    const usefulnessTotal = scoredUsefulness.reduce((sum, metrics) => sum + (metrics.usefulnessScore ?? 0), 0);
+    const profile = getCampaignVariantProfile(variant);
+
+    return {
+      variant,
+      variantLabel: OUTREACH_CAMPAIGN_VARIANT_LABELS[variant],
+      hypothesis: profile.hypothesis,
+      total: variantRows.length,
+      sendAllowed: campaignRows.filter((row) => row.sendAllowed).length,
+      responsesLogged: responseMetrics.filter((metrics) => metrics.replySentiment !== "none" || Boolean(metrics.repliedAt)).length,
+      positiveReplies: responseMetrics.filter((metrics) => metrics.replySentiment === "positive").length,
+      meetingsBooked: responseMetrics.filter((metrics) => Boolean(metrics.meetingBookedAt)).length,
+      paidPilotSignals: responseMetrics.filter((metrics) => metrics.paidPilotSignal).length,
+      averageUsefulnessScore: scoredUsefulness.length ? Math.round((usefulnessTotal / scoredUsefulness.length) * 10) / 10 : null,
+      caveat: profile.caveat,
+      doesNotProve: profile.doesNotProve,
+    };
+  });
 }
 
 const csvHeaders = [
@@ -648,6 +762,9 @@ const campaignCsvHeaders = [
   "buyer_segment",
   "sequence_name",
   "sequence_step",
+  "campaign_variant",
+  "campaign_variant_label",
+  "variant_hypothesis",
   "channel",
   "priority",
   "subject",
@@ -656,6 +773,8 @@ const campaignCsvHeaders = [
   "next_action",
   "next_follow_up_at",
   "tracked_link",
+  "analytics_event_name",
+  "conversion_goal",
   "proof_artifact",
   "source_ids",
   "caveat",
@@ -674,6 +793,9 @@ export function buildCommercialOutreachCampaignCsv(
       row.buyerSegment,
       row.sequenceName,
       row.sequenceStep,
+      row.campaignVariant,
+      row.variantLabel,
+      row.variantHypothesis,
       row.channel,
       row.priority,
       row.subject,
@@ -682,6 +804,8 @@ export function buildCommercialOutreachCampaignCsv(
       row.nextAction,
       row.nextFollowUpAt,
       row.trackedLink,
+      row.analyticsEventName,
+      row.conversionGoal,
       row.proofArtifact,
       row.sourceIds.join("|"),
       row.caveat,

@@ -52,6 +52,7 @@ import {
   readCommercialLeadResponseMetrics,
   summarizeCommercialLeads,
   summarizeCommercialOutreachCampaign,
+  summarizeCommercialOutreachExperiment,
   updateCommercialLeadOutreachPlan,
   updateCommercialLeadResponseMetrics,
   updateCommercialLeadStatus,
@@ -438,6 +439,10 @@ export default function CommercialLeadOpsPage() {
     [leads, segmentFilter, statusFilter]
   );
   const campaignSummary = useMemo(() => summarizeCommercialOutreachCampaign(filteredLeads), [filteredLeads]);
+  const campaignExperimentSummary = useMemo(
+    () => summarizeCommercialOutreachExperiment(filteredLeads),
+    [filteredLeads]
+  );
 
   const handleExport = () => {
     if (!filteredLeads.length) {
@@ -485,7 +490,7 @@ export default function CommercialLeadOpsPage() {
     window.URL.revokeObjectURL(url);
     toast({
       title: "Campaign CSV exported",
-      description: `${campaignSummary.sendAllowed} send-ready rows and ${campaignSummary.suppressed} suppressed rows were included with tracked links and caveats.`,
+      description: `${campaignSummary.sendAllowed} send-ready rows and ${campaignSummary.suppressed} suppressed rows were included with tracked links, A/B variants, and caveats.`,
     });
   };
 
@@ -1193,8 +1198,50 @@ export default function CommercialLeadOpsPage() {
         </div>
         <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
           Exported campaign rows include suppression status, tracked proof-pack link, recommended first touch,
-          follow-up text, evidence source IDs, caveat, and does-not-prove boundary. Suppressed rows are included
-          for auditability and should stay suppressed in the downstream CRM or email provider.
+          follow-up text, A/B campaign variant, analytics event name, conversion goal, evidence source IDs, caveat,
+          and does-not-prove boundary. Suppressed rows are included for auditability and should stay suppressed in
+          the downstream CRM or email provider.
+        </div>
+        <div className="mt-4 space-y-3" data-outreach-ab-reporting="true">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-sm font-semibold">A/B campaign reporting</h3>
+            <p className="text-xs text-muted-foreground">
+              Deterministic variants support founder-led learning from real replies, meetings, usefulness scores, and
+              paid pilot signals. Treat this as directional validation only until enough live responses are logged.
+            </p>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {campaignExperimentSummary.map((variant) => (
+              <div key={variant.variant} className="rounded-md border bg-background p-3" data-outreach-ab-variant={variant.variant}>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="font-medium">{variant.variantLabel}</div>
+                  <Badge variant="outline">{variant.sendAllowed}/{variant.total} send-ready</Badge>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{variant.hypothesis}</p>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                  <div>
+                    <div className="text-muted-foreground">Replies</div>
+                    <div className="font-semibold">{variant.responsesLogged}</div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Positive</div>
+                    <div className="font-semibold">{variant.positiveReplies}</div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Meetings</div>
+                    <div className="font-semibold">{variant.meetingsBooked}</div>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground">Usefulness</div>
+                    <div className="font-semibold">
+                      {variant.averageUsefulnessScore === null ? "N/A" : `${variant.averageUsefulnessScore}/5`}
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">Does not prove: {variant.doesNotProve}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </Card>
 

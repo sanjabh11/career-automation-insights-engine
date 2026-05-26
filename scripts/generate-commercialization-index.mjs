@@ -125,7 +125,7 @@ const featureMap = [
       'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
       'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links and suppression reasons, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links, A/B campaign variants, analytics event names, conversion goals, suppression reasons, variant-level response reporting, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
   },
   {
     feature: 'Commercial launch gate and payment fulfillment boundary',
@@ -360,7 +360,7 @@ CI boundary:
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, the live parser receipt verifier, and the optional signed-in synthetic artifact/deletion e2e verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while paid PDF/DOCX parser adapters, malware scanning, completed authenticated e2e run evidence, and formal e-signature/PDF storage remain Phase 5 hardening work.
-- Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
+- Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, CRM-import CSV, tracked outreach links, and A/B variant reporting, but deployed-domain analytics ingestion, email automation, unsubscribe webhook sync-back, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
 - GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
