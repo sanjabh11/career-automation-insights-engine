@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T15:19:34.537Z",
+  "generatedAt": "2026-05-26T15:55:03.027Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -436,9 +436,9 @@
         "Payment fulfillment"
       ],
       "caveat": "Launch-gate model separates controls already implemented from owner-held secrets, manual function review, provider integration, and payment replay evidence still needed before scaled outreach.",
-      "bytes": 6970,
+      "bytes": 7096,
       "rows": 122,
-      "sha256": "4549c1e1a27ef2ea39a368a698eaac98fa1c5349da130807a482b585302bc2bc",
+      "sha256": "3bbd16c7f30b8966dd1d7fd7b7b34e0d1a07dabb4306746560c2fc57099be5d7",
       "failures": [],
       "passed": true
     },
@@ -843,9 +843,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 71063,
-      "rows": 1162,
-      "sha256": "70922628285dc3a5edbb26028902a9b4c4bcffff955f664ed7462189a1096e31",
+      "bytes": 72378,
+      "rows": 1182,
+      "sha256": "57840f3be67681f3595cb2300f731db30187c89fedf21e2a7a654654438de62d",
       "failures": [],
       "passed": true
     },
@@ -965,7 +965,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 19425,
       "rows": 619,
-      "sha256": "7e10605cdd4e9c0fdcdb95f6a86fa1644c6cc716d8de62c3f98d2e1160e0db36",
+      "sha256": "724090f76806e81fd01a0bfe2d2c6d34c6b6ef929a4d7317c497c9cf511b8404",
       "failures": [],
       "passed": true
     },
@@ -995,7 +995,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 7053,
       "rows": 53,
-      "sha256": "b58e6ba482b5f8a5a4fa728f4cd2cb07522d0c3b26f9fce669e64585a8b2a19f",
+      "sha256": "b5152a0af53899d8c057ff635ba226472c2875e556318760d3e9fbbc3a9ec0f6",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "50857e41c15e0749fd1225ae1199d2bed30b0f0a2d5d1c00b8b1be9f8d8e9563",
+      "sha256": "c4d0f6176440c5229cea51983f9bd68f8c8f13ddc12575f4e4920c903a5f98dd",
       "failures": [],
       "passed": true
     },

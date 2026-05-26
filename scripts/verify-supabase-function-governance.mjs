@@ -19,6 +19,10 @@ const checks = [
       'create-portal-session',
       'allPublicNoJwtFunctionGovernanceItems',
       'classifiedPublicNoJwtFunctionCount',
+      'requiredEvidence',
+      'launchDecision',
+      'Block paid launch until retired or proven unreachable.',
+      'Rate limit or abuse telemetry',
       'ai-skill-analysis',
       'calculate-learning-roi',
       'content-moderation',
@@ -67,6 +71,9 @@ const checks = [
       'publicNoJwtFunctionReviewItems',
       'classifiedPublicNoJwtFunctionCount',
       'data-public-function-classification-count="true"',
+      'data-public-function-required-evidence="true"',
+      'data-public-function-launch-decision="true"',
+      'data-retirement-required-evidence="true"',
     ],
   },
   {
@@ -139,6 +146,18 @@ async function main() {
   for (const slug of expectedPublicNoJwtSlugs) {
     if (!classifiedSlugs.has(slug)) {
       throw new Error(`Missing public/no-JWT classification for live function: ${slug}`);
+    }
+
+    const blockStart = governanceSource.indexOf(`slug: "${slug}"`);
+    const nextBlockStart = governanceSource.indexOf('\n  {', blockStart + 1);
+    const arrayEnd = governanceSource.indexOf('\n];', blockStart + 1);
+    const blockEnd = nextBlockStart === -1 ? arrayEnd : Math.min(nextBlockStart, arrayEnd);
+    const block = governanceSource.slice(blockStart, blockEnd);
+    if (!/requiredEvidence:\s*\[[\s\S]*?\]/.test(block)) {
+      throw new Error(`Missing required evidence checklist for public/no-JWT function: ${slug}`);
+    }
+    if (!/launchDecision:\s*"/.test(block)) {
+      throw new Error(`Missing launch decision for public/no-JWT function: ${slug}`);
     }
   }
 

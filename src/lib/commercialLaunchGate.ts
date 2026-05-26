@@ -40,12 +40,12 @@ export const commercialLaunchGateItems: CommercialLaunchGateItem[] = [
   },
   {
     gap: "Public/no-JWT function review",
-    control: "Payment checkout functions now require Supabase JWTs; public utility APIs remain documented as planning surfaces.",
-    currentProof: "create-checkout-session and create-portal-session are live with JWT verification; legacy stripe-checkout/stripe-portal remain public and should be retired after function-cap cleanup.",
-    remainingAction: "Review live no-JWT utility functions for origin allowlists, rate limits, and abuse telemetry before paid launch; remove legacy public payment slugs after approval.",
+    control: "Payment checkout functions now require Supabase JWTs; public utility APIs remain documented with launch decisions and required evidence fields.",
+    currentProof: "create-checkout-session and create-portal-session are live with JWT verification; 20/20 public/no-JWT functions are classified with required evidence and legacy stripe-checkout/stripe-portal remain owner-approval retirement candidates.",
+    remainingAction: "Attach live origin allowlist, rate-limit, abuse telemetry, and unsigned-request rejection evidence before paid launch; remove legacy public payment slugs after approval.",
     priority: "high",
     owner: "staff-review",
-    maturity: 3.5,
+    maturity: 3.8,
   },
   {
     gap: "Legacy function sprawl",
@@ -105,9 +105,9 @@ export const functionSecurityReviewGroups: FunctionSecurityReviewGroup[] = [
   {
     group: "Public utility APIs",
     functions: ["search-occupations", "calculate-apo", "analyze-occupation-tasks", "skill-recommendations", "ai-career-coach"],
-    currentControl: "Useful for public discovery and SEO experiences; several include schema validation, CORS, or rate-limit code.",
-    remainingRisk: "Document intentional public status, rate-limit settings, and abuse monitoring per deployed function.",
-    maturity: 3.2,
+    currentControl: "Useful for public discovery and SEO experiences; launch decisions and required evidence fields now separate keep, harden, retire, and review actions.",
+    remainingRisk: "Attach live rate-limit settings, abuse telemetry, and origin/cost controls per deployed function.",
+    maturity: 3.5,
   },
   {
     group: "Payment and subscription functions",

@@ -1122,6 +1122,7 @@ export default function ProofPackGalleryPage() {
                   <th className="py-3 pr-4 font-semibold">Launch impact</th>
                   <th className="py-3 pr-4 font-semibold">Risk</th>
                   <th className="py-3 pr-4 font-semibold">Next action</th>
+                  <th className="py-3 pr-4 font-semibold">Launch decision</th>
                   <th className="py-3 pr-4 font-semibold">Maturity</th>
                 </tr>
               </thead>
@@ -1132,7 +1133,15 @@ export default function ProofPackGalleryPage() {
                     <td className="py-4 pr-4 text-red-200">{item.liveVerifyJwt ? "yes" : "no"}</td>
                     <td className="py-4 pr-4 leading-6 text-slate-300">{item.launchImpact}</td>
                     <td className="py-4 pr-4 leading-6 text-amber-100">{item.risk}</td>
-                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.nextStep}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">
+                      <div>{item.nextStep}</div>
+                      <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-400" data-retirement-required-evidence="true">
+                        {item.requiredEvidence.map((evidence) => (
+                          <li key={evidence}>- {evidence}</li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.launchDecision}</td>
                     <td className="py-4 pr-4">
                       <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
                         {item.maturity.toFixed(1)}/5
@@ -1155,6 +1164,17 @@ export default function ProofPackGalleryPage() {
                 <p className="mt-2 text-sm leading-6 text-slate-300">{item.launchImpact}</p>
                 <p className="mt-3 text-xs leading-5 text-amber-100">{item.risk}</p>
                 <p className="mt-3 text-xs leading-5 text-slate-400">{item.nextStep}</p>
+                <div className="mt-4 rounded-md border border-slate-800 bg-slate-900/70 p-3" data-public-function-required-evidence="true">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Required evidence</div>
+                  <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-300">
+                    {item.requiredEvidence.map((evidence) => (
+                      <li key={evidence}>- {evidence}</li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-emerald-100" data-public-function-launch-decision="true">
+                  <span className="font-semibold">Launch decision:</span> {item.launchDecision}
+                </p>
               </article>
             ))}
           </div>

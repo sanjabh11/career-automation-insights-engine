@@ -649,6 +649,9 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.getByText(/Owner approval required before deletion/i), 'function governance owner approval boundary');
   await assertVisible(page.locator('[data-public-function-classification-count="true"]'), 'public function classification count');
   await assertVisible(page.getByText(/20\/20 public\/no-JWT classified/i), 'all public functions classified');
+  await assertVisible(page.locator('[data-retirement-required-evidence="true"]').first(), 'retirement required evidence checklist');
+  await assertVisible(page.locator('[data-public-function-required-evidence="true"]').first(), 'public function required evidence checklist');
+  await assertVisible(page.locator('[data-public-function-launch-decision="true"]').first(), 'public function launch decision');
   await assertVisible(page.getByText(/stripe-checkout/i).first(), 'stripe checkout retirement candidate');
   await assertVisible(page.getByText(/stripe-portal/i).first(), 'stripe portal retirement candidate');
   await assertVisible(page.getByText(/market-intelligence/i).first(), 'market intelligence function classification');
