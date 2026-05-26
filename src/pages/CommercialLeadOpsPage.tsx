@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useSession } from "@/hooks/useSession";
 import {
   buildCommercialLeadCsv,
+  buildCommercialOutreachCampaignCsv,
   CommercialLeadRow,
   fetchCommercialLeads,
   isCommercialLeadFollowUpDue,
@@ -50,6 +51,7 @@ import {
   readCommercialLeadOutreachPlan,
   readCommercialLeadResponseMetrics,
   summarizeCommercialLeads,
+  summarizeCommercialOutreachCampaign,
   updateCommercialLeadOutreachPlan,
   updateCommercialLeadResponseMetrics,
   updateCommercialLeadStatus,
@@ -435,6 +437,7 @@ export default function CommercialLeadOpsPage() {
       }),
     [leads, segmentFilter, statusFilter]
   );
+  const campaignSummary = useMemo(() => summarizeCommercialOutreachCampaign(filteredLeads), [filteredLeads]);
 
   const handleExport = () => {
     if (!filteredLeads.length) {
@@ -456,6 +459,34 @@ export default function CommercialLeadOpsPage() {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
+  };
+
+  const handleCampaignExport = () => {
+    if (!filteredLeads.length) {
+      toast({
+        title: "No campaign rows to export",
+        description: "Change the filters or refresh the lead list.",
+      });
+      return;
+    }
+
+    const blob = new Blob([
+      buildCommercialOutreachCampaignCsv(filteredLeads, { baseUrl: window.location.origin }),
+    ], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `commercial-outreach-campaign-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    toast({
+      title: "Campaign CSV exported",
+      description: `${campaignSummary.sendAllowed} send-ready rows and ${campaignSummary.suppressed} suppressed rows were included with tracked links and caveats.`,
+    });
   };
 
   const downloadReviewAttestation = (lead: CommercialLeadRow, attestation: ProofPackReviewAttestation) => {
@@ -989,6 +1020,10 @@ export default function CommercialLeadOpsPage() {
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
+          <Button variant="secondary" onClick={handleCampaignExport}>
+            <Mail className="mr-2 h-4 w-4" />
+            Export campaign CSV
+          </Button>
         </div>
       </section>
 
@@ -1116,6 +1151,50 @@ export default function CommercialLeadOpsPage() {
           <div className="text-sm text-muted-foreground md:text-right">
             Showing {filteredLeads.length} of {leads.length} leads.
           </div>
+        </div>
+      </Card>
+
+      <Card className="p-4" data-outreach-campaign-automation="true">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl space-y-2">
+            <div className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">Unsubscribe-safe campaign export</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Generates CRM/email-provider rows with tracked UTM links, source IDs, caveats, and suppression reasons.
+              This export does not send messages; it prevents founder-led outreach from contacting no-consent,
+              unsubscribed, archived, converted, paused, or not-interested leads.
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <Badge variant="outline">No employment-decision use</Badge>
+              <Badge variant="outline">No Lightcast-level claim</Badge>
+              <Badge variant="outline">Manual provider import only</Badge>
+            </div>
+          </div>
+          <div className="grid min-w-[280px] gap-2 text-sm sm:grid-cols-2">
+            <div className="rounded-md border bg-slate-50 p-3">
+              <div className="text-muted-foreground">Send-ready</div>
+              <div className="text-2xl font-semibold">{campaignSummary.sendAllowed}</div>
+            </div>
+            <div className="rounded-md border bg-slate-50 p-3">
+              <div className="text-muted-foreground">Suppressed</div>
+              <div className="text-2xl font-semibold">{campaignSummary.suppressed}</div>
+            </div>
+            <div className="rounded-md border bg-slate-50 p-3">
+              <div className="text-muted-foreground">Unsubscribed</div>
+              <div className="text-2xl font-semibold">{campaignSummary.unsubscribed}</div>
+            </div>
+            <div className="rounded-md border bg-slate-50 p-3">
+              <div className="text-muted-foreground">Missing consent</div>
+              <div className="text-2xl font-semibold">{campaignSummary.missingConsent}</div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+          Exported campaign rows include suppression status, tracked proof-pack link, recommended first touch,
+          follow-up text, evidence source IDs, caveat, and does-not-prove boundary. Suppressed rows are included
+          for auditability and should stay suppressed in the downstream CRM or email provider.
         </div>
       </Card>
 

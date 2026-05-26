@@ -139,6 +139,38 @@ export interface LeadOpsSummary {
   averageRiskScore: number | null;
 }
 
+export interface CommercialOutreachCampaignSummary {
+  total: number;
+  sendAllowed: number;
+  suppressed: number;
+  missingConsent: number;
+  unsubscribed: number;
+  archivedOrConverted: number;
+  pausedOrConverted: number;
+  notInterested: number;
+}
+
+export interface CommercialOutreachCampaignRow {
+  email: string;
+  buyerSegment: string;
+  sequenceName: string;
+  sequenceStep: number;
+  channel: OutreachChannel;
+  priority: OutreachPriority;
+  sendAllowed: boolean;
+  suppressionReason: string;
+  trackedLink: string;
+  subject: string;
+  firstTouch: string;
+  followUp: string;
+  proofArtifact: string;
+  nextAction: string;
+  nextFollowUpAt: string | null;
+  sourceIds: string[];
+  caveat: string;
+  doesNotProve: string;
+}
+
 interface SupabaseRpcError {
   message?: string;
 }
@@ -404,6 +436,130 @@ export function summarizeCommercialLeads(rows: CommercialLeadRow[]): LeadOpsSumm
   };
 }
 
+function normalizeSegment(segment: string): string {
+  return segment.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
+function getCampaignProfile(row: CommercialLeadRow): Pick<
+  CommercialOutreachCampaignRow,
+  "sequenceName" | "subject" | "firstTouch" | "followUp" | "proofArtifact" | "sourceIds" | "caveat" | "doesNotProve"
+> {
+  const segment = normalizeSegment(row.buyer_segment || "");
+  if (isWorkforceSegment(segment)) {
+    return {
+      sequenceName: "workforce_csv_audit_pilot",
+      subject: "Role-level AI transition audit for your workforce planning review",
+      firstTouch:
+        "Offer a 10-25 role CSV audit with no employee names, source-labeled caveats, and no employment-decision use.",
+      followUp:
+        "Share the executive report skeleton and ask who should own SOC review, local-market validation, and governance sign-off.",
+      proofArtifact: "/enterprise-dashboard",
+      sourceIds: ["dol-ai-literacy-framework", "bls-emp", "ada-ai-hiring-guidance"],
+      caveat: "Use only for role-level planning until buyer governance, local data validation, and human review are signed off.",
+      doesNotProve: "Does not predict layoffs, rank employees, or support hiring, firing, pay, promotion, or discipline decisions.",
+    };
+  }
+
+  if (segment.includes("career_center") || segment.includes("counselor") || segment.includes("student")) {
+    return {
+      sequenceName: "career_center_cohort_review",
+      subject: "Aggregate-only AI work transition proof pack for counselor review",
+      firstTouch:
+        "Send an aggregate cohort proof-pack sample and ask which privacy, cohort, or skill-ledger fields would help a workshop.",
+      followUp:
+        "Ask whether small-cell suppression, NACE outcome separation, and advisor review notes meet the institution's review needs.",
+      proofArtifact: "/tools/counselor-reports",
+      sourceIds: ["ferpa-student-privacy", "nace-first-destination", "nace-career-readiness"],
+      caveat: "Student or alumni data must stay aggregate-only unless consent, retention, and institutional review are approved.",
+      doesNotProve: "Does not certify student outcomes, placement rates, or institutional compliance.",
+    };
+  }
+
+  return {
+    sequenceName: "coach_sample_report_review",
+    subject: "Source-labeled AI career transition sample report for your coaching review",
+    firstTouch:
+      "Send a coach-branded sample report and ask for role-specific feedback on evidence cards, caveats, and client usefulness.",
+    followUp:
+      "Share one source/caveat section and ask whether it would improve client trust before a paid pilot.",
+    proofArtifact: "/sample-report",
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+    caveat: "Coach outreach must stay framed as human-reviewed planning guidance, not validated career assessment.",
+    doesNotProve: "Does not guarantee career outcomes, job placement, wage gains, or automation timing.",
+  };
+}
+
+function buildTrackedCampaignLink(row: CommercialLeadRow, proofArtifact: string, baseUrl: string): string {
+  const root = baseUrl.replace(/\/+$/, "") || "https://automationinsights.app";
+  const url = new URL(proofArtifact, `${root}/`);
+  const plan = readCommercialLeadOutreachPlan(row);
+  url.searchParams.set("utm_source", "commercial_lead_ops");
+  url.searchParams.set("utm_medium", plan.channel || "email");
+  url.searchParams.set("utm_campaign", "founder_led_pilot");
+  url.searchParams.set("utm_content", `${normalizeSegment(row.buyer_segment || "unknown") || "unknown"}_step_${plan.sequenceStep}`);
+  url.searchParams.set("lead_id", row.id);
+  return url.toString();
+}
+
+function readSuppressionReason(row: CommercialLeadRow): string {
+  const plan = readCommercialLeadOutreachPlan(row);
+  const metrics = readCommercialLeadResponseMetrics(row);
+  if (metrics.unsubscribeRequested) return "unsubscribe_requested";
+  if (!row.consent_to_contact) return "missing_contact_consent";
+  if (row.status === "archived" || row.status === "converted") return `lead_status_${row.status}`;
+  if (plan.stage === "nurture_paused" || plan.stage === "paid_converted") return `outreach_stage_${plan.stage}`;
+  if (metrics.replySentiment === "not_interested") return "reply_not_interested";
+  return "";
+}
+
+export function buildCommercialOutreachCampaignRows(
+  rows: CommercialLeadRow[],
+  options: { baseUrl?: string } = {}
+): CommercialOutreachCampaignRow[] {
+  const baseUrl = options.baseUrl || "https://automationinsights.app";
+  return rows.map((row) => {
+    const plan = readCommercialLeadOutreachPlan(row);
+    const profile = getCampaignProfile(row);
+    const suppressionReason = readSuppressionReason(row);
+    const sendAllowed = suppressionReason === "";
+    const sequenceStep = Math.max(1, plan.sequenceStep || 1);
+    return {
+      email: row.email,
+      buyerSegment: row.buyer_segment,
+      sequenceName: profile.sequenceName,
+      sequenceStep,
+      channel: plan.channel,
+      priority: plan.priority,
+      sendAllowed,
+      suppressionReason,
+      trackedLink: buildTrackedCampaignLink(row, profile.proofArtifact, baseUrl),
+      subject: profile.subject,
+      firstTouch: profile.firstTouch,
+      followUp: profile.followUp,
+      proofArtifact: profile.proofArtifact,
+      nextAction: plan.nextAction || (sequenceStep <= 1 ? profile.firstTouch : profile.followUp),
+      nextFollowUpAt: plan.nextFollowUpAt,
+      sourceIds: profile.sourceIds,
+      caveat: profile.caveat,
+      doesNotProve: profile.doesNotProve,
+    };
+  });
+}
+
+export function summarizeCommercialOutreachCampaign(rows: CommercialLeadRow[]): CommercialOutreachCampaignSummary {
+  const campaignRows = buildCommercialOutreachCampaignRows(rows);
+  return {
+    total: campaignRows.length,
+    sendAllowed: campaignRows.filter((row) => row.sendAllowed).length,
+    suppressed: campaignRows.filter((row) => !row.sendAllowed).length,
+    missingConsent: campaignRows.filter((row) => row.suppressionReason === "missing_contact_consent").length,
+    unsubscribed: campaignRows.filter((row) => row.suppressionReason === "unsubscribe_requested").length,
+    archivedOrConverted: campaignRows.filter((row) => row.suppressionReason === "lead_status_archived" || row.suppressionReason === "lead_status_converted").length,
+    pausedOrConverted: campaignRows.filter((row) => row.suppressionReason === "outreach_stage_nurture_paused" || row.suppressionReason === "outreach_stage_paid_converted").length,
+    notInterested: campaignRows.filter((row) => row.suppressionReason === "reply_not_interested").length,
+  };
+}
+
 const csvHeaders = [
   "created_at",
   "email",
@@ -483,4 +639,57 @@ export function buildCommercialLeadCsv(rows: CommercialLeadRow[]): string {
   });
 
   return [csvHeaders.join(","), ...body].join("\n");
+}
+
+const campaignCsvHeaders = [
+  "send_allowed",
+  "suppression_reason",
+  "email",
+  "buyer_segment",
+  "sequence_name",
+  "sequence_step",
+  "channel",
+  "priority",
+  "subject",
+  "first_touch",
+  "follow_up",
+  "next_action",
+  "next_follow_up_at",
+  "tracked_link",
+  "proof_artifact",
+  "source_ids",
+  "caveat",
+  "does_not_prove",
+];
+
+export function buildCommercialOutreachCampaignCsv(
+  rows: CommercialLeadRow[],
+  options: { baseUrl?: string } = {}
+): string {
+  const body = buildCommercialOutreachCampaignRows(rows, options).map((row) =>
+    [
+      row.sendAllowed ? "yes" : "no",
+      row.suppressionReason,
+      row.email,
+      row.buyerSegment,
+      row.sequenceName,
+      row.sequenceStep,
+      row.channel,
+      row.priority,
+      row.subject,
+      row.firstTouch,
+      row.followUp,
+      row.nextAction,
+      row.nextFollowUpAt,
+      row.trackedLink,
+      row.proofArtifact,
+      row.sourceIds.join("|"),
+      row.caveat,
+      row.doesNotProve,
+    ]
+      .map(escapeCsv)
+      .join(",")
+  );
+
+  return [campaignCsvHeaders.join(","), ...body].join("\n");
 }

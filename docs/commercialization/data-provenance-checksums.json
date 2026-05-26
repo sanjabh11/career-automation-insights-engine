@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T13:51:10.469Z",
+  "generatedAt": "2026-05-26T14:01:11.845Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -843,9 +843,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 70843,
+      "bytes": 71063,
       "rows": 1162,
-      "sha256": "62ccb617c840e0295bc371dc4b021ac94bbbf8ec5bdc291e7e256f25cba94293",
+      "sha256": "70922628285dc3a5edbb26028902a9b4c4bcffff955f664ed7462189a1096e31",
       "failures": [],
       "passed": true
     },
@@ -911,7 +911,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "5a5cbedecb83c7b7734701fa85e83ba2cac76139709c14a23f497d59be63da93",
+      "sha256": "0867949ab68f7bc1b02e15b03aa063e8bb1f7755a203a1b92e35f9c4dd10b647",
       "failures": [],
       "passed": true
     },
@@ -941,7 +941,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "7844c5ac5e8c43c62d9760b8958a622443abc573442fabbbd9827b25a066791e",
+      "sha256": "987943649f52b2a79cd1d9b37630886d93dc2d8c5ce1d1904fd28f0ec559e63f",
       "failures": [],
       "passed": true
     },
@@ -1073,7 +1073,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "5de783c7d05cd226963d8662d18ed851d08175bf2cce30075dfaef52c7b65991",
+      "sha256": "7634b982b2ab6964fb1357faec25dfea972b4526887aa1b975273c7e6936fa94",
       "failures": [],
       "passed": true
     },

@@ -269,9 +269,9 @@ const outreachFunctionalityAssessment = [
     capability: "Lead capture and lead ops",
     laymanValue: "People requesting reports can become trackable leads instead of disappearing after a download.",
     outreachUse: "Turns sample reports and SEO traffic into a sales pipeline.",
-    currentProof: "Supabase lead capture, consent text, offline redacted retry queue, staff lead ops, CSV export.",
-    maturity: 4.0,
-    nextGap: "Add CRM/email integration, deployed-domain analytics, owner assignment, sequence status, and unsubscribe handling.",
+    currentProof: "Supabase lead capture, consent text, offline redacted retry queue, staff lead ops, response metrics, CSV export, and unsubscribe-safe campaign CSV with tracked links.",
+    maturity: 4.2,
+    nextGap: "Add email-provider API sync, deployed-domain analytics, owner assignment, unsubscribe webhook sync-back, and A/B message results.",
     sourceIds: ["nist-ai-rmf", "wcag-22", "llm-output"],
   },
   {
@@ -287,9 +287,9 @@ const outreachFunctionalityAssessment = [
     capability: "Outreach CSV starter pack",
     laymanValue: "The founder can export pilot segments, messages, offers, and success metrics for manual CRM use.",
     outreachUse: "Fastest practical way to begin small controlled outreach.",
-    currentProof: "Proof-pack gallery exports a CRM CSV for coach, career-center, and workforce-board pilots.",
-    maturity: 3.8,
-    nextGap: "Add tracked campaign links, response status, follow-up templates, calendar booking, and A/B message results.",
+    currentProof: "Proof-pack gallery exports a CRM CSV; lead ops exports a campaign CSV with send/suppression status, tracked proof-pack links, follow-up templates, source IDs, caveats, and does-not-prove boundaries.",
+    maturity: 4.1,
+    nextGap: "Add calendar booking, deployed-domain analytics, email-provider sync, and A/B message results.",
     sourceIds: ["nace-career-readiness", "dol-ai-literacy-framework", "lightcast"],
   },
 ];
@@ -306,8 +306,8 @@ const outreachCampaignPhases = [
     phase: "2. Founder-led validation",
     focus: "Ask coaches and counselors to review sample artifacts, not buy a large platform.",
     successPoint: "10 reviews, 3 discovery calls, 1 paid pilot conversation.",
-    maturity: 3.8,
-    remaining: "Tracked links, feedback form, and CRM status updates.",
+    maturity: 4.0,
+    remaining: "Feedback form, deployed-domain analytics, and CRM owner assignment.",
   },
   {
     phase: "3. Workforce pilot",
@@ -327,8 +327,8 @@ const outreachCampaignPhases = [
     phase: "5. Scaled outreach",
     focus: "Move from manual founder outreach to repeatable campaigns.",
     successPoint: "CRM/email sequences, analytics, unsubscribe, and buyer-specific case-study artifacts.",
-    maturity: 2.5,
-    remaining: "Campaign automation, conversion dashboards, and buyer-specific landing pages.",
+    maturity: 2.8,
+    remaining: "Provider sync, conversion dashboards, unsubscribe webhook sync-back, and buyer-specific landing pages.",
   },
 ];
 
