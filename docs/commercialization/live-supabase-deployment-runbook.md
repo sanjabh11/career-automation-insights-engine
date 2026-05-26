@@ -1,6 +1,6 @@
 # Live Supabase Deployment Runbook
 
-Generated: 2026-05-26T12:41:35.149Z
+Generated: 2026-05-26T13:36:17.275Z
 Target project ref: `kvunnankqgfokeufvsrv`
 Packet status: **pass**
 
@@ -15,7 +15,8 @@ Purpose: apply the commercial proof-pack schema changes in the linked Supabase p
 | `20260524000300` | Phase 2 O*NET Task Ratings metadata | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | `b719ea4ba88bed94...` | pass |
 | `20260524000400` | Phase 5 resume deletion receipts | `supabase/migrations/20260524000400_add_resume_deletion_receipts.sql` | `26cbcd73f5380890...` | pass |
 | `20260524000500` | Phase 5 redacted resume proof artifacts | `supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql` | `7ca18c1ef3788b23...` | pass |
-| `20260525000100` | Commercial outreach pipeline | `supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql` | `ebbb672d2ec56e54...` | pass |
+| `20260525172048` | Commercial outreach pipeline | `supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql` | `ebbb672d2ec56e54...` | pass |
+| `20260526000100` | Commercial outreach response metrics | `supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql` | `c77b4715c0ad41f9...` | pass |
 
 ## Required Environment
 

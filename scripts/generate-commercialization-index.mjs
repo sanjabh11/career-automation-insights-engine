@@ -122,9 +122,10 @@ const featureMap = [
       'src/lib/commercialReportArtifacts.ts',
       'supabase/migrations/20260523000100_create_commercial_leads.sql',
       'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
-      'supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql',
+      'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
+      'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
   },
   {
     feature: 'Commercial launch gate and payment fulfillment boundary',
@@ -379,6 +380,7 @@ async function main() {
     baseSqlSource,
     reviewSqlSource,
     outreachSqlSource,
+    outreachResponseSqlSource,
     resumeDeletionSqlSource,
     resumeProofArtifactSqlSource,
   ] = await Promise.all([
@@ -387,11 +389,12 @@ async function main() {
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
     readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
-    readFile('supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql', 'utf8'),
+    readFile('supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql', 'utf8'),
+    readFile('supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql', 'utf8'),
     readFile('supabase/migrations/20260524000400_add_resume_deletion_receipts.sql', 'utf8'),
     readFile('supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql', 'utf8'),
   ]);
-  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${outreachSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${outreachSqlSource}\n${outreachResponseSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
   const branch = await getCurrentBranch();
   const index = {
     generatedAt: new Date().toISOString(),

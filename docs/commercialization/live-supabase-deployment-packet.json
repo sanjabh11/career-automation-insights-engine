@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T12:41:35.149Z",
+  "generatedAt": "2026-05-26T13:36:17.275Z",
   "targetProjectRef": "kvunnankqgfokeufvsrv",
   "allPassed": true,
   "versionsAreSorted": true,
@@ -21,7 +21,7 @@
       "purpose": "Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files."
     }
   ],
-  "combinedSqlSha256": "6678b89e7283e6ae32320b5ba1e1747b0f232c3221f1b6c053d753d5b9f32e3c",
+  "combinedSqlSha256": "c4a48127b7f012a537fdb5d4b98894ba07a2bc672fa737724ecca6842db5f967",
   "references": [
     {
       "label": "Supabase database migrations",
@@ -135,7 +135,7 @@
     },
     {
       "phase": "Commercial outreach pipeline",
-      "file": "supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql",
+      "file": "supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql",
       "reason": "Staff-only CRM sequence metadata, follow-up scheduling, and outreach launch-gate state for proof-pack leads.",
       "expectedSnippets": [
         "update_commercial_lead_outreach_plan",
@@ -145,9 +145,30 @@
         "commercial_launch_gate",
         "GRANT EXECUTE ON FUNCTION public.update_commercial_lead_outreach_plan"
       ],
-      "version": "20260525000100",
+      "version": "20260525172048",
       "lineCount": 136,
       "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Commercial outreach response metrics",
+      "file": "supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql",
+      "reason": "Staff-only reply, meeting, usefulness, objection, paid-signal, case-study, unsubscribe, and response-note metrics for founder-led proof-pack outreach.",
+      "expectedSnippets": [
+        "update_commercial_lead_response_metrics",
+        "outreach_response_metrics",
+        "reply_sentiment",
+        "meeting_booked_at",
+        "usefulness_score",
+        "paid_pilot_signal",
+        "unsubscribe_requested",
+        "GRANT EXECUTE ON FUNCTION public.update_commercial_lead_response_metrics"
+      ],
+      "version": "20260526000100",
+      "lineCount": 175,
+      "sha256": "c77b4715c0ad41f9e620e3e741653c8d52eb8e8dc484513ad1413cca08bc6ee3",
       "missingSnippets": [],
       "unsafeMatches": [],
       "status": "pass"

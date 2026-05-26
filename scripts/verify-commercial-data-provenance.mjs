@@ -138,11 +138,20 @@ const artifacts = [
   {
     id: 'commercial-outreach-pipeline-migration',
     label: 'Commercial lead outreach pipeline migration',
-    path: 'supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql',
+    path: 'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
     type: 'supabase-migration',
     sourceIds: ['nist-ai-rmf', 'llm-output'],
     expectedSnippets: ['update_commercial_lead_outreach_plan', 'outreach_pipeline', 'next_follow_up_at', 'sequence_step', 'commercial_launch_gate', 'Staff-only commercial outreach pipeline update'],
     caveat: 'Staff-only CRM sequence metadata makes founder-led outreach trackable; it does not send emails, guarantee consent compliance, or replace a configured CRM/email provider.',
+  },
+  {
+    id: 'commercial-outreach-response-metrics-migration',
+    label: 'Commercial lead outreach response metrics migration',
+    path: 'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
+    type: 'supabase-migration',
+    sourceIds: ['nist-ai-rmf', 'llm-output'],
+    expectedSnippets: ['update_commercial_lead_response_metrics', 'outreach_response_metrics', 'reply_sentiment', 'meeting_booked_at', 'usefulness_score', 'paid_pilot_signal', 'unsubscribe_requested', 'Staff-only commercial outreach response metrics update'],
+    caveat: 'Response metrics support founder-led pilot learning; they do not prove market demand, predict sales, or replace consent-aware CRM/email tooling.',
   },
   {
     id: 'commercial-checkout-auth-boundary',

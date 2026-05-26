@@ -12,11 +12,24 @@ export const OUTREACH_STAGES = [
 ] as const;
 export const OUTREACH_CHANNELS = ["linkedin", "email", "warm_intro", "webinar", "phone", "other"] as const;
 export const OUTREACH_PRIORITIES = ["urgent", "high", "medium", "low"] as const;
+export const OUTREACH_REPLY_SENTIMENTS = ["none", "positive", "neutral", "objection", "not_interested"] as const;
+export const OUTREACH_OBJECTION_CATEGORIES = [
+  "none",
+  "pricing",
+  "timing",
+  "trust",
+  "data_privacy",
+  "integration",
+  "not_priority",
+  "other",
+] as const;
 
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 export type OutreachStage = (typeof OUTREACH_STAGES)[number];
 export type OutreachChannel = (typeof OUTREACH_CHANNELS)[number];
 export type OutreachPriority = (typeof OUTREACH_PRIORITIES)[number];
+export type OutreachReplySentiment = (typeof OUTREACH_REPLY_SENTIMENTS)[number];
+export type OutreachObjectionCategory = (typeof OUTREACH_OBJECTION_CATEGORIES)[number];
 
 export const OUTREACH_STAGE_LABELS: Record<OutreachStage, string> = {
   not_started: "Not started",
@@ -42,6 +55,25 @@ export const OUTREACH_PRIORITY_LABELS: Record<OutreachPriority, string> = {
   high: "High",
   medium: "Medium",
   low: "Low",
+};
+
+export const OUTREACH_REPLY_SENTIMENT_LABELS: Record<OutreachReplySentiment, string> = {
+  none: "No reply yet",
+  positive: "Positive",
+  neutral: "Neutral",
+  objection: "Objection",
+  not_interested: "Not interested",
+};
+
+export const OUTREACH_OBJECTION_CATEGORY_LABELS: Record<OutreachObjectionCategory, string> = {
+  none: "No objection logged",
+  pricing: "Pricing",
+  timing: "Timing",
+  trust: "Trust / evidence",
+  data_privacy: "Data privacy",
+  integration: "Integration",
+  not_priority: "Not a priority",
+  other: "Other",
 };
 
 export interface CommercialLeadRow {
@@ -76,6 +108,21 @@ export interface CommercialLeadOutreachPlan {
   updatedByUserId: string | null;
 }
 
+export interface CommercialLeadResponseMetrics {
+  repliedAt: string | null;
+  replySentiment: OutreachReplySentiment;
+  meetingBookedAt: string | null;
+  sampleReportSentAt: string | null;
+  usefulnessScore: number | null;
+  objectionCategory: OutreachObjectionCategory;
+  caseStudyPermission: boolean;
+  paidPilotSignal: boolean;
+  unsubscribeRequested: boolean;
+  responseNotes: string | null;
+  updatedAt: string | null;
+  updatedByUserId: string | null;
+}
+
 export interface LeadOpsSummary {
   total: number;
   newLeads: number;
@@ -84,6 +131,11 @@ export interface LeadOpsSummary {
   qualifiedOrConverted: number;
   followUpsDue: number;
   pilotReady: number;
+  responsesLogged: number;
+  meetingsBooked: number;
+  paidPilotSignals: number;
+  unsubscribeRequests: number;
+  averageUsefulnessScore: number | null;
   averageRiskScore: number | null;
 }
 
@@ -119,6 +171,22 @@ interface CommercialLeadOpsRpcClient {
       p_staff_notes: string | null;
     }
   ): RpcResult<CommercialLeadRow[]>;
+  rpc(
+    functionName: "update_commercial_lead_response_metrics",
+    args: {
+      p_lead_id: string;
+      p_replied_at: string | null;
+      p_reply_sentiment: OutreachReplySentiment;
+      p_meeting_booked_at: string | null;
+      p_sample_report_sent_at: string | null;
+      p_usefulness_score: number | null;
+      p_objection_category: OutreachObjectionCategory;
+      p_case_study_permission: boolean;
+      p_paid_pilot_signal: boolean;
+      p_unsubscribe_requested: boolean;
+      p_response_notes: string | null;
+    }
+  ): RpcResult<CommercialLeadRow[]>;
 }
 
 const commercialLeadOpsClient = supabase as unknown as CommercialLeadOpsRpcClient;
@@ -147,6 +215,20 @@ function isOutreachPriority(value: unknown): value is OutreachPriority {
   return OUTREACH_PRIORITIES.some((priority) => priority === value);
 }
 
+function isOutreachReplySentiment(value: unknown): value is OutreachReplySentiment {
+  return OUTREACH_REPLY_SENTIMENTS.some((sentiment) => sentiment === value);
+}
+
+function isOutreachObjectionCategory(value: unknown): value is OutreachObjectionCategory {
+  return OUTREACH_OBJECTION_CATEGORIES.some((category) => category === value);
+}
+
+function readBoundedScore(value: unknown): number | null {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  const score = Math.trunc(value);
+  return score >= 1 && score <= 5 ? score : null;
+}
+
 export function readCommercialLeadOutreachPlan(row: CommercialLeadRow): CommercialLeadOutreachPlan {
   const rawPlan = row.metadata?.outreach_pipeline;
   const plan = isRecord(rawPlan) ? rawPlan : {};
@@ -161,6 +243,25 @@ export function readCommercialLeadOutreachPlan(row: CommercialLeadRow): Commerci
     nextAction: typeof plan.next_action === "string" ? plan.next_action : null,
     updatedAt: typeof plan.updated_at === "string" ? plan.updated_at : null,
     updatedByUserId: typeof plan.updated_by_user_id === "string" ? plan.updated_by_user_id : null,
+  };
+}
+
+export function readCommercialLeadResponseMetrics(row: CommercialLeadRow): CommercialLeadResponseMetrics {
+  const rawMetrics = row.metadata?.outreach_response_metrics;
+  const metrics = isRecord(rawMetrics) ? rawMetrics : {};
+  return {
+    repliedAt: typeof metrics.replied_at === "string" ? metrics.replied_at : null,
+    replySentiment: isOutreachReplySentiment(metrics.reply_sentiment) ? metrics.reply_sentiment : "none",
+    meetingBookedAt: typeof metrics.meeting_booked_at === "string" ? metrics.meeting_booked_at : null,
+    sampleReportSentAt: typeof metrics.sample_report_sent_at === "string" ? metrics.sample_report_sent_at : null,
+    usefulnessScore: readBoundedScore(metrics.usefulness_score),
+    objectionCategory: isOutreachObjectionCategory(metrics.objection_category) ? metrics.objection_category : "none",
+    caseStudyPermission: metrics.case_study_permission === true,
+    paidPilotSignal: metrics.paid_pilot_signal === true,
+    unsubscribeRequested: metrics.unsubscribe_requested === true,
+    responseNotes: typeof metrics.response_notes === "string" ? metrics.response_notes : null,
+    updatedAt: typeof metrics.updated_at === "string" ? metrics.updated_at : null,
+    updatedByUserId: typeof metrics.updated_by_user_id === "string" ? metrics.updated_by_user_id : null,
   };
 }
 
@@ -240,9 +341,51 @@ export async function updateCommercialLeadOutreachPlan(input: {
   return updatedLead;
 }
 
+export async function updateCommercialLeadResponseMetrics(input: {
+  leadId: string;
+  repliedAt?: string | null;
+  replySentiment?: OutreachReplySentiment;
+  meetingBookedAt?: string | null;
+  sampleReportSentAt?: string | null;
+  usefulnessScore?: number | null;
+  objectionCategory?: OutreachObjectionCategory;
+  caseStudyPermission?: boolean;
+  paidPilotSignal?: boolean;
+  unsubscribeRequested?: boolean;
+  responseNotes?: string;
+}): Promise<CommercialLeadRow> {
+  const { data, error } = await commercialLeadOpsClient.rpc("update_commercial_lead_response_metrics", {
+    p_lead_id: input.leadId,
+    p_replied_at: input.repliedAt || null,
+    p_reply_sentiment: input.replySentiment || "none",
+    p_meeting_booked_at: input.meetingBookedAt || null,
+    p_sample_report_sent_at: input.sampleReportSentAt || null,
+    p_usefulness_score: input.usefulnessScore ?? null,
+    p_objection_category: input.objectionCategory || "none",
+    p_case_study_permission: input.caseStudyPermission === true,
+    p_paid_pilot_signal: input.paidPilotSignal === true,
+    p_unsubscribe_requested: input.unsubscribeRequested === true,
+    p_response_notes: input.responseNotes?.trim() || null,
+  });
+
+  if (error) {
+    throw new Error(error.message || "Unable to update commercial outreach response metrics.");
+  }
+
+  const updatedLead = data?.[0];
+  if (!updatedLead) {
+    throw new Error("Commercial outreach response update returned no row.");
+  }
+
+  return updatedLead;
+}
+
 export function summarizeCommercialLeads(rows: CommercialLeadRow[]): LeadOpsSummary {
   const scoredRows = rows.filter((row) => typeof row.risk_score === "number");
   const riskTotal = scoredRows.reduce((sum, row) => sum + (row.risk_score ?? 0), 0);
+  const responseMetrics = rows.map(readCommercialLeadResponseMetrics);
+  const scoredUsefulness = responseMetrics.filter((metrics) => typeof metrics.usefulnessScore === "number");
+  const usefulnessTotal = scoredUsefulness.reduce((sum, metrics) => sum + (metrics.usefulnessScore ?? 0), 0);
 
   return {
     total: rows.length,
@@ -252,6 +395,11 @@ export function summarizeCommercialLeads(rows: CommercialLeadRow[]): LeadOpsSumm
     qualifiedOrConverted: rows.filter((row) => row.status === "qualified" || row.status === "converted").length,
     followUpsDue: rows.filter((row) => isCommercialLeadFollowUpDue(row)).length,
     pilotReady: rows.filter((row) => readCommercialLeadOutreachPlan(row).stage === "pilot_qualified").length,
+    responsesLogged: responseMetrics.filter((metrics) => metrics.replySentiment !== "none" || Boolean(metrics.repliedAt)).length,
+    meetingsBooked: responseMetrics.filter((metrics) => Boolean(metrics.meetingBookedAt)).length,
+    paidPilotSignals: responseMetrics.filter((metrics) => metrics.paidPilotSignal).length,
+    unsubscribeRequests: responseMetrics.filter((metrics) => metrics.unsubscribeRequested).length,
+    averageUsefulnessScore: scoredUsefulness.length ? Math.round((usefulnessTotal / scoredUsefulness.length) * 10) / 10 : null,
     averageRiskScore: scoredRows.length ? Math.round((riskTotal / scoredRows.length) * 10) / 10 : null,
   };
 }
@@ -273,6 +421,16 @@ const csvHeaders = [
   "outreach_sequence_step",
   "outreach_next_follow_up_at",
   "outreach_next_action",
+  "response_replied_at",
+  "response_sentiment",
+  "response_meeting_booked_at",
+  "response_sample_report_sent_at",
+  "response_usefulness_score",
+  "response_objection_category",
+  "response_paid_pilot_signal",
+  "response_case_study_permission",
+  "response_unsubscribe_requested",
+  "response_notes",
   "consent_to_contact",
   "consent_captured_at",
   "last_contacted_at",
@@ -287,6 +445,7 @@ function escapeCsv(value: unknown): string {
 export function buildCommercialLeadCsv(rows: CommercialLeadRow[]): string {
   const body = rows.map((row) => {
     const outreachPlan = readCommercialLeadOutreachPlan(row);
+    const responseMetrics = readCommercialLeadResponseMetrics(row);
     return [
       row.created_at,
       row.email,
@@ -304,6 +463,16 @@ export function buildCommercialLeadCsv(rows: CommercialLeadRow[]): string {
       outreachPlan.sequenceStep,
       outreachPlan.nextFollowUpAt,
       outreachPlan.nextAction,
+      responseMetrics.repliedAt,
+      responseMetrics.replySentiment,
+      responseMetrics.meetingBookedAt,
+      responseMetrics.sampleReportSentAt,
+      responseMetrics.usefulnessScore,
+      responseMetrics.objectionCategory,
+      responseMetrics.paidPilotSignal ? "yes" : "no",
+      responseMetrics.caseStudyPermission ? "yes" : "no",
+      responseMetrics.unsubscribeRequested ? "yes" : "no",
+      responseMetrics.responseNotes,
       row.consent_to_contact ? "yes" : "no",
       row.consent_captured_at,
       row.last_contacted_at,

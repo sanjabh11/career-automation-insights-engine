@@ -153,6 +153,27 @@ const checks = [
     expectedBoundary: 'staff-required-or-missing-lead-no-mutation',
     acceptStatementTimeoutAsPresent: true,
   },
+  {
+    id: 'commercial-lead-response-metrics-rpc',
+    label: 'update_commercial_lead_response_metrics RPC exists behind staff boundary',
+    method: 'POST',
+    path: '/rest/v1/rpc/update_commercial_lead_response_metrics',
+    body: {
+      p_lead_id: ZERO_UUID,
+      p_replied_at: null,
+      p_reply_sentiment: 'none',
+      p_meeting_booked_at: null,
+      p_sample_report_sent_at: null,
+      p_usefulness_score: null,
+      p_objection_category: 'none',
+      p_case_study_permission: false,
+      p_paid_pilot_signal: false,
+      p_unsubscribe_requested: false,
+      p_response_notes: 'non-mutating live proof',
+    },
+    expectedBoundary: 'staff-required-or-missing-lead-no-mutation',
+    acceptStatementTimeoutAsPresent: true,
+  },
 ];
 
 function hasFlag(flag) {

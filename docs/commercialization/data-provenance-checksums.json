@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T12:41:35.561Z",
+  "generatedAt": "2026-05-26T13:36:17.398Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -445,7 +445,7 @@
     {
       "id": "commercial-outreach-pipeline-migration",
       "label": "Commercial lead outreach pipeline migration",
-      "path": "supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql",
+      "path": "supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql",
       "type": "supabase-migration",
       "sourceIds": [
         "nist-ai-rmf",
@@ -463,6 +463,32 @@
       "bytes": 4343,
       "rows": 127,
       "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-outreach-response-metrics-migration",
+      "label": "Commercial lead outreach response metrics migration",
+      "path": "supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "update_commercial_lead_response_metrics",
+        "outreach_response_metrics",
+        "reply_sentiment",
+        "meeting_booked_at",
+        "usefulness_score",
+        "paid_pilot_signal",
+        "unsubscribe_requested",
+        "Staff-only commercial outreach response metrics update"
+      ],
+      "caveat": "Response metrics support founder-led pilot learning; they do not prove market demand, predict sales, or replace consent-aware CRM/email tooling.",
+      "bytes": 4838,
+      "rows": 165,
+      "sha256": "c77b4715c0ad41f9e620e3e741653c8d52eb8e8dc484513ad1413cca08bc6ee3",
       "failures": [],
       "passed": true
     },
@@ -885,7 +911,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 17782,
       "rows": 565,
-      "sha256": "50de85b318301888054e33dab387b08373df0ce9d5fd7730406380d0eb1dfb23",
+      "sha256": "5a5cbedecb83c7b7734701fa85e83ba2cac76139709c14a23f497d59be63da93",
       "failures": [],
       "passed": true
     },
@@ -915,7 +941,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 6658,
       "rows": 50,
-      "sha256": "04af288228be8ea84b99f5a6494ce6a7420252529efcfd9d412944c7d0df7170",
+      "sha256": "7844c5ac5e8c43c62d9760b8958a622443abc573442fabbbd9827b25a066791e",
       "failures": [],
       "passed": true
     },
@@ -991,9 +1017,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
-      "bytes": 13914,
-      "rows": 385,
-      "sha256": "055127c97a7ea8854d9900b9bd279cb6d20422e8b5436e26f6521b1b657e23da",
+      "bytes": 14660,
+      "rows": 406,
+      "sha256": "c5abb98eadd2bb930012104ba394a2d9aec88fe7e861cb9c961c022a2f87cd29",
       "failures": [],
       "passed": true
     },
@@ -1017,9 +1043,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 12307,
-      "rows": 274,
-      "sha256": "b479988e180c80d2d572bce8e243e340f1e05058be3a492da78ce487450b2f6b",
+      "bytes": 12959,
+      "rows": 289,
+      "sha256": "24a4796ffbf79ee7ac6daa6d89d7f6fb1e88cddff365aa2f1bcd6ac6358af9df",
       "failures": [],
       "passed": true
     },
@@ -1045,9 +1071,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 5287,
-      "rows": 75,
-      "sha256": "459cc8b594bf40c1f4adc0ba7c83da75128a5e9411082b282db41f0075978fe3",
+      "bytes": 5462,
+      "rows": 76,
+      "sha256": "ed61c383bbed992b6d6c469969afdc1685bc457c2ae72b45b9adff31a1b29442",
       "failures": [],
       "passed": true
     },

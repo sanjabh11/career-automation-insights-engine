@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,16 +34,24 @@ import {
   LeadStatus,
   OUTREACH_CHANNEL_LABELS,
   OUTREACH_CHANNELS,
+  OUTREACH_OBJECTION_CATEGORIES,
+  OUTREACH_OBJECTION_CATEGORY_LABELS,
   OUTREACH_PRIORITIES,
   OUTREACH_PRIORITY_LABELS,
+  OUTREACH_REPLY_SENTIMENT_LABELS,
+  OUTREACH_REPLY_SENTIMENTS,
   OUTREACH_STAGE_LABELS,
   OUTREACH_STAGES,
   OutreachChannel,
+  OutreachObjectionCategory,
   OutreachPriority,
+  OutreachReplySentiment,
   OutreachStage,
   readCommercialLeadOutreachPlan,
+  readCommercialLeadResponseMetrics,
   summarizeCommercialLeads,
   updateCommercialLeadOutreachPlan,
+  updateCommercialLeadResponseMetrics,
   updateCommercialLeadStatus,
 } from "@/lib/commercialLeadOps";
 import {
@@ -89,6 +98,16 @@ interface LeadOutreachPlanDraft {
   sequenceStep: string;
   nextAction: string;
   staffNotes: string;
+  repliedAt: string;
+  replySentiment: OutreachReplySentiment;
+  meetingBookedAt: string;
+  sampleReportSentAt: string;
+  usefulnessScore: string;
+  objectionCategory: OutreachObjectionCategory;
+  caseStudyPermission: boolean;
+  paidPilotSignal: boolean;
+  unsubscribeRequested: boolean;
+  responseNotes: string;
 }
 
 const statusLabels: Record<LeadStatus, string> = {
@@ -167,6 +186,11 @@ function isReviewStatus(value: unknown): value is ReportReviewStatus {
     value === "coach_reviewed" ||
     value === "client_ready"
   );
+}
+
+function isMissingResponseMetricsRpcError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error || "");
+  return /update_commercial_lead_response_metrics|schema cache|could not find|does not exist|undefined function|PGRST202|PGRST203/i.test(message);
 }
 
 function readStringList(value: unknown): string[] {
@@ -254,6 +278,7 @@ function reviewWorkflowSummary(workflow: LeadProofPackReviewWorkflow): string {
 
 function buildOutreachPlanDraft(lead: CommercialLeadRow): LeadOutreachPlanDraft {
   const plan = readCommercialLeadOutreachPlan(lead);
+  const metrics = readCommercialLeadResponseMetrics(lead);
   return {
     stage: plan.stage,
     channel: plan.channel,
@@ -262,6 +287,16 @@ function buildOutreachPlanDraft(lead: CommercialLeadRow): LeadOutreachPlanDraft 
     sequenceStep: String(plan.sequenceStep),
     nextAction: plan.nextAction ?? "",
     staffNotes: lead.staff_notes ?? "",
+    repliedAt: toDateTimeLocal(metrics.repliedAt),
+    replySentiment: metrics.replySentiment,
+    meetingBookedAt: toDateTimeLocal(metrics.meetingBookedAt),
+    sampleReportSentAt: toDateTimeLocal(metrics.sampleReportSentAt),
+    usefulnessScore: metrics.usefulnessScore === null ? "" : String(metrics.usefulnessScore),
+    objectionCategory: metrics.objectionCategory,
+    caseStudyPermission: metrics.caseStudyPermission,
+    paidPilotSignal: metrics.paidPilotSignal,
+    unsubscribeRequested: metrics.unsubscribeRequested,
+    responseNotes: metrics.responseNotes ?? "",
   };
 }
 
@@ -274,7 +309,17 @@ function isOutreachDraftChanged(lead: CommercialLeadRow, draft: LeadOutreachPlan
     draft.nextFollowUpAt !== existing.nextFollowUpAt ||
     draft.sequenceStep !== existing.sequenceStep ||
     draft.nextAction !== existing.nextAction ||
-    draft.staffNotes !== existing.staffNotes
+    draft.staffNotes !== existing.staffNotes ||
+    draft.repliedAt !== existing.repliedAt ||
+    draft.replySentiment !== existing.replySentiment ||
+    draft.meetingBookedAt !== existing.meetingBookedAt ||
+    draft.sampleReportSentAt !== existing.sampleReportSentAt ||
+    draft.usefulnessScore !== existing.usefulnessScore ||
+    draft.objectionCategory !== existing.objectionCategory ||
+    draft.caseStudyPermission !== existing.caseStudyPermission ||
+    draft.paidPilotSignal !== existing.paidPilotSignal ||
+    draft.unsubscribeRequested !== existing.unsubscribeRequested ||
+    draft.responseNotes !== existing.responseNotes
   );
 }
 
@@ -836,10 +881,13 @@ export default function CommercialLeadOpsPage() {
 
   const handleSaveOutreachPlan = async (lead: CommercialLeadRow) => {
     const draft = leadOutreachDrafts[lead.id] || buildOutreachPlanDraft(lead);
+    const parsedUsefulnessScore = draft.usefulnessScore.trim()
+      ? Math.max(1, Math.min(5, Number.parseInt(draft.usefulnessScore, 10) || 0))
+      : null;
     setUpdatingOutreachLeadId(lead.id);
 
     try {
-      const updatedLead = await updateCommercialLeadOutreachPlan({
+      const updatedPlanLead = await updateCommercialLeadOutreachPlan({
         leadId: lead.id,
         stage: draft.stage,
         channel: draft.channel,
@@ -849,13 +897,36 @@ export default function CommercialLeadOpsPage() {
         nextAction: draft.nextAction,
         staffNotes: draft.staffNotes,
       });
+      let responseMetricsPendingMigration = false;
+      let updatedLead = updatedPlanLead;
+      try {
+        updatedLead = await updateCommercialLeadResponseMetrics({
+          leadId: updatedPlanLead.id,
+          repliedAt: fromDateTimeLocal(draft.repliedAt),
+          replySentiment: draft.replySentiment,
+          meetingBookedAt: fromDateTimeLocal(draft.meetingBookedAt),
+          sampleReportSentAt: fromDateTimeLocal(draft.sampleReportSentAt),
+          usefulnessScore: parsedUsefulnessScore,
+          objectionCategory: draft.objectionCategory,
+          caseStudyPermission: draft.caseStudyPermission,
+          paidPilotSignal: draft.paidPilotSignal,
+          unsubscribeRequested: draft.unsubscribeRequested,
+          responseNotes: draft.responseNotes,
+        });
+      } catch (responseMetricsError) {
+        if (!isMissingResponseMetricsRpcError(responseMetricsError)) throw responseMetricsError;
+        responseMetricsPendingMigration = true;
+      }
       setLeads((current) => current.map((row) => (row.id === updatedLead.id ? updatedLead : row)));
       setLeadStatusDrafts((current) => ({ ...current, [updatedLead.id]: updatedLead.status }));
       setLeadNoteDrafts((current) => ({ ...current, [updatedLead.id]: updatedLead.staff_notes ?? "" }));
       setLeadOutreachDrafts((current) => ({ ...current, [updatedLead.id]: buildOutreachPlanDraft(updatedLead) }));
       toast({
-        title: "Outreach plan updated",
-        description: `${updatedLead.email} is now ${OUTREACH_STAGE_LABELS[readCommercialLeadOutreachPlan(updatedLead).stage].toLowerCase()}.`,
+        title: responseMetricsPendingMigration ? "Outreach plan updated; metrics migration pending" : "Outreach plan updated",
+        description: responseMetricsPendingMigration
+          ? "Stage, follow-up, and notes were saved. Response metrics need the pending Supabase migration before they can persist."
+          : `${updatedLead.email} is now ${OUTREACH_STAGE_LABELS[readCommercialLeadOutreachPlan(updatedLead).stage].toLowerCase()}.`,
+        variant: responseMetricsPendingMigration ? "destructive" : undefined,
       });
     } catch (error) {
       toast({
@@ -929,7 +1000,7 @@ export default function CommercialLeadOpsPage() {
         </div>
       )}
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-10">
         <Card className="p-4">
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm text-muted-foreground">Total leads</span>
@@ -972,13 +1043,34 @@ export default function CommercialLeadOpsPage() {
           </div>
           <div className="mt-2 text-2xl font-semibold">{summary.pilotReady}</div>
         </Card>
+        <Card className="p-4" data-outreach-response-summary="true">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Replies</span>
+            <Badge variant="outline">Response</Badge>
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{summary.responsesLogged}</div>
+        </Card>
         <Card className="p-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-muted-foreground">Avg risk</span>
-            <Badge variant="secondary">Signal</Badge>
+            <span className="text-sm text-muted-foreground">Meetings</span>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{summary.meetingsBooked}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Paid signals</span>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-2 text-2xl font-semibold">{summary.paidPilotSignals}</div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Usefulness</span>
+            <Badge variant="secondary">/5</Badge>
           </div>
           <div className="mt-2 text-2xl font-semibold">
-            {summary.averageRiskScore === null ? "N/A" : `${summary.averageRiskScore}%`}
+            {summary.averageUsefulnessScore === null ? "N/A" : summary.averageUsefulnessScore}
           </div>
         </Card>
       </section>
@@ -1476,6 +1568,149 @@ export default function CommercialLeadOpsPage() {
                               aria-label={`Outreach CRM note for ${lead.email}`}
                               onChange={(event) => patchOutreachDraft(lead, { staffNotes: event.target.value })}
                             />
+                            <div
+                              className="space-y-3 rounded-md border border-slate-200 bg-white p-3"
+                              data-outreach-response-metrics="true"
+                            >
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <div className="text-sm font-medium">Response metrics</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Track founder-led outreach learning; not a sales forecast or employment outcome.
+                                  </div>
+                                </div>
+                                <Badge variant={outreachDraft.paidPilotSignal ? "default" : "outline"}>
+                                  {outreachDraft.paidPilotSignal ? "Paid signal" : "No paid signal"}
+                                </Badge>
+                              </div>
+                              <div className="grid gap-2 md:grid-cols-3">
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-sentiment-${lead.id}`} className="text-xs">
+                                    Reply sentiment
+                                  </Label>
+                                  <Select
+                                    value={outreachDraft.replySentiment}
+                                    onValueChange={(value) => {
+                                      if (OUTREACH_REPLY_SENTIMENTS.includes(value as OutreachReplySentiment)) {
+                                        patchOutreachDraft(lead, { replySentiment: value as OutreachReplySentiment });
+                                      }
+                                    }}
+                                  >
+                                    <SelectTrigger id={`response-sentiment-${lead.id}`} aria-label={`Reply sentiment for ${lead.email}`}>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {OUTREACH_REPLY_SENTIMENTS.map((sentiment) => (
+                                        <SelectItem key={sentiment} value={sentiment}>
+                                          {OUTREACH_REPLY_SENTIMENT_LABELS[sentiment]}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-objection-${lead.id}`} className="text-xs">
+                                    Objection
+                                  </Label>
+                                  <Select
+                                    value={outreachDraft.objectionCategory}
+                                    onValueChange={(value) => {
+                                      if (OUTREACH_OBJECTION_CATEGORIES.includes(value as OutreachObjectionCategory)) {
+                                        patchOutreachDraft(lead, { objectionCategory: value as OutreachObjectionCategory });
+                                      }
+                                    }}
+                                  >
+                                    <SelectTrigger id={`response-objection-${lead.id}`} aria-label={`Objection category for ${lead.email}`}>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {OUTREACH_OBJECTION_CATEGORIES.map((category) => (
+                                        <SelectItem key={category} value={category}>
+                                          {OUTREACH_OBJECTION_CATEGORY_LABELS[category]}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-usefulness-${lead.id}`} className="text-xs">
+                                    Usefulness /5
+                                  </Label>
+                                  <Input
+                                    id={`response-usefulness-${lead.id}`}
+                                    type="number"
+                                    min={1}
+                                    max={5}
+                                    value={outreachDraft.usefulnessScore}
+                                    onChange={(event) => patchOutreachDraft(lead, { usefulnessScore: event.target.value })}
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid gap-2 md:grid-cols-3">
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-replied-${lead.id}`} className="text-xs">
+                                    Replied at
+                                  </Label>
+                                  <Input
+                                    id={`response-replied-${lead.id}`}
+                                    type="datetime-local"
+                                    value={outreachDraft.repliedAt}
+                                    onChange={(event) => patchOutreachDraft(lead, { repliedAt: event.target.value })}
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-meeting-${lead.id}`} className="text-xs">
+                                    Meeting booked
+                                  </Label>
+                                  <Input
+                                    id={`response-meeting-${lead.id}`}
+                                    type="datetime-local"
+                                    value={outreachDraft.meetingBookedAt}
+                                    onChange={(event) => patchOutreachDraft(lead, { meetingBookedAt: event.target.value })}
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label htmlFor={`response-sample-${lead.id}`} className="text-xs">
+                                    Sample sent
+                                  </Label>
+                                  <Input
+                                    id={`response-sample-${lead.id}`}
+                                    type="datetime-local"
+                                    value={outreachDraft.sampleReportSentAt}
+                                    onChange={(event) => patchOutreachDraft(lead, { sampleReportSentAt: event.target.value })}
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid gap-2 md:grid-cols-3">
+                                {[
+                                  ["paidPilotSignal", "Paid pilot signal"],
+                                  ["caseStudyPermission", "Case-study permission"],
+                                  ["unsubscribeRequested", "Unsubscribe requested"],
+                                ].map(([field, label]) => (
+                                  <label
+                                    key={field}
+                                    className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium"
+                                  >
+                                    <Checkbox
+                                      checked={Boolean(outreachDraft[field as keyof LeadOutreachPlanDraft])}
+                                      onCheckedChange={(checked) =>
+                                        patchOutreachDraft(lead, {
+                                          [field]: checked === true,
+                                        } as Partial<LeadOutreachPlanDraft>)
+                                      }
+                                    />
+                                    {label}
+                                  </label>
+                                ))}
+                              </div>
+                              <Input
+                                value={outreachDraft.responseNotes}
+                                maxLength={1000}
+                                placeholder="Response note, objection detail, or buyer quote"
+                                aria-label={`Outreach response note for ${lead.email}`}
+                                onChange={(event) => patchOutreachDraft(lead, { responseNotes: event.target.value })}
+                              />
+                            </div>
                             <Button
                               type="button"
                               size="sm"

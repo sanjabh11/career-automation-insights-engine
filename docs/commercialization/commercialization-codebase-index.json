@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T12:41:29.094Z",
+  "generatedAt": "2026-05-26T13:36:16.762Z",
   "branch": "live-auth-e2e-closeout",
   "routes": [
     {
@@ -726,6 +726,7 @@
       "list_commercial_workforce_review_rows",
       "log_commercial_report_artifact_event",
       "update_commercial_lead_outreach_plan",
+      "update_commercial_lead_response_metrics",
       "update_commercial_lead_status",
       "update_commercial_workforce_row_mapping",
       "update_resume_proof_report_artifact_updated_at"
@@ -746,6 +747,7 @@
       "list_commercial_workforce_review_rows",
       "log_commercial_report_artifact_event",
       "update_commercial_lead_outreach_plan",
+      "update_commercial_lead_response_metrics",
       "update_commercial_lead_status",
       "update_commercial_workforce_row_mapping"
     ],
@@ -874,9 +876,10 @@
         "src/lib/commercialReportArtifacts.ts",
         "supabase/migrations/20260523000100_create_commercial_leads.sql",
         "supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql",
-        "supabase/migrations/20260525000100_add_commercial_outreach_pipeline.sql"
+        "supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql",
+        "supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql"
       ],
-      "proof": "Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation."
+      "proof": "Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation."
     },
     {
       "feature": "Commercial launch gate and payment fulfillment boundary",

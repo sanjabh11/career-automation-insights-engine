@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T12:43:38.263Z",
+  "generatedAt": "2026-05-26T13:29:00.358Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -186,7 +186,7 @@
       "label": "occupation SEO report",
       "viewport": "mobile",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2298,
+      "bodyLength": 2319,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -316,7 +316,7 @@
       "label": "occupation SEO report",
       "viewport": "tablet",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2332,
+      "bodyLength": 2351,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -444,7 +444,7 @@
       "label": "occupation SEO report",
       "viewport": "desktop",
       "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2284,
+      "bodyLength": 2343,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
