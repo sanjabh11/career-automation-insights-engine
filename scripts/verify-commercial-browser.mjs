@@ -626,6 +626,10 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(outreachPhasePlan, 'outreach phase plan');
   await assertVisible(outreachPhasePlan.getByText('2. Founder-led validation'), 'outreach founder validation phase');
   await assertVisible(outreachPhasePlan.getByText('5. Scaled outreach'), 'outreach scaled phase');
+  await assertVisible(page.locator('[data-pilot-validation-tracker="true"]'), 'pilot validation evidence tracker');
+  await assertVisible(page.getByRole('button', { name: /Validation CSV/i }), 'pilot validation CSV export');
+  await assertVisible(page.locator('[data-pilot-validation-target]').first(), 'pilot validation target');
+  await assertVisible(page.locator('[data-pilot-validation-worksheet-column]').first(), 'pilot validation worksheet column');
   await assertVisible(page.locator('[data-payment-fulfillment-status="true"]'), 'payment fulfillment status panel');
   await assertVisible(page.getByText(/Report-credit checkout/i), 'report credit checkout status');
   await assertVisible(page.getByText(/Stripe webhook fulfillment/i), 'stripe webhook fulfillment status');
@@ -680,6 +684,27 @@ async function verifyProofPackGallery(page, baseUrl) {
     }
   }
   console.log('ok download - proof-pack gallery CRM CSV');
+
+  const validationDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Validation CSV/i }).click();
+  const validationDownload = await validationDownloadPromise;
+  if (!validationDownload.suggestedFilename().includes('pilot-validation-worksheet')) {
+    throw new Error(`Unexpected pilot validation CSV filename: ${validationDownload.suggestedFilename()}`);
+  }
+  const validationCsvBody = await validationDownload.createReadStream().then(async (stream) => {
+    if (!stream) {
+      throw new Error('Pilot validation CSV stream was unavailable');
+    }
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of ['buyer_segment', 'proof_artifact_reviewed', 'usefulness_score_1_to_5', 'paid_pilot_signal', 'decision_boundary_confirmed', 'does_not_prove']) {
+    if (!validationCsvBody.includes(expectedColumn)) {
+      throw new Error(`Pilot validation CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - pilot validation CSV');
 
   const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
   await page.getByRole('button', { name: /Trust HTML/i }).click();

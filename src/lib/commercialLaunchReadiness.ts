@@ -56,6 +56,23 @@ export interface PilotFeedbackCaptureField {
   maturity: number;
 }
 
+export interface PilotValidationTarget {
+  buyerSegment: string;
+  targetCount: number;
+  qualifyingEvidence: string;
+  successThreshold: string;
+  currentProof: string;
+  remainingAction: string;
+  maturity: number;
+}
+
+export interface PilotValidationWorksheetColumn {
+  column: string;
+  purpose: string;
+  requiredFor: string;
+  boundary: string;
+}
+
 export interface BuyerLandingRoadmapItem {
   buyer: string;
   currentRoute: string;
@@ -63,6 +80,8 @@ export interface BuyerLandingRoadmapItem {
   nextAction: string;
   maturity: number;
 }
+
+export const PILOT_VALIDATION_WORKSHEET_FILENAME = "proof-pack-pilot-validation-worksheet.csv";
 
 export const commercialLaunchReadinessMilestones: CommercialLaunchReadinessMilestone[] = [
   {
@@ -108,10 +127,10 @@ export const commercialLaunchReadinessMilestones: CommercialLaunchReadinessMiles
   {
     phase: "5. Market validation",
     focus: "Collect proof that buyers understand, value, and will pay for the wedge.",
-    done: "Positioning, proof-pack gallery, sample reports, and outreach scripts exist.",
-    pending: "10 coach reviews, 5 career-center reviews, 3 workforce-board reviews, and paid pilot willingness evidence.",
-    rating: 3.2,
-    remainingPercent: 36,
+    done: "Positioning, proof-pack gallery, sample reports, outreach scripts, feedback fields, and pilot validation worksheet/export exist.",
+    pending: "Real 10 coach reviews, 5 career-center reviews, 3 workforce-board reviews, paid pilot willingness evidence, and permissioned quotes.",
+    rating: 3.4,
+    remainingPercent: 32,
     moveNext: "No broad marketing until feedback and conversion data are captured.",
     priority: "medium",
   },
@@ -290,6 +309,132 @@ export const pilotFeedbackCaptureFields: PilotFeedbackCaptureField[] = [
     maturity: 2.6,
   },
 ];
+
+export const pilotValidationTargets: PilotValidationTarget[] = [
+  {
+    buyerSegment: "Career coaches and resume writers",
+    targetCount: 10,
+    qualifyingEvidence: "A named reviewer inspects a coach-branded sample report and scores usefulness, trust, and client-fit language.",
+    successThreshold: "At least 6 useful-or-better reviews, 3 discovery calls, and 1 paid-pilot conversation.",
+    currentProof: "Coach sample route, evidence-card report body, consent capture, tracked campaign export, and response metrics exist.",
+    remainingAction: "Run founder-led reviews and log usefulness score, trust objection, meeting, paid-signal, and permission fields.",
+    maturity: 3.6,
+  },
+  {
+    buyerSegment: "Career centers and alumni offices",
+    targetCount: 5,
+    qualifyingEvidence: "A counselor or career-center owner reviews the aggregate cohort proof pack and privacy/workshop framing.",
+    successThreshold: "At least 3 counselor-useful reviews and 1 workshop-fit discussion with an institutional review owner.",
+    currentProof: "Aggregate-only cohort report, FERPA/NACE caveats, downloadable HTML/CSV, and institutional readiness packet exist.",
+    remainingAction: "Capture workshop use case, privacy objection, acceptable-use confirmation, and case-study permission status.",
+    maturity: 3.4,
+  },
+  {
+    buyerSegment: "Workforce boards and L&D teams",
+    targetCount: 3,
+    qualifyingEvidence: "A workforce/L&D reviewer inspects a role-level CSV audit sample with no employee ranking or employment-decision use.",
+    successThreshold: "At least 1 anonymized 10-25 role CSV pilot and one SOC/local-market review owner identified.",
+    currentProof: "Workforce CSV audit, executive report skeleton, unmapped review queue, and local-market snapshot packet exist.",
+    remainingAction: "Capture role-count, SOC-review owner, local-source requirement, governance blocker, and paid-pilot path.",
+    maturity: 3.3,
+  },
+  {
+    buyerSegment: "Paid pilot willingness",
+    targetCount: 3,
+    qualifyingEvidence: "A buyer states budget, procurement path, paid discovery interest, or report-credit purchase intent.",
+    successThreshold: "At least 1 paid pilot or clear procurement path before broad paid marketing.",
+    currentProof: "Pricing route and authenticated checkout source exist, but live credit fulfillment is still blocked by function capacity.",
+    remainingAction: "Log paid willingness separately from polite feedback; do not sell paid credits until payment proof passes.",
+    maturity: 3.0,
+  },
+];
+
+export const pilotValidationWorksheetColumns: PilotValidationWorksheetColumn[] = [
+  {
+    column: "buyer_segment",
+    purpose: "Separates coach, career-center, workforce, and paid-pilot evidence.",
+    requiredFor: "All validation rows",
+    boundary: "Segment evidence is directional and does not prove market-wide demand.",
+  },
+  {
+    column: "proof_artifact_reviewed",
+    purpose: "Links feedback to the exact sample report, cohort pack, workforce audit, or gallery route reviewed.",
+    requiredFor: "All validation rows",
+    boundary: "A viewed artifact does not prove buyer adoption or procurement readiness.",
+  },
+  {
+    column: "usefulness_score_1_to_5",
+    purpose: "Captures whether the proof pack would change a real coaching, advising, or planning workflow.",
+    requiredFor: "Coach, career-center, and workforce reviews",
+    boundary: "Usefulness scores are not sales forecasts or employment outcomes.",
+  },
+  {
+    column: "trust_objection",
+    purpose: "Records missing source, privacy, accessibility, legal, local-market, or payment proof blockers.",
+    requiredFor: "All validation rows",
+    boundary: "An objection is a product-learning signal, not legal advice.",
+  },
+  {
+    column: "paid_pilot_signal",
+    purpose: "Distinguishes willingness to pay from general encouragement or polite feedback.",
+    requiredFor: "Paid pilot qualification",
+    boundary: "A paid signal does not prove revenue until payment and delivery are completed.",
+  },
+  {
+    column: "case_study_permission",
+    purpose: "Tracks whether a quote or outcome can be used in outreach without exposing private data.",
+    requiredFor: "Public case-study use",
+    boundary: "No private resume, student, or workforce data should enter outreach without explicit approval.",
+  },
+  {
+    column: "decision_boundary_confirmed",
+    purpose: "Confirms the reviewer accepts no layoff prediction, no employee ranking, and no hiring/firing use.",
+    requiredFor: "Institutional and workforce rows",
+    boundary: "Acceptance confirms pilot framing only; it is not legal compliance certification.",
+  },
+];
+
+function csvCell(value: string | number): string {
+  return `"${String(value).replace(/"/g, '""')}"`;
+}
+
+export function buildPilotValidationWorksheetCsv(): string {
+  const header = [
+    "buyer_segment",
+    "target_count",
+    "reviewer_name_or_role",
+    "organization",
+    "proof_artifact_reviewed",
+    "usefulness_score_1_to_5",
+    "trust_objection",
+    "meeting_booked_at",
+    "paid_pilot_signal",
+    "case_study_permission",
+    "decision_boundary_confirmed",
+    "next_action_owner",
+    "source_ids",
+    "does_not_prove",
+  ];
+
+  const rows = pilotValidationTargets.map((target) => [
+    target.buyerSegment,
+    target.targetCount,
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "nace-career-readiness;nist-ai-rmf;wcag-22;dol-ai-literacy-framework",
+    "This worksheet does not prove market demand, revenue, legal compliance, employment outcomes, or buyer adoption until real review and payment evidence is attached.",
+  ]);
+
+  return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+}
 
 export const buyerLandingPageRoadmap: BuyerLandingRoadmapItem[] = [
   {

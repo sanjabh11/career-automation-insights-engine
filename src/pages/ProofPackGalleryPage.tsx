@@ -17,12 +17,16 @@ import {
 } from "@/lib/localLaborMarketSnapshot";
 import { commercialLaunchGateItems, functionSecurityReviewGroups } from "@/lib/commercialLaunchGate";
 import {
+  buildPilotValidationWorksheetCsv,
   buyerLandingPageRoadmap,
   commercialLaunchReadinessMilestones,
   manualWcagEvidenceChecklist,
   outreachSequenceTemplates,
   paymentFulfillmentStatusItems,
+  PILOT_VALIDATION_WORKSHEET_FILENAME,
   pilotFeedbackCaptureFields,
+  pilotValidationTargets,
+  pilotValidationWorksheetColumns,
   sourceFreshnessDashboardRows,
 } from "@/lib/commercialLaunchReadiness";
 import {
@@ -476,6 +480,18 @@ function downloadLocalMarketSnapshotCsv() {
   window.URL.revokeObjectURL(url);
 }
 
+function downloadPilotValidationWorksheetCsv() {
+  const blob = new Blob([`${buildPilotValidationWorksheetCsv()}\n`], { type: "text/csv;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = PILOT_VALIDATION_WORKSHEET_FILENAME;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
 export default function ProofPackGalleryPage() {
   const institutionalPacket = buildInstitutionalReadinessPacket();
   const topInstitutionalRisks = institutionalPacket.riskRows.slice(0, 4);
@@ -897,6 +913,71 @@ export default function ProofPackGalleryPage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-pilot-validation-tracker="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Pilot validation evidence tracker</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                A worksheet for converting founder-led reviews into bounded market evidence. It records usefulness,
+                trust objections, paid-pilot signals, and case-study permission without treating feedback as revenue proof.
+              </p>
+            </div>
+            <Button type="button" onClick={downloadPilotValidationWorksheetCsv} className="bg-emerald-500 text-slate-950 hover:bg-emerald-400">
+              <Download className="mr-2 h-4 w-4" />
+              Validation CSV
+            </Button>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[1060px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Buyer segment</th>
+                  <th className="py-3 pr-4 font-semibold">Target</th>
+                  <th className="py-3 pr-4 font-semibold">Qualifying evidence</th>
+                  <th className="py-3 pr-4 font-semibold">Success threshold</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining action</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pilotValidationTargets.map((target) => (
+                  <tr key={target.buyerSegment} className="border-b border-slate-800/80 align-top" data-pilot-validation-target={target.buyerSegment}>
+                    <td className="py-4 pr-4 font-semibold text-white">{target.buyerSegment}</td>
+                    <td className="py-4 pr-4 text-slate-300">{target.targetCount}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.qualifyingEvidence}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.successThreshold}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.currentProof}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{target.remainingAction}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {target.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-3 lg:grid-cols-3">
+            {pilotValidationWorksheetColumns.map((column) => (
+              <article key={column.column} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-pilot-validation-worksheet-column={column.column}>
+                <div className="text-xs uppercase tracking-wide text-slate-500">{column.column}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{column.purpose}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400"><span className="font-semibold text-slate-200">Required for:</span> {column.requiredFor}</p>
+                <p className="mt-2 text-xs leading-5 text-amber-100"><span className="font-semibold">Boundary:</span> {column.boundary}</p>
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
+            Does not prove market demand, revenue, legal compliance, employment outcomes, or buyer adoption until real
+            review rows, payment proof, and permissioned case-study evidence are attached.
+          </p>
         </section>
 
         <section className="mt-12 grid gap-6 lg:grid-cols-2">

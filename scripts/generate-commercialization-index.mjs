@@ -40,7 +40,7 @@ const featureMap = [
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-supabase-function-governance.mjs',
     ],
-    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV.',
+    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, and pilot validation worksheet CSV.',
   },
   {
     feature: 'Institutional readiness and governance packet',
