@@ -198,6 +198,22 @@ export interface CommercialOutreachCampaignRow {
   doesNotProve: string;
 }
 
+export interface CommercialOutreachProviderSuppressionRow {
+  email: string;
+  providerAction: string;
+  suppressionReason: string;
+  suppressionTag: string;
+  consentToContact: boolean;
+  unsubscribeRequested: boolean;
+  leadStatus: LeadStatus;
+  outreachStage: OutreachStage;
+  replySentiment: OutreachReplySentiment;
+  buyerSegment: string;
+  sourceIds: string[];
+  caveat: string;
+  doesNotProve: string;
+}
+
 interface SupabaseRpcError {
   message?: string;
 }
@@ -578,7 +594,7 @@ function buildTrackedCampaignLink(
   return url.toString();
 }
 
-function readSuppressionReason(row: CommercialLeadRow): string {
+export function readSuppressionReason(row: CommercialLeadRow): string {
   const plan = readCommercialLeadOutreachPlan(row);
   const metrics = readCommercialLeadResponseMetrics(row);
   if (metrics.unsubscribeRequested) return "unsubscribe_requested";
@@ -587,6 +603,45 @@ function readSuppressionReason(row: CommercialLeadRow): string {
   if (plan.stage === "nurture_paused" || plan.stage === "paid_converted") return `outreach_stage_${plan.stage}`;
   if (metrics.replySentiment === "not_interested") return "reply_not_interested";
   return "";
+}
+
+function readProviderSuppressionAction(reason: string): string {
+  if (reason === "unsubscribe_requested") return "unsubscribe_and_suppress";
+  if (reason === "missing_contact_consent") return "do_not_import";
+  if (reason === "reply_not_interested") return "suppress_future_sequence";
+  if (reason.startsWith("lead_status_")) return "suppress_campaign";
+  if (reason.startsWith("outreach_stage_")) return "suppress_campaign";
+  return "review_before_import";
+}
+
+export function buildCommercialOutreachProviderSuppressionRows(
+  rows: CommercialLeadRow[]
+): CommercialOutreachProviderSuppressionRow[] {
+  return rows
+    .map((row) => {
+      const suppressionReason = readSuppressionReason(row);
+      if (!suppressionReason) return null;
+      const plan = readCommercialLeadOutreachPlan(row);
+      const metrics = readCommercialLeadResponseMetrics(row);
+      return {
+        email: row.email,
+        providerAction: readProviderSuppressionAction(suppressionReason),
+        suppressionReason,
+        suppressionTag: `proof_pack_${suppressionReason}`,
+        consentToContact: row.consent_to_contact,
+        unsubscribeRequested: metrics.unsubscribeRequested,
+        leadStatus: row.status,
+        outreachStage: plan.stage,
+        replySentiment: metrics.replySentiment,
+        buyerSegment: row.buyer_segment,
+        sourceIds: ["nist-ai-rmf", "llm-output"],
+        caveat:
+          "Manual provider import only. Confirm provider-specific unsubscribe and suppression rules before sending any campaign.",
+        doesNotProve:
+          "Does not prove legal compliance, email deliverability, consent validity, revenue, or buyer adoption.",
+      };
+    })
+    .filter((row): row is CommercialOutreachProviderSuppressionRow => Boolean(row));
 }
 
 export function buildCommercialOutreachCampaignRows(
@@ -816,4 +871,44 @@ export function buildCommercialOutreachCampaignCsv(
   );
 
   return [campaignCsvHeaders.join(","), ...body].join("\n");
+}
+
+const providerSuppressionCsvHeaders = [
+  "email",
+  "provider_action",
+  "suppression_reason",
+  "suppression_tag",
+  "consent_to_contact",
+  "unsubscribe_requested",
+  "lead_status",
+  "outreach_stage",
+  "reply_sentiment",
+  "buyer_segment",
+  "source_ids",
+  "caveat",
+  "does_not_prove",
+];
+
+export function buildCommercialOutreachProviderSuppressionCsv(rows: CommercialLeadRow[]): string {
+  const body = buildCommercialOutreachProviderSuppressionRows(rows).map((row) =>
+    [
+      row.email,
+      row.providerAction,
+      row.suppressionReason,
+      row.suppressionTag,
+      row.consentToContact ? "yes" : "no",
+      row.unsubscribeRequested ? "yes" : "no",
+      row.leadStatus,
+      row.outreachStage,
+      row.replySentiment,
+      row.buyerSegment,
+      row.sourceIds.join("|"),
+      row.caveat,
+      row.doesNotProve,
+    ]
+      .map(escapeCsv)
+      .join(",")
+  );
+
+  return [providerSuppressionCsvHeaders.join(","), ...body].join("\n");
 }

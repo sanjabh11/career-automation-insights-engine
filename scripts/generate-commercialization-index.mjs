@@ -125,7 +125,7 @@ const featureMap = [
       'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
       'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links, A/B campaign variants, analytics event names, conversion goals, suppression reasons, variant-level response reporting, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links, provider suppression handoff CSV, A/B campaign variants, analytics event names, conversion goals, suppression reasons, variant-level response reporting, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
   },
   {
     feature: 'Commercial launch gate and payment fulfillment boundary',

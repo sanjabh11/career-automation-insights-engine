@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T05:08:36.381Z",
+  "generatedAt": "2026-05-27T07:01:03.707Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -965,7 +965,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 19425,
       "rows": 619,
-      "sha256": "724090f76806e81fd01a0bfe2d2c6d34c6b6ef929a4d7317c497c9cf511b8404",
+      "sha256": "87cb33bfce98324a2ebbca47a20430cdf22ef8c81272814479e81bd9e6f10018",
       "failures": [],
       "passed": true
     },
@@ -995,7 +995,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 7053,
       "rows": 53,
-      "sha256": "b5152a0af53899d8c057ff635ba226472c2875e556318760d3e9fbbc3a9ec0f6",
+      "sha256": "f594d2e8d8ffe92cc701aaf4c3a80dce7c9001b88100dc3d26b888ed0911bf3c",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "1564f039852e4f9a0fd6378a6b47996f4b3423e993d8541a3cc22692b648020f",
+      "sha256": "09bc785b65875c847c45f90b6781778560819f7b6f1be3c67a6aa577438199a1",
       "failures": [],
       "passed": true
     },

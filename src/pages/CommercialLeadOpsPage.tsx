@@ -28,6 +28,7 @@ import { useSession } from "@/hooks/useSession";
 import {
   buildCommercialLeadCsv,
   buildCommercialOutreachCampaignCsv,
+  buildCommercialOutreachProviderSuppressionCsv,
   CommercialLeadRow,
   fetchCommercialLeads,
   isCommercialLeadFollowUpDue,
@@ -491,6 +492,32 @@ export default function CommercialLeadOpsPage() {
     toast({
       title: "Campaign CSV exported",
       description: `${campaignSummary.sendAllowed} send-ready rows and ${campaignSummary.suppressed} suppressed rows were included with tracked links, A/B variants, and caveats.`,
+    });
+  };
+
+  const handleProviderSuppressionExport = () => {
+    if (!filteredLeads.length) {
+      toast({
+        title: "No suppression rows to export",
+        description: "Change the filters or refresh the lead list.",
+      });
+      return;
+    }
+
+    const blob = new Blob([buildCommercialOutreachProviderSuppressionCsv(filteredLeads)], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `commercial-provider-suppression-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    toast({
+      title: "Suppression CSV exported",
+      description: `${campaignSummary.suppressed} suppressed rows were exported for manual CRM/email-provider sync.`,
     });
   };
 
@@ -1029,6 +1056,10 @@ export default function CommercialLeadOpsPage() {
             <Mail className="mr-2 h-4 w-4" />
             Export campaign CSV
           </Button>
+          <Button variant="outline" onClick={handleProviderSuppressionExport}>
+            <Download className="mr-2 h-4 w-4" />
+            Export suppression CSV
+          </Button>
         </div>
       </section>
 
@@ -1201,6 +1232,17 @@ export default function CommercialLeadOpsPage() {
           follow-up text, A/B campaign variant, analytics event name, conversion goal, evidence source IDs, caveat,
           and does-not-prove boundary. Suppressed rows are included for auditability and should stay suppressed in
           the downstream CRM or email provider.
+        </div>
+        <div
+          className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-700"
+          data-outreach-provider-suppression-export="true"
+        >
+          <div className="font-semibold text-slate-900">Provider suppression handoff</div>
+          <p className="mt-1">
+            The suppression CSV is a manual CRM/email-provider import artifact for no-consent, unsubscribe,
+            archived, converted, paused, and not-interested rows. It does not send email, certify consent
+            compliance, or replace provider webhook sync-back.
+          </p>
         </div>
         <div className="mt-4 space-y-3" data-outreach-ab-reporting="true">
           <div className="flex flex-col gap-1">
