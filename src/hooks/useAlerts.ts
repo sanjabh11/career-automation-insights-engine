@@ -39,7 +39,7 @@ export function useAlerts() {
 
             setAlerts(data || []);
             setUnreadCount(data?.filter(a => !a.is_read).length || 0);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching alerts:', err);
         } finally {
             setLoading(false);
@@ -57,7 +57,7 @@ export function useAlerts() {
 
             setAlerts(alerts.map(a => a.id === id ? { ...a, is_read: true } : a));
             setUnreadCount(prev => Math.max(0, prev - 1));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error marking alert as read:', err);
             toast.error('Failed to update alert');
         }
@@ -79,7 +79,7 @@ export function useAlerts() {
             setAlerts(alerts.map(a => ({ ...a, is_read: true })));
             setUnreadCount(0);
             toast.success('All alerts marked as read');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error marking all alerts as read:', err);
             toast.error('Failed to update alerts');
         }
