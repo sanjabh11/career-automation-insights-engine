@@ -7,6 +7,32 @@ const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+type ScoreValue = number | string | null | undefined;
+
+interface ReportOccupation {
+    title: string;
+    soc_code: string;
+}
+
+interface ApoCategoryScores {
+    tasks?: ScoreValue;
+    skills?: ScoreValue;
+    technology?: ScoreValue;
+}
+
+interface ApoAnalysisData {
+    apo_score?: ScoreValue;
+    category_scores?: ApoCategoryScores | null;
+}
+
+interface BrandingConfig {
+    company_name: string;
+    primary_color: string;
+    secondary_color: string;
+    include_apo_branding?: boolean;
+    contact_email?: string | null;
+}
+
 /**
  * Generate Counselor Report (PDF)
  * 
@@ -171,9 +197,9 @@ serve(async (req) => {
 // Generate printable HTML report
 function generateReportHtml(params: {
     clientName: string;
-    occupation: any;
-    apoData: any;
-    branding: any;
+    occupation: ReportOccupation;
+    apoData: ApoAnalysisData | null | undefined;
+    branding: BrandingConfig;
     generatedDate: string;
 }): string {
     const { clientName, occupation, apoData, branding, generatedDate } = params;
@@ -283,7 +309,7 @@ function generateReportHtml(params: {
   </div>
 
   <h2>Automation Potential Score</h2>
-  <div class="apo-score">${apoData?.apo_score || 'N/A'}</div>
+  <div class="apo-score">${formatScore(apoData?.apo_score)}</div>
   <div class="risk-level ${getRiskClass(apoData?.apo_score)}">
     ${getRiskLabel(apoData?.apo_score)}
   </div>
@@ -302,17 +328,17 @@ function generateReportHtml(params: {
     <tbody>
       <tr>
         <td>Task Automation</td>
-        <td>${apoData?.category_scores?.tasks || 'N/A'}%</td>
+        <td>${formatPercent(apoData?.category_scores?.tasks)}</td>
         <td>Percentage of routine tasks susceptible to automation</td>
       </tr>
       <tr>
         <td>Skill Demands</td>
-        <td>${apoData?.category_scores?.skills || 'N/A'}%</td>
+        <td>${formatPercent(apoData?.category_scores?.skills)}</td>
         <td>Skills that remain uniquely human</td>
       </tr>
       <tr>
         <td>Technology Impact</td>
-        <td>${apoData?.category_scores?.technology || 'N/A'}%</td>
+        <td>${formatPercent(apoData?.category_scores?.technology)}</td>
         <td>Current technology substitution risk</td>
       </tr>
     </tbody>
@@ -338,16 +364,35 @@ function generateReportHtml(params: {
   `.trim();
 }
 
-function getRiskClass(score: number): string {
-    if (!score) return 'risk-medium';
-    if (score < 30) return 'risk-low';
-    if (score < 60) return 'risk-medium';
+function scoreToNumber(score: ScoreValue): number | null {
+    if (typeof score === 'number') return Number.isFinite(score) ? score : null;
+    if (typeof score !== 'string' || score.trim().length === 0) return null;
+    const parsed = Number(score);
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatScore(score: ScoreValue): string {
+    const normalized = scoreToNumber(score);
+    return normalized === null ? 'N/A' : String(normalized);
+}
+
+function formatPercent(score: ScoreValue): string {
+    const normalized = scoreToNumber(score);
+    return normalized === null ? 'N/A' : `${normalized}%`;
+}
+
+function getRiskClass(score: ScoreValue): string {
+    const normalized = scoreToNumber(score);
+    if (normalized === null) return 'risk-medium';
+    if (normalized < 30) return 'risk-low';
+    if (normalized < 60) return 'risk-medium';
     return 'risk-high';
 }
 
-function getRiskLabel(score: number): string {
-    if (!score) return 'Analysis Pending';
-    if (score < 30) return 'Low Automation Risk';
-    if (score < 60) return 'Moderate Automation Risk';
+function getRiskLabel(score: ScoreValue): string {
+    const normalized = scoreToNumber(score);
+    if (normalized === null) return 'Analysis Pending';
+    if (normalized < 30) return 'Low Automation Risk';
+    if (normalized < 60) return 'Moderate Automation Risk';
     return 'High Automation Risk';
 }
