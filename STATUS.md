@@ -21,7 +21,7 @@ Last observed Phase D local baseline:
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
 | `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
-| `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook disclosure status. |
+| `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
 | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` | Pass | 6 Playwright smoke tests passed: auth, APO run, Veterans crosswalk, Stripe test-mode checkout, white-label report export, and UK global-English disclosure. |
 
 ## Active Proof Boundaries
@@ -29,8 +29,8 @@ Last observed Phase D local baseline:
 - APO outputs are automation-exposure estimates for coaching and planning. They are not job-loss predictions, employment decisions, salary guarantees, or scientific certification.
 - Public Phase B validation artifacts are served from `/docs/**`: APO model card, task model card, calibration report, and reliability plot.
 - The Phase B public calibration artifact is a source-backed fixture calculation for transparent documentation. Live database calibration still requires owner approval to apply migrations and run the Supabase Edge Function against production APO logs and approved expert labels.
-- Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise. For UK, Canada, and Australia browser locales, APO result UI now shows a visible U.S.-basis disclosure and local classification mapping when one of the Phase D sample rows is available.
-- Phase D does not claim localized UK, Canada, or Australia wage/outlook values. Those adapters remain gated on source-specific joins that preserve release dates, suppression notes, and methodology boundaries.
+- Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise. For UK, Canada, and Australia browser locales, APO result UI now shows a visible U.S.-basis disclosure, local classification mapping when one of the Phase D sample rows is available, and the registered local wage/outlook adapter status.
+- Phase D does not claim localized UK, Canada, or Australia wage/outlook values. Source-registered adapter contracts exist for ONS ASHE, Canada Job Bank wage/outlook methods, and JSA occupation profiles, but local values remain gated on source-specific joins that preserve release dates, suppression notes, geography, and methodology boundaries.
 - Stripe subscription price IDs exist for core tiers; bootcamp checkout is disabled until a real live Stripe price is supplied.
 
 ## Remediation Phases
@@ -80,8 +80,9 @@ Ask before:
 
 ## Phase D Acceptance Evidence
 
-- `src/lib/globalEnglishLocalization.ts` defines an explicit source date of 2026-05-31 and official source registry entries for ESCO API, ONS SOC/ASHE, Statistics Canada NOC, Canada Job Bank wage methodology, ABS ANZSCO, and Jobs and Skills Australia occupation profiles.
+- `src/lib/globalEnglishLocalization.ts` defines an explicit source date of 2026-05-31 and official source registry entries for ESCO API, ONS SOC/ASHE, Statistics Canada NOC, Canada Job Bank wage and outlook methodology, ABS ANZSCO, and Jobs and Skills Australia occupation profiles.
+- Phase D now registers UK, Canada, and Australia wage/outlook adapter contracts with required join fields, release metadata, suppression boundaries, and display boundaries before any local value can be shown.
 - `npm run verify:global-english` passed with 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK SOC mappings, 20 Canada NOC mappings, and 20 Australia ANZSCO mappings.
-- Official source-link fetch checks returned 200 for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
-- `OccupationAnalysis` now shows a regional labor-market disclosure for non-US English locales, including the local classification mapping when available and the statement that wage/outlook values remain U.S. O*NET/BLS basis until localized adapters supply source-dated values.
+- Official source-link fetch checks returned 200 for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
+- `OccupationAnalysis` now shows a regional labor-market disclosure for non-US English locales, including the local classification mapping when available, adapter pending status, join requirement, and the statement that wage/outlook values remain U.S. O*NET/BLS basis until localized adapters supply source-dated values.
 - `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser smoke tests, including the UK locale disclosure check for Software Developers mapped to UK SOC `2134`.

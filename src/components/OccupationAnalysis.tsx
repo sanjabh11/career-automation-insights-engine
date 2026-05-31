@@ -344,6 +344,16 @@ export const OccupationAnalysis = ({
               )}
             </div>
             <p>{regionalDisclosure.message}</p>
+            {regionalDisclosure.adapter && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Badge variant="outline" className="text-[10px]">
+                  Adapter: {regionalDisclosure.adapter.valueStatus.replace(/_/g, ' ')}
+                </Badge>
+                <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
+                  Join requirement: {regionalDisclosure.adapter.joinLevel}
+                </span>
+              </div>
+            )}
             {regionalSources.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
                 {regionalSources.map((source) => (

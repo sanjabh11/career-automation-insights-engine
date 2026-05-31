@@ -14,7 +14,7 @@ The product should be described as a decision-support tool. It estimates automat
 | Validation artifacts | Validation UI and calibration tables/functions exist. | No public model cards, ablations report, reliability plot, or calibration PDF is served in Phase A. |
 | Commercial proof pack | Report evidence, trust-boundary, data-provenance, and commercial release verifiers exist. | Some verifiers generate timestamped docs; live secrets/payment proof remain owner-controlled. |
 | Payments | Stripe subscription price IDs exist for Defender and Coach Pro. | Bootcamp pricing still has a placeholder and must be hidden or replaced before use. |
-| Localization | O*NET/BLS-centered U.S. data is the current backbone. | UK, Canada, and Australia wage/outlook localization is not complete. |
+| Localization | O*NET/BLS-centered U.S. data is the current wage/outlook backbone. Phase D adds 20 sample ESCO, UK SOC, Canada NOC, and Australia ANZSCO mappings plus source-registered UK/Canada/Australia wage/outlook adapter contracts and a visible U.S.-basis disclosure. | UK, Canada, and Australia wage/outlook values are not localized until source-dated adapter joins are imported and validated. |
 
 ## Source Anchors
 
@@ -29,6 +29,9 @@ External context used for current claims, as of 2026-05-31:
 - ESCO API: https://esco.ec.europa.eu/en/about-esco/escopedia/escopedia/esco-api
 - ONS ASHE occupation earnings dataset: https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2
 - Statistics Canada NOC 2021: https://www.statcan.gc.ca/en/subjects/standard/noc/2021/indexV1
+- Canada Job Bank wage methodology: https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology
+- Canada Job Bank 3-year employment outlook methodology: https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology
+- ABS ANZSCO 2022 Australian update: https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022
 - Jobs and Skills Australia occupation profiles: https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations
 
 ## What Is Implemented Now
@@ -36,6 +39,7 @@ External context used for current claims, as of 2026-05-31:
 - Vite/React app shell with lazy-loaded routes and shadcn/Tailwind UI.
 - Supabase Edge Functions for APO analysis, resume analysis, crosswalk, counselor reports, market intelligence, skill adjacency, bridge roles, and commercial proof-pack flows.
 - Postgres migrations for APO logs, O*NET enrichment, calibration scaffolding, expert assessments, monetization, subscriptions, resume proof artifacts, and commercial lead operations.
+- Global-English crosswalk/disclosure scaffolding for O*NET to ESCO, UK SOC, Canada NOC, and Australia ANZSCO sample coverage, plus source-registered UK/Canada/Australia wage/outlook adapter contracts.
 - Commercial verifiers for report evidence, secret hygiene, trust boundaries, data provenance, release checks, live Supabase readiness, and route smoke.
 - Stripe subscription utilities with real Defender and Coach Pro price IDs.
 
@@ -45,7 +49,7 @@ External context used for current claims, as of 2026-05-31:
 - Live production checkout success.
 - Live Supabase data coverage for every commercial claim.
 - Public calibration report, reliability plot, or model cards.
-- UK/Canada/Australia localized wages and outlooks.
+- UK/Canada/Australia localized wage and outlook values from source-dated adapter joins.
 - Paid customer traction, MRR, or partner outcomes.
 - Full lint cleanliness; current baseline lint still fails on existing active, backup, and archived code.
 
