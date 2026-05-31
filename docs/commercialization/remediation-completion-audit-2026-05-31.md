@@ -31,6 +31,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run | Pass, including build and commercial route smoke |
+| Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
 | Full lint | `npm run lint` from Phase E gate run | Fail on inherited repo-wide lint debt: 1,506 problems, mainly `SAFE_BACKUP`, archived functions, legacy explicit `any`, empty blocks, and CommonJS require usage |
 
 ## Unmet Or Externally Blocked Gates
@@ -46,4 +47,4 @@ This audit checks the active remediation objective against current repo and GitH
 
 ## Decision
 
-Local implementation for phases A-E is in place and verified as far as this workspace can prove without secrets, migrations, deployments, payments, or real partner activity. The active goal should remain open because the original plan's Phase C and Phase E live/commercial gates are not fully proven.
+Local implementation for phases A-E is in place and verified as far as this workspace can prove without secrets, migrations, deployments, payments, or real partner activity. `docs/commercialization/remediation-external-gates-latest.md` is the current non-mutating ledger for remaining live/manual evidence. The active goal should remain open because the original plan's Phase C and Phase E live/commercial gates are not fully proven.

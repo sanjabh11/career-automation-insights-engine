@@ -27,6 +27,7 @@
 - [x] Phase E: Add activation/retention event contract, retention cohorts, and commercial validation gates
 - [x] Phase E: Prepare design-partner onboarding checklist and case-study capture template
 - [x] Phase E: Verify bootcamp CTA remains hidden until a real Stripe price exists
+- [x] Cross-phase: Add non-mutating external gate ledger for the remaining live/manual acceptance evidence
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -50,4 +51,5 @@
 - Phase E `npm run verify:commercial-validation` passed and confirms activation/retention instrumentation, design-partner onboarding, case-study capture, live MRR/partner/outcome gates, and hidden bootcamp CTA boundary.
 - Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including build and commercial route smoke.
 - Phase E `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,506 problems; Phase E touched files pass file-scoped ESLint.
+- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because live/manual evidence is still missing.
 - Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.
