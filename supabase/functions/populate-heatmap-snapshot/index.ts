@@ -6,6 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+type JsonRecord = Record<string, unknown>;
+
 interface BLSData {
   occupation_code_6: string;
   occupation_code_8: string | null;
@@ -33,8 +35,79 @@ interface APOData {
   overall_apo: number;
   model: string;
   confidence: string | null;
-  category_scores: any;
+  category_scores: JsonRecord;
   created_at: string;
+}
+
+interface APOLogRow {
+  occupation_code: string;
+  occupation_title: string | null;
+  overall_apo: number | null;
+  model: string | null;
+  computed_items: {
+    confidence?: unknown;
+    category_scores?: unknown;
+  } | null;
+  created_at: string;
+}
+
+interface MarketFactInsert {
+  occupation_code_6: string;
+  occupation_code_8: string;
+  occupation_title: string;
+  region: string;
+  year: number;
+  employment_level: number | null;
+  projected_growth_10y: number | null;
+  median_wage_annual: number | null;
+  career_cluster: string | null;
+  career_cluster_id: string | null;
+  job_zone: number | null;
+  bright_outlook: boolean;
+  bright_outlook_category: string | null;
+  is_stem: boolean;
+  data_source: string;
+  last_updated: string;
+}
+
+interface ExposureSnapshotInsert {
+  snapshot_date: string;
+  occupation_code_8: string;
+  occupation_code_6: string;
+  occupation_title: string;
+  model: string;
+  scoring_version: string;
+  overall_apo: number;
+  confidence: string | null;
+  timeline: null;
+  category_scores_json: JsonRecord;
+  external_signals_json: JsonRecord;
+}
+
+interface HeatmapCellInsert {
+  snapshot_date: string;
+  region: string;
+  occupation_code_6: string;
+  occupation_code_8: string;
+  occupation_title: string;
+  career_cluster: string | null;
+  career_cluster_id: string | null;
+  job_zone: number | null;
+  employment_level: number | null;
+  median_wage_annual: number | null;
+  projected_growth_10y: number | null;
+  overall_apo: number;
+  confidence?: string | null;
+  risk_band: string;
+  cell_weight: number;
+  cell_color_score: number;
+  detail_slug: string;
+  is_stem: boolean;
+  bright_outlook: boolean;
+}
+
+function isRecord(value: unknown): value is JsonRecord {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function calculateRiskBand(apo: number): string {
@@ -91,7 +164,7 @@ export async function handler(req: Request) {
 
     // Create enrichment lookup map
     const enrichmentMap = new Map<string, EnrichmentData>();
-    (enrichmentData || []).forEach((item: any) => {
+    ((enrichmentData || []) as EnrichmentData[]).forEach((item) => {
       const code6 = item.occupation_code.substring(0, 7);
       enrichmentMap.set(code6, item);
       enrichmentMap.set(item.occupation_code, item);
@@ -109,25 +182,32 @@ export async function handler(req: Request) {
 
     // Create APO lookup map (latest per occupation)
     const apoMap = new Map<string, APOData>();
-    (apoData || []).forEach((item: any) => {
+    ((apoData || []) as APOLogRow[]).forEach((item) => {
       const code = item.occupation_code;
       if (!apoMap.has(code)) {
+        const computedItems = item.computed_items;
+        const confidence = typeof computedItems?.confidence === "string"
+          ? computedItems.confidence
+          : null;
+        const categoryScores = isRecord(computedItems?.category_scores)
+          ? computedItems.category_scores
+          : {};
         apoMap.set(code, {
           occupation_code: code,
-          occupation_title: item.occupation_title,
+          occupation_title: item.occupation_title || `Occupation ${code}`,
           overall_apo: item.overall_apo || 0,
           model: item.model || "unknown",
-          confidence: item.computed_items?.confidence || null,
-          category_scores: item.computed_items?.category_scores || {},
+          confidence,
+          category_scores: categoryScores,
           created_at: item.created_at,
         });
       }
     });
 
     // Step 4: Process and merge data
-    const marketFacts: any[] = [];
-    const exposureSnapshots: any[] = [];
-    const heatmapCells: any[] = [];
+    const marketFacts: MarketFactInsert[] = [];
+    const exposureSnapshots: ExposureSnapshotInsert[] = [];
+    const heatmapCells: HeatmapCellInsert[] = [];
 
     const processedCodes = new Set<string>();
 
