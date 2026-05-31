@@ -9,6 +9,14 @@ const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+interface NetlifyProxyEvent {
+  httpMethod: string;
+  body?: string | null;
+}
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
 function getFunctionsBaseFromSupabaseUrl(url?: string): string {
   // Example: https://kvunnankqgfokeufvsrv.supabase.co -> https://kvunnankqgfokeufvsrv.functions.supabase.co
   if (!url) throw new Error('SUPABASE_URL is not configured');
@@ -21,7 +29,7 @@ function getFunctionsBaseFromSupabaseUrl(url?: string): string {
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: NetlifyProxyEvent) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
@@ -56,11 +64,11 @@ export const handler = async (event: any) => {
       headers: { ...corsHeaders, 'Content-Type': contentType },
       body: text,
     };
-  } catch (err: any) {
+  } catch (error: unknown) {
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: err?.message || String(err) }),
+      body: JSON.stringify({ error: getErrorMessage(error) }),
     };
   }
 };
