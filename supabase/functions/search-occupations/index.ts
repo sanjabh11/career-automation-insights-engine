@@ -28,6 +28,27 @@ const requestSchema = z.object({
   offset: z.number().min(0).optional().default(0),
 });
 
+interface OnetCareerResult {
+  code?: string;
+  onetsoc_code?: string;
+  title?: string;
+  description?: string | null;
+}
+
+interface OnetSearchResponse {
+  career?: OnetCareerResult | OnetCareerResult[];
+  occupation?: OnetCareerResult | OnetCareerResult[];
+}
+
+interface NormalizedOccupation {
+  occupation_code: string;
+  occupation_title: string;
+  description: string | null;
+  bright_outlook: boolean;
+  is_stem: boolean;
+  is_green: boolean;
+}
+
 /**
  * Get Basic Auth header for O*NET API
  */
@@ -42,7 +63,7 @@ function getAuthHeader(): string {
 /**
  * Search O*NET for occupations by keyword
  */
-async function searchOnetByKeyword(keyword: string): Promise<any[]> {
+async function searchOnetByKeyword(keyword: string): Promise<OnetCareerResult[]> {
   const url = `${ONET_BASE_URL}/mnm/search?keyword=${encodeURIComponent(keyword)}`;
   
   try {
@@ -58,7 +79,7 @@ async function searchOnetByKeyword(keyword: string): Promise<any[]> {
       return [];
     }
 
-    const data = await response.json();
+    const data = await response.json() as OnetSearchResponse;
     const careers = data.career || data.occupation || [];
     
     return Array.isArray(careers) ? careers : [careers];
@@ -85,7 +106,7 @@ export async function handler(req: Request) {
   const allowedOrigins = rawOrigins
     .split(",")
     .map((s) => s.trim())
-    // Strip any surrounding quotes to avoid CLI quoting issues
+    // Strip surrounding quotes to avoid CLI quoting issues
     .map((s) => s.replace(/^['"]|['"]$/g, ""))
     .filter(Boolean);
 
@@ -211,17 +232,17 @@ export async function handler(req: Request) {
       }
 
       // Map O*NET results to normalized format
-      const normalizedOccupations = onetResults.map((occ: any) => ({
-        occupation_code: occ.code || occ.onetsoc_code,
-        occupation_title: occ.title,
+      const normalizedOccupations: NormalizedOccupation[] = onetResults.map((occ) => ({
+        occupation_code: occ.code || occ.onetsoc_code || "",
+        occupation_title: occ.title || "Unknown occupation",
         description: occ.description || null,
         bright_outlook: false,
         is_stem: false,
         is_green: false,
-      }));
+      })).filter((occ) => occ.occupation_code.length > 0);
 
       // Try to enrich with cached data if available
-      occupationCodes = normalizedOccupations.map((occ: any) => occ.occupation_code).filter(Boolean);
+      occupationCodes = normalizedOccupations.map((occ) => occ.occupation_code);
       
       const { data: enrichedData } = await supabase
         .from("onet_occupation_enrichment")
@@ -230,7 +251,7 @@ export async function handler(req: Request) {
 
       // Merge O*NET results with enrichment data
       const enrichmentMap = new Map((enrichedData || []).map(item => [item.occupation_code, item]));
-      const mergedOccupations = normalizedOccupations.map((occ: any) => {
+      const mergedOccupations = normalizedOccupations.map((occ) => {
         const enriched = enrichmentMap.get(occ.occupation_code);
         return enriched || occ;
       });
