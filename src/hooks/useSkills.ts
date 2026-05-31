@@ -10,6 +10,16 @@ export interface UserSkill {
     created_at: string;
 }
 
+function getErrorMessage(err: unknown, fallback: string): string {
+    if (err instanceof Error) return err.message;
+    if (typeof err === 'string') return err;
+    if (typeof err === 'object' && err !== null && 'message' in err) {
+        const message = (err as { message?: unknown }).message;
+        if (typeof message === 'string' && message.length > 0) return message;
+    }
+    return fallback;
+}
+
 export function useSkills() {
     const [skills, setSkills] = useState<UserSkill[]>([]);
     const [loading, setLoading] = useState(true);
@@ -34,9 +44,9 @@ export function useSkills() {
             if (error) throw error;
 
             setSkills(data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching skills:', err);
-            setError(err.message);
+            setError(getErrorMessage(err, 'Failed to fetch skills'));
         } finally {
             setLoading(false);
         }
@@ -60,9 +70,9 @@ export function useSkills() {
             setSkills([data, ...skills]);
             toast.success('Skill added successfully');
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error adding skill:', err);
-            toast.error(err.message || 'Failed to add skill');
+            toast.error(getErrorMessage(err, 'Failed to add skill'));
             throw err;
         }
     };
@@ -81,9 +91,9 @@ export function useSkills() {
             setSkills(skills.map(s => s.id === id ? data : s));
             toast.success('Skill updated successfully');
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error updating skill:', err);
-            toast.error(err.message || 'Failed to update skill');
+            toast.error(getErrorMessage(err, 'Failed to update skill'));
             throw err;
         }
     };
@@ -99,9 +109,9 @@ export function useSkills() {
 
             setSkills(skills.filter(s => s.id !== id));
             toast.success('Skill removed successfully');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error deleting skill:', err);
-            toast.error(err.message || 'Failed to delete skill');
+            toast.error(getErrorMessage(err, 'Failed to delete skill'));
             throw err;
         }
     };
