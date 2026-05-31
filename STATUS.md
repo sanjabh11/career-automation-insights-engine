@@ -19,6 +19,7 @@ Last observed Phase C local baseline:
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
+| `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims or dead local WEF PDF path. |
 | `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` | Pass | 5 Playwright smoke tests passed: auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export. |
@@ -56,6 +57,9 @@ Ask before:
 - No active user-facing proof buttons link to missing `/docs/**` files.
 - README and landing claims avoid unsupported absolute language.
 - Stale status and summary docs are archived so `README.md` and this file are canonical.
+- Stale research and strategy docs with unsupported readiness, security-score, projected-MRR, or 95%+ confidence language are archived under `docs/archive/phase-a-status-sprawl-20260531/`.
+- `data/econ_wef.csv` and `public/data/econ_wef.csv` point to the official WEF Future of Jobs 2025 source page rather than a missing local `/public/docs/**` PDF.
+- `src/pages/EconImporter.tsx` uses the official WEF source page as placeholder guidance and has no touched-file lint findings.
 - Rendered route crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans` return 200, render body content, and expose no `/docs/**` anchors.
 
 ## Phase B Acceptance Evidence

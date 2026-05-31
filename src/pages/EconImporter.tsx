@@ -4,12 +4,19 @@ import { postEconBatch, type EconRow } from "@/services/econSync";
 
 const BATCH_DEFAULT = 500;
 
+type CsvRowValue = string | number | boolean | null | undefined;
+type CsvRow = Record<string, CsvRowValue>;
+
+declare global {
+  interface Window {
+    __CAIE_ENV?: Record<string, string | undefined>;
+  }
+}
+
 function getEnv(key: string): string | undefined {
-  const win = typeof window !== "undefined" ? (window as any) : {};
-  const env = win.__CAIE_ENV || {};
+  const env = typeof window !== "undefined" ? window.__CAIE_ENV : undefined;
   // Vite env first, then injected snapshot
-  // @ts-ignore
-  return import.meta.env[key] || env[key];
+  return import.meta.env[key] || env?.[key];
 }
 
 export default function EconImporter() {
@@ -55,7 +62,9 @@ export default function EconImporter() {
       if (oy) setOverrideYear(oy);
       if (bs && !Number.isNaN(Number(bs))) setBatchSize(Number(bs));
       if (cu) setCsvUrl(cu);
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, []);
 
   // Persist settings to localStorage
@@ -70,7 +79,9 @@ export default function EconImporter() {
       localStorage.setItem('econImporter.overrideYear', overrideYear);
       localStorage.setItem('econImporter.batchSize', String(batchSize));
       localStorage.setItem('econImporter.csvUrl', csvUrl);
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, [functionUrl, apiKey, source, sourceUrl, region, country, overrideYear, batchSize, csvUrl]);
 
   const reset = useCallback(() => {
@@ -80,7 +91,7 @@ export default function EconImporter() {
   }, []);
 
   const mapRow = useCallback(
-    (r: Record<string, any>): EconRow => {
+    (r: CsvRow): EconRow => {
       const year = (overrideYear || String(r["as_of_year"] || "").trim() || String(r["Date"] || "").slice(0, 4)).replace(/[^0-9]/g, "");
       const hasAdoption = r.adoption_current_pct != null || r.adoption_expected_pct != null;
       const hasPayback = r.payback_months != null && String(r.payback_months).trim() !== "";
@@ -145,7 +156,7 @@ export default function EconImporter() {
       }
     };
 
-    const onRow = async (rowObj: Record<string, any>) => {
+    const onRow = async (rowObj: CsvRow) => {
       if (abortRef.current.abort) return;
       const mapped = mapRow(rowObj);
       sendQueue.push(mapped);
@@ -167,7 +178,7 @@ export default function EconImporter() {
       skipEmptyLines: true,
       chunk: async (results) => {
         // results.data is array of row objects
-        for (const r of results.data as any[]) {
+        for (const r of results.data as CsvRow[]) {
           await onRow(r);
           if (abortRef.current.abort) break;
         }
@@ -214,7 +225,7 @@ export default function EconImporter() {
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-medium">Source URL</span>
-          <input className="border rounded p-2" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="/public/docs/WEF_Future_of_Jobs_Report_2025.pdf or https://..." />
+          <input className="border rounded p-2" value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://www.weforum.org/publications/the-future-of-jobs-report-2025/ or https://..." />
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-medium">Region</span>
