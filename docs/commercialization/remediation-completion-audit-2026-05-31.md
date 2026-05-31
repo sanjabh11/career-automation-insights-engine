@@ -2,7 +2,7 @@
 
 Status date: 2026-05-31
 Branch audited: `phase-e-commercial-validation`
-Head commit audited: `bd8b39e`
+Latest non-audit remediation implementation commit audited: `bd8b39e`
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 

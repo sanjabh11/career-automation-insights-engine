@@ -78,8 +78,11 @@ assert(
   'Live MRR > $0',
   '>=3 committed design partners',
   'Case-Study Template',
-  'PostHog retention docs',
-  'Stripe checkout docs',
+  'https://posthog.com/docs/product-analytics/retention',
+  'https://posthog.com/docs/product-analytics/funnels',
+  'https://posthog.com/docs/libraries/js',
+  'https://docs.stripe.com/payments/checkout-sessions',
+  'https://docs.stripe.com/test-mode',
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
 
 console.log(JSON.stringify({
