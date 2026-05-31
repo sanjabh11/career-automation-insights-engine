@@ -2,7 +2,7 @@
 
 Status date: 2026-05-31
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through O*NET enrichment hook type-hardening
+Latest local remediation evidence reviewed: Phase E follow-up through saved-analyses unified hook type-hardening
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -32,7 +32,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
 | Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
-| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 183 explicit-`any` errors and 34 React warnings after inactive backup/archive trees, mechanical non-`any` errors, and AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, plus O*NET enrichment hook payload `any` casts were cleared |
+| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 178 explicit-`any` errors and 34 React warnings after inactive backup/archive trees, mechanical non-`any` errors, and AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, O*NET enrichment hook, plus saved-analyses unified hook payload `any` casts were cleared |
 
 ## Unmet Or Externally Blocked Gates
 
