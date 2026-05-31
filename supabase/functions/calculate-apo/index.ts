@@ -6,7 +6,27 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { rateLimit } from "../../lib/RateLimiter.ts";
 import { jsonrepair } from "https://esm.sh/jsonrepair@3.0.2";
 
-declare const Deno: any;
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+};
+
+type JsonRecord = Record<string, unknown>;
+type CategoryConfidence = "low" | "medium" | "high";
+
+const isRecord = (value: unknown): value is JsonRecord =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+function mergeNumberRecord(base: Record<string, number>, value: unknown): Record<string, number> {
+  if (!isRecord(value)) return base;
+  const merged = { ...base };
+  for (const [key, raw] of Object.entries(value)) {
+    const next = typeof raw === "number" ? raw : Number(raw);
+    if (Number.isFinite(next)) merged[key] = next;
+  }
+  return merged;
+}
 
 const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
@@ -116,7 +136,7 @@ const ApoSchema = z.object({
     skills: z.object({ apo: z.number().min(0).max(100), confidence: z.enum(["low","medium","high"]) }).optional(),
     abilities: z.object({ apo: z.number().min(0).max(100), confidence: z.enum(["low","medium","high"]) }).optional(),
     technologies: z.object({ apo: z.number().min(0).max(100), confidence: z.enum(["low","medium","high"]) }).optional(),
-  }).default({} as any),
+  }).default({}),
   timeline_projections: z.object({
     immediate: z.number().min(0).max(100).optional(),
     short_term: z.number().min(0).max(100).optional(),
@@ -140,6 +160,22 @@ const RequestSchema = z.object({
     title: z.string().min(1),
   }),
 });
+
+type ApoItem = z.infer<typeof ApoItemSchema>;
+type ComputedApoItem = ApoItem & { computedAPO: number };
+type ApoCategory = ApoItem["category"];
+type CategoryScore = { apo: number; confidence: CategoryConfidence };
+
+type ProfileRow = {
+  subscription_tier?: string | null;
+};
+
+type EnrichmentRow = {
+  career_cluster?: string | null;
+  median_wage_annual?: number | null;
+};
+
+const APO_CATEGORIES = ["tasks","knowledge","skills","abilities","technologies"] as const;
 
 // Helpers for deterministic APO computation
 const normSkill = (level: number) => (level - 1) / 4; // 1-5 -> 0-1
@@ -261,7 +297,7 @@ serve(async (req) => {
     const requestBody = await req.text();
     // Avoid logging full request bodies to reduce risk of sensitive data exposure
     // console.log('Request body received');
-    let parsedBody: any;
+    let parsedBody: unknown;
     try {
       parsedBody = JSON.parse(requestBody);
     } catch (parseError) {
@@ -269,12 +305,14 @@ serve(async (req) => {
       throw new Error('Invalid JSON in request body');
     }
 
+    const requestPayload = isRecord(parsedBody) ? { ...parsedBody } : {};
+
     // Backward compatibility: support legacy shape { occupation_code, occupation_title }
-    if (!parsedBody.occupation && parsedBody.occupation_code && parsedBody.occupation_title) {
-      parsedBody.occupation = { code: String(parsedBody.occupation_code), title: String(parsedBody.occupation_title) };
+    if (!requestPayload.occupation && requestPayload.occupation_code && requestPayload.occupation_title) {
+      requestPayload.occupation = { code: String(requestPayload.occupation_code), title: String(requestPayload.occupation_title) };
     }
 
-    const { occupation } = RequestSchema.parse(parsedBody);
+    const { occupation } = RequestSchema.parse(requestPayload);
 
     console.log(`Calculating enhanced APO for occupation: ${occupation.title} (${occupation.code})`);
 
@@ -309,7 +347,7 @@ serve(async (req) => {
             .select('subscription_tier')
             .eq('user_id', userId)
             .maybeSingle();
-          cohort = (prof as any)?.subscription_tier ?? null;
+          cohort = (prof as ProfileRow | null)?.subscription_tier ?? null;
         }
       } catch (e) {
         console.warn('User resolution failed:', e);
@@ -332,8 +370,8 @@ serve(async (req) => {
         if (error) throw error;
         if (data) {
           configId = data.id as string;
-          if (data.weights) weightsUsed = { ...weightsUsed, ...data.weights } as any;
-          if (data.factor_multipliers) factorMultipliersUsed = { ...factorMultipliersUsed, ...data.factor_multipliers } as any;
+          if (data.weights) weightsUsed = mergeNumberRecord(weightsUsed, data.weights);
+          if (data.factor_multipliers) factorMultipliersUsed = mergeNumberRecord(factorMultipliersUsed, data.factor_multipliers);
         }
       } catch (e) {
         console.warn('apo_config fetch failed, using defaults:', e);
@@ -382,16 +420,16 @@ serve(async (req) => {
     // Deterministic item -> category -> overall computation
     const computedItems = apo.items.map((it) => ({
       ...it,
-      computedAPO: computeItemAPO(it as any, factorMultipliersUsed),
+      computedAPO: computeItemAPO(it, factorMultipliersUsed),
     }));
 
-    const byCat = {
+    const byCat: Record<ApoCategory, ComputedApoItem[]> = {
       tasks: computedItems.filter(i => i.category === 'tasks'),
       knowledge: computedItems.filter(i => i.category === 'knowledge'),
       skills: computedItems.filter(i => i.category === 'skills'),
       abilities: computedItems.filter(i => i.category === 'abilities'),
       technologies: computedItems.filter(i => i.category === 'technologies'),
-    } as const;
+    };
 
     const categoryScores = Object.fromEntries(Object.entries(byCat).map(([cat, items]) => {
       const values = items.map(i => i.computedAPO);
@@ -401,7 +439,7 @@ serve(async (req) => {
         apo: clamp100(weightedMean(values, weights)),
         confidence: confidenceBand(confAvg),
       }];
-    })) as Record<string, { apo: number; confidence: "low"|"medium"|"high" }>;
+    })) as Record<ApoCategory, CategoryScore>;
 
     // Overall weighting: start from config weights; if tech-heavy, add +10% to technologies by subtracting evenly from others
     const weights = { ...weightsUsed } as Record<string, number>;
@@ -494,8 +532,9 @@ serve(async (req) => {
           .select('career_cluster, median_wage_annual')
           .eq('occupation_code', occupation.code)
           .maybeSingle();
-        const cluster = (enr as any)?.career_cluster as string | undefined;
-        const wageFromEnrichment = (enr as any)?.median_wage_annual as number | undefined;
+        const enrichment = enr as EnrichmentRow | null;
+        const cluster = enrichment?.career_cluster ?? undefined;
+        const wageFromEnrichment = enrichment?.median_wage_annual ?? undefined;
         const clusterToSector: Record<string, string> = {
           'Health Science': 'Healthcare',
           'Finance': 'Finance',
@@ -590,9 +629,9 @@ serve(async (req) => {
 
     // Cross-field validation (T4): compare model category_apos with computed aggregates
     const validationWarnings: string[] = [];
-    for (const cat of ["tasks","knowledge","skills","abilities","technologies"] as const) {
-      const modelCat = (apo.category_apos as any)?.[cat]?.apo;
-      const compCat = (categoryScores as any)?.[cat]?.apo;
+    for (const cat of APO_CATEGORIES) {
+      const modelCat = apo.category_apos?.[cat]?.apo;
+      const compCat = categoryScores[cat]?.apo;
       if (typeof modelCat === 'number' && typeof compCat === 'number') {
         const delta = Math.abs(modelCat - compCat);
         if (delta > 5) validationWarnings.push(`Category ${cat} apo mismatch: model=${modelCat.toFixed(1)}, computed=${compCat.toFixed(1)}, delta=${delta.toFixed(1)}`);
@@ -600,6 +639,13 @@ serve(async (req) => {
     }
 
     // Transform to enhanced response format
+    const toResponseItem = (item: ComputedApoItem) => ({
+      description: item.description,
+      apo: clamp100(item.computedAPO),
+      factors: item.factors || [],
+      timeline: 'unknown'
+    });
+
     const transformedData = {
       code: occupation.code,
       title: occupation.title,
@@ -625,36 +671,11 @@ serve(async (req) => {
         const top = entries[0];
         return top && top[1] > 0 ? top[0] : 'unknown';
       })(),
-      tasks: byCat.tasks.map((item: any) => ({
-        description: item.description,
-        apo: clamp100(item.computedAPO),
-        factors: item.factors || [],
-        timeline: 'unknown'
-      })),
-      knowledge: byCat.knowledge.map((item: any) => ({
-        description: item.description,
-        apo: clamp100(item.computedAPO),
-        factors: item.factors || [],
-        timeline: 'unknown'
-      })),
-      skills: byCat.skills.map((item: any) => ({
-        description: item.description,
-        apo: clamp100(item.computedAPO),
-        factors: item.factors || [],
-        timeline: 'unknown'
-      })),
-      abilities: byCat.abilities.map((item: any) => ({
-        description: item.description,
-        apo: clamp100(item.computedAPO),
-        factors: item.factors || [],
-        timeline: 'unknown'
-      })),
-      technologies: byCat.technologies.map((item: any) => ({
-        description: item.description,
-        apo: clamp100(item.computedAPO),
-        factors: item.factors || [],
-        timeline: 'unknown'
-      })),
+      tasks: byCat.tasks.map(toResponseItem),
+      knowledge: byCat.knowledge.map(toResponseItem),
+      skills: byCat.skills.map(toResponseItem),
+      abilities: byCat.abilities.map(toResponseItem),
+      technologies: byCat.technologies.map(toResponseItem),
       categoryBreakdown: {
         tasks: { apo: categoryScores.tasks?.apo ?? 0, confidence: categoryScores.tasks?.confidence ?? 'medium' },
         knowledge: { apo: categoryScores.knowledge?.apo ?? 0, confidence: categoryScores.knowledge?.confidence ?? 'medium' },
@@ -723,7 +744,7 @@ serve(async (req) => {
           } as unknown as Record<string, unknown>,
           error: null,
         } as const;
-        await supabase.from('apo_logs').insert(insertPayload as any);
+        await supabase.from('apo_logs').insert(insertPayload as Record<string, unknown>);
       } else {
         console.warn('apo_logs: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
       }
