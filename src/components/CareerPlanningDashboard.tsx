@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,73 @@ interface StatsCardProps {
   color: string;
   trend?: string;
 }
+
+interface JobMarketLocation {
+  location: string;
+  count: number;
+}
+
+interface RecentJob {
+  title: string;
+  company: string;
+  location: string;
+  salary?: string;
+  postedDate: string;
+  source: string;
+}
+
+interface JobMarketData {
+  totalJobs: number;
+  topLocations: JobMarketLocation[];
+  recentJobs: RecentJob[];
+  trending: boolean;
+  error?: string;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const stringOrFallback = (value: unknown, fallback: string) =>
+  typeof value === 'string' && value.trim().length > 0 ? value : fallback;
+
+const normalizeRecentJob = (value: unknown): RecentJob | null => {
+  if (!isRecord(value)) return null;
+
+  return {
+    title: stringOrFallback(value.title, 'Unknown Title'),
+    company: stringOrFallback(value.company, 'Unknown Company'),
+    location: stringOrFallback(value.location, 'Unknown Location'),
+    salary: typeof value.salary === 'string' ? value.salary : undefined,
+    postedDate: stringOrFallback(value.postedDate, 'Recently'),
+    source: stringOrFallback(value.source, 'Job Board'),
+  };
+};
+
+const normalizeJobMarketData = (value: unknown): JobMarketData | null => {
+  if (!isRecord(value)) return null;
+
+  const recentJobs = Array.isArray(value.recentJobs)
+    ? value.recentJobs.map(normalizeRecentJob).filter((job): job is RecentJob => job !== null)
+    : [];
+
+  const topLocations = Array.isArray(value.topLocations)
+    ? value.topLocations.flatMap((location): JobMarketLocation[] => {
+      if (!isRecord(location) || typeof location.location !== 'string') return [];
+      return [{
+        location: location.location,
+        count: typeof location.count === 'number' && Number.isFinite(location.count) ? location.count : 0,
+      }];
+    })
+    : [];
+
+  return {
+    totalJobs: typeof value.totalJobs === 'number' && Number.isFinite(value.totalJobs) ? value.totalJobs : recentJobs.length,
+    topLocations,
+    recentJobs,
+    trending: typeof value.trending === 'boolean' ? value.trending : false,
+    error: typeof value.error === 'string' ? value.error : undefined,
+  };
+};
 
 function StatsCard({ title, value, description, icon: Icon, color, trend }: StatsCardProps) {
   return (
@@ -207,10 +274,10 @@ export function CareerPlanningDashboard() {
 // Add Job Market Insights Panel component
 function JobMarketInsightsPanel() {
   const { userSkills } = useCareerPlanningStorage();
-  const [jobData, setJobData] = useState<any>(null);
+  const [jobData, setJobData] = useState<JobMarketData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchJobMarketData = async () => {
+  const fetchJobMarketData = useCallback(async () => {
     if (userSkills.length === 0) return;
     
     setIsLoading(true);
@@ -221,18 +288,19 @@ function JobMarketInsightsPanel() {
       });
 
       if (!error && data) {
-        setJobData(data);
+        const normalized = normalizeJobMarketData(data);
+        setJobData(normalized);
       }
     } catch (error) {
       console.error('Job market data fetch error:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userSkills]);
 
   useEffect(() => {
     fetchJobMarketData();
-  }, [userSkills]);
+  }, [fetchJobMarketData]);
 
   return (
     <div className="space-y-8">
@@ -286,7 +354,7 @@ function JobMarketInsightsPanel() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {jobData.recentJobs.slice(0, 5).map((job: any, index: number) => (
+                  {jobData.recentJobs.slice(0, 5).map((job, index) => (
                     <div key={index} className="p-4 border rounded-lg">
                       <h4 className="font-semibold text-[var(--text-primary)]">{job.title}</h4>
                       <p className="text-[var(--text-secondary)]">{job.company} • {job.location}</p>
