@@ -151,6 +151,7 @@ function main() {
 
   const globalEnglishReady =
     packageScripts['verify:global-english'] === 'node scripts/verify-global-english-localization.mjs' &&
+    packageScripts['verify:global-english-sources'] === 'node scripts/verify-global-english-localization.mjs --with-source-fetch' &&
     containsAll(globalEnglish, [
       'GLOBAL_ENGLISH_SOURCE_DATE',
       'GLOBAL_ENGLISH_OCCUPATION_CROSSWALKS',
@@ -242,7 +243,7 @@ function main() {
       'Phase D global-English disclosure/mapping/adapter layer',
       globalEnglishReady ? 'satisfied_by_mapping_adapter_and_us_basis_disclosure' : 'missing_local_disclosure_mapping_or_adapter',
       globalEnglishReady
-        ? 'Global-English source registry, sample crosswalks, verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present.'
+        ? 'Global-English source registry, sample crosswalks, static verifier, source-fetch verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present.'
         : 'Global-English mapping/disclosure/adapter scaffolding is incomplete.',
       'If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display.'
     ),

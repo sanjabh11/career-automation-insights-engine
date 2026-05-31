@@ -43,7 +43,7 @@
 - Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export.
 - Phase C `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,529 problems; Phase C touched files pass file-scoped ESLint.
 - The bootcamp placeholder Stripe price ID no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
-- Phase D official source-link checks returned 200 for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
+- Phase D `npm run verify:global-english-sources` provides the reproducible network-backed source-link check for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
 - Phase D `npm run verify:global-english` passed with 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK SOC mappings, 20 Canada NOC mappings, 20 Australia ANZSCO mappings, and source-registered UK/CA/AU wage/outlook adapter contracts.
 - Phase D `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests after adding UK global-English disclosure coverage.
 - Phase D `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,507 problems; Phase D touched files pass file-scoped ESLint.

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T16:09:34.698Z",
+  "generatedAt": "2026-05-31T16:17:53.838Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -657,6 +657,10 @@
     {
       "name": "verify:global-english",
       "command": "node scripts/verify-global-english-localization.mjs"
+    },
+    {
+      "name": "verify:global-english-sources",
+      "command": "node scripts/verify-global-english-localization.mjs --with-source-fetch"
     },
     {
       "name": "verify:live-closeout-readiness",
