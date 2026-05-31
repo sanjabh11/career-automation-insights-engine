@@ -15,10 +15,11 @@ Last observed Phase A baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 1,541 existing problems observed, including `SAFE_BACKUP`, archived functions, explicit `any`, empty blocks, and `require()` style imports. |
+| `npm run lint` | Fail | Latest JSON run reported 1,441 inherited errors and 93 warnings; touched active files have no findings. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
+| `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims or dead local WEF PDF path. |
 | `npm run verify:commercial` | Pass | Passed, but regenerates timestamped commercialization evidence docs. Review generated diffs before committing. |
 
 ## Active Proof Boundaries
@@ -54,4 +55,7 @@ Ask before:
 - No active user-facing proof buttons link to missing `/docs/**` files.
 - README and landing claims avoid unsupported absolute language.
 - Stale status and summary docs are archived so `README.md` and this file are canonical.
+- Stale research and strategy docs with unsupported readiness, security-score, projected-MRR, or 95%+ confidence language are archived under `docs/archive/phase-a-status-sprawl-20260531/`.
+- `data/econ_wef.csv` and `public/data/econ_wef.csv` point to the official WEF Future of Jobs 2025 source page rather than a missing local `/public/docs/**` PDF.
+- `src/pages/EconImporter.tsx` uses the official WEF source page as placeholder guidance and has no touched-file lint findings.
 - Rendered route crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans` return 200, render body content, and expose no `/docs/**` anchors.

@@ -1,7 +1,7 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-27T07:00:49.923Z
-Branch: `live-auth-e2e-closeout`
+Generated: 2026-05-31T17:27:47.933Z
+Branch: `phase-a-truth-claims-reconciliation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
 ## Indexed Commercial Routes
@@ -132,6 +132,7 @@ Policies:
 | `lint` | `eslint .` |
 | `lint:commercial` | `node scripts/lint-commercial-scope.mjs` |
 | `smoke:commercial` | `node scripts/smoke-commercial-routes.mjs` |
+| `verify:claim-boundaries` | `node scripts/verify-claim-boundaries.mjs` |
 | `verify:commercial` | `node scripts/verify-commercial-release.mjs` |
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
 | `verify:commercial-browser` | `node scripts/verify-commercial-browser.mjs` |
