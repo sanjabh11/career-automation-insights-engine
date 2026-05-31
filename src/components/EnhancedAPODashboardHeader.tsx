@@ -39,6 +39,36 @@ interface EnhancedAPODashboardHeaderProps {
   onCreditsClick?: () => void;
 }
 
+interface ValidationMetricRow {
+  metric_name: string;
+  value: number | string | null;
+  sample_size: number | null;
+  created_at: string | null;
+}
+
+type ValidationMetricQuery = {
+  select(columns: string): ValidationMetricQuery;
+  eq(column: string, value: string): ValidationMetricQuery;
+  order(column: string, options?: { ascending?: boolean }): ValidationMetricQuery;
+  limit(count: number): ValidationMetricQuery;
+  maybeSingle(): Promise<{ data: ValidationMetricRow | null }>;
+};
+
+type ValidationMetricsClient = {
+  from(table: 'validation_metrics'): ValidationMetricQuery;
+};
+
+const validationMetricsClient = supabase as unknown as ValidationMetricsClient;
+
+const normalizeValidationMetric = (row: ValidationMetricRow | null) => {
+  if (!row) return null;
+  const value = typeof row.value === 'number' ? row.value : Number(row.value);
+  return {
+    ...row,
+    value: Number.isFinite(value) ? value : null,
+  };
+};
+
 export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: EnhancedAPODashboardHeaderProps) {
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -54,14 +84,14 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
   const { data: corrMetric } = useQuery({
     queryKey: ['validation-metric-pearson-r-header'],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await validationMetricsClient
         .from('validation_metrics')
         .select('metric_name, value, sample_size, created_at')
         .eq('metric_name', 'apo_vs_academic_pearson_r')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      return data as any;
+      return normalizeValidationMetric(data);
     },
     staleTime: 60_000,
   });
@@ -240,7 +270,7 @@ export function EnhancedAPODashboardHeader({ userEmail, onCreditsClick }: Enhanc
                 />
                 {corrMetric && (
                   <Badge variant="outline" className="text-[10px]">
-                    Acad r={(Number(corrMetric.value)).toFixed(2)}{typeof corrMetric.sample_size === 'number' ? ` n=${corrMetric.sample_size}` : ''}
+                    Acad r={corrMetric.value === null ? 'N/A' : corrMetric.value.toFixed(2)}{typeof corrMetric.sample_size === 'number' ? ` n=${corrMetric.sample_size}` : ''}
                   </Badge>
                 )}
               </div>
