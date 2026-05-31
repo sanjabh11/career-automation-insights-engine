@@ -8,16 +8,17 @@ export interface CrosswalkParams {
   from: CrosswalkFrom;
   code: string;
   to?: CrosswalkTo;
+  branch?: string;
   enabled?: boolean;
 }
 
-export const useCrosswalk = <T = unknown>({ from, code, to, enabled = true }: CrosswalkParams) => {
-  const key = ["crosswalk", from, code, to ?? "ALL"] as const;
+export const useCrosswalk = <T = unknown>({ from, code, to, branch, enabled = true }: CrosswalkParams) => {
+  const key = ["crosswalk", from, code, to ?? "ALL", branch ?? "all"] as const;
 
   const fetcher = async (): Promise<T> => {
     if (!code) throw new Error("Crosswalk requires a code");
     const { data, error } = await supabase.functions.invoke("crosswalk", {
-      body: { from, code, ...(to ? { to } : {}) },
+      body: { from, code, ...(to ? { to } : {}), ...(branch ? { branch } : {}) },
     });
     if (error) throw new Error(error.message || "Crosswalk request failed");
     return data as T;

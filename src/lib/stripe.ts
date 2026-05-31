@@ -224,7 +224,8 @@ export const BOOTCAMP_PRICING = {
   regularPrice: 1997,
   earlyBirdPrice: 1497,
   currency: 'USD',
-  stripePriceId: 'price_bootcamp', // TODO: Replace with actual Stripe price ID
+  stripePriceId: undefined,
+  checkoutStatus: 'hidden_pending_live_price' as const,
 };
 
 // ============================================================================
@@ -258,11 +259,6 @@ export const redirectToCheckout = async (
   userId: string,
   billingPeriod: 'month' | 'year' = 'month'
 ): Promise<void> => {
-  const stripe = await getStripe();
-  if (!stripe) {
-    throw new Error('Stripe not initialized');
-  }
-
   const tier = SUBSCRIPTION_TIERS.find((t) => t.id === tierId);
   if (!tier) {
     throw new Error('Invalid subscription tier');
@@ -314,6 +310,11 @@ export const redirectToCheckout = async (
   }
 
   // Fallback to Stripe.js redirect
+  const stripe = await getStripe();
+  if (!stripe) {
+    throw new Error('Stripe not initialized');
+  }
+
   const { error } = await stripe.redirectToCheckout({ sessionId });
 
   if (error) {

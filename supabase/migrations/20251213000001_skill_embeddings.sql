@@ -21,11 +21,11 @@ ADD COLUMN IF NOT EXISTS embedding vector(768);
 -- Add metadata columns for embedding generation tracking
 ALTER TABLE public.onet_knowledge
 ADD COLUMN IF NOT EXISTS embedding_generated_at TIMESTAMPTZ,
-ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'gemini-2.5-flash';
+ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'gemini-embedding-001';
 
 ALTER TABLE public.onet_abilities
 ADD COLUMN IF NOT EXISTS embedding_generated_at TIMESTAMPTZ,
-ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'gemini-2.5-flash';
+ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'gemini-embedding-001';
 
 -- ============================================================================
 -- 2. CREATE INDEXES FOR VECTOR SIMILARITY SEARCH
@@ -150,7 +150,7 @@ $$;
 
 -- Function to clean up old embeddings when model changes
 CREATE OR REPLACE FUNCTION public.cleanup_old_embeddings(
-  p_model TEXT DEFAULT 'gemini-2.5-flash'
+  p_model TEXT DEFAULT 'gemini-embedding-001'
 )
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -211,5 +211,5 @@ GRANT EXECUTE ON FUNCTION public.cleanup_old_embeddings TO service_role;
 -- MIGRATION COMPLETE
 -- ============================================================================
 COMMENT ON TABLE public.skill_adjacency_cache IS 'Pre-computed skill adjacency relationships for performance (Feature #2: Skill Adjacency Graph)';
-COMMENT ON COLUMN public.onet_knowledge.embedding IS 'Gemini embedding vector (768 dimensions) for skill similarity search';
-COMMENT ON COLUMN public.onet_abilities.embedding IS 'Gemini embedding vector (768 dimensions) for ability similarity search';
+COMMENT ON COLUMN public.onet_knowledge.embedding IS 'Gemini embedding vector (768 dimensions) generated with gemini-embedding-001 for skill similarity search';
+COMMENT ON COLUMN public.onet_abilities.embedding IS 'Gemini embedding vector (768 dimensions) generated with gemini-embedding-001 for ability similarity search';

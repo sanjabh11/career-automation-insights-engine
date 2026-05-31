@@ -17,22 +17,47 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useOnetEnrichment } from "@/hooks/useOnetEnrichment";
 
 const MILITARY_BRANCHES = [
-  { id: "army", name: "U.S. Army" },
-  { id: "navy", name: "U.S. Navy" },
-  { id: "marines", name: "U.S. Marine Corps" },
-  { id: "airforce", name: "U.S. Air Force" },
-  { id: "spaceforce", name: "U.S. Space Force" },
-  { id: "coastguard", name: "U.S. Coast Guard" },
+  { id: "army", name: "U.S. Army", onet: "army" },
+  { id: "navy", name: "U.S. Navy", onet: "navy" },
+  { id: "marines", name: "U.S. Marine Corps", onet: "marine_corps" },
+  { id: "airforce", name: "U.S. Air Force", onet: "air_force" },
+  { id: "spaceforce", name: "U.S. Space Force", onet: "space_force" },
+  { id: "coastguard", name: "U.S. Coast Guard", onet: "coast_guard" },
 ];
+
+type CrosswalkOccupation = {
+  code?: string;
+  onetsoc_code?: string;
+  soc_code?: string;
+  title?: string;
+  name?: string;
+};
+
+type MilitaryCrosswalkMatch = {
+  occupation?: CrosswalkOccupation | CrosswalkOccupation[];
+};
+
+type MilitaryCrosswalkResponse = {
+  match?: MilitaryCrosswalkMatch | MilitaryCrosswalkMatch[];
+  occupation?: CrosswalkOccupation | CrosswalkOccupation[];
+  results?: CrosswalkOccupation | CrosswalkOccupation[];
+};
+
+function asArray<T>(value: T | T[] | undefined): T[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
 
 export default function VeteransPage() {
   const [branch, setBranch] = useState("");
   const [mocCode, setMocCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const crosswalkQuery = useCrosswalk<any>({
+  const onetBranch = MILITARY_BRANCHES.find((item) => item.id === branch)?.onet;
+  const crosswalkQuery = useCrosswalk<MilitaryCrosswalkResponse>({
     from: "MOC",
     code: mocCode,
+    branch: onetBranch,
     enabled: submitted && !!mocCode,
   });
 
@@ -53,24 +78,19 @@ export default function VeteransPage() {
   const civilianOccupations = React.useMemo(() => {
     if (!crosswalkQuery.data) return [];
     
-    // Handle different response structures
-    let occupations: any[] = [];
-    if (Array.isArray(crosswalkQuery.data)) {
-      occupations = crosswalkQuery.data;
-    } else if (crosswalkQuery.data.occupation) {
-      occupations = Array.isArray(crosswalkQuery.data.occupation)
-        ? crosswalkQuery.data.occupation
-        : [crosswalkQuery.data.occupation];
-    } else if (crosswalkQuery.data.results) {
-      occupations = Array.isArray(crosswalkQuery.data.results)
-        ? crosswalkQuery.data.results
-        : [crosswalkQuery.data.results];
-    }
+    const data = crosswalkQuery.data;
+    const matches = asArray(data.match);
+    const occupations = matches.length > 0
+      ? matches.flatMap((match) => asArray(match.occupation))
+      : [
+          ...asArray(data.occupation),
+          ...asArray(data.results),
+        ];
 
-    return occupations.map((occ: any) => ({
+    return occupations.map((occ) => ({
       code: occ.code || occ.onetsoc_code || occ.soc_code,
       title: occ.title || occ.name,
-    }));
+    })).filter((occ): occ is { code: string; title: string } => Boolean(occ.code && occ.title));
   }, [crosswalkQuery.data]);
 
   return (
@@ -209,13 +229,15 @@ export default function VeteransPage() {
                       onClick={() => {
                         try {
                           const header = ["code","title"];
-                          const rows = civilianOccupations.map((o:any)=>({ code: o.code, title: o.title }));
+                          const rows = civilianOccupations.map((o) => ({ code: o.code, title: o.title }));
                           const csv = [header.join(","), ...rows.map(r => `${JSON.stringify(r.code)},${JSON.stringify(r.title)}`)].join("\n");
                           const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
                           const url = URL.createObjectURL(blob);
                           const a = document.createElement('a');
                           a.href = url; a.download = `veterans_matches_${mocCode}_${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
-                        } catch {}
+                        } catch (error) {
+                          console.warn('Unable to export veterans crosswalk CSV', error);
+                        }
                       }}
                     >
                       Download CSV

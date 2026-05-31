@@ -11,6 +11,12 @@
 - [x] Phase B: Serve calibration report, reliability plot, APO model card, and task model card from `public/docs`
 - [x] Phase B: Add APO result uncertainty disclosure and decision-support estimate language
 - [x] Phase B: Run Phase B type, lint, proof, route, and artifact-link checks
+- [x] Phase C: Switch skill-adjacency embedding calls to `gemini-embedding-001`
+- [x] Phase C: Add skill-adjacency embedding and non-empty adjacency smoke check
+- [x] Phase C: Route Veterans MOC crosswalks through O*NET's military crosswalk endpoint
+- [x] Phase C: Add Playwright smoke coverage for auth, APO run, Stripe test-mode checkout, and white-label export
+- [x] Phase C: Wire Phase C runtime smoke into CI
+- [x] Phase C: Run Phase C type, lint, proof, commercial, embedding, and E2E checks
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -22,3 +28,7 @@
 - Phase B artifact evidence is intentionally scoped: public docs prove transparent documentation and source-backed fixture calibration, while live expert-label calibration still requires owner-approved Supabase migration/application and function execution.
 - Phase B route and artifact crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans`, `/docs/reports/apo-calibration-report.html`, `/docs/reports/apo-reliability-curve.svg`, `/docs/model_cards/APO_MODEL_CARD.html`, and `/docs/model_cards/TASK_MODEL_CARD.html`.
 - Phase B `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,534 problems; `supabase/functions/calibrate-ece/index.ts` passes file-scoped ESLint.
+- Phase C `npm run smoke:skill-adjacency` passed with `gemini-embedding-001`, 768 dimensions, and a non-empty adjacency result.
+- Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export.
+- Phase C `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,529 problems; Phase C touched files pass file-scoped ESLint.
+- `price_bootcamp` no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
