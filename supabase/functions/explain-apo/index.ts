@@ -5,7 +5,11 @@ import { GeminiClient, getEnvGenerationDefaults, getEnvModel } from "../../lib/G
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { jsonrepair } from "https://esm.sh/jsonrepair@3.0.2";
 
-declare const Deno: any;
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,6 +39,16 @@ const RequestSchema = z.object({
     .optional(),
 });
 
+type ExplainRequest = z.infer<typeof RequestSchema>;
+type ExplainAnalysis = NonNullable<ExplainRequest["analysis"]>;
+type AnalysisSection = "tasks" | "knowledge" | "skills" | "abilities" | "technologies";
+type ExplanationJson = {
+  waterfall: unknown[];
+  [key: string]: unknown;
+};
+
+const ANALYSIS_SECTIONS: AnalysisSection[] = ["tasks", "knowledge", "skills", "abilities", "technologies"];
+
 const RESPONSE_SCHEMA_DESC = `{
   "narrative": "string (200-600 chars, executive-friendly explanation of why the APO looks this way)",
   "waterfall": [
@@ -46,9 +60,12 @@ const RESPONSE_SCHEMA_DESC = `{
   "disclaimer": "string (<=160 chars)"
 }`;
 
-function buildPrompt(input: z.infer<typeof RequestSchema>): string {
+function isExplanationJson(value: unknown): value is ExplanationJson {
+  return Boolean(value && typeof value === "object" && Array.isArray((value as { waterfall?: unknown }).waterfall));
+}
+
+function buildPrompt(input: ExplainRequest): string {
   const { occupation, analysis } = input;
-  const cat = analysis?.categoryBreakdown || {};
   const lines: string[] = [];
   lines.push(
     `You are an explainable-AI analyst. Produce ONLY valid JSON per the schema. No code fences. No extra keys.`
@@ -58,17 +75,12 @@ function buildPrompt(input: z.infer<typeof RequestSchema>): string {
   lines.push(`SOC: ${occupation.code}`);
   if (analysis) {
     lines.push(`Overall_APO: ${analysis.overallAPO}`);
-    const cb = analysis.categoryBreakdown as any;
+    const cb = analysis.categoryBreakdown;
     lines.push(`Category_APOs: tasks=${cb?.tasks?.apo ?? 0}, knowledge=${cb?.knowledge?.apo ?? 0}, skills=${cb?.skills?.apo ?? 0}, abilities=${cb?.abilities?.apo ?? 0}, technologies=${cb?.technologies?.apo ?? 0}`);
   }
-  const sampleItems = (k: string) => (analysis as any)?.[k]?.slice(0, 5) || [];
-  const items = {
-    tasks: sampleItems('tasks'),
-    knowledge: sampleItems('knowledge'),
-    skills: sampleItems('skills'),
-    abilities: sampleItems('abilities'),
-    technologies: sampleItems('technologies'),
-  };
+  const sampleItems = (section: AnalysisSection): ExplainAnalysis[AnalysisSection] =>
+    analysis?.[section]?.slice(0, 5) ?? [];
+  const items = Object.fromEntries(ANALYSIS_SECTIONS.map((section) => [section, sampleItems(section)]));
   lines.push(`Representative items (up to 5 each): ${JSON.stringify(items)}`);
   lines.push(`
 SCHEMA:
@@ -104,7 +116,7 @@ serve(async (req: Request) => {
     }
 
     const bodyText = await req.text();
-    let body: any;
+    let body: unknown;
     try {
       body = JSON.parse(bodyText);
     } catch (_e) {
@@ -120,7 +132,7 @@ serve(async (req: Request) => {
     const { text } = await client.generateContent(prompt, perCall);
     const latency = Date.now() - started;
 
-    let json: any;
+    let json: unknown;
     try {
       json = JSON.parse(text);
     } catch (_e) {
@@ -134,7 +146,7 @@ serve(async (req: Request) => {
     }
 
     // Basic shape checks to guard UI
-    if (!json || typeof json !== "object" || !Array.isArray(json.waterfall)) {
+    if (!isExplanationJson(json)) {
       throw new Error("Model did not return expected JSON shape");
     }
 
