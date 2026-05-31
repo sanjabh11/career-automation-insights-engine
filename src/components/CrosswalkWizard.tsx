@@ -17,6 +17,36 @@ import { Loader2 } from "lucide-react";
 const FROM_OPTIONS: CrosswalkFrom[] = ["SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT", "OOH"];
 const TO_OPTIONS: (CrosswalkTo | "ALL")[] = ["ALL", "SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT"];
 
+type CrosswalkRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is CrosswalkRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function extractEntries(data: unknown): unknown[] | null {
+  if (Array.isArray(data)) return data;
+  if (!isRecord(data)) return null;
+
+  for (const key of ["results", "mappings", "items"]) {
+    const value = data[key];
+    if (Array.isArray(value)) return value;
+  }
+
+  return null;
+}
+
+function getStringField(item: unknown, keys: string[]): string {
+  if (!isRecord(item)) return "";
+
+  for (const key of keys) {
+    const value = item[key];
+    if (typeof value === "string" && value.trim()) return value;
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  }
+
+  return "";
+}
+
 export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as const }: { defaultFrom?: CrosswalkFrom; defaultTo?: CrosswalkTo | "ALL" }) {
   const [from, setFrom] = useState<CrosswalkFrom>(defaultFrom);
   const [code, setCode] = useState("");
@@ -33,7 +63,7 @@ export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as cons
     } as const;
   }, [submitted]);
 
-  const query = useCrosswalk<any>({
+  const query = useCrosswalk({
     from: params?.from || from,
     code: params?.code || code,
     to: params?.to,
@@ -127,16 +157,9 @@ export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as cons
   );
 }
 
-function ResultView({ data }: { data: any }) {
+function ResultView({ data }: { data: unknown }) {
   // Attempt to find a sensible list to render; fallback to JSON
-  const entries: any[] | null = useMemo(() => {
-    if (!data) return null;
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.results)) return data.results;
-    if (Array.isArray(data?.mappings)) return data.mappings;
-    if (Array.isArray(data?.items)) return data.items;
-    return null;
-  }, [data]);
+  const entries = useMemo(() => extractEntries(data), [data]);
 
   if (!data) return null;
 
@@ -150,9 +173,9 @@ function ResultView({ data }: { data: any }) {
             onClick={() => {
               try {
                 const rows = entries.map((item) => {
-                  const code = item.code || item.to_code || item.target || item.id || "";
-                  const title = item.title || item.name || item.desc || item.label || "";
-                  const relate = item.type || item.rel || item.via || item.source || "";
+                  const code = getStringField(item, ["code", "to_code", "target", "id"]);
+                  const title = getStringField(item, ["title", "name", "desc", "label"]);
+                  const relate = getStringField(item, ["type", "rel", "via", "source"]);
                   return { code, title, relate };
                 });
                 const header = ["code","title","relate"]; 
@@ -192,13 +215,12 @@ function ResultView({ data }: { data: any }) {
   );
 }
 
-function summarize(item: any): string {
+function summarize(item: unknown): string {
   if (!item) return "";
-  const keys = Object.keys(item);
   // Heuristic display
-  const code = item.code || item.to_code || item.target || item.id || "";
-  const label = item.title || item.name || item.desc || item.label || "";
-  const relate = item.type || item.rel || item.via || item.source || "";
+  const code = getStringField(item, ["code", "to_code", "target", "id"]);
+  const label = getStringField(item, ["title", "name", "desc", "label"]);
+  const relate = getStringField(item, ["type", "rel", "via", "source"]);
   const parts = [code, label, relate].filter(Boolean);
   if (parts.length) return parts.join(" — ");
   // fallback to compact json
