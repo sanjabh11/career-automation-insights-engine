@@ -1,5 +1,7 @@
+export type CSVValue = string | number | boolean | null | undefined;
+
 export interface CSVRow {
-  [key: string]: string | number | boolean | null | undefined;
+  [key: string]: CSVValue;
 }
 
 export interface CareerAnalysisData {
@@ -17,7 +19,27 @@ export interface CareerAnalysisData {
   };
 }
 
-function escapeCSV(value: any): string {
+export interface SavedAnalysisExportData {
+  id?: CSVValue;
+  occupation_code?: CSVValue;
+  occupation_title?: CSVValue;
+  tags?: string[] | null;
+  created_at?: CSVValue;
+  updated_at?: CSVValue;
+}
+
+export interface CareerExportData {
+  code?: CSVValue;
+  occupation_code?: CSVValue;
+  title?: CSVValue;
+  occupation_title?: CSVValue;
+  overallAPO?: CSVValue;
+  apo_score?: CSVValue;
+  confidence?: CSVValue;
+  timeline?: CSVValue;
+}
+
+function escapeCSV(value: CSVValue): string {
   if (value === null || value === undefined) return "";
   const str = String(value);
   const needsQuotes = /[",\n]/.test(str);
@@ -45,7 +67,7 @@ export function download(filename: string, content: string, mime = 'text/csv;cha
   URL.revokeObjectURL(url);
 }
 
-export function exportAnalysesToCSV(analyses: any[], filename = 'saved_analyses.csv') {
+export function exportAnalysesToCSV(analyses: SavedAnalysisExportData[], filename = 'saved_analyses.csv') {
   const rows: CSVRow[] = (analyses || []).map((a) => ({
     id: a.id,
     occupation_code: a.occupation_code,
@@ -58,7 +80,7 @@ export function exportAnalysesToCSV(analyses: any[], filename = 'saved_analyses.
   download(filename, csv);
 }
 
-export function exportToCSV(jobs: any[], filename = 'career_analyses.csv') {
+export function exportToCSV(jobs: CareerExportData[], filename = 'career_analyses.csv') {
   const rows: CSVRow[] = (jobs || []).map((job) => ({
     occupation_code: job.code || job.occupation_code || '',
     occupation_title: job.title || job.occupation_title || '',
@@ -120,11 +142,11 @@ export function exportAnalysisToPDF(analyses: CareerAnalysisData[], title = 'Car
   report.document.close();
 }
 
-export function exportAnalysesToPrintableHTML(analyses: any[], title = 'Saved Analyses Report') {
-  const rows = (analyses || []).map((a: any) => `
+export function exportAnalysesToPrintableHTML(analyses: SavedAnalysisExportData[], title = 'Saved Analyses Report') {
+  const rows = (analyses || []).map((a) => `
     <tr>
-      <td>${escapeHTML(a.occupation_title || '')}</td>
-      <td>${escapeHTML(a.occupation_code || '')}</td>
+      <td>${escapeHTML(String(a.occupation_title || ''))}</td>
+      <td>${escapeHTML(String(a.occupation_code || ''))}</td>
       <td>${Array.isArray(a.tags) ? escapeHTML(a.tags.join(', ')) : ''}</td>
       <td>${a.created_at ? new Date(a.created_at).toLocaleString() : ''}</td>
       <td>${a.updated_at ? new Date(a.updated_at).toLocaleString() : ''}</td>
