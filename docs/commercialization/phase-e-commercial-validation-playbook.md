@@ -47,6 +47,7 @@ Use PostHog funnels and Supabase `analytics_events` exports with the same event 
 
 ## Source Anchors
 
-- PostHog retention docs, as of 2026-05-31: retention needs a start event and return event, and cohort sizes must be interpreted explicitly.
-- PostHog funnel docs, as of 2026-05-31: funnels should use clear sequential steps and simple success events before adding optional complexity.
-- Stripe checkout docs, as of 2026-05-31: Checkout Sessions should reference real Stripe Price objects; test mode or sandbox objects do not prove live revenue.
+- [PostHog retention docs](https://posthog.com/docs/product-analytics/retention), as of 2026-05-31: retention needs a start event and return event, and cohort sizes must be interpreted explicitly.
+- [PostHog funnel docs](https://posthog.com/docs/product-analytics/funnels), as of 2026-05-31: funnels should use clear sequential steps and simple success events before adding optional complexity.
+- [PostHog JavaScript docs](https://posthog.com/docs/libraries/js), as of 2026-05-31: identified users and SDK defaults are explicit setup choices.
+- [Stripe Checkout Sessions](https://docs.stripe.com/payments/checkout-sessions) and [Stripe test mode](https://docs.stripe.com/test-mode), as of 2026-05-31: Checkout Sessions should reference real Stripe Price objects; test mode or sandbox objects do not prove live revenue.
