@@ -22,7 +22,7 @@ import { useSubscriptionWithPrompts } from '@/hooks/useSubscriptionWithPrompts';
 import { occupationRiskData } from '@/data/occupationRiskData';
 
 interface SearchInterfaceProps {
-  onOccupationSelect: (occupation: Record<string, unknown>) => void;
+  onOccupationSelect: (occupation: unknown) => void;
 }
 
 interface SearchResult {

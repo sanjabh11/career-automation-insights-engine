@@ -55,6 +55,59 @@ export interface SelectedOccupation {
   };
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === 'string');
+
+const isAnalysisItems = (value: unknown): value is SelectedOccupation['tasks'] =>
+  Array.isArray(value) && value.every((item) =>
+    isRecord(item) &&
+    typeof item.description === 'string' &&
+    typeof item.apo === 'number' &&
+    (item.factors === undefined || isStringArray(item.factors)) &&
+    (item.timeline === undefined || typeof item.timeline === 'string')
+  );
+
+const isCategoryBreakdown = (value: unknown): value is SelectedOccupation['categoryBreakdown'] => {
+  if (!isRecord(value)) return false;
+  return ['tasks', 'knowledge', 'skills', 'abilities', 'technologies'].every((key) => {
+    const category = value[key];
+    return isRecord(category) && typeof category.apo === 'number' && typeof category.confidence === 'string';
+  });
+};
+
+const isSelectedOccupation = (value: unknown): value is SelectedOccupation => {
+  if (!isRecord(value)) return false;
+  const insights = value.insights;
+  const metadata = value.metadata;
+
+  return (
+    typeof value.code === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.description === 'string' &&
+    typeof value.overallAPO === 'number' &&
+    typeof value.confidence === 'string' &&
+    typeof value.timeline === 'string' &&
+    isAnalysisItems(value.tasks) &&
+    isAnalysisItems(value.knowledge) &&
+    isAnalysisItems(value.skills) &&
+    isAnalysisItems(value.abilities) &&
+    isAnalysisItems(value.technologies) &&
+    isCategoryBreakdown(value.categoryBreakdown) &&
+    isRecord(insights) &&
+    isStringArray(insights.primary_opportunities) &&
+    isStringArray(insights.main_challenges) &&
+    isStringArray(insights.automation_drivers) &&
+    isStringArray(insights.barriers) &&
+    isRecord(metadata) &&
+    typeof metadata.analysis_version === 'string' &&
+    typeof metadata.calculation_method === 'string' &&
+    typeof metadata.timestamp === 'string'
+  );
+};
+
 const dashboardVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
@@ -82,7 +135,12 @@ export const APODashboard = () => {
 
   const savedSelections = useSavedSelections<SelectedOccupation[]>();
 
-  const handleOccupationSelect = (occupation: any) => {
+  const handleOccupationSelect = (occupation: unknown) => {
+    if (!isSelectedOccupation(occupation)) {
+      console.error('calculate-apo returned an invalid occupation payload', occupation);
+      return;
+    }
+
     console.log('Selected occupation with enhanced APO data:', occupation);
     setSelectedOccupation(occupation);
   };

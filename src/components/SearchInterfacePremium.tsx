@@ -2,7 +2,11 @@ import React from "react";
 import { Search } from "lucide-react";
 import { SearchInterface } from "./SearchInterface";
 
-export default function SearchInterfacePremium({ onOccupationSelect }: { onOccupationSelect: (occupation: any) => void }) {
+interface SearchInterfacePremiumProps {
+  onOccupationSelect: (occupation: unknown) => void;
+}
+
+export default function SearchInterfacePremium({ onOccupationSelect }: SearchInterfacePremiumProps) {
   return (
     <div className="relative group">
       <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent-primary)] via-[var(--accent-secondary)] to-[var(--accent-primary)] rounded-3xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
