@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T16:28:49.497Z",
+  "generatedAt": "2026-05-31T18:30:20.285Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -609,6 +609,10 @@
     {
       "name": "smoke:skill-adjacency",
       "command": "node scripts/verify-skill-adjacency-embedding.mjs"
+    },
+    {
+      "name": "verify:claim-boundaries",
+      "command": "node scripts/verify-claim-boundaries.mjs"
     },
     {
       "name": "verify:commercial",

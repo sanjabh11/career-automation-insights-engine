@@ -5,6 +5,8 @@
 - [x] Phase A: Rewrite README as an evidence-scoped project ledger
 - [x] Phase A: Add canonical `STATUS.md`
 - [x] Phase A: Archive stale status, summary, completion, and deployment-status docs under `docs/archive/`
+- [x] Phase A: Archive active stale research/strategy docs with unsupported commercial, readiness, security-score, and confidence claims
+- [x] Phase A: Add active-claim boundary verifier and remove dead local WEF PDF path from seed data
 - [x] Phase A: Run typecheck, lint, evidence, secret, trust, commercial, and route-link checks
 - [x] Phase B: Replace placeholder expert-assessment seed data with source-backed calibration anchors
 - [x] Phase B: Update `calibrate-ece` to compare APO logs against `expert_assessments`
@@ -34,9 +36,11 @@
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
 - Existing dirty files before Phase A edits: generated commercialization docs under `docs/commercialization/`.
 - Phase A must not copy archived placeholder PDFs into `public/docs`; real artifacts are deferred to Phase B.
-- `npm run lint` still fails on pre-existing repo-wide lint debt: 1,541 problems across `SAFE_BACKUP`, archived Supabase functions, and legacy explicit-`any`/empty-block rules.
+- Phase A follow-up archives active stale research/strategy docs with unsupported numeric readiness/security scores, projected revenue, uniqueness claims, and high-confidence commercialization language under `docs/archive/phase-a-status-sprawl-20260531/`.
+- Phase A follow-up replaces the missing local WEF PDF seed URL with the official WEF source page and adds `npm run verify:claim-boundaries`.
+- `npm run lint` still fails on pre-existing repo-wide lint debt: latest JSON run reports 1,441 errors and 93 warnings outside touched active files.
 - Rendered route crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans`: each route returned 200, had body content, and exposed no `/docs/**` anchors or forbidden claims.
-- `npm run verify:commercial` passed and regenerated the commercial evidence files; keep those generated files out of the Phase A commit unless intentionally refreshing that artifact set.
+- `npm run verify:commercial` passed and regenerated the commercial evidence files; the Phase A follow-up includes refreshed provenance artifacts because the WEF seed URL/checksum changed.
 - Phase B artifact evidence is intentionally scoped: public docs prove transparent documentation and source-backed fixture calibration, while live expert-label calibration still requires owner-approved Supabase migration/application and function execution.
 - Phase B route and artifact crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans`, `/docs/reports/apo-calibration-report.html`, `/docs/reports/apo-reliability-curve.svg`, `/docs/model_cards/APO_MODEL_CARD.html`, and `/docs/model_cards/TASK_MODEL_CARD.html`.
 - Phase B `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,534 problems; `supabase/functions/calibrate-ece/index.ts` passes file-scoped ESLint.
@@ -51,7 +55,7 @@
 - Phase D deliberately does not claim localized UK/CA/AU wage values. The UI labels non-US views as U.S. O*NET/BLS basis and exposes adapter-pending join requirements until source-dated local wage/outlook adapters are imported and validated.
 - Phase E `npm run verify:commercial-validation` passed and confirms activation/retention instrumentation, design-partner onboarding, case-study capture, live MRR/partner/outcome gates, and hidden bootcamp CTA boundary.
 - Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including remediation-gate ledger, build, and commercial route smoke.
-- Phase E `npm run lint` remains red on inherited repo-wide lint debt; latest live-gate evidence slice observed 1,413 errors and 93 warnings across 1,161 files, while all touched verifier files had zero findings.
+- Phase E `npm run lint` remains red on inherited repo-wide lint debt; the final stack run observed 1,406 errors and 93 warnings, while touched verifier/config/UI files had zero findings.
 - `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because live/manual evidence is still missing.
 - `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof.
 - Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.

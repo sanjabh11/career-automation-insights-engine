@@ -15,11 +15,12 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 1,506 existing problems observed, including `SAFE_BACKUP`, archived functions, explicit `any`, empty blocks, and `require()` style imports. Phase E touched files passed file-scoped ESLint. |
+| `npm run lint` | Fail | 1,406 inherited errors and 93 warnings remain; Phase E touched files passed file-scoped ESLint. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
 | `npm run verify:commercial` | Pass | Passed, including the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
+| `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims or dead local WEF PDF path. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
 | `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles. |
@@ -65,6 +66,9 @@ Ask before:
 - No active user-facing proof buttons link to missing `/docs/**` files.
 - README and landing claims avoid unsupported absolute language.
 - Stale status and summary docs are archived so `README.md` and this file are canonical.
+- Stale research and strategy docs with unsupported readiness, security-score, projected-MRR, or 95%+ confidence language are archived under `docs/archive/phase-a-status-sprawl-20260531/`.
+- `data/econ_wef.csv` and `public/data/econ_wef.csv` point to the official WEF Future of Jobs 2025 source page rather than a missing local `/public/docs/**` PDF.
+- `src/pages/EconImporter.tsx` uses the official WEF source page as placeholder guidance and has no touched-file lint findings.
 - Rendered route crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans` return 200, render body content, and expose no `/docs/**` anchors.
 
 ## Phase B Acceptance Evidence

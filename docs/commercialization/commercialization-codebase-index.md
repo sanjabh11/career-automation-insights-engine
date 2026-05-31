@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-31T16:28:49.497Z
+Generated: 2026-05-31T18:30:20.285Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -134,6 +134,7 @@ Policies:
 | `lint:commercial` | `node scripts/lint-commercial-scope.mjs` |
 | `smoke:commercial` | `node scripts/smoke-commercial-routes.mjs` |
 | `smoke:skill-adjacency` | `node scripts/verify-skill-adjacency-embedding.mjs` |
+| `verify:claim-boundaries` | `node scripts/verify-claim-boundaries.mjs` |
 | `verify:commercial` | `node scripts/verify-commercial-release.mjs` |
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
 | `verify:commercial-browser` | `node scripts/verify-commercial-browser.mjs` |

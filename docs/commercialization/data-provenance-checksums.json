@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T16:28:51.073Z",
+  "generatedAt": "2026-05-31T18:30:21.554Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -24,9 +24,9 @@
         "evidence_note"
       ],
       "caveat": "Local WEF-derived economics seed used for directional macro context; not a complete live labor-market feed.",
-      "bytes": 726394,
+      "bytes": 762934,
       "rows": 1740,
-      "sha256": "cedb403873db06371e59d1a203c096d1f0c7dd1cfea00663bd8c6d7df8ad3e4d",
+      "sha256": "acc975874eb3c965e70daf5636281afca938fa1204489c1caa38bc04dac6460c",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "655019950d9b6ebb5617d269964a56d4071d5f11261fc17c60889844d14420ef",
+      "sha256": "8f091553b97186d563337caf26d9e70e2a6b32228c9572ed79d08f16b9857b14",
       "failures": [],
       "passed": true
     },
