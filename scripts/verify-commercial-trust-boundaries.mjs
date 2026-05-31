@@ -459,6 +459,7 @@ const checks = [
       /"verify:commercial-browser": "node scripts\/verify-commercial-browser\.mjs"/,
       /"verify:commercial-deployment": "node scripts\/generate-commercial-supabase-deployment-packet\.mjs"/,
       /"verify:commercial-full": "node scripts\/verify-commercial-release\.mjs --with-a11y --with-network --with-journey"/,
+      /"verify:remediation-gates": "node scripts\/verify-remediation-external-gates\.mjs"/,
       /"verify:data-provenance": "node scripts\/verify-commercial-data-provenance\.mjs --write"/,
       /"verify:onet-task-ratings": "node scripts\/verify-onet-task-ratings-ingest\.mjs"/,
       /"verify:onet-task-ratings-live": "node scripts\/verify-onet-task-ratings-live\.mjs --write"/,
@@ -471,6 +472,8 @@ const checks = [
     expected: [
       /DEFAULT_STEPS/,
       /deployment-packet/,
+      /remediation-gates/,
+      /verify-remediation-external-gates\.mjs/,
       /NETWORK_STEPS/,
       /JOURNEY_STEPS/,
       /verify-onet-task-ratings-ingest\.mjs/,

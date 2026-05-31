@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-31T15:20:42.064Z
+Generated: 2026-05-31T15:33:57.023Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -158,7 +158,7 @@ Policies:
 
 Required commercial pre-demo gate:
 
-1. `npm run verify:commercial`
+1. `npm run verify:commercial` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, remediation external-gate ledger, commercial lint/build checks, and route smoke proof
 2. `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` when Chromium startup is stable; this writes `docs/commercialization/commercial-accessibility-audit-latest.md` and `.json`
 3. `npm run verify:sources` when DNS/network access is available
 4. `npm audit --omit=dev --audit-level=high` when registry access is available
@@ -166,7 +166,7 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
+- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, refreshes the remediation external-gate ledger through `verify:commercial`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
 
 ## Remaining Index Gaps
 
