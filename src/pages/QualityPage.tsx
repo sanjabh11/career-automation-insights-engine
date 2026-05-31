@@ -1,9 +1,8 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShieldCheck, Activity, Keyboard, GaugeCircle, Download } from "lucide-react";
+import { ShieldCheck, Activity, Keyboard, GaugeCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -90,10 +89,8 @@ export default function QualityPage() {
             </TableRow>
           </TableBody>
         </Table>
-        <div className="mt-4">
-          <Button variant="outline" className="gap-2" asChild>
-            <a href="/docs/QUALITY_CHECKLIST.pdf"><Download className="h-4 w-4" /> Download Checklist</a>
-          </Button>
+        <div className="mt-4 text-sm text-muted-foreground rounded-md border p-3">
+          The public checklist PDF is not served yet. Use this page as the current checklist until a dated accessibility artifact is produced.
         </div>
       </Card>
 
@@ -103,17 +100,12 @@ export default function QualityPage() {
           <h3 className="font-semibold">WCAG AA Evidence Artifacts</h3>
         </div>
         <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-          <li>Lighthouse mobile/desktop badges — upload latest screenshots to <code>public/docs/quality/</code>.</li>
+          <li>Lighthouse mobile/desktop badges — upload only after a dated audit run is complete.</li>
           <li>axe DevTools report screenshots per route.</li>
           <li>Keyboard navigation map (PNG) and Accessibility Conformance Statement (PDF).</li>
         </ul>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
-            <a href="/docs/quality/AA_STATEMENT.pdf" target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> AA Statement (PDF)</a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="/docs/QUALITY_CHECKLIST.pdf" target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> AA Checklist (PDF)</a>
-          </Button>
+        <div className="mt-3 text-sm text-muted-foreground rounded-md border p-3">
+          No AA statement or checklist download is currently served. Publish these only after a current Lighthouse/axe/keyboard audit is attached.
         </div>
       </Card>
 

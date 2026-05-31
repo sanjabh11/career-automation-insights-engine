@@ -29,13 +29,13 @@ export const StatsOverview = ({ selectedJobsCount }: StatsOverviewProps) => {
       source: 'WEF Future of Jobs 2025',
     },
     {
-      title: 'Work Hours Automatable',
-      value: '57%',
-      description: 'via human-AI partnerships',
+      title: 'Exposure Unit',
+      value: 'Tasks',
+      description: 'not job-loss predictions',
       icon: BarChart3,
       iconColor: 'text-[var(--accent-info)]',
       iconBg: 'bg-[var(--accent-info)]/10',
-      source: 'McKinsey 2025',
+      source: 'ILO/OpenAI exposure framing',
     },
     {
       title: 'Workers Needing Reskill',

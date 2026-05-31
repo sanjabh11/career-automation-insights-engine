@@ -435,7 +435,7 @@ export const OccupationAnalysis = ({
 
             {/* Methods & Evidence strip */}
             <div className="text-[11px] text-[var(--text-tertiary)] mt-2">
-              Methods & Evidence: <a href="/docs/methods/" target="_blank" rel="noreferrer" className="underline hover:text-[var(--text-secondary)]">Read methodology</a>
+              Methods & Evidence: <a href="/validation/methods" className="underline hover:text-[var(--text-secondary)]">Read current methodology status</a>
             </div>
 
             <div className="flex flex-wrap gap-2">
