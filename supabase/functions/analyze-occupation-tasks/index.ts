@@ -13,6 +13,123 @@ const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 const ONET_USERNAME = Deno.env.get('ONET_USERNAME');
 const ONET_PASSWORD = Deno.env.get('ONET_PASSWORD');
 
+type JsonRecord = Record<string, unknown>;
+
+interface AnalyzeOccupationRequest {
+  occupation_code?: string;
+  occupation_title?: string;
+}
+
+interface CachedTaskAssessment {
+  task_description?: string | null;
+  category?: string | null;
+  explanation?: string | null;
+  confidence?: number | string | null;
+}
+
+interface TaskAssessment {
+  description: string;
+  category: string;
+  explanation: string;
+  confidence: number;
+}
+
+interface TaskAssessmentInsert {
+  occupation_code: string;
+  occupation_title: string;
+  task_description: string;
+  category: string;
+  explanation: string;
+  confidence: number;
+}
+
+interface GeminiGenerateResponse {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{
+        text?: string;
+      }>;
+    };
+  }>;
+}
+
+const isRecord = (value: unknown): value is JsonRecord =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+
+const asNumber = (value: unknown): number | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+};
+
+const asArray = (value: unknown): unknown[] => {
+  if (Array.isArray(value)) return value;
+  return value === undefined || value === null ? [] : [value];
+};
+
+const describeTask = (task: unknown): string => {
+  if (typeof task === 'string') return task;
+  if (isRecord(task)) {
+    return asString(task.description)
+      || asString(task.title)
+      || asString(task.name)
+      || asString(task.statement)
+      || JSON.stringify(task);
+  }
+  return String(task);
+};
+
+const normalizeAssessment = (
+  task: unknown,
+  fallbackDescription?: string,
+): TaskAssessment | null => {
+  if (!isRecord(task)) {
+    return fallbackDescription ? {
+      description: fallbackDescription,
+      category: 'Augment',
+      explanation: 'No explanation provided.',
+      confidence: 0.5,
+    } : null;
+  }
+
+  const description = asString(task.description) || fallbackDescription;
+  if (!description) return null;
+
+  return {
+    description,
+    category: asString(task.category) || 'Augment',
+    explanation: asString(task.explanation) || 'No explanation provided.',
+    confidence: asNumber(task.confidence) ?? 0.5,
+  };
+};
+
+const normalizeAnalysisData = (
+  value: unknown,
+  fallbackDescriptions: string[],
+): { tasks: TaskAssessment[] } | null => {
+  if (!isRecord(value) || !Array.isArray(value.tasks)) return null;
+  const tasks = value.tasks.flatMap((task, index) => {
+    const normalized = normalizeAssessment(task, fallbackDescriptions[index]);
+    return normalized ? [normalized] : [];
+  });
+  return tasks.length > 0 ? { tasks } : null;
+};
+
+const fallbackAnalysis = (taskDescriptions: string[]): { tasks: TaskAssessment[] } => ({
+  tasks: taskDescriptions.slice(0, 10).map((description) => ({
+    description,
+    category: 'Augment',
+    explanation: 'Default categorization fallback due to AI parse issue',
+    confidence: 0.5,
+  })),
+});
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -38,7 +155,8 @@ serve(async (req) => {
       }
     }
 
-    const { occupation_code, occupation_title } = await req.json();
+    const requestBody = await req.json() as AnalyzeOccupationRequest;
+    const { occupation_code, occupation_title } = requestBody;
     
     if (!occupation_code || !occupation_title) {
       throw new Error('Occupation code and title are required');
@@ -50,9 +168,9 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('PROJECT_URL') || '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY') || '';
     const canCache = !!supabaseUrl && !!supabaseKey;
-    const supabase = canCache ? createClient(supabaseUrl, supabaseKey) : null as any;
+    const supabase = canCache ? createClient(supabaseUrl, supabaseKey) : null;
 
-    if (canCache) {
+    if (supabase) {
       try {
         const { data: cachedAnalysis } = await supabase
           .from('ai_task_assessments')
@@ -60,22 +178,28 @@ serve(async (req) => {
           .eq('occupation_code', occupation_code)
           .limit(20);
         if (cachedAnalysis && cachedAnalysis.length > 0) {
-          const tasks = cachedAnalysis.map((task: any) => ({
-            description: task.task_description,
-            category: task.category,
-            explanation: task.explanation,
-            confidence: task.confidence
-          }));
-          return new Response(JSON.stringify({ tasks }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          const tasks = (cachedAnalysis as CachedTaskAssessment[]).flatMap((task) => {
+            const description = asString(task.task_description);
+            if (!description) return [];
+            return [{
+              description,
+              category: asString(task.category) || 'Augment',
+              explanation: asString(task.explanation) || 'Cached task assessment.',
+              confidence: asNumber(task.confidence) ?? 0.5,
+            }];
           });
+          if (tasks.length > 0) {
+            return new Response(JSON.stringify({ tasks }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
         }
       } catch (e) {
         console.warn('Skipping cache lookup due to error:', e);
       }
     }
 
-    let tasksToProcess: any[] = [];
+    let tasksToProcess: unknown[] = [];
     if (hasOnetCreds) {
       const basicToken = btoa(`${ONET_USERNAME}:${ONET_PASSWORD}`);
       const onetUrl = `https://services.onetcenter.org/ws/online/occupations/${occupation_code}/details`;
@@ -91,16 +215,17 @@ serve(async (req) => {
         const errorText = await onetResponse.text();
         console.error('O*NET API error response:', errorText);
       } else {
-        const onetData = await onetResponse.json();
-        if (onetData.tasks) {
-          if (Array.isArray(onetData.tasks)) {
-            tasksToProcess = onetData.tasks;
-          } else if (onetData.tasks.task) {
-            tasksToProcess = Array.isArray(onetData.tasks.task) ? onetData.tasks.task : [onetData.tasks.task];
-          } else if (onetData.tasks.items) {
-            tasksToProcess = Array.isArray(onetData.tasks.items) ? onetData.tasks.items : [onetData.tasks.items];
-          } else if (typeof onetData.tasks === 'object') {
-            tasksToProcess = [onetData.tasks];
+        const onetData = await onetResponse.json() as unknown;
+        if (isRecord(onetData) && onetData.tasks) {
+          const tasksPayload = onetData.tasks;
+          if (Array.isArray(tasksPayload)) {
+            tasksToProcess = tasksPayload;
+          } else if (isRecord(tasksPayload) && tasksPayload.task) {
+            tasksToProcess = asArray(tasksPayload.task);
+          } else if (isRecord(tasksPayload) && tasksPayload.items) {
+            tasksToProcess = asArray(tasksPayload.items);
+          } else if (isRecord(tasksPayload)) {
+            tasksToProcess = [tasksPayload];
           }
         }
       }
@@ -115,14 +240,9 @@ serve(async (req) => {
     }
 
     // Extract task descriptions from the processed tasks array
-    const taskDescriptions: string[] = tasksToProcess.map((task: any) => {
-      if (typeof task === 'string') {
-        return task;
-      } else if (task && typeof task === 'object') {
-        return task.description || task.title || task.name || String(task);
-      }
-      return String(task);
-    }).filter(desc => desc && desc.trim().length > 0);
+    const taskDescriptions = tasksToProcess
+      .map(describeTask)
+      .filter(desc => desc.trim().length > 0);
 
     if (taskDescriptions.length === 0) {
       throw new Error('No tasks found for this occupation');
@@ -149,7 +269,7 @@ ${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
     } as const;
     
     // Simple exponential backoff for transient 503s from Gemini
-    async function callGeminiWithRetry(maxAttempts = 3): Promise<any> {
+    async function callGeminiWithRetry(maxAttempts = 3): Promise<GeminiGenerateResponse> {
       let attempt = 0;
       let lastStatus = 0;
       let lastText = '';
@@ -165,7 +285,8 @@ ${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
 
         if (resp.ok) {
           try {
-            return await resp.json();
+            const payload = await resp.json() as unknown;
+            return isRecord(payload) ? payload as GeminiGenerateResponse : {};
           } catch (e) {
             const t = await resp.text();
             console.error('Gemini non-JSON response:', t.slice(0, 300));
@@ -190,12 +311,15 @@ ${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
       throw new Error('Invalid response from Gemini API');
     }
 
-    const generatedText = geminiData.candidates[0].content.parts[0].text;
+    const generatedText = asString(geminiData.candidates[0].content.parts?.[0]?.text);
+    if (!generatedText) {
+      throw new Error('Invalid response from Gemini API');
+    }
     
     console.log('Gemini raw response:', generatedText.substring(0, 500));
     
     // Extract JSON from response (handle markdown code blocks)
-    let analysisData;
+    let analysisData: { tasks: TaskAssessment[] };
     try {
       // Remove markdown code blocks if present
       let cleanedText = generatedText.trim();
@@ -208,33 +332,25 @@ ${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
       // Try to find JSON object
       const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        analysisData = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]) as unknown;
+        const normalized = normalizeAnalysisData(parsed, taskDescriptions);
+        if (!normalized) {
+          throw new Error('Response missing tasks array');
+        }
+        analysisData = normalized;
       } else {
         console.error('No JSON found in cleaned response:', cleanedText.substring(0, 200));
         throw new Error('No JSON found in response');
-      }
-      
-      // Validate structure
-      if (!analysisData.tasks || !Array.isArray(analysisData.tasks)) {
-        console.error('Invalid structure - missing tasks array:', analysisData);
-        throw new Error('Response missing tasks array');
       }
     } catch (parseError) {
       console.error('Failed to parse Gemini response as JSON:', parseError);
       console.error('Raw text:', generatedText);
       // Fallback: map tasks to a minimal, consistent schema to avoid 500s
-      analysisData = {
-        tasks: taskDescriptions.slice(0, 10).map((d: string) => ({
-          description: d,
-          category: 'Augment',
-          explanation: 'Default categorization fallback due to AI parse issue',
-          confidence: 0.5
-        }))
-      };
+      analysisData = fallbackAnalysis(taskDescriptions);
     }
 
     // Store results in Supabase for future use
-    const taskInserts = analysisData.tasks.map((task: any) => ({
+    const taskInserts: TaskAssessmentInsert[] = analysisData.tasks.map((task) => ({
       occupation_code,
       occupation_title,
       task_description: task.description,
@@ -243,7 +359,7 @@ ${taskDescriptions.map((task: string) => `- ${task}`).join('\n')}`;
       confidence: task.confidence
     }));
 
-    if (canCache) {
+    if (supabase) {
       try {
         const { error: insertError } = await supabase
           .from('ai_task_assessments')
