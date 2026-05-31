@@ -12,7 +12,7 @@ import { ShareAnalysisModal } from "./ShareAnalysisModal";
 import { toast } from "sonner";
 import { exportAnalysesToCSV, exportAnalysesToPrintableHTML } from "@/utils/export";
 
-type SavedAnalysisItem = ReturnType<typeof useSavedAnalysesUnified>["savedAnalyses"][number];
+export type SavedAnalysisItem = ReturnType<typeof useSavedAnalysesUnified>["savedAnalyses"][number];
 
 interface SavedAnalysesPanelProps {
   onLoadAnalysis?: (analysis: SavedAnalysisItem) => void;
