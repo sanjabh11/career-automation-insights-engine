@@ -15,7 +15,7 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 173 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, O*NET enrichment hook, saved-analyses unified hook, and Occupation Detail payload paths. |
+| `npm run lint` | Fail | 168 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, O*NET enrichment hook, saved-analyses unified hook, Occupation Detail, and Operations telemetry payload paths. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |

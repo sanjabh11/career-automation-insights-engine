@@ -6,9 +6,69 @@ import { supabase } from "@/integrations/supabase/client";
 import { Activity, AlertTriangle, TrendingUp, Clock } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar } from "recharts";
 
+type ApoLogRow = {
+  created_at?: string | null;
+  latency_ms?: number | null;
+  error?: string | null;
+  overall_apo?: number | string | null;
+};
+
+type OpsAlertRow = {
+  created_at?: string | null;
+  metric?: string | null;
+  value?: number | string | null;
+  threshold?: number | string | null;
+  severity?: string | null;
+  action_taken?: string | null;
+};
+
+type OpsSeriesPoint = {
+  day: string;
+  throughput: number;
+  errorRate: number;
+  p95Latency: number;
+};
+
+type OpsMetricsData = {
+  series: OpsSeriesPoint[];
+  psi: number;
+};
+
+type QueryResponse<T> = {
+  data: T | null;
+  error: { message?: string } | null;
+};
+
+type QueryBuilder<T> = {
+  select(columns: string): QueryBuilder<T>;
+  gte(column: string, value: unknown): QueryBuilder<T>;
+  order(column: string, options?: { ascending?: boolean }): QueryBuilder<T>;
+  limit(count: number): QueryBuilder<T>;
+  then<TResult1 = QueryResponse<T[]>, TResult2 = never>(
+    onfulfilled?: ((value: QueryResponse<T[]>) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+  ): PromiseLike<TResult1 | TResult2>;
+};
+
+type OperationsSupabaseClient = {
+  from(table: "apo_logs"): QueryBuilder<ApoLogRow>;
+  from(table: "ops_alerts"): QueryBuilder<OpsAlertRow>;
+};
+
+const operationsSupabase = supabase as unknown as OperationsSupabaseClient;
+
 function formatDay(d: string | Date) {
   const dt = typeof d === 'string' ? new Date(d) : d;
   return dt.toISOString().slice(0, 10);
+}
+
+function asFiniteNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 function pQuantile(values: number[], p: number) {
@@ -42,27 +102,26 @@ function computePSI(a: number[], b: number[], bins = 10) {
 }
 
 export default function OperationsPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<OpsMetricsData>({
     queryKey: ["ops-metrics"],
     queryFn: async () => {
       const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
       const since28 = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: logs } = await (supabase as any)
+      const { data: logs } = await operationsSupabase
         .from("apo_logs")
         .select("created_at, latency_ms, error, overall_apo")
         .gte("created_at", since30)
         .order("created_at", { ascending: true })
         .limit(5000);
       const byDay = new Map<string, { count: number; failures: number; latencies: number[] }>();
-      const overall: number[] = [];
       for (const r of (logs || [])) {
+        if (!r.created_at) continue;
         const day = formatDay(r.created_at);
         const o = byDay.get(day) || { count: 0, failures: 0, latencies: [] };
         o.count += 1;
         if (r.error && String(r.error).trim().length > 0) o.failures += 1;
         if (typeof r.latency_ms === 'number') o.latencies.push(r.latency_ms);
         byDay.set(day, o);
-        if (typeof r.overall_apo === 'number') overall.push(r.overall_apo);
       }
       const series = Array.from(byDay.entries()).sort((a,b)=>a[0].localeCompare(b[0])).map(([day, v]) => ({
         day,
@@ -71,14 +130,16 @@ export default function OperationsPage() {
         p95Latency: pQuantile(v.latencies, 95),
       }));
       // Drift: compare last 14d vs prior 14d
-      const { data: driftLogs } = await (supabase as any)
+      const { data: driftLogs } = await operationsSupabase
         .from("apo_logs")
         .select("created_at, overall_apo")
         .gte("created_at", since28)
         .order("created_at", { ascending: true })
         .limit(5000);
       const half = Math.floor((driftLogs || []).length / 2);
-      const vals = (driftLogs || []).map((r: any) => Number(r.overall_apo || 0)).filter((n: number) => n>0);
+      const vals = (driftLogs || [])
+        .map((r) => asFiniteNumber(r.overall_apo) ?? 0)
+        .filter((n) => n > 0);
       const current = vals.slice(half);
       const prior = vals.slice(0, half);
       const psi = computePSI(prior, current, 10);
@@ -90,7 +151,7 @@ export default function OperationsPage() {
   const { data: alerts } = useQuery({
     queryKey: ["ops-alerts"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await operationsSupabase
         .from("ops_alerts")
         .select("created_at, metric, value, threshold, severity, action_taken")
         .order("created_at", { ascending: false })
@@ -209,9 +270,9 @@ export default function OperationsPage() {
               </tr>
             </thead>
             <tbody>
-              {(alerts as any[])?.map((a, i) => (
+              {alerts?.map((a, i) => (
                 <tr key={i} className="border-t">
-                  <td className="p-2">{new Date(a.created_at).toLocaleString()}</td>
+                  <td className="p-2">{a.created_at ? new Date(a.created_at).toLocaleString() : "—"}</td>
                   <td className="p-2">{a.metric}</td>
                   <td className="p-2">{a.value}</td>
                   <td className="p-2">{a.threshold}</td>
