@@ -49,6 +49,44 @@ interface LearningPath {
   prerequisites: string[];
 }
 
+type SupabaseClient = ReturnType<typeof createClient>;
+type LearningPathSkill = LearningPathRequest["userSkills"][number];
+
+interface GeneratedResource {
+  name?: string;
+  type?: string;
+  url?: string;
+  cost?: number;
+}
+
+interface GeneratedMilestone {
+  title?: string;
+  name?: string;
+  description?: string;
+  targetDate?: string;
+  skills?: string[];
+  duration_weeks?: number;
+  resources?: GeneratedResource[];
+  cost_estimate?: number;
+  priority?: string;
+}
+
+interface GeneratedLearningPathPayload {
+  name?: string;
+  description?: string;
+  skills?: string[];
+  estimatedDuration?: string;
+  estimatedDurationMonths?: number;
+  difficulty?: string;
+  prerequisites?: string[];
+  milestones?: GeneratedMilestone[];
+  totalCostEstimate?: number;
+}
+
+interface SavedLearningPathRow {
+  id?: string | null;
+}
+
 const resolveEnv = (...keys: string[]): string | undefined => {
   for (const k of keys) {
     const v = Deno.env.get(k);
@@ -66,16 +104,16 @@ serve(async (req) => {
     const supabaseUrl = resolveEnv('SUPABASE_URL', 'PROJECT_URL', 'VITE_SUPABASE_URL', 'PUBLIC_SUPABASE_URL') || '';
     const supabaseKey = resolveEnv('SUPABASE_SERVICE_ROLE_KEY', 'SERVICE_ROLE_KEY') || '';
     const canDb = !!supabaseUrl && !!supabaseKey;
-    const supabaseClient = canDb ? createClient(supabaseUrl, supabaseKey) : null as any;
+    const supabaseClient: SupabaseClient | null = canDb ? createClient(supabaseUrl, supabaseKey) : null;
 
     // Get user from auth header
     const authHeader = req.headers.get("Authorization");
-    let user = null;
-    if (authHeader && canDb) {
+    let user: { id: string } | null = null;
+    if (authHeader && supabaseClient) {
       const result = await supabaseClient.auth.getUser(
         authHeader.replace("Bearer ", "")
       );
-      user = result.data?.user;
+      user = result.data?.user ?? null;
     }
 
     const body: LearningPathRequest = await req.json();
@@ -172,10 +210,10 @@ Return JSON:
 
     // Parse the JSON response
     let learningPath: LearningPath;
-    let parsedAI: any = {};
+    let parsedAI: GeneratedLearningPathPayload = {};
     let parsedOk = false;
     try {
-      parsedAI = JSON.parse(generatedContent);
+      parsedAI = normalizeGeneratedPayload(JSON.parse(generatedContent) as unknown);
       parsedOk = true;
       
       // Add missing fields and ensure proper structure
@@ -187,7 +225,7 @@ Return JSON:
         estimatedDuration: parsedAI.estimatedDuration || `${parsedAI.estimatedDurationMonths ?? 6} months`,
         difficulty: parsedAI.difficulty || 'Intermediate',
         prerequisites: parsedAI.prerequisites || [],
-        milestones: (parsedAI.milestones || []).map((milestone: any, index: number) => ({
+        milestones: (parsedAI.milestones || []).map((milestone, index) => ({
           id: `milestone_${Date.now()}_${index}`,
           title: milestone.title || milestone.name || `Milestone ${index + 1}`,
           description: milestone.description || 'Complete learning objectives',
@@ -219,8 +257,8 @@ Return JSON:
       : null;
 
     // Save to database if requested and user is authenticated
-    let savedPathId = null;
-    if (saveToDB && user && canDb) {
+    let savedPathId: string | null = null;
+    if (saveToDB && user && supabaseClient) {
       try {
         const { data: savedPath, error: saveError } = await supabaseClient
           .from("learning_paths")
@@ -247,7 +285,8 @@ Return JSON:
         if (saveError) {
           console.error("Failed to save learning path:", saveError);
         } else {
-          savedPathId = (savedPath as any)?.id ?? null;
+          const savedPathRow = savedPath as SavedLearningPathRow | null;
+          savedPathId = savedPathRow?.id ?? null;
           console.log("Learning path saved to database:", savedPathId);
         }
       } catch (error) {
@@ -324,7 +363,7 @@ function calculateWeeksToComplete(duration: string, timeCommitment: string): num
   return baseWeeks;
 }
 
-function createFallbackLearningPath(skillGaps: any[], targetRole: string, timeCommitment: string): LearningPath {
+function createFallbackLearningPath(skillGaps: LearningPathSkill[], targetRole: string, timeCommitment: string): LearningPath {
   const milestones: Milestone[] = skillGaps.map((skill, index) => ({
     id: `milestone_${Date.now()}_${index}`,
     title: `Master ${skill.name}`,
@@ -344,4 +383,81 @@ function createFallbackLearningPath(skillGaps: any[], targetRole: string, timeCo
     prerequisites: ['Basic understanding of relevant domain'],
     milestones
   };
+}
+
+function normalizeGeneratedPayload(value: unknown): GeneratedLearningPathPayload {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const milestones = Array.isArray(value.milestones)
+    ? value.milestones
+      .map(normalizeGeneratedMilestone)
+      .filter((milestone): milestone is GeneratedMilestone => milestone !== null)
+    : undefined;
+
+  return {
+    name: asString(value.name),
+    description: asString(value.description),
+    skills: asStringArray(value.skills),
+    estimatedDuration: asString(value.estimatedDuration),
+    estimatedDurationMonths: asNumber(value.estimatedDurationMonths),
+    difficulty: asString(value.difficulty),
+    prerequisites: asStringArray(value.prerequisites),
+    milestones,
+    totalCostEstimate: asNumber(value.totalCostEstimate),
+  };
+}
+
+function normalizeGeneratedMilestone(value: unknown): GeneratedMilestone | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  return {
+    title: asString(value.title),
+    name: asString(value.name),
+    description: asString(value.description),
+    targetDate: asString(value.targetDate),
+    skills: asStringArray(value.skills),
+    duration_weeks: asNumber(value.duration_weeks),
+    resources: normalizeGeneratedResources(value.resources),
+    cost_estimate: asNumber(value.cost_estimate),
+    priority: asString(value.priority),
+  };
+}
+
+function normalizeGeneratedResources(value: unknown): GeneratedResource[] | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  return value
+    .filter(isRecord)
+    .map((resource) => ({
+      name: asString(resource.name),
+      type: asString(resource.type),
+      url: asString(resource.url),
+      cost: asNumber(resource.cost),
+    }));
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value : undefined;
+}
+
+function asNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+function asStringArray(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  return value.filter((item): item is string => typeof item === "string");
 }
