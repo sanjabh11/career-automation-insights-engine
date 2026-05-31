@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T07:01:03.707Z",
+  "generatedAt": "2026-05-31T15:06:25.893Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -509,9 +509,9 @@
         "create-checkout-session"
       ],
       "caveat": "Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.",
-      "bytes": 14317,
-      "rows": 427,
-      "sha256": "59ed47cc90ba8cf6bbb101a18d082221ac7935c29aa0d5b97709281194bd4692",
+      "bytes": 14321,
+      "rows": 428,
+      "sha256": "310063bdd1eaf44efa42e5e4baaf9cc0794aa375200518398a6d6d675952c0fc",
       "failures": [],
       "passed": true
     },
@@ -596,9 +596,9 @@
         "model-provider logs, browser files, exports, and backups are outside this receipt"
       ],
       "caveat": "Edge-function proof metadata documents raw-text redaction, parser receipt linkage, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.",
-      "bytes": 15366,
+      "bytes": 15384,
       "rows": 292,
-      "sha256": "f84531f2f44c1df3004992effe1d68d3e4cf7f6866ccc11e8554c34e3655cb68",
+      "sha256": "1414ebd82f09f074828e7d4bc3490de3c57d2da26c63493aca659f921230f334",
       "failures": [],
       "passed": true
     },
@@ -662,7 +662,7 @@
       "caveat": "Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.",
       "bytes": 17533,
       "rows": 450,
-      "sha256": "9836d44bd881d508990620c1b47b37e687d5a43057721301d71569eb6f316642",
+      "sha256": "0adb0510f79d3f729eb875d337d3f867144a604f33572bdb5e37771330de5df2",
       "failures": [],
       "passed": true
     },
@@ -732,9 +732,9 @@
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
       "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 68400,
+      "bytes": 68407,
       "rows": 1218,
-      "sha256": "b8e9a07e45c9d2200832750412abcbd5b651e82078b8f2318af0fbdcbdbfe392",
+      "sha256": "76d4598f2c47d281c6b97f208ad863f9ff70a1f71897debf90224d091866ac13",
       "failures": [],
       "passed": true
     },
@@ -843,9 +843,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 77168,
-      "rows": 1258,
-      "sha256": "900c3d05a074b14699029e64ec9984da64d9d08fdafd9ef006d2d21ae550cf86",
+      "bytes": 84324,
+      "rows": 1363,
+      "sha256": "ccbc4e53f7deb5ce1175a10304f5cd3d1ef94bfb4ee4d12dd83795b848758ccb",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "09bc785b65875c847c45f90b6781778560819f7b6f1be3c67a6aa577438199a1",
+      "sha256": "f7e6ff313b37531df7f63b9fcd2a5670be3146a3f416738e57a30da3b742b908",
       "failures": [],
       "passed": true
     },

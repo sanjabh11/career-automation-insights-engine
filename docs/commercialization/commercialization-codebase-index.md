@@ -1,7 +1,7 @@
 # Commercialization Codebase Index
 
-Generated: 2026-05-27T07:00:49.923Z
-Branch: `live-auth-e2e-closeout`
+Generated: 2026-05-31T15:06:20.943Z
+Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
 ## Indexed Commercial Routes
@@ -128,10 +128,12 @@ Policies:
 | `build` | `vite build` |
 | `build:dev` | `vite build --mode development` |
 | `dev` | `vite` |
+| `e2e:smoke` | `playwright test` |
 | `index:commercial` | `node scripts/generate-commercialization-index.mjs` |
 | `lint` | `eslint .` |
 | `lint:commercial` | `node scripts/lint-commercial-scope.mjs` |
 | `smoke:commercial` | `node scripts/smoke-commercial-routes.mjs` |
+| `smoke:skill-adjacency` | `node scripts/verify-skill-adjacency-embedding.mjs` |
 | `verify:commercial` | `node scripts/verify-commercial-release.mjs` |
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
 | `verify:commercial-browser` | `node scripts/verify-commercial-browser.mjs` |
@@ -141,7 +143,9 @@ Policies:
 | `verify:commercial-live-supabase` | `node scripts/verify-commercial-live-supabase.mjs --write` |
 | `verify:commercial-network` | `node scripts/verify-commercial-release.mjs --with-network` |
 | `verify:commercial-trust` | `node scripts/verify-commercial-trust-boundaries.mjs` |
+| `verify:commercial-validation` | `node scripts/verify-phase-e-commercial-validation.mjs` |
 | `verify:data-provenance` | `node scripts/verify-commercial-data-provenance.mjs --write` |
+| `verify:global-english` | `node scripts/verify-global-english-localization.mjs` |
 | `verify:live-closeout-readiness` | `node scripts/verify-live-closeout-readiness.mjs` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |

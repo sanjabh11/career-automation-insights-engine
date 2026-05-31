@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-27T07:00:49.923Z",
-  "branch": "live-auth-e2e-closeout",
+  "generatedAt": "2026-05-31T15:06:20.943Z",
+  "branch": "phase-e-commercial-validation",
   "routes": [
     {
       "path": "/",
@@ -575,6 +575,14 @@
       "command": "vite"
     },
     {
+      "name": "e2e:smoke",
+      "command": "playwright test"
+    },
+    {
+      "name": "generate:phase-b-validation",
+      "command": "node scripts/generate-phase-b-validation-artifacts.mjs"
+    },
+    {
       "name": "index:commercial",
       "command": "node scripts/generate-commercialization-index.mjs"
     },
@@ -597,6 +605,10 @@
     {
       "name": "smoke:commercial",
       "command": "node scripts/smoke-commercial-routes.mjs"
+    },
+    {
+      "name": "smoke:skill-adjacency",
+      "command": "node scripts/verify-skill-adjacency-embedding.mjs"
     },
     {
       "name": "verify:commercial",
@@ -635,8 +647,16 @@
       "command": "node scripts/verify-commercial-trust-boundaries.mjs"
     },
     {
+      "name": "verify:commercial-validation",
+      "command": "node scripts/verify-phase-e-commercial-validation.mjs"
+    },
+    {
       "name": "verify:data-provenance",
       "command": "node scripts/verify-commercial-data-provenance.mjs --write"
+    },
+    {
+      "name": "verify:global-english",
+      "command": "node scripts/verify-global-english-localization.mjs"
     },
     {
       "name": "verify:live-closeout-readiness",
