@@ -15,7 +15,7 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 245 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, and Whop webhook payload paths. |
+| `npm run lint` | Fail | 239 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, and roadmap-generation payload paths. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
