@@ -22,6 +22,7 @@ Last observed Phase D local baseline:
 | `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
+| `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles. |
 | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` | Pass | 6 Playwright smoke tests passed: auth, APO run, Veterans crosswalk, Stripe test-mode checkout, white-label report export, and UK global-English disclosure. |
 
 ## Active Proof Boundaries
@@ -83,6 +84,6 @@ Ask before:
 - `src/lib/globalEnglishLocalization.ts` defines an explicit source date of 2026-05-31 and official source registry entries for ESCO API, ONS SOC/ASHE, Statistics Canada NOC, Canada Job Bank wage and outlook methodology, ABS ANZSCO, and Jobs and Skills Australia occupation profiles.
 - Phase D now registers UK, Canada, and Australia wage/outlook adapter contracts with required join fields, release metadata, suppression boundaries, and display boundaries before any local value can be shown.
 - `npm run verify:global-english` passed with 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK SOC mappings, 20 Canada NOC mappings, and 20 Australia ANZSCO mappings.
-- Official source-link fetch checks returned 200 for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
+- `npm run verify:global-english-sources` provides the reproducible network-backed source-link check for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
 - `OccupationAnalysis` now shows a regional labor-market disclosure for non-US English locales, including the local classification mapping when available, adapter pending status, join requirement, and the statement that wage/outlook values remain U.S. O*NET/BLS basis until localized adapters supply source-dated values.
 - `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser smoke tests, including the UK locale disclosure check for Software Developers mapped to UK SOC `2134`.

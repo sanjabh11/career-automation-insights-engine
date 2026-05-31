@@ -11,6 +11,45 @@ const sourcePath = path.join(root, 'src/lib/globalEnglishLocalization.ts');
 const analysisPath = path.join(root, 'src/components/OccupationAnalysis.tsx');
 const source = fs.readFileSync(sourcePath, 'utf8');
 const analysis = fs.readFileSync(analysisPath, 'utf8');
+const withSourceFetch = process.argv.includes('--with-source-fetch');
+
+const officialSourceLinks = [
+  {
+    id: 'esco-api',
+    name: 'ESCO API',
+    url: 'https://esco.ec.europa.eu/en/about-esco/escopedia/escopedia/esco-api',
+  },
+  {
+    id: 'ons-ashe-table-2',
+    name: 'ONS ASHE Table 2',
+    url: 'https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2',
+  },
+  {
+    id: 'statcan-noc-2021',
+    name: 'Statistics Canada NOC 2021',
+    url: 'https://www.statcan.gc.ca/en/subjects/standard/noc/2021/indexV1',
+  },
+  {
+    id: 'jobbank-wage-methodology',
+    name: 'Canada Job Bank wage methodology',
+    url: 'https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology',
+  },
+  {
+    id: 'jobbank-outlooks-methodology',
+    name: 'Canada Job Bank outlook methodology',
+    url: 'https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology',
+  },
+  {
+    id: 'abs-anzsco-2022',
+    name: 'ABS ANZSCO 2022',
+    url: 'https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022',
+  },
+  {
+    id: 'jsa-occupation-profiles',
+    name: 'Jobs and Skills Australia occupation profiles',
+    url: 'https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations',
+  },
+];
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -18,6 +57,25 @@ function assert(condition, message) {
 
 function count(pattern) {
   return [...source.matchAll(pattern)].length;
+}
+
+async function checkOfficialSourceLink(link) {
+  const response = await fetch(link.url, {
+    redirect: 'follow',
+    signal: AbortSignal.timeout(15000),
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/json,*/*;q=0.8',
+      'User-Agent': 'career-automation-insights-engine-source-verifier/1.0',
+    },
+  });
+
+  return {
+    id: link.id,
+    name: link.name,
+    url: link.url,
+    status: response.status,
+    ok: response.status >= 200 && response.status < 400,
+  };
 }
 
 const socCount = count(/soc: '\d{2}-\d{4}\.00'/g);
@@ -51,7 +109,7 @@ assert(analysis.includes('getRegionalLaborMarketDisclosure'), 'OccupationAnalysi
 assert(analysis.includes('Adapter:'), 'OccupationAnalysis must show regional adapter status');
 assert(analysis.includes('Join requirement:'), 'OccupationAnalysis must show regional adapter join requirements');
 
-console.log(JSON.stringify({
+const result = {
   ok: true,
   sourceDate: '2026-05-31',
   sampleOccupations: socCount,
@@ -61,4 +119,13 @@ console.log(JSON.stringify({
   auMappings: auCount,
   wageOutlookAdapters: adapterCount,
   wageOutlookStatus: 'non-US displayed as U.S.-basis with source-registered local adapters pending validated joins',
-}, null, 2));
+};
+
+if (withSourceFetch) {
+  const sourceFetch = await Promise.all(officialSourceLinks.map(checkOfficialSourceLink));
+  const failed = sourceFetch.filter((item) => !item.ok);
+  assert(failed.length === 0, `official source fetch failed: ${failed.map((item) => `${item.id}=${item.status}`).join(', ')}`);
+  result.officialSourceFetch = sourceFetch;
+}
+
+console.log(JSON.stringify(result, null, 2));
