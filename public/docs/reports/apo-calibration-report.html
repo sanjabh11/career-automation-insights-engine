@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APO Calibration Report</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: #f8fafc; color: #0f172a; }
+    main { max-width: 960px; margin: 0 auto; padding: 40px 20px 64px; }
+    h1 { font-size: 32px; line-height: 1.15; margin: 0 0 12px; }
+    h2 { font-size: 21px; margin-top: 32px; }
+    p, li { line-height: 1.65; }
+    .meta { color: #475569; font-size: 14px; }
+    .callout { border: 1px solid #f59e0b; background: #fffbeb; border-radius: 8px; padding: 14px 16px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .metric { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .metric strong { display: block; font-size: 28px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #f1f5f9; }
+    a { color: #2563eb; }
+    code { background: #e2e8f0; padding: 2px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+
+    <h1>APO Calibration Report</h1>
+    <p class="meta">Generated 2026-05-31. Scope: Phase B starter artifact for the APO Dashboard.</p>
+    <div class="callout">
+      <strong>Evidence boundary:</strong> This report proves the calibration pipeline and public artifact path. It does not prove production accuracy. The fixture compares current app seed estimates to published occupation-level automation probability anchors; a live Supabase run against approved expert labels is still required before claiming validation.
+    </div>
+    <h2>Metrics</h2>
+    <div class="grid">
+      <div class="metric"><span>Expected Calibration Error</span><strong>0.235</strong><span class="meta">Normalized 0-1; lower is better.</span></div>
+      <div class="metric"><span>Mean Absolute Error</span><strong>23.5 pp</strong><span class="meta">Percentage-point gap.</span></div>
+      <div class="metric"><span>RMSE</span><strong>26.5 pp</strong><span class="meta">Percentage-point root mean squared error.</span></div>
+      <div class="metric"><span>Fixture size</span><strong>7</strong><span class="meta">Occupations with source-backed anchors.</span></div>
+    </div>
+    <h2>Reliability Curve</h2>
+    <p><a href="/docs/reports/apo-reliability-curve.svg">Open reliability plot SVG</a>.</p>
+    <h2>Calibration Bins</h2>
+    <table>
+      <thead><tr><th>Predicted bin</th><th>n</th><th>Predicted avg</th><th>Observed anchor avg</th><th>Absolute error</th></tr></thead>
+      <tbody><tr>
+    <td>0-20%</td>
+    <td>1</td>
+    <td>18.0%</td>
+    <td>0.4%</td>
+    <td>17.6 pp</td>
+  </tr>
+<tr>
+    <td>20-40%</td>
+    <td>0</td>
+    <td>0.0%</td>
+    <td>0.0%</td>
+    <td>0.0 pp</td>
+  </tr>
+<tr>
+    <td>40-60%</td>
+    <td>3</td>
+    <td>52.7%</td>
+    <td>89.7%</td>
+    <td>37.0 pp</td>
+  </tr>
+<tr>
+    <td>60-80%</td>
+    <td>0</td>
+    <td>0.0%</td>
+    <td>0.0%</td>
+    <td>0.0 pp</td>
+  </tr>
+<tr>
+    <td>80-100%</td>
+    <td>3</td>
+    <td>86.0%</td>
+    <td>98.0%</td>
+    <td>12.0 pp</td>
+  </tr></tbody>
+    </table>
+    <h2>Fixture Rows</h2>
+    <table>
+      <thead><tr><th>O*NET code</th><th>Occupation</th><th>APO estimate</th><th>External anchor</th><th>Error</th><th>Source</th></tr></thead>
+      <tbody><tr>
+    <td>41-9041.00</td>
+    <td>Telemarketers</td>
+    <td>88.0%</td>
+    <td>99.0%</td>
+    <td>11.0 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr>
+<tr>
+    <td>43-3031.00</td>
+    <td>Bookkeeping, Accounting, and Auditing Clerks</td>
+    <td>85.0%</td>
+    <td>98.0%</td>
+    <td>13.0 pp</td>
+    <td><a href="https://www.atlantafed.org/research-and-data/publications/workforce-currents/2020/02/12/01-opportunity-occupations-and-the-future-of-work">Frey and Osborne, corroborated in Atlanta Fed workforce-current summary</a></td>
+  </tr>
+<tr>
+    <td>41-2011.00</td>
+    <td>Cashiers</td>
+    <td>85.0%</td>
+    <td>97.0%</td>
+    <td>12.0 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr>
+<tr>
+    <td>13-2011.00</td>
+    <td>Accountants and Auditors</td>
+    <td>52.0%</td>
+    <td>94.0%</td>
+    <td>42.0 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr>
+<tr>
+    <td>27-3042.00</td>
+    <td>Technical Writers</td>
+    <td>58.0%</td>
+    <td>89.0%</td>
+    <td>31.0 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr>
+<tr>
+    <td>41-9022.00</td>
+    <td>Real Estate Sales Agents</td>
+    <td>48.0%</td>
+    <td>86.0%</td>
+    <td>38.0 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr>
+<tr>
+    <td>29-1021.00</td>
+    <td>Dentists, General</td>
+    <td>18.0%</td>
+    <td>0.4%</td>
+    <td>17.6 pp</td>
+    <td><a href="https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/">Frey and Osborne occupation computerisation probabilities</a></td>
+  </tr></tbody>
+    </table>
+    <h2>Method</h2>
+    <p>ECE is computed by binning APO estimates, averaging predicted exposure and observed external anchors in each bin, and summing each bin's weighted absolute gap. The Edge Function now uses <code>apo_overall_vs_expert_assessments</code> and joins <code>apo_logs.occupation_code</code> to <code>expert_assessments.occupation_code</code>.</p>
+    <h2>Limitations</h2>
+    <ul>
+      <li>External anchors are published computerisation probabilities, not contemporary expert labels for generative AI exposure.</li>
+      <li>The fixture uses a small set of occupations to verify plumbing and artifact serving, not to certify model accuracy.</li>
+      <li>Live calibration requires applying the migration, running APO jobs for matched occupations, and running the <code>calibrate-ece</code> function in an approved Supabase environment.</li>
+    </ul>
+
+  </main>
+</body>
+</html>

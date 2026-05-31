@@ -9,16 +9,50 @@ const corsHeaders = {
 type ApoLogRow = {
   id: string;
   created_at: string;
-  model_json: any;
-  category_scores: any;
+  occupation_code: string;
+  occupation_title: string;
+  model_json: JsonValue;
+  category_scores: JsonValue;
   overall_apo: number | null;
   cohort: string | null;
 };
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+type ExpertAssessmentRow = {
+  occupation_code: string;
+  occupation_title: string | null;
+  automation_probability: number | null;
+  source: string;
+  assessment_year: number | null;
+  methodology: string | null;
+  citation: string | null;
+};
+
+type CalibrationPair = {
+  predicted: number;
+  observed: number;
+};
+
+type CalibrationBin = {
+  bin_lower: number;
+  bin_upper: number;
+  predicted_avg: number;
+  observed_avg: number;
+  count: number;
+  ece_component: number;
+};
+
 function clamp01(x: number) { return Math.max(0, Math.min(1, x)); }
 
-function computeECE(values: Array<{ predicted: number; observed: number }>, binCount: number) {
-  if (!values.length) return { ece: 0, bins: [] as any[] };
+function getNumberProperty(value: JsonValue, key: string): number | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const maybeNumber = value[key];
+  return typeof maybeNumber === "number" ? maybeNumber : null;
+}
+
+function computeECE(values: CalibrationPair[], binCount: number): { ece: number; bins: CalibrationBin[] } {
+  if (!values.length) return { ece: 0, bins: [] };
   const bins = Array.from({ length: binCount }, (_, i) => ({
     lower: i / binCount,
     upper: (i + 1) / binCount,
@@ -56,6 +90,15 @@ function computeECE(values: Array<{ predicted: number; observed: number }>, binC
   return { ece, bins: outBins };
 }
 
+function mean(values: number[]) {
+  return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+}
+
+function rmse(values: CalibrationPair[]) {
+  if (!values.length) return 0;
+  return Math.sqrt(mean(values.map((v) => Math.pow(v.observed - v.predicted, 2))));
+}
+
 export async function handler(req: Request) {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -65,14 +108,23 @@ export async function handler(req: Request) {
     let days = parseInt(url.searchParams.get("days") || "90");
     let binCount = parseInt(url.searchParams.get("binCount") || "10");
     let cohort = url.searchParams.get("cohort");
+    let source = url.searchParams.get("source");
 
     if (req.method === "POST") {
       try {
-        const body = await req.json();
+        const body = await req.json() as Partial<{
+          days: number;
+          binCount: number;
+          cohort: string;
+          source: string;
+        }>;
         if (typeof body?.days === "number") days = body.days;
         if (typeof body?.binCount === "number") binCount = body.binCount;
         if (typeof body?.cohort === "string") cohort = body.cohort;
-      } catch (_) {}
+        if (typeof body?.source === "string") source = body.source;
+      } catch {
+        // Ignore malformed optional POST filters and fall back to query params.
+      }
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
@@ -82,41 +134,68 @@ export async function handler(req: Request) {
     const sinceIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
     let query = supabase
       .from("apo_logs")
-      .select("id, created_at, model_json, category_scores, overall_apo, cohort")
+      .select("id, created_at, occupation_code, occupation_title, model_json, category_scores, overall_apo, cohort")
       .gte("created_at", sinceIso)
       .order("created_at", { ascending: false })
       .limit(5000);
-    if (cohort) query = (query as any).eq("cohort", cohort);
-    const { data: rows, error } = await query as any;
+    if (cohort) query = query.eq("cohort", cohort);
+    const { data: rows, error } = await query;
     if (error) throw error;
 
-    // Build predicted vs observed pairs
-    const pairs: Array<{ predicted: number; observed: number }> = [];
-    for (const r of (rows as ApoLogRow[] || [])) {
-      const predictedRaw: number | undefined = r.model_json?.overall_apo ?? undefined;
-      const observedRaw: number | null = r.overall_apo ?? null;
-      if (typeof predictedRaw === "number" && typeof observedRaw === "number") {
-        pairs.push({ predicted: predictedRaw / 100, observed: observedRaw / 100 });
-        continue;
-      }
-      // Fallback: derive predicted from model_json.category_apos weighted equally
-      const caps = r.model_json?.category_apos || {};
-      const values: number[] = [];
-      for (const k of ["tasks","knowledge","skills","abilities","technologies"]) {
-        if (typeof caps?.[k]?.apo === "number") values.push(caps[k].apo);
-      }
-      if (values.length && typeof observedRaw === "number") {
-        const avg = values.reduce((a,b)=>a+b,0) / values.length;
-        pairs.push({ predicted: avg / 100, observed: observedRaw / 100 });
-      }
+    const apoRows = (rows ?? []) as ApoLogRow[];
+    const occupationCodes = Array.from(new Set(apoRows
+      .map((row) => row.occupation_code)
+      .filter(Boolean)));
+
+    let expertRows: ExpertAssessmentRow[] = [];
+    if (occupationCodes.length) {
+      let expertQuery = supabase
+        .from("expert_assessments")
+        .select("occupation_code, occupation_title, automation_probability, source, assessment_year, methodology, citation")
+        .in("occupation_code", occupationCodes);
+      if (source) expertQuery = expertQuery.eq("source", source);
+      const { data, error: expertError } = await expertQuery;
+      if (expertError) throw expertError;
+      expertRows = (data ?? []) as ExpertAssessmentRow[];
+    }
+
+    const expertByOccupation = new Map<string, ExpertAssessmentRow[]>();
+    for (const expert of expertRows) {
+      if (typeof expert.automation_probability !== "number") continue;
+      const bucket = expertByOccupation.get(expert.occupation_code) || [];
+      bucket.push(expert);
+      expertByOccupation.set(expert.occupation_code, bucket);
+    }
+
+    const pairs: Array<CalibrationPair & { occupation_code: string; source_count: number }> = [];
+    for (const r of apoRows) {
+      const expertMatches = expertByOccupation.get(r.occupation_code) || [];
+      if (!expertMatches.length) continue;
+      const predictedRaw = typeof r.overall_apo === "number"
+        ? r.overall_apo
+        : getNumberProperty(r.model_json, "overall_apo");
+      if (typeof predictedRaw !== "number") continue;
+      const observedRaw = mean(expertMatches.map((expert) => Number(expert.automation_probability)));
+      pairs.push({
+        predicted: predictedRaw / 100,
+        observed: observedRaw / 100,
+        occupation_code: r.occupation_code,
+        source_count: expertMatches.length,
+      });
     }
 
     const { ece, bins } = computeECE(pairs, binCount);
+    const mae = pairs.length ? mean(pairs.map((pair) => Math.abs(pair.observed - pair.predicted))) : 0;
+    const rootMeanSquaredError = rmse(pairs);
 
-    // Persist run & results
     const { data: runIns, error: runErr } = await supabase
       .from("calibration_runs")
-      .insert({ cohort: cohort || null, bin_count: binCount, method: "overall_apo_vs_deterministic" })
+      .insert({
+        cohort: cohort || null,
+        bin_count: binCount,
+        method: "apo_overall_vs_expert_assessments",
+        notes: `Compared APO overall_apo to mean expert_assessments. days=${days}; expert_source=${source || "all"}; matched_pairs=${pairs.length}; expert_rows=${expertRows.length}`,
+      })
       .select("id, created_at")
       .single();
     if (runErr) throw runErr;
@@ -132,10 +211,45 @@ export async function handler(req: Request) {
         count: b.count,
         ece_component: b.ece_component,
       }));
-      await supabase.from("calibration_results").insert(rowsToInsert as any);
+      await supabase.from("calibration_results").insert(rowsToInsert);
     }
 
-    return new Response(JSON.stringify({ runId: runIns.id, created_at: runIns.created_at, ece, binsCount: bins.length, pairsCount: pairs.length }), {
+    if (pairs.length) {
+      await supabase.from("validation_metrics").insert([
+        {
+          metric_name: "apo_vs_expert_ece",
+          value: ece,
+          sample_size: pairs.length,
+          notes: `Expected calibration error against expert_assessments; binCount=${binCount}; source=${source || "all"}`,
+        },
+        {
+          metric_name: "apo_vs_expert_mae",
+          value: mae,
+          sample_size: pairs.length,
+          notes: "Mean absolute error against expert_assessments, normalized 0-1.",
+        },
+        {
+          metric_name: "apo_vs_expert_rmse",
+          value: rootMeanSquaredError,
+          sample_size: pairs.length,
+          notes: "Root mean squared error against expert_assessments, normalized 0-1.",
+        },
+      ]);
+    }
+
+    return new Response(JSON.stringify({
+      runId: runIns.id,
+      created_at: runIns.created_at,
+      method: "apo_overall_vs_expert_assessments",
+      ece,
+      mae,
+      rmse: rootMeanSquaredError,
+      binsCount: bins.length,
+      pairsCount: pairs.length,
+      expertRowsCount: expertRows.length,
+      unmatchedApoLogs: Math.max(0, (rows || []).length - pairs.length),
+      source: source || "all",
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {

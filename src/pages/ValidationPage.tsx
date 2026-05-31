@@ -96,12 +96,26 @@ export default function ValidationPage() {
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-3">
           <FileText className="h-5 w-5 text-indigo-600" />
-          <h3 className="font-semibold">Transparency Artifacts Status</h3>
-          <Badge variant="secondary">Phase B pending</Badge>
+          <h3 className="font-semibold">Transparency Artifacts</h3>
+          <Badge variant="secondary">Phase B starter</Badge>
         </div>
         <p className="text-sm text-muted-foreground">
-          Public model cards, dataset sheets, validation protocol, and academic-correlation artifacts are not served yet. They will be published only after Phase B computes calibration against sourced expert assessments and documents limitations.
+          Public model cards and calibration artifacts are now served as Phase B starter evidence. They document the current decision-support boundary and include a source-backed fixture calibration; production expert-label calibration still requires an approved Supabase migration/run.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/reports/apo-calibration-report.html">Calibration Report</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/reports/apo-reliability-curve.svg">Reliability Plot</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/APO_MODEL_CARD.html">APO Model Card</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/TASK_MODEL_CARD.html">Task Model Card</a>
+          </Button>
+        </div>
       </Card>
 
       <Card className="p-6">
@@ -121,7 +135,7 @@ export default function ValidationPage() {
               <SelectItem value="enterprise">Enterprise</SelectItem>
             </SelectContent>
           </Select>
-          <Badge variant="outline">Calibration artifact pending Phase B</Badge>
+          <Badge variant="outline">Expert-assessment ECE</Badge>
         </div>
         <div className="mb-3">
           <Button
@@ -148,7 +162,7 @@ export default function ValidationPage() {
         {!run && !runLoading && (
           <div className="mt-4 rounded-lg border p-4 bg-[var(--bg-tertiary)]">
             <div className="text-sm text-muted-foreground">
-              No calibration run found yet. Please run the 200+ occupation benchmark in <a className="underline" href="/validation/methods">Methods</a> and refresh.
+              No live calibration run found yet. The served Phase B calibration report uses a source-backed fixture; run the approved Supabase calibration job after expert-assessment rows are loaded.
             </div>
           </div>
         )}

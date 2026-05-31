@@ -8,10 +8,10 @@ interface PremiumReportSummaryProps {
 }
 
 function gradeFromAPO(apo: number) {
-  if (apo >= 75) return { grade: "D", label: "Critical Risk", color: "from-red-500 to-rose-500" };
-  if (apo >= 60) return { grade: "C", label: "Elevated Risk", color: "from-orange-500 to-amber-500" };
-  if (apo >= 40) return { grade: "B", label: "Moderate Risk", color: "from-yellow-500 to-lime-500" };
-  return { grade: "A", label: "Low Risk", color: "from-emerald-500 to-teal-500" };
+  if (apo >= 75) return { grade: "D", label: "Very High Exposure", color: "from-red-500 to-rose-500" };
+  if (apo >= 60) return { grade: "C", label: "Elevated Exposure", color: "from-orange-500 to-amber-500" };
+  if (apo >= 40) return { grade: "B", label: "Moderate Exposure", color: "from-yellow-500 to-lime-500" };
+  return { grade: "A", label: "Lower Exposure", color: "from-emerald-500 to-teal-500" };
 }
 
 export default function PremiumReportSummary({ occupation, overallAPO }: PremiumReportSummaryProps) {
@@ -42,7 +42,7 @@ export default function PremiumReportSummary({ occupation, overallAPO }: Premium
             <div
               className="h-24 w-24 rounded-full grid place-items-center shadow-inner"
               style={{ backgroundImage: conicPremium }}
-              aria-label={`Automation risk ${score.toFixed(0)} percent`}
+              aria-label={`Automation exposure estimate ${score.toFixed(0)} percent`}
             >
               <div className="h-20 w-20 rounded-full bg-[var(--bg-primary)] grid place-items-center text-[var(--text-primary)] font-bold">
                 {score.toFixed(0)}%
@@ -52,12 +52,12 @@ export default function PremiumReportSummary({ occupation, overallAPO }: Premium
           <div className="flex-1">
             <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-[var(--bg-secondary)]/70 border border-[hsl(var(--border))] shadow-sm">
               <Gauge className="h-4 w-4 text-[var(--accent-primary)]" />
-              <span className="text-xs font-medium text-[var(--text-secondary)]">Automation Potential</span>
+              <span className="text-xs font-medium text-[var(--text-secondary)]">Decision-support estimate</span>
             </div>
             <div className="mt-2 flex items-end gap-3">
               <div>
                 <div className="text-xl font-bold text-[var(--text-primary)] tracking-tight">{g.label}</div>
-                <div className="text-xs text-[var(--text-tertiary)]">Stripe-level clarity: crisp, contextual, beautiful.</div>
+                <div className="text-xs text-[var(--text-tertiary)]">Planning signal. Not a job-loss probability or employment decision.</div>
               </div>
               <div className={`ml-auto inline-flex items-center justify-center rounded-xl px-3 py-2 text-white bg-gradient-to-r ${g.color} shadow-lg`}>
                 <span className="text-sm font-bold">Grade {g.grade}</span>
@@ -65,8 +65,8 @@ export default function PremiumReportSummary({ occupation, overallAPO }: Premium
             </div>
             {ci && Number.isFinite(ci.lower) && Number.isFinite(ci.upper) && (
               <div className="mt-3">
-                <div className="text-[10px] text-[var(--text-tertiary)] mb-1">95% confidence band</div>
-                <div className="relative h-4 w-full bg-[var(--bg-tertiary)] rounded border border-[var(--accent-primary)]/20" role="img" aria-label={`Confidence band from ${ci.lower} to ${ci.upper}; point estimate ${score}%`}>
+                <div className="text-[10px] text-[var(--text-tertiary)] mb-1">Uncertainty band</div>
+                <div className="relative h-4 w-full bg-[var(--bg-tertiary)] rounded border border-[var(--accent-primary)]/20" role="img" aria-label={`Uncertainty band from ${ci.lower} to ${ci.upper}; point estimate ${score}%`}>
                   {(() => {
                     const lo = Math.max(0, Math.min(100, ci.lower));
                     const hi = Math.max(0, Math.min(100, ci.upper));

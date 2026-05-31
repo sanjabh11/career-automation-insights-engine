@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "ingest:onet-task-ratings": "node scripts/run-onet-task-ratings-live-ingest.mjs",
+    "generate:phase-b-validation": "node scripts/generate-phase-b-validation-artifacts.mjs",
     "index:commercial": "node scripts/generate-commercialization-index.mjs",
     "lint": "eslint .",
     "lint:commercial": "node scripts/lint-commercial-scope.mjs",

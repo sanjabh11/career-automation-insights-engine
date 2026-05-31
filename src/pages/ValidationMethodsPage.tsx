@@ -68,12 +68,26 @@ export default function ValidationMethodsPage() {
           <h3 className="font-semibold">Deliverables</h3>
         </div>
         <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-          <li>Calibration report, reliability plot, and model cards are planned Phase B artifacts.</li>
-          <li>No downloadable validation report is served until calibration is computed against sourced expert assessments.</li>
+          <li>Calibration report, reliability plot, and model cards are served as Phase B starter artifacts.</li>
+          <li>The current public calibration report uses source-backed fixture anchors; live Supabase calibration still requires owner-approved migration and function execution.</li>
           <li>Prompt and weight changes will be documented with artifact version dates when published.</li>
         </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/reports/apo-calibration-report.html">Calibration Report</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/reports/apo-reliability-curve.svg">Reliability Plot</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/APO_MODEL_CARD.html">APO Model Card</a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/docs/model_cards/TASK_MODEL_CARD.html">Task Model Card</a>
+          </Button>
+        </div>
         <div className="mt-4 text-sm text-muted-foreground rounded-md border p-3">
-          Methodology artifact downloads are intentionally unavailable in Phase A. See the live reliability panel and the canonical status page for current proof boundaries.
+          These artifacts support transparent review. They do not certify scientific validity or replace the approved live calibration run.
         </div>
       </Card>
     </div>

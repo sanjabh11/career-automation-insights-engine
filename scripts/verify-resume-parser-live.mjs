@@ -436,7 +436,7 @@ async function main() {
     caveat:
       'This verifies the deployed parse-resume Edge Function behavior from the public functions endpoint using synthetic non-sensitive fixtures. It does not apply migrations, deploy functions, prove authenticated resume artifact save/delete, prove malware scanning, or prove production PDF/DOC/DOCX extraction.',
     doesNotProve:
-      'This does not prove uploaded files are malware-free, that PDF/DOC/DOCX parsing is production-ready, that raw data is removed from every browser download/export/provider log/backup, or that the workflow is valid for employment decisions.',
+      'This does not prove uploaded files are malware-free, that PDF/DOC/DOCX parsing is production grade, that raw data is removed from every browser download/export/provider log/backup, or that the workflow is valid for employment decisions.',
     checks: [],
   };
 

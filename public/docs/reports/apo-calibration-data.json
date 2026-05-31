@@ -1,0 +1,121 @@
+{
+  "generatedAt": "2026-05-31",
+  "sources": {
+    "freyOsborne": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/",
+    "atlantaFed": "https://www.atlantafed.org/research-and-data/publications/workforce-currents/2020/02/12/01-opportunity-occupations-and-the-future-of-work",
+    "modelCards": "https://research.google/pubs/pub48120/",
+    "nist": "https://www.nist.gov/itl/ai-risk-management-framework",
+    "openAiExposure": "https://openai.com/index/gpts-are-gpts/",
+    "ilo2025": "https://www.ilo.org/publications/generative-ai-and-jobs-2025-update"
+  },
+  "fixtureRows": [
+    {
+      "code": "41-9041.00",
+      "occupation": "Telemarketers",
+      "apoEstimate": 88,
+      "externalAnchor": 99,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    },
+    {
+      "code": "43-3031.00",
+      "occupation": "Bookkeeping, Accounting, and Auditing Clerks",
+      "apoEstimate": 85,
+      "externalAnchor": 98,
+      "anchorSource": "Frey and Osborne, corroborated in Atlanta Fed workforce-current summary",
+      "citation": "https://www.atlantafed.org/research-and-data/publications/workforce-currents/2020/02/12/01-opportunity-occupations-and-the-future-of-work"
+    },
+    {
+      "code": "41-2011.00",
+      "occupation": "Cashiers",
+      "apoEstimate": 85,
+      "externalAnchor": 97,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    },
+    {
+      "code": "13-2011.00",
+      "occupation": "Accountants and Auditors",
+      "apoEstimate": 52,
+      "externalAnchor": 94,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    },
+    {
+      "code": "27-3042.00",
+      "occupation": "Technical Writers",
+      "apoEstimate": 58,
+      "externalAnchor": 89,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    },
+    {
+      "code": "41-9022.00",
+      "occupation": "Real Estate Sales Agents",
+      "apoEstimate": 48,
+      "externalAnchor": 86,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    },
+    {
+      "code": "29-1021.00",
+      "occupation": "Dentists, General",
+      "apoEstimate": 18,
+      "externalAnchor": 0.4,
+      "anchorSource": "Frey and Osborne occupation computerisation probabilities",
+      "citation": "https://ora.ox.ac.uk/objects/uuid:4ed9f1bd-27e9-4e30-997e-5fc8405b0491/"
+    }
+  ],
+  "metrics": {
+    "ece": 0.23514285714285704,
+    "mae": 23.514285714285712,
+    "rmse": 26.491939474920617,
+    "reliabilityBins": [
+      {
+        "binLower": 0,
+        "binUpper": 0.2,
+        "count": 1,
+        "predictedAvg": 0.18,
+        "observedAvg": 0.004,
+        "error": 0.176,
+        "eceComponent": 0.02514285714285714
+      },
+      {
+        "binLower": 0.2,
+        "binUpper": 0.4,
+        "count": 0,
+        "predictedAvg": 0,
+        "observedAvg": 0,
+        "error": 0,
+        "eceComponent": 0
+      },
+      {
+        "binLower": 0.4,
+        "binUpper": 0.6,
+        "count": 3,
+        "predictedAvg": 0.5266666666666667,
+        "observedAvg": 0.8966666666666666,
+        "error": 0.3699999999999999,
+        "eceComponent": 0.1585714285714285
+      },
+      {
+        "binLower": 0.6,
+        "binUpper": 0.8,
+        "count": 0,
+        "predictedAvg": 0,
+        "observedAvg": 0,
+        "error": 0,
+        "eceComponent": 0
+      },
+      {
+        "binLower": 0.8,
+        "binUpper": 1,
+        "count": 3,
+        "predictedAvg": 0.86,
+        "observedAvg": 0.98,
+        "error": 0.12,
+        "eceComponent": 0.05142857142857142
+      }
+    ]
+  }
+}
