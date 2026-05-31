@@ -6,24 +6,58 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 
+interface OutcomeSurveyForm {
+  initial_apo_score: string;
+  initial_salary: string;
+  goal_occupation: string;
+  completed_learning_hours: string;
+  skills_acquired: string;
+  transitioned: boolean;
+  new_salary: string;
+  transition_months: string;
+  satisfaction_score: string;
+}
+
+type OutcomeSurveyField = keyof OutcomeSurveyForm;
+
+interface OutcomeSurveyPayload {
+  initial_apo_score?: number;
+  initial_salary?: number;
+  goal_occupation?: string;
+  completed_learning_hours?: number;
+  skills_acquired?: string[];
+  transitioned?: boolean;
+  new_salary?: number;
+  transition_months?: number;
+  satisfaction_score?: number;
+}
+
+const emptyOutcomeSurveyForm: OutcomeSurveyForm = {
+  initial_apo_score: '',
+  initial_salary: '',
+  goal_occupation: '',
+  completed_learning_hours: '',
+  skills_acquired: '',
+  transitioned: false,
+  new_salary: '',
+  transition_months: '',
+  satisfaction_score: '',
+};
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Failed to submit outcomes';
+}
+
 export function OutcomeSurvey() {
   const { user } = useSession();
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
-  const [form, setForm] = React.useState({
-    initial_apo_score: '',
-    initial_salary: '',
-    goal_occupation: '',
-    completed_learning_hours: '',
-    skills_acquired: '',
-    transitioned: false as boolean,
-    new_salary: '',
-    transition_months: '',
-    satisfaction_score: '',
-  });
+  const [form, setForm] = React.useState<OutcomeSurveyForm>(emptyOutcomeSurveyForm);
 
-  const onChange = (k: keyof typeof form, v: string | boolean) => setForm(prev => ({ ...prev, [k]: v as any }));
+  const onChange = <K extends OutcomeSurveyField>(k: K, v: OutcomeSurveyForm[K]) => {
+    setForm(prev => ({ ...prev, [k]: v }));
+  };
 
   const onSubmit = async () => {
     setLoading(true);
@@ -77,7 +111,7 @@ export function OutcomeSurvey() {
       const { data: { session } } = await supabase.auth.getSession();
       const headers: Record<string,string> = {};
       if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
-      const payload: any = {
+      const payload: OutcomeSurveyPayload = {
         initial_apo_score: form.initial_apo_score ? Number(form.initial_apo_score) : undefined,
         initial_salary: form.initial_salary ? Number(form.initial_salary) : undefined,
         goal_occupation: form.goal_occupation || undefined,
@@ -95,13 +129,10 @@ export function OutcomeSurvey() {
       try { window.dispatchEvent(new CustomEvent('outcome:created')); } catch {
         // Event dispatch is best-effort for embedded or restricted browser contexts.
       }
-      setForm({
-        initial_apo_score: '', initial_salary: '', goal_occupation: '', completed_learning_hours: '', skills_acquired: '', transitioned: false, new_salary: '', transition_months: '', satisfaction_score: ''
-      });
-    } catch (e: any) {
+      setForm({ ...emptyOutcomeSurveyForm });
+    } catch (e: unknown) {
       // Prefer server error message body when available
-      const msg = e?.message || 'Failed to submit outcomes';
-      setMessage(msg);
+      setMessage(getErrorMessage(e));
     } finally {
       setLoading(false);
     }
