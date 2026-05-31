@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-05-27T07:01:03.707Z
+Generated: 2026-05-31T17:27:54.599Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -10,7 +10,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 
 | Artifact | Label | Path | Type | Rows/Lines | SHA-256 | Source IDs | Status |
 |---|---|---|---|---:|---|---|---|
-| `wef-economics-csv` | WEF economics CSV seed | `public/data/econ_wef.csv` | csv | 1,740 | `cedb403873db0637...` | `wef-foj-2025` | pass |
+| `wef-economics-csv` | WEF economics CSV seed | `public/data/econ_wef.csv` | csv | 1,740 | `acc975874eb3c965...` | `wef-foj-2025` | pass |
 | `occupation-risk-seed` | SEO occupation risk seed | `src/data/occupationRiskData.ts` | typescript-seed | 1,043 | `4b5826d0fb62c3a8...` | `onet`, `bls-emp`, `bls-oews`, `wef-foj-2025` | pass |
 | `onet-ingest-boundary` | O*NET metadata ingestion boundary | `supabase/lib/scripts/ingest_onet_metadata.ts` | ingestion-script | 403 | `24cf96358f6fc878...` | `onet` | pass |
 | `onet-task-ratings-ingest-script` | O*NET Task Ratings ingest script | `supabase/lib/scripts/ingest_onet_metadata.ts` | ingestion-script | 403 | `24cf96358f6fc878...` | `onet` | pass |
@@ -29,11 +29,11 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-checkout-auth-boundary` | Commercial checkout authentication boundary | `src/lib/stripe.ts` | payment-runtime | 427 | `59ed47cc90ba8cf6...` | `supabase-edge-functions`, `llm-output` | pass |
 | `resume-deletion-receipt-client` | Resume analysis deletion receipt client | `src/lib/resumeAnalysisPrivacy.ts` | privacy-runtime | 75 | `dd2d0e3fbe2f4a42...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-deletion-receipt-migration` | Resume analysis deletion receipt migration | `supabase/migrations/20260524000400_add_resume_deletion_receipts.sql` | supabase-migration | 145 | `26cbcd73f5380890...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
-| `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 292 | `f84531f2f44c1df3...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `owasp-file-upload`, `supabase-edge-functions`, `llm-output` | pass |
+| `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 292 | `1414ebd82f09f074...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `owasp-file-upload`, `supabase-edge-functions`, `llm-output` | pass |
 | `resume-server-parser-edge-boundary` | Resume server-side parser boundary Edge Function | `supabase/functions/parse-resume/index.ts` | edge-function | 244 | `55ae276b6ea8aff5...` | `owasp-file-upload`, `supabase-edge-functions`, `nist-ai-rmf`, `ada-ai-hiring-guidance` | pass |
 | `resume-parser-live-verifier` | Live resume parser receipt verifier | `scripts/verify-resume-parser-live.mjs` | live-verifier | 450 | `9836d44bd881d508...` | `owasp-file-upload`, `supabase-edge-functions`, `nist-ai-rmf`, `ada-ai-hiring-guidance` | pass |
 | `commercial-live-auth-e2e-verifier` | Authenticated live resume proof artifact e2e verifier | `scripts/verify-commercial-live-auth-e2e.mjs` | live-verifier | 358 | `9ecd6c43fda8af1d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
-| `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,218 | `b8e9a07e45c9d220...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `owasp-file-upload`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
+| `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,218 | `76d4598f2c47d281...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `owasp-file-upload`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
 | `resume-proof-report-artifact-client` | Resume proof-report artifact client | `src/lib/resumeProofReportArtifacts.ts` | privacy-runtime | 152 | `2ff26b17a34b668d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-proof-report-artifact-migration` | Resume proof-report artifact migration | `supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql` | supabase-migration | 282 | `7ca18c1ef3788b23...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `proof-pack-gallery-page` | Phase 6 proof-pack gallery and outreach CSV | `src/pages/ProofPackGalleryPage.tsx` | commercial-page | 1,258 | `900c3d05a074b146...` | `nace-career-readiness`, `nace-first-destination`, `ferpa-student-privacy`, `dol-ai-literacy-framework`, `nist-ai-rmf`, `ada-ai-hiring-guidance`, `wcag-22`, `lightcast`, `workera-positioning`, `serpapi`, `llm-output` | pass |
@@ -45,7 +45,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 39 | `d831d1ab23f28d68...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 289 | `24a4796ffbf79ee7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `09bc785b65875c84...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `40112fe8277a2e56...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |

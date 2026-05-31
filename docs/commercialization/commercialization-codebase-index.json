@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-27T07:00:49.923Z",
-  "branch": "live-auth-e2e-closeout",
+  "generatedAt": "2026-05-31T17:27:47.933Z",
+  "branch": "phase-a-truth-claims-reconciliation",
   "routes": [
     {
       "path": "/",
@@ -597,6 +597,10 @@
     {
       "name": "smoke:commercial",
       "command": "node scripts/smoke-commercial-routes.mjs"
+    },
+    {
+      "name": "verify:claim-boundaries",
+      "command": "node scripts/verify-claim-boundaries.mjs"
     },
     {
       "name": "verify:commercial",
