@@ -13,6 +13,12 @@ Phase E does not complete commercial validation. It prepares the instrumentation
 | Documented outcomes | Permissioned case-study row with baseline workflow, artifact reviewed, outcome, quote, and explicit does-not-prove text | Template and fields prepared | A case study does not prove market-wide demand or career outcomes |
 | Bootcamp CTA safe | Runtime has no placeholder price ID, or a real live Stripe price is supplied | Bootcamp checkout hidden pending live price | Hidden CTA does not prove bootcamp demand |
 
+## Redacted Evidence Intake
+
+Use `docs/commercialization/live-gate-evidence-template.json` only as a schema template. Put owner-held, redacted proof metadata in `docs/commercialization/live-gate-evidence.local.json` or pass another path with `LIVE_GATE_EVIDENCE_PATH`; the default local file is ignored by git. Run `npm run verify:live-gate-evidence` before `npm run verify:remediation-gates`.
+
+The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret patterns and only upgrades a live/manual gate when the gate-specific redacted evidence item passes validation.
+
 ## Activation And Retention Events
 
 Use PostHog funnels and Supabase `analytics_events` exports with the same event contract:

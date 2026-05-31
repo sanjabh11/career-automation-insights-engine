@@ -28,6 +28,7 @@
 - [x] Phase E: Prepare design-partner onboarding checklist and case-study capture template
 - [x] Phase E: Verify bootcamp CTA remains hidden until a real Stripe price exists
 - [x] Cross-phase: Add non-mutating external gate ledger for the remaining live/manual acceptance evidence
+- [x] Cross-phase: Add redacted live-gate evidence intake verifier for owner-held proof metadata
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -50,6 +51,7 @@
 - Phase D deliberately does not claim localized UK/CA/AU wage values. The UI labels non-US views as U.S. O*NET/BLS basis and exposes adapter-pending join requirements until source-dated local wage/outlook adapters are imported and validated.
 - Phase E `npm run verify:commercial-validation` passed and confirms activation/retention instrumentation, design-partner onboarding, case-study capture, live MRR/partner/outcome gates, and hidden bootcamp CTA boundary.
 - Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including remediation-gate ledger, build, and commercial route smoke.
-- Phase E `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,506 problems; Phase E touched files pass file-scoped ESLint.
+- Phase E `npm run lint` remains red on inherited repo-wide lint debt; latest live-gate evidence slice observed 1,413 errors and 93 warnings across 1,161 files, while all touched verifier files had zero findings.
 - `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because live/manual evidence is still missing.
+- `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof.
 - Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.

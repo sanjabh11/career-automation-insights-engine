@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-05-31T16:17:55.153Z
+Generated: 2026-05-31T16:28:51.528Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
@@ -13,6 +13,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 | Phase C embedding/runtime smoke path | locally_proven | `smoke:skill-adjacency` is wired to the embedding dimensionality/non-empty adjacency verifier. | Run `npm run smoke:skill-adjacency` after embedding or adjacency code changes. |
 | Phase D global-English disclosure/mapping/adapter layer | satisfied_by_mapping_adapter_and_us_basis_disclosure | Global-English source registry, sample crosswalks, static verifier, source-fetch verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present. | If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display. |
 | Phase E activation/retention/commercial validation instrumentation | locally_proven_with_scope_limit | Commercial validation gates, activation/retention catalog, onboarding checklist, and case-study template are implemented. | Live MRR, committed partners, and permissioned outcomes remain external evidence. |
+| Redacted live-gate evidence intake verifier | locally_proven | A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates. | Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`. |
 | Real Stripe test-mode checkout | blocked_missing_owner_secret_or_live_evidence | Local checkout code is ready, but required secret/env names are absent: STRIPE_SECRET_KEY, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY. | Owner-provided Stripe/Supabase test credentials and a successful Checkout Session from `create-checkout-session`. |
 | Production calibration run | blocked_missing_owner_secret_or_live_evidence | Calibration code/artifacts are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY. | Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project. |
 | Authenticated live artifact e2e | blocked_missing_owner_secret_or_live_evidence | Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD. | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
@@ -28,6 +29,18 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 - Live MRR greater than zero: Stripe live-mode and database evidence showing `total_mrr > 0`.
 - Three committed design partners: At least three permissioned partner records with pilot scope, next step, and contact permission.
 - Permissioned documented outcomes: Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text.
+
+## Redacted Live Evidence Intake
+
+Schema: `2026-05-31.apo-live-gate-evidence.v1`
+Template: `docs/commercialization/live-gate-evidence-template.json`
+Default local file: `docs/commercialization/live-gate-evidence.local.json`
+Current file found: no
+Accepted gates: none
+Rejected gates: none
+Validation errors: 0
+
+The evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret patterns and does not print raw evidence contents.
 
 ## Command
 

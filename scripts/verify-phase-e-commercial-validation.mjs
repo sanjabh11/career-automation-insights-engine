@@ -27,6 +27,9 @@ const files = {
   gallery: read('src/pages/ProofPackGalleryPage.tsx'),
   stripe: read('src/lib/stripe.ts'),
   playbook: read('docs/commercialization/phase-e-commercial-validation-playbook.md'),
+  packageJson: read('package.json'),
+  liveGateEvidenceVerifier: read('scripts/verify-live-gate-evidence.mjs'),
+  liveGateEvidenceTemplate: read('docs/commercialization/live-gate-evidence-template.json'),
 };
 
 assert(!/DISABLED: Analytics events table has schema issues/.test(files.analyticsHook), 'analytics hook must not remain disabled');
@@ -83,7 +86,13 @@ assert(
   'https://posthog.com/docs/libraries/js',
   'https://docs.stripe.com/payments/checkout-sessions',
   'https://docs.stripe.com/test-mode',
+  'npm run verify:live-gate-evidence',
+  'live-gate-evidence-template.json',
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
+
+assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
+assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
+assert(/2026-05-31\.apo-live-gate-evidence\.v1/.test(files.liveGateEvidenceTemplate), 'live-gate evidence template must declare the expected schema version');
 
 console.log(JSON.stringify({
   ok: true,

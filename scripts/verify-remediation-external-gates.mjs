@@ -3,6 +3,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  DEFAULT_LIVE_GATE_EVIDENCE_PATH,
+  LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
+  validateLiveGateEvidence,
+} from './lib/liveGateEvidence.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -114,6 +119,18 @@ ${rows}
 
 ${artifact.remainingManualEvidence.map((item) => `- ${item}`).join('\n')}
 
+## Redacted Live Evidence Intake
+
+Schema: \`${artifact.liveGateEvidence.schemaVersion}\`
+Template: \`${artifact.liveGateEvidence.templatePath}\`
+Default local file: \`${artifact.liveGateEvidence.defaultPath}\`
+Current file found: ${artifact.liveGateEvidence.found ? 'yes' : 'no'}
+Accepted gates: ${artifact.liveGateEvidence.acceptedGateIds.length ? artifact.liveGateEvidence.acceptedGateIds.map((id) => `\`${id}\``).join(', ') : 'none'}
+Rejected gates: ${artifact.liveGateEvidence.rejectedGateIds.length ? artifact.liveGateEvidence.rejectedGateIds.map((id) => `\`${id}\``).join(', ') : 'none'}
+Validation errors: ${artifact.liveGateEvidence.errorCount}
+
+The evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret patterns and does not print raw evidence contents.
+
 ## Command
 
 \`\`\`bash
@@ -136,6 +153,26 @@ function main() {
   const globalEnglish = readOptional('src/lib/globalEnglishLocalization.ts');
   const occupationAnalysis = readOptional('src/components/OccupationAnalysis.tsx');
   const readinessModel = readOptional('src/lib/commercialLaunchReadiness.ts');
+  const liveGateEvidence = validateLiveGateEvidence({ root });
+  const acceptedLiveGateEvidence = new Set(liveGateEvidence.acceptedGateIds);
+
+  function externalGate(id, label, status, evidence, neededEvidence, options = {}) {
+    if (!acceptedLiveGateEvidence.has(id)) {
+      return gate(id, label, status, evidence, neededEvidence, options);
+    }
+
+    return gate(
+      id,
+      label,
+      'externally_proven_redacted_evidence_attached',
+      'Redacted owner evidence is accepted by `verify:live-gate-evidence`; raw proof artifacts and private details remain owner-held.',
+      'Keep the redacted evidence file current and preserve owner-held raw proof for audit.',
+      {
+        ...options,
+        sourceBoundary: 'redacted owner evidence intake',
+      }
+    );
+  }
 
   const publicDocsReady = [
     'public/docs/model_cards/APO_MODEL_CARD.html',
@@ -170,6 +207,12 @@ function main() {
       'caseStudyCaptureTemplate',
       'Live MRR greater than zero',
     ]);
+
+  const liveGateEvidenceIntakeReady =
+    packageScripts['verify:live-gate-evidence'] === 'node scripts/verify-live-gate-evidence.mjs' &&
+    exists('scripts/verify-live-gate-evidence.mjs') &&
+    exists('scripts/lib/liveGateEvidence.mjs') &&
+    exists('docs/commercialization/live-gate-evidence-template.json');
 
   const stripeMissing = missingGroups(presentEnvNames, [
     { label: 'STRIPE_SECRET_KEY', aliases: ['STRIPE_SECRET_KEY'] },
@@ -257,6 +300,25 @@ function main() {
       'Live MRR, committed partners, and permissioned outcomes remain external evidence.'
     ),
     gate(
+      'redacted_live_gate_evidence_intake',
+      'Redacted live-gate evidence intake verifier',
+      liveGateEvidence.errors.length
+        ? 'invalid_redacted_evidence_file'
+        : liveGateEvidenceIntakeReady
+          ? 'locally_proven'
+          : 'missing_local_verifier',
+      liveGateEvidence.errors.length
+        ? `The redacted evidence file is present but invalid with ${liveGateEvidence.errors.length} verifier error(s).`
+        : liveGateEvidenceIntakeReady
+          ? 'A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates.'
+          : 'The redacted evidence intake verifier is missing or miswired.',
+      'Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`.',
+      {
+        sourceBoundary: 'local verifier and redacted owner-evidence schema',
+        doesNotProve: ['Live proof until a valid evidence file is attached', 'Raw evidence authenticity without owner-held artifacts'],
+      }
+    ),
+    externalGate(
       'real_stripe_test_checkout',
       'Real Stripe test-mode checkout',
       statusForExternalGate(stripeMissing, stripeLocalReady),
@@ -269,7 +331,7 @@ function main() {
         doesNotProve: ['Live revenue', 'MRR', 'payment fulfillment in live mode'],
       }
     ),
-    gate(
+    externalGate(
       'production_calibration_run',
       'Production calibration run',
       statusForExternalGate(calibrationMissing, calibrationLocalReady),
@@ -282,7 +344,7 @@ function main() {
         doesNotProve: ['Scientific validation before live labels exist'],
       }
     ),
-    gate(
+    externalGate(
       'authenticated_live_artifact_e2e',
       'Authenticated live artifact e2e',
       liveAuthMissing.length
@@ -297,7 +359,7 @@ function main() {
         doesNotProve: ['Payment proof', 'malware scanning', 'legal compliance'],
       }
     ),
-    gate(
+    externalGate(
       'live_mrr_gt_zero',
       'Live MRR greater than zero',
       'manual_external_evidence_required',
@@ -305,7 +367,7 @@ function main() {
       'Stripe live-mode and database evidence showing `total_mrr > 0`.',
       { sourceBoundary: 'manual commercial evidence gate' }
     ),
-    gate(
+    externalGate(
       'three_committed_partners',
       'Three committed design partners',
       'manual_external_evidence_required',
@@ -313,7 +375,7 @@ function main() {
       'At least three permissioned partner records with pilot scope, next step, and contact permission.',
       { sourceBoundary: 'manual commercial evidence gate' }
     ),
-    gate(
+    externalGate(
       'documented_outcomes',
       'Permissioned documented outcomes',
       'manual_external_evidence_required',
@@ -329,6 +391,7 @@ function main() {
       'locally_proven_with_scope_limit',
       'satisfied_by_mapping_and_us_basis_disclosure',
       'satisfied_by_mapping_adapter_and_us_basis_disclosure',
+      'externally_proven_redacted_evidence_attached',
     ].includes(item.status))
     .map((item) => `${item.label}: ${item.neededEvidence}`);
 
@@ -340,6 +403,17 @@ function main() {
     requireComplete,
     gates,
     remainingManualEvidence,
+    liveGateEvidence: {
+      schemaVersion: LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
+      templatePath: 'docs/commercialization/live-gate-evidence-template.json',
+      defaultPath: DEFAULT_LIVE_GATE_EVIDENCE_PATH,
+      found: liveGateEvidence.found,
+      evidencePath: liveGateEvidence.evidencePath,
+      acceptedGateIds: liveGateEvidence.acceptedGateIds,
+      rejectedGateIds: liveGateEvidence.rejectedGateIds,
+      errorCount: liveGateEvidence.errors.length,
+      errors: liveGateEvidence.errors,
+    },
   };
 
   fs.mkdirSync(path.join(root, 'docs/commercialization'), { recursive: true });
@@ -347,11 +421,18 @@ function main() {
   fs.writeFileSync(path.join(root, OUTPUT_MD), renderMarkdown(artifact));
 
   console.log(JSON.stringify({
-    ok: true,
+    ok: liveGateEvidence.errors.length === 0,
     goalComplete,
+    liveGateEvidence: artifact.liveGateEvidence,
     gates: gates.map((item) => ({ id: item.id, status: item.status })),
     wrote: [OUTPUT_JSON, OUTPUT_MD],
   }, null, 2));
+
+  if (liveGateEvidence.errors.length > 0) {
+    console.error('Redacted live-gate evidence is invalid. See generated artifact for verifier-safe error details.');
+    process.exitCode = 1;
+    return;
+  }
 
   if (requireComplete && !goalComplete) {
     console.error('Remediation external gates are not complete. See generated artifact for remaining evidence.');

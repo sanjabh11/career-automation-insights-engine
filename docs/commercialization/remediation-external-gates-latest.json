@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T16:17:55.153Z",
+  "generatedAt": "2026-05-31T16:28:51.528Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -52,6 +52,18 @@
       "neededEvidence": "Live MRR, committed partners, and permissioned outcomes remain external evidence.",
       "sourceBoundary": "local verifier",
       "doesNotProve": []
+    },
+    {
+      "id": "redacted_live_gate_evidence_intake",
+      "label": "Redacted live-gate evidence intake verifier",
+      "status": "locally_proven",
+      "evidence": "A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates.",
+      "neededEvidence": "Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`.",
+      "sourceBoundary": "local verifier and redacted owner-evidence schema",
+      "doesNotProve": [
+        "Live proof until a valid evidence file is attached",
+        "Raw evidence authenticity without owner-held artifacts"
+      ]
     },
     {
       "id": "real_stripe_test_checkout",
@@ -125,5 +137,16 @@
     "Live MRR greater than zero: Stripe live-mode and database evidence showing `total_mrr > 0`.",
     "Three committed design partners: At least three permissioned partner records with pilot scope, next step, and contact permission.",
     "Permissioned documented outcomes: Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text."
-  ]
+  ],
+  "liveGateEvidence": {
+    "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
+    "templatePath": "docs/commercialization/live-gate-evidence-template.json",
+    "defaultPath": "docs/commercialization/live-gate-evidence.local.json",
+    "found": false,
+    "evidencePath": "docs/commercialization/live-gate-evidence.local.json",
+    "acceptedGateIds": [],
+    "rejectedGateIds": [],
+    "errorCount": 0,
+    "errors": []
+  }
 }
