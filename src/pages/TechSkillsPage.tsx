@@ -11,8 +11,8 @@ import { formatWage } from "@/types/onet-enrichment";
 
 interface HotTechnology {
   technology_name: string;
-  category: string;
-  trending_score?: number;
+  category: string | null;
+  trending_score?: number | null;
   related_occupations_count: number;
   occupation_count?: number;
 }
@@ -26,12 +26,39 @@ interface TechOccupation {
   };
 }
 
+interface HotTechnologiesData {
+  technologies: HotTechnology[];
+  totalCount: number;
+  source: "db";
+}
+
+interface SkillDemandSignal {
+  posting_count_30d: number | null;
+  median_salary: number | null;
+  growth_rate_yoy: number | null;
+  last_updated: string | null;
+}
+
+interface TechnologyDemandView {
+  technology_name: string;
+  top_occupation_codes: string[] | null;
+  occupation_titles: string[] | null;
+  occupation_count: number | null;
+  avg_demand_score: number | null;
+}
+
+interface TechOccupationsData {
+  technology: string;
+  occupations: TechOccupation[];
+  count: number;
+}
+
 export default function TechSkillsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
   // Fetch all hot technologies directly from database
-  const { data: techsData, isLoading: techsLoading } = useQuery({
+  const { data: techsData, isLoading: techsLoading } = useQuery<HotTechnologiesData>({
     queryKey: ["hot-technologies"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -53,7 +80,7 @@ export default function TechSkillsPage() {
   });
 
   // Fetch skill demand signals for selected technology (budget-friendly pipeline)
-  const { data: skillDemand } = useQuery({
+  const { data: skillDemand } = useQuery<SkillDemandSignal | null>({
     queryKey: ["skill-demand", selectedTech],
     queryFn: async () => {
       if (!selectedTech) return null;
@@ -66,14 +93,14 @@ export default function TechSkillsPage() {
         .limit(1)
         .maybeSingle();
       if (error) return null;
-      return data as any;
+      return data as SkillDemandSignal | null;
     },
     enabled: !!selectedTech,
     staleTime: 1000 * 60 * 5,
   });
 
   // Fetch top SOC codes/titles from aggregated view for the selected technology
-  const { data: techViewData, isLoading: techViewLoading } = useQuery({
+  const { data: techViewData, isLoading: techViewLoading } = useQuery<TechnologyDemandView | null>({
     queryKey: ["v_technology_demand", selectedTech],
     queryFn: async () => {
       if (!selectedTech) return null;
@@ -83,14 +110,14 @@ export default function TechSkillsPage() {
         .eq("technology_name", selectedTech)
         .maybeSingle();
       if (error) return null;
-      return data as any;
+      return data as TechnologyDemandView | null;
     },
     enabled: !!selectedTech,
     staleTime: 1000 * 60 * 5,
   });
 
   // Fetch occupations for selected technology directly from database
-  const { data: occupationsData, isLoading: occupationsLoading } = useQuery({
+  const { data: occupationsData, isLoading: occupationsLoading } = useQuery<TechOccupationsData | null>({
     queryKey: ["tech-occupations", selectedTech],
     queryFn: async () => {
       if (!selectedTech) return null;
@@ -110,7 +137,7 @@ export default function TechSkillsPage() {
       if (error) throw error;
       return {
         technology: selectedTech,
-        occupations: data || [],
+        occupations: (data || []) as TechOccupation[],
         count: data?.length || 0,
       };
     },
@@ -138,7 +165,7 @@ export default function TechSkillsPage() {
   };
 
   const totalTechs = techsData?.totalCount || 0;
-  const source = (techsData as any)?.source || "db";
+  const source = techsData?.source || "db";
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -255,7 +282,7 @@ export default function TechSkillsPage() {
                           {tech.technology_name}
                         </h4>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {tech.category}
+                          {tech.category || "Uncategorized"}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
