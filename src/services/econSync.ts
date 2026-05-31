@@ -25,7 +25,7 @@ export type EconRow = {
 function getEnv(key: string): string | undefined {
   const win = typeof window !== 'undefined' ? (window as any) : {};
   const env = win.__CAIE_ENV || {};
-  // @ts-ignore
+  // @ts-expect-error import.meta.env is provided by Vite in browser builds.
   return import.meta.env[key] || env[key];
 }
 

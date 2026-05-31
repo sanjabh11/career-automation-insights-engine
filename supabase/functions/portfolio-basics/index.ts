@@ -75,7 +75,7 @@ serve(async (req) => {
 
     // Heuristic tangency-like weights: proportional to return/risk
     const base = items.map(it => (it.risk > 0 ? it.expected_return / it.risk : 0));
-    let weights = normalize(base.map(x=>Math.max(0, x)));
+    const weights = normalize(base.map(x=>Math.max(0, x)));
 
     // Compute portfolio expected return and risk (equal correlation rho)
     const mu = items.reduce((acc, it, i) => acc + weights[i] * it.expected_return, 0);

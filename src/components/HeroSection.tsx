@@ -34,7 +34,9 @@ export function HeroSection() {
     if (trimmed) {
       try {
         localStorage.setItem('planner:lastSearch', trimmed);
-      } catch { }
+      } catch {
+        // localStorage may be unavailable in private or restricted browser contexts.
+      }
     }
     trackAnalyticsEvent({
       event_name: 'hero_search_submit',

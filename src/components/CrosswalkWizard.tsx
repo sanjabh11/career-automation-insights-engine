@@ -164,7 +164,9 @@ function ResultView({ data }: { data: any }) {
                 a.download = `crosswalk_${Date.now()}.csv`;
                 a.click();
                 URL.revokeObjectURL(url);
-              } catch {}
+              } catch {
+                // Export is best-effort in browsers that block object URL downloads.
+              }
             }}
           >
             Download CSV

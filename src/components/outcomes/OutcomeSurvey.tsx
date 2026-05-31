@@ -92,7 +92,9 @@ export function OutcomeSurvey() {
       if (error) throw error;
       setMessage('Outcome recorded. Thank you!');
       // notify list to refresh
-      try { window.dispatchEvent(new CustomEvent('outcome:created')); } catch {}
+      try { window.dispatchEvent(new CustomEvent('outcome:created')); } catch {
+        // Event dispatch is best-effort for embedded or restricted browser contexts.
+      }
       setForm({
         initial_apo_score: '', initial_salary: '', goal_occupation: '', completed_learning_hours: '', skills_acquired: '', transitioned: false, new_salary: '', transition_months: '', satisfaction_score: ''
       });

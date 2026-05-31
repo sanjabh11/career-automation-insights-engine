@@ -244,7 +244,9 @@ function usePersonalizedDefaultTab(fallback: string) {
       const usage: Record<string, number> = raw ? JSON.parse(raw) : {};
       usage[tab] = (usage[tab] || 0) + 1;
       localStorage.setItem(TAB_USAGE_KEY, JSON.stringify(usage));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, []);
 
   return { defaultTab, trackTab };

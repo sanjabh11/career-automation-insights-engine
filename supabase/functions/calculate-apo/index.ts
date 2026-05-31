@@ -404,7 +404,7 @@ serve(async (req) => {
     })) as Record<string, { apo: number; confidence: "low"|"medium"|"high" }>;
 
     // Overall weighting: start from config weights; if tech-heavy, add +10% to technologies by subtracting evenly from others
-    let weights = { ...weightsUsed } as Record<string, number>;
+    const weights = { ...weightsUsed } as Record<string, number>;
     const techItems = byCat.technologies;
     if (techItems.length) {
       const avgTechAdoption = techItems.reduce((a, b) => a + (b.metadata.tech_adoption ?? 0.5), 0) / techItems.length;

@@ -117,7 +117,7 @@ export function AIImpactPlanner() {
     const raw = pfResult.weights.map((w: any) => w.weight as number);
     const capped = raw.map(w => Math.min(w, cap));
     const deficit = 1 - capped.reduce((a, b) => a + b, 0);
-    let adjusted = [...capped];
+    const adjusted = [...capped];
     if (deficit > 0) {
       const underIdx = adjusted.map((w, i) => (w < cap ? i : -1)).filter(i => i >= 0);
       const underTotal = underIdx.reduce((acc, i) => acc + (cap - adjusted[i]), 0);
@@ -286,8 +286,10 @@ export function AIImpactPlanner() {
         searchOccupations(last);
         localStorage.removeItem('planner:lastSearch');
       }
-    } catch { }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
+
   }, []);
 
   // Find similar occupations for custom job title
@@ -581,7 +583,9 @@ export function AIImpactPlanner() {
       try {
         const parsed = JSON.parse(cascadePayload || '[]');
         upstream = Array.isArray(parsed) ? parsed : [];
-      } catch { }
+      } catch {
+        // Invalid upstream JSON is handled by the empty-array validation below.
+      }
       if (upstream.length === 0) {
         toast.error('Provide upstream array JSON');
         setIsCascadeLoading(false);

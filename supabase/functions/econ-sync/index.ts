@@ -122,7 +122,7 @@ function toStr(v: any): string | null {
 }
 function toNum(v: any): number | null {
   if (v === undefined || v === null || v === '') return null;
-  const n = Number(String(v).replace(/[^0-9.\-]/g, ''));
+  const n = Number(String(v).replace(/[^0-9.-]/g, ''));
   return Number.isFinite(n) ? n : null;
 }
 function toInt(v: any): number | null {

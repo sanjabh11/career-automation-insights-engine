@@ -117,7 +117,7 @@ export function AccessibilityToolbar() {
   // Add CSS styles to head instead of using jsx attribute
   useEffect(() => {
     const styleId = 'accessibility-styles';
-    let existingStyle = document.getElementById(styleId);
+    const existingStyle = document.getElementById(styleId);
     
     if (!existingStyle) {
       const style = document.createElement('style');

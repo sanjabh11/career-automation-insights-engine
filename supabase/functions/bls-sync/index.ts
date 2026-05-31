@@ -267,7 +267,7 @@ async function processOEWSCSVText(supabase: any, soc6List: string[], csvText: st
   const toNum = (s: unknown) => {
     const v = typeof s === 'string' ? s : String(s ?? '');
     if (!v) return null;
-    const clean = v.replace(/[^0-9.\-]/g, '');
+    const clean = v.replace(/[^0-9.-]/g, '');
     const n = Number(clean);
     return Number.isFinite(n) ? n : null;
   };

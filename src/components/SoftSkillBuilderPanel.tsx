@@ -67,7 +67,9 @@ export default function SoftSkillBuilderPanel() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setRatings(JSON.parse(raw));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, []);
 
   const groups = useMemo(() => {
@@ -103,10 +105,12 @@ export default function SoftSkillBuilderPanel() {
         }));
       // save only if any
       if (gaps.length) {
-        // @ts-ignore saveSkillGaps signature accepts array from useCareerPlanningStorage
+        // @ts-expect-error saveSkillGaps signature accepts this derived gap array.
         saveSkillGaps(gaps as any);
       }
-    } catch {}
+    } catch {
+      // Skill-gap persistence is best-effort; the local ratings save above is authoritative.
+    }
     setSaving(false);
   };
 

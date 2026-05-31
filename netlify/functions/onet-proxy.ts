@@ -30,7 +30,9 @@ export const handler = async (event: any) => {
       hasUser: !!process.env.ONET_USERNAME,
       hasPass: !!process.env.ONET_PASSWORD,
     });
-  } catch {}
+  } catch {
+    // Debug logging must never block the proxy response.
+  }
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
@@ -56,11 +58,15 @@ export const handler = async (event: any) => {
     const beforeDecode = onetPath;
     try {
       onetPath = decodeURIComponent(onetPath);
-    } catch {}
+    } catch {
+      // If decoding fails, continue with the original path string.
+    }
     if (onetPath.startsWith("/")) onetPath = onetPath.slice(1);
     try {
       console.log("[onet-proxy] path", { beforeDecode, afterDecode: onetPath });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     // Ensure JSON response from O*NET when possible
     if (!/[?&]fmt=/.test(onetPath)) {
@@ -72,7 +78,9 @@ export const handler = async (event: any) => {
 
     try {
       console.log("[onet-proxy] outbound", { target, node: process.version });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     const resp = await fetch(target, {
       headers: {
@@ -91,7 +99,9 @@ export const handler = async (event: any) => {
         bytes: text.length,
         ms: Date.now() - start,
       });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     if (!resp.ok) {
       return {

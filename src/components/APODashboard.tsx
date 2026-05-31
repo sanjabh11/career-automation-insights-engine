@@ -227,7 +227,9 @@ export const APODashboard = () => {
                       <h3 className="text-lg font-semibold text-[var(--text-primary)]">Career Impact Planner</h3>
                       <Button
                         onClick={() => {
-                          try { localStorage.setItem('planner:visited', '1'); } catch {}
+                          try { localStorage.setItem('planner:visited', '1'); } catch {
+                            // localStorage may be unavailable in private or restricted browser contexts.
+                          }
                           navigate('/ai-impact-planner');
                         }}
                         className={`gap-2 ${shouldHighlightPlanner ? 'animate-pulse ring-2 ring-[var(--accent-primary)]/50 shadow-lg shadow-[var(--accent-primary)]/20' : ''}`}

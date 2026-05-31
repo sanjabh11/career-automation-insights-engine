@@ -31,8 +31,8 @@ export const sanitizeOccupationCode = (code: string): string => {
   if (!code || typeof code !== 'string') return '';
   
   // O*NET codes should follow pattern: XX-XXXX.XX
-  const codePattern = /^[\d\-\.]+$/;
-  const cleanCode = code.trim().replace(/[^0-9\-\.]/g, '');
+  const codePattern = /^[\d.-]+$/;
+  const cleanCode = code.trim().replace(/[^0-9.-]/g, '');
   
   if (!codePattern.test(cleanCode)) {
     throw new Error('Invalid occupation code format');

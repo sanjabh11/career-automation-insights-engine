@@ -15,7 +15,7 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 1,406 inherited errors and 93 warnings remain; Phase E touched files passed file-scoped ESLint. |
+| `npm run lint` | Fail | 373 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives and clearing mechanical lint errors. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |

@@ -110,7 +110,7 @@ export function useRoadmaps() {
 
             // 3. Create Milestones in DB
             console.log('Preparing milestones for insertion...');
-            let allMilestones: any[] = [];
+            const allMilestones: any[] = [];
             let orderIndex = 0;
 
             if (aiRoadmap.phases && Array.isArray(aiRoadmap.phases)) {
