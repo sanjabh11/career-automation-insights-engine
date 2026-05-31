@@ -32,7 +32,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
 | Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
-| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 373 explicit-`any` errors and 34 React warnings after inactive backup/archive trees and mechanical non-`any` errors were cleared |
+| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 342 explicit-`any` errors and 34 React warnings after inactive backup/archive trees, mechanical non-`any` errors, and AI Impact Planner payload `any` casts were cleared |
 
 ## Unmet Or Externally Blocked Gates
 

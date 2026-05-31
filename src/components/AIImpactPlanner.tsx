@@ -27,6 +27,113 @@ import type {
 } from '@/components/planner/types';
 import { normalizeOccupation } from '@/components/planner/types';
 
+type ResistanceResult = {
+  resistance_score?: number | string;
+  category?: string;
+  timeline_years?: number | string;
+};
+
+type SkillFreshnessResult = {
+  skill?: string;
+  freshness_score?: number;
+  months_to_80?: number;
+  months_to_60?: number;
+  decay_lambda?: number;
+  critical_threshold?: number;
+  recommended_hours_per_month?: number;
+  assumptions?: {
+    half_life_years?: number;
+  };
+};
+
+type SkillFreshnessDerived = {
+  recommendedHours: number | null;
+  monthsToCritical: number | null;
+  belowCritical: boolean;
+  critical: number;
+};
+
+type SkillComparisonResult = {
+  skills: Array<{
+    name: string;
+    half_life_years: number;
+    maint_hours: number;
+  }>;
+  recommendation: {
+    top_choice: string;
+    reasoning: string[];
+  };
+};
+
+type SimulatorRiskTolerance = 'conservative' | 'balanced' | 'aggressive';
+
+type SimulatorResult = {
+  p_success_12m: number;
+  p_success_18m: number;
+  p_success_24m: number;
+  months_p50: number;
+  months_p90: number;
+  median_salary_at_completion?: number | null;
+};
+
+type CascadeUpstreamItem = Record<string, unknown>;
+type CascadeResult = Record<string, unknown>;
+
+type PortfolioWeight = {
+  skill: string;
+  weight: number;
+};
+
+type PortfolioResult = {
+  expected_return: number;
+  risk: number;
+  diversification_score: number;
+  weights: PortfolioWeight[];
+  rationale?: string[];
+};
+
+type FunctionInvokeResult<TData = unknown> = {
+  data: TData | null;
+  error: Error | { message?: string } | null;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+};
+
+const asString = (value: unknown, fallback = ''): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return fallback;
+};
+
+const getArrayField = (value: unknown, field: string): unknown[] => {
+  if (!isRecord(value)) return [];
+  const fieldValue = value[field];
+  return Array.isArray(fieldValue) ? fieldValue : [];
+};
+
+const getFirstArrayField = (value: unknown, fields: string[]): unknown[] => {
+  for (const field of fields) {
+    const items = getArrayField(value, field);
+    if (items.length > 0) return items;
+  }
+  return [];
+};
+
+const normalizeCipProgram = (item: unknown): CIPProgram => {
+  const record = isRecord(item) ? item : {};
+  return {
+    code: asString(record.code || record.to_code || record.target),
+    title: asString(record.title || record.name || record.desc, 'Unknown Program'),
+    type: asString(record.type || record.category),
+  };
+};
+
+const isSimulatorRiskTolerance = (value: string): value is SimulatorRiskTolerance => {
+  return value === 'conservative' || value === 'balanced' || value === 'aggressive';
+};
+
 // Main component
 export function AIImpactPlanner() {
   // State
@@ -64,12 +171,12 @@ export function AIImpactPlanner() {
   const [coursesForSkill, setCoursesForSkill] = useState<CourseResult[]>([]);
   const [isLoadingCourses, setIsLoadingCourses] = useState(false);
 
-  const [resistanceResult, setResistanceResult] = useState<any | null>(null);
+  const [resistanceResult, setResistanceResult] = useState<ResistanceResult | null>(null);
   const [isComputingResistance, setIsComputingResistance] = useState(false);
   const [sfSkill, setSfSkill] = useState('');
   const [sfAcquiredYear, setSfAcquiredYear] = useState('');
   const [isLoadingFreshness, setIsLoadingFreshness] = useState(false);
-  const [freshnessResult, setFreshnessResult] = useState<any | null>(null);
+  const [freshnessResult, setFreshnessResult] = useState<SkillFreshnessResult | null>(null);
   const [compASkill, setCompASkill] = useState('');
   const [compAYear, setCompAYear] = useState('');
   const [compAHalfLife, setCompAHalfLife] = useState('');
@@ -77,16 +184,16 @@ export function AIImpactPlanner() {
   const [compBYear, setCompBYear] = useState('');
   const [compBHalfLife, setCompBHalfLife] = useState('');
   const [isComparing, setIsComparing] = useState(false);
-  const [compResult, setCompResult] = useState<any | null>(null);
+  const [compResult, setCompResult] = useState<SkillComparisonResult | null>(null);
   const [simHoursPerWeek, setSimHoursPerWeek] = useState(10);
-  const [simRiskTolerance, setSimRiskTolerance] = useState<'conservative' | 'balanced' | 'aggressive'>('balanced');
+  const [simRiskTolerance, setSimRiskTolerance] = useState<SimulatorRiskTolerance>('balanced');
   const [simCurrentSalary, setSimCurrentSalary] = useState('');
   const [simTargetSalary, setSimTargetSalary] = useState('');
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simResult, setSimResult] = useState<any | null>(null);
+  const [simResult, setSimResult] = useState<SimulatorResult | null>(null);
 
   const [cascadePayload, setCascadePayload] = useState('');
-  const [cascadeResult, setCascadeResult] = useState<any | null>(null);
+  const [cascadeResult, setCascadeResult] = useState<CascadeResult | null>(null);
   const [isCascadeLoading, setIsCascadeLoading] = useState(false);
   const [pfItems, setPfItems] = useState<Array<{ skill: string; expected: string; risk: string }>>([
     { skill: '', expected: '', risk: '' },
@@ -94,7 +201,7 @@ export function AIImpactPlanner() {
     { skill: '', expected: '', risk: '' },
   ]);
   const [pfCorrelation, setPfCorrelation] = useState('0.2');
-  const [pfResult, setPfResult] = useState<any | null>(null);
+  const [pfResult, setPfResult] = useState<PortfolioResult | null>(null);
   const [isPfLoading, setIsPfLoading] = useState(false);
   const [scenario, setScenario] = useState<'none' | 'recession' | 'ai'>('none');
 
@@ -114,7 +221,7 @@ export function AIImpactPlanner() {
   const optimizedSuggestion = useMemo(() => {
     if (!pfResult || !pfResult.weights || pfResult.weights.length === 0) return null;
     const cap = 0.4;
-    const raw = pfResult.weights.map((w: any) => w.weight as number);
+    const raw = pfResult.weights.map((w) => w.weight);
     const capped = raw.map(w => Math.min(w, cap));
     const deficit = 1 - capped.reduce((a, b) => a + b, 0);
     const adjusted = [...capped];
@@ -138,8 +245,8 @@ export function AIImpactPlanner() {
         adjusted[minI] = adjusted[minI] + delta;
       }
     }
-    const weights = pfResult.weights.map((w: any, i: number) => ({ skill: w.skill, weight: Math.round(adjusted[i] * 10000) / 10000 }));
-    const concentration = Math.max(...weights.map((w: any) => w.weight)) * 100;
+    const weights = pfResult.weights.map((w, i) => ({ skill: w.skill, weight: Math.round(adjusted[i] * 10000) / 10000 }));
+    const concentration = Math.max(...weights.map((w) => w.weight)) * 100;
     return { weights, concentration: Math.round(concentration * 10) / 10 };
   }, [pfResult, pfCorrelation]);
 
@@ -163,7 +270,7 @@ export function AIImpactPlanner() {
     };
   }, [pfResult, scenario]);
 
-  const freshnessDerived = useMemo(() => {
+  const freshnessDerived = useMemo<SkillFreshnessDerived | null>(() => {
     if (!freshnessResult) return null;
     const halfLife = Number(freshnessResult.assumptions?.half_life_years) || 0;
     const recommendedHours = halfLife ? Math.round((Math.max(1, Math.min(12, 20 / halfLife))) * 10) / 10 : null;
@@ -254,12 +361,10 @@ export function AIImpactPlanner() {
         throw new Error('Unexpected response from search function');
       }
 
-      const occupations = Array.isArray((data as any).occupations)
-        ? (data as any).occupations
-        : [];
+      const occupations = getArrayField(data, 'occupations');
 
       const occs: Occupation[] = occupations
-        .map((o: any) => {
+        .map((o) => {
           const normalized = normalizeOccupation(o);
           if (!normalized.description) {
             normalized.description = 'An occupation from the O*NET database.';
@@ -316,12 +421,10 @@ export function AIImpactPlanner() {
         throw new Error('Unexpected response from search function');
       }
 
-      const occupations = Array.isArray((data as any).occupations)
-        ? (data as any).occupations
-        : [];
+      const occupations = getArrayField(data, 'occupations');
 
       const occs: Occupation[] = occupations
-        .map((o: any) => {
+        .map((o) => {
           const normalized = normalizeOccupation(o);
           if (!normalized.description) {
             normalized.description = 'An occupation from the O*NET database.';
@@ -447,7 +550,7 @@ export function AIImpactPlanner() {
         body: { task: customTask },
       });
       if (error) throw error;
-      setResistanceResult(data);
+      setResistanceResult(data as ResistanceResult);
       toast.success('Resistance scored');
     } catch (_error) {
       toast.error('Failed to score resistance');
@@ -468,7 +571,7 @@ export function AIImpactPlanner() {
         body: { skill: sfSkill.trim(), acquired_year: year },
       });
       if (error) throw error;
-      setFreshnessResult(data);
+      setFreshnessResult(data as SkillFreshnessResult);
       toast.success('Estimated skill freshness');
     } catch (_error) {
       toast.error('Failed to estimate freshness');
@@ -494,16 +597,16 @@ export function AIImpactPlanner() {
       const aManual = parseHL(compAHalfLife);
       const bManual = parseHL(compBHalfLife);
 
-      const invokeHL = async (skill: string, year?: number) => {
+      const invokeHL = async (skill: string, year?: number): Promise<SkillFreshnessResult> => {
         const { data, error } = await supabase.functions.invoke('estimate-skill-half-life', {
           body: { skill: skill.trim(), acquired_year: year },
         });
         if (error) throw error;
-        return data;
+        return data as SkillFreshnessResult;
       };
 
-      let aData: any;
-      let bData: any;
+      let aData: SkillFreshnessResult;
+      let bData: SkillFreshnessResult;
       if (aManual !== null) {
         const hl = aManual;
         const lambda = Math.log(2) / hl;
@@ -567,7 +670,7 @@ export function AIImpactPlanner() {
         },
       });
       if (error) throw error;
-      setSimResult(data);
+      setSimResult(data as SimulatorResult);
       toast.success('Simulation complete');
     } catch (_error) {
       toast.error('Failed to simulate');
@@ -579,10 +682,12 @@ export function AIImpactPlanner() {
   const runCascade = async () => {
     setIsCascadeLoading(true);
     try {
-      let upstream: any[] = [];
+      let upstream: CascadeUpstreamItem[] = [];
       try {
-        const parsed = JSON.parse(cascadePayload || '[]');
-        upstream = Array.isArray(parsed) ? parsed : [];
+        const parsed = JSON.parse(cascadePayload || '[]') as unknown;
+        upstream = Array.isArray(parsed)
+          ? parsed.filter((item): item is CascadeUpstreamItem => isRecord(item))
+          : [];
       } catch {
         // Invalid upstream JSON is handled by the empty-array validation below.
       }
@@ -593,7 +698,7 @@ export function AIImpactPlanner() {
       }
       const { data, error } = await supabase.functions.invoke('cascade-risk', { body: { upstream } });
       if (error) throw error;
-      setCascadeResult(data);
+      setCascadeResult(data as CascadeResult);
       toast.success('Cascade computed');
     } catch (_e) {
       toast.error('Failed to compute cascade');
@@ -629,7 +734,7 @@ export function AIImpactPlanner() {
       const rho = Number.isFinite(rhoParsed) ? rhoParsed : 0.2;
       const { data, error } = await supabase.functions.invoke('portfolio-basics', { body: { items, correlation: rho } });
       if (error) throw error;
-      setPfResult(data);
+      setPfResult(data as PortfolioResult);
       toast.success('Portfolio computed');
     } catch (_e) {
       toast.error('Failed to compute portfolio');
@@ -1390,7 +1495,7 @@ export function AIImpactPlanner() {
                             </div>
                           )}
                           <div className="mt-2">
-                            <SkillFreshnessAlerts skill={freshnessResult.skill} derived={freshnessDerived as any} />
+                            <SkillFreshnessAlerts skill={freshnessResult.skill || sfSkill || 'Skill'} derived={freshnessDerived} />
                           </div>
                         </div>
                       )}
@@ -1422,7 +1527,7 @@ export function AIImpactPlanner() {
                       {compResult && (
                         <div className="mt-3 p-3 bg-[var(--accent-primary)]/10 rounded-md text-sm text-[var(--text-primary)]">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {compResult.skills.map((s: any) => (
+                            {compResult.skills.map((s) => (
                               <div key={s.name} className="p-2 bg-[var(--bg-elevated)] rounded border border-[var(--accent-primary)]/20">
                                 <div className="flex items-center justify-between">
                                   <span className="font-medium">{s.name}</span>
@@ -1623,7 +1728,15 @@ export function AIImpactPlanner() {
                           <Input placeholder="Hours/week" value={String(simHoursPerWeek)} onChange={(e) => setSimHoursPerWeek(Math.max(1, Math.min(60, parseInt(e.target.value || '0'))))} />
                         </div>
                         <div className="md:col-span-1">
-                          <select className="border rounded px-2 py-2 w-full" value={simRiskTolerance} onChange={(e) => setSimRiskTolerance(e.target.value as any)}>
+                          <select
+                            className="border rounded px-2 py-2 w-full"
+                            value={simRiskTolerance}
+                            onChange={(e) => {
+                              if (isSimulatorRiskTolerance(e.target.value)) {
+                                setSimRiskTolerance(e.target.value);
+                              }
+                            }}
+                          >
                             <option value="conservative">Conservative</option>
                             <option value="balanced">Balanced</option>
                             <option value="aggressive">Aggressive</option>
@@ -1785,7 +1898,7 @@ export function AIImpactPlanner() {
                               <div>
                                 <p className="text-xs uppercase tracking-wide text-slate-500 mb-2">Baseline Weights (Model)</p>
                                 <div className="space-y-1">
-                                  {(pfResult.weights || []).map((item: any) => (
+                                  {pfResult.weights.map((item) => (
                                     <div key={item.skill} className="flex justify-between bg-[var(--bg-secondary)] px-3 py-2 rounded border border-slate-200">
                                       <span>{item.skill}</span>
                                       <span>{(item.weight * 100).toFixed(1)}%</span>
@@ -1816,7 +1929,7 @@ export function AIImpactPlanner() {
                                 <div>
                                   <p className="text-xs uppercase tracking-wide text-indigo-600 mb-2">Optimized Allocation (≤40%)</p>
                                   <div className="space-y-1">
-                                    {optimizedSuggestion.weights.map((item: any) => (
+                                    {optimizedSuggestion.weights.map((item) => (
                                       <div key={item.skill} className="flex justify-between bg-[var(--bg-secondary)]/60 px-3 py-2 rounded border border-indigo-200">
                                         <span>{item.skill}</span>
                                         <span>{(item.weight * 100).toFixed(1)}%</span>
@@ -1839,9 +1952,9 @@ export function AIImpactPlanner() {
                           {/* Hedging Card */}
                           {pfResult?.weights && pfResult.weights.length > 1 && (
                             <PortfolioHedgingCard
-                              weights={(pfResult.weights as any[]).map(w => ({ skill: w.skill, weight: Number(w.weight) }))}
+                              weights={pfResult.weights.map(w => ({ skill: w.skill, weight: Number(w.weight) }))}
                               onApply={(next) => {
-                                setPfResult((prev: any) => prev ? { ...prev, weights: next } : prev);
+                                setPfResult((prev) => prev ? { ...prev, weights: next } : prev);
                                 toast.success('Applied hedging suggestions');
                               }}
                             />
@@ -1920,18 +2033,14 @@ export function AIImpactPlanner() {
                               setIsLoadingCIP(true);
                               try {
                                 const codeNorm = (selectedOccupation.code || '').replace(/\.00$/, '');
-                                const invoke = supabase.functions.invoke('crosswalk', { body: { from: 'SOC', code: codeNorm, to: 'CIP' } });
+                                const invoke = supabase.functions.invoke('crosswalk', { body: { from: 'SOC', code: codeNorm, to: 'CIP' } }) as Promise<FunctionInvokeResult>;
                                 const withTimeout = <T,>(p: Promise<T>, ms: number) => new Promise<T>((resolve, reject) => {
                                   const t = setTimeout(() => reject(new Error('Request timed out')), ms);
                                   p.then((v) => { clearTimeout(t); resolve(v); }).catch((e) => { clearTimeout(t); reject(e); });
                                 });
-                                const { data, error } = await withTimeout(invoke as any, 8000) as any;
+                                const { data, error } = await withTimeout(invoke, 8000);
                                 if (error) throw error;
-                                const programs = (data?.results || data?.mappings || data?.items || []).map((item: any) => ({
-                                  code: item.code || item.to_code || item.target || '',
-                                  title: item.title || item.name || item.desc || 'Unknown Program',
-                                  type: item.type || item.category || ''
-                                }));
+                                const programs = getFirstArrayField(data, ['results', 'mappings', 'items']).map(normalizeCipProgram);
                                 setCipPrograms(programs);
                                 if (programs.length === 0) {
                                   toast.error('No accredited programs found for this occupation');
@@ -2057,10 +2166,10 @@ export function AIImpactPlanner() {
                               }
                             });
                             if (error) throw error;
-                            setLearningPathData(data);
+                            setLearningPathData(data as LearningPathData);
                             toast.success('Learning path generated!');
-                          } catch (e: any) {
-                            toast.error(e.message || 'Failed to generate learning path');
+                          } catch (e) {
+                            toast.error(e instanceof Error ? e.message : 'Failed to generate learning path');
                           } finally {
                             setIsGeneratingPath(false);
                           }
