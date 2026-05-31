@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T15:33:58.632Z",
+  "generatedAt": "2026-05-31T16:09:35.869Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -37,10 +37,10 @@
     },
     {
       "id": "phase_d_global_english",
-      "label": "Phase D global-English disclosure/mapping layer",
-      "status": "satisfied_by_mapping_and_us_basis_disclosure",
-      "evidence": "Global-English source registry, sample crosswalks, verifier, and visible U.S.-basis disclosure are present.",
-      "neededEvidence": "If the product needs local wage values instead of disclosure, add source-dated ONS/Job Bank/StatCan/JSA/ABS adapters and tested joins.",
+      "label": "Phase D global-English disclosure/mapping/adapter layer",
+      "status": "satisfied_by_mapping_adapter_and_us_basis_disclosure",
+      "evidence": "Global-English source registry, sample crosswalks, verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present.",
+      "neededEvidence": "If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display.",
       "sourceBoundary": "local verifier",
       "doesNotProve": []
     },

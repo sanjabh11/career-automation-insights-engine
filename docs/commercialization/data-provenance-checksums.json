@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T15:33:58.408Z",
+  "generatedAt": "2026-05-31T16:09:35.668Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "6a17e89df3ec93c997294a2e6932c93ae5954003866851cd4c48eb5fae3a81d0",
+      "sha256": "e65fb29533ca6bbad1ce87d4592a30353e4557995259a6184b0af49562e8bad2",
       "failures": [],
       "passed": true
     },

@@ -14,7 +14,7 @@ The product should be described as a decision-support tool. It estimates automat
 | Validation artifacts | APO/task model cards, calibration report, reliability curve, and calibration JSON are served from `public/docs`. | These artifacts document the current method and fixture evidence; they do not certify scientific validity. |
 | Commercial proof pack | Report evidence, trust-boundary, data-provenance, and commercial release verifiers exist. | Some verifiers generate timestamped docs; live secrets/payment proof remain owner-controlled. |
 | Payments | Stripe subscription price IDs exist for Defender and Coach Pro; bootcamp checkout is hidden with no runtime placeholder price ID. | Live checkout success, live MRR, and bootcamp demand are not proven. |
-| Localization | O*NET/BLS-centered U.S. data remains the wage/outlook backbone; 20 sample occupations have ESCO, UK SOC, Canada NOC, and Australia ANZSCO mapping coverage with a visible U.S.-basis disclosure. | UK, Canada, and Australia wage/outlook values are not yet localized. |
+| Localization | O*NET/BLS-centered U.S. data is the current wage/outlook backbone. Phase D adds 20 sample ESCO, UK SOC, Canada NOC, and Australia ANZSCO mappings plus source-registered UK/Canada/Australia wage/outlook adapter contracts and a visible U.S.-basis disclosure. | UK, Canada, and Australia wage/outlook values are not localized until source-dated adapter joins are imported and validated. |
 
 ## Source Anchors
 
@@ -29,6 +29,9 @@ External context used for current claims, as of 2026-05-31:
 - ESCO API: https://esco.ec.europa.eu/en/about-esco/escopedia/escopedia/esco-api
 - ONS ASHE occupation earnings dataset: https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2
 - Statistics Canada NOC 2021: https://www.statcan.gc.ca/en/subjects/standard/noc/2021/indexV1
+- Canada Job Bank wage methodology: https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology
+- Canada Job Bank 3-year employment outlook methodology: https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology
+- ABS ANZSCO 2022 Australian update: https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022
 - Jobs and Skills Australia occupation profiles: https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations
 
 ## What Is Implemented Now
@@ -37,7 +40,7 @@ External context used for current claims, as of 2026-05-31:
 - Supabase Edge Functions for APO analysis, resume analysis, crosswalk, counselor reports, market intelligence, skill adjacency, bridge roles, and commercial proof-pack flows.
 - Postgres migrations for APO logs, O*NET enrichment, calibration scaffolding, expert assessments, monetization, subscriptions, resume proof artifacts, and commercial lead operations.
 - Public APO/task model cards, calibration report, reliability plot, and calibration JSON.
-- Global-English crosswalk/disclosure scaffolding for O*NET to ESCO, UK SOC, Canada NOC, and Australia ANZSCO sample coverage.
+- Global-English crosswalk/disclosure scaffolding for O*NET to ESCO, UK SOC, Canada NOC, and Australia ANZSCO sample coverage, plus source-registered UK/Canada/Australia wage/outlook adapter contracts.
 - Commercial verifiers for report evidence, secret hygiene, trust boundaries, data provenance, release checks, live Supabase readiness, and route smoke.
 - Activation/retention instrumentation, commercial validation gates, design-partner onboarding checklist, and case-study capture template.
 - Stripe subscription utilities with real Defender and Coach Pro price IDs.
@@ -48,7 +51,7 @@ External context used for current claims, as of 2026-05-31:
 - Live production checkout success.
 - Live Supabase data coverage for every commercial claim.
 - Production calibration against live APO logs and sourced expert-label rows.
-- UK/Canada/Australia localized wage and outlook values.
+- UK/Canada/Australia localized wage and outlook values from source-dated adapter joins.
 - Paid customer traction, MRR, or partner outcomes.
 - Full lint cleanliness; current baseline lint still fails on existing active, backup, and archived code.
 

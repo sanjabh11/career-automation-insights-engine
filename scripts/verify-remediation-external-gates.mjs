@@ -154,10 +154,12 @@ function main() {
     containsAll(globalEnglish, [
       'GLOBAL_ENGLISH_SOURCE_DATE',
       'GLOBAL_ENGLISH_OCCUPATION_CROSSWALKS',
+      'REGIONAL_WAGE_OUTLOOK_ADAPTERS',
+      'source_registered_adapter_pending',
       'getRegionalLaborMarketDisclosure',
       'U.S. O*NET/BLS basis',
     ]) &&
-    containsAll(occupationAnalysis, ['getRegionalLaborMarketDisclosure', 'regionalDisclosure']);
+    containsAll(occupationAnalysis, ['getRegionalLaborMarketDisclosure', 'regionalDisclosure', 'Join requirement:']);
 
   const phaseEReady =
     packageScripts['verify:commercial-validation'] === 'node scripts/verify-phase-e-commercial-validation.mjs' &&
@@ -237,12 +239,12 @@ function main() {
     ),
     gate(
       'phase_d_global_english',
-      'Phase D global-English disclosure/mapping layer',
-      globalEnglishReady ? 'satisfied_by_mapping_and_us_basis_disclosure' : 'missing_local_disclosure_or_mapping',
+      'Phase D global-English disclosure/mapping/adapter layer',
+      globalEnglishReady ? 'satisfied_by_mapping_adapter_and_us_basis_disclosure' : 'missing_local_disclosure_mapping_or_adapter',
       globalEnglishReady
-        ? 'Global-English source registry, sample crosswalks, verifier, and visible U.S.-basis disclosure are present.'
-        : 'Global-English mapping/disclosure scaffolding is incomplete.',
-      'If the product needs local wage values instead of disclosure, add source-dated ONS/Job Bank/StatCan/JSA/ABS adapters and tested joins.'
+        ? 'Global-English source registry, sample crosswalks, verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present.'
+        : 'Global-English mapping/disclosure/adapter scaffolding is incomplete.',
+      'If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display.'
     ),
     gate(
       'phase_e_instrumentation',
@@ -321,7 +323,12 @@ function main() {
   ];
 
   const remainingManualEvidence = gates
-    .filter((item) => item.status !== 'locally_proven' && item.status !== 'locally_proven_with_scope_limit' && item.status !== 'satisfied_by_mapping_and_us_basis_disclosure')
+    .filter((item) => ![
+      'locally_proven',
+      'locally_proven_with_scope_limit',
+      'satisfied_by_mapping_and_us_basis_disclosure',
+      'satisfied_by_mapping_adapter_and_us_basis_disclosure',
+    ].includes(item.status))
     .map((item) => `${item.label}: ${item.neededEvidence}`);
 
   const goalComplete = remainingManualEvidence.length === 0;

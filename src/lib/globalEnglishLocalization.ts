@@ -40,8 +40,23 @@ export interface RegionalLaborMarketDisclosure {
   heading: string;
   message: string;
   classification?: RegionalOccupationMapping;
-  wageStatus: 'us_basis' | 'not_integrated_disclosure_required';
+  wageStatus: 'us_basis' | 'source_registered_adapter_pending' | 'not_integrated_disclosure_required';
+  adapter?: RegionalWageOutlookAdapter;
   sourceIds: string[];
+}
+
+export interface RegionalWageOutlookAdapter {
+  region: Exclude<GlobalEnglishRegion, 'US'>;
+  label: string;
+  valueStatus: 'source_registered_adapter_pending';
+  wageSourceIds: string[];
+  outlookSourceIds: string[];
+  classificationField: 'ukSoc2020' | 'noc2021' | 'anzsco2022';
+  joinLevel: string;
+  requiredFields: string[];
+  releaseMetadataRequired: string[];
+  displayBoundary: string;
+  suppressionBoundary: string;
 }
 
 export const GLOBAL_ENGLISH_SOURCE_DATE = '2026-05-31';
@@ -82,6 +97,13 @@ export const GLOBAL_ENGLISH_OFFICIAL_SOURCES: Record<string, OfficialSource> = {
     asOf: GLOBAL_ENGLISH_SOURCE_DATE,
     claimBoundary: 'Use only for Canada wage displays after joining NOC-specific low, median, and high wage records with source period.',
   },
+  'jobbank-outlooks-methodology': {
+    id: 'jobbank-outlooks-methodology',
+    name: 'Canada Job Bank 3-year employment outlook methodology',
+    url: 'https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology',
+    asOf: GLOBAL_ENGLISH_SOURCE_DATE,
+    claimBoundary: 'Use only for Canada outlook displays after joining NOC, geography, outlook period, and undetermined/suppression status.',
+  },
   'abs-anzsco-2022': {
     id: 'abs-anzsco-2022',
     name: 'ABS ANZSCO 2022 Australian Update',
@@ -95,6 +117,51 @@ export const GLOBAL_ENGLISH_OFFICIAL_SOURCES: Record<string, OfficialSource> = {
     url: 'https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations',
     asOf: GLOBAL_ENGLISH_SOURCE_DATE,
     claimBoundary: 'Use only after joining ANZSCO-level profile data and preserving JSA suppression and update notes.',
+  },
+};
+
+export const REGIONAL_WAGE_OUTLOOK_ADAPTERS: Record<
+  Exclude<GlobalEnglishRegion, 'US'>,
+  RegionalWageOutlookAdapter
+> = {
+  UK: {
+    region: 'UK',
+    label: 'ONS ASHE wage adapter',
+    valueStatus: 'source_registered_adapter_pending',
+    wageSourceIds: ['ons-ashe-table-2'],
+    outlookSourceIds: [],
+    classificationField: 'ukSoc2020',
+    joinLevel: 'UK SOC two-digit wage table; four-digit occupation mappings must be aggregated or separately sourced before display.',
+    requiredFields: ['soc_2_digit', 'earnings_measure', 'sex', 'work_pattern', 'estimate', 'unit', 'suppression_or_quality_flag'],
+    releaseMetadataRequired: ['edition', 'release_date', 'correction_notice', 'next_release'],
+    displayBoundary: 'Do not display UK wage or outlook values until ASHE rows are joined with edition metadata and quality/suppression notes.',
+    suppressionBoundary: 'ONS ASHE Table 2 includes corrections and suppressed estimates; suppressed or corrected rows must not be silently imputed.',
+  },
+  CA: {
+    region: 'CA',
+    label: 'Canada Job Bank wage and outlook adapter',
+    valueStatus: 'source_registered_adapter_pending',
+    wageSourceIds: ['jobbank-wage-methodology'],
+    outlookSourceIds: ['jobbank-outlooks-methodology'],
+    classificationField: 'noc2021',
+    joinLevel: 'NOC 2021 occupation with national, province, territory, or economic-region geography.',
+    requiredFields: ['noc_2021', 'geography', 'low_wage', 'median_wage', 'high_wage', 'wage_period', 'outlook_rating', 'outlook_period'],
+    releaseMetadataRequired: ['date_modified', 'reference_period', 'methodology_url', 'undetermined_or_suppressed_status'],
+    displayBoundary: 'Do not display Canada wage or outlook values until Job Bank rows preserve geography, low/median/high wage, outlook period, and undetermined status.',
+    suppressionBoundary: 'Job Bank wages and outlooks can be approximate, suppressed, or undetermined when local data is limited; the UI must show that status.',
+  },
+  AU: {
+    region: 'AU',
+    label: 'JSA occupation profile adapter',
+    valueStatus: 'source_registered_adapter_pending',
+    wageSourceIds: ['jsa-occupation-profiles'],
+    outlookSourceIds: ['jsa-occupation-profiles'],
+    classificationField: 'anzsco2022',
+    joinLevel: 'ANZSCO occupation profile, with 4-digit values preferred where 6-digit earnings or growth values are unavailable.',
+    requiredFields: ['anzsco', 'employed', 'median_weekly_earnings', 'annual_employment_growth', 'source_basis', 'not_applicable_or_suppressed_status'],
+    releaseMetadataRequired: ['source_period', 'profile_url', 'osca_transition_note'],
+    displayBoundary: 'Do not display Australia wage or outlook values until JSA rows preserve ANZSCO level, N/A values, suppression, and OSCA transition notes.',
+    suppressionBoundary: 'JSA notes that ANZSCO-based occupation pages will stop receiving updates and some 6-digit or high-error estimates are not produced.',
   },
 };
 
@@ -290,7 +357,7 @@ const REGION_LABELS: Record<GlobalEnglishRegion, string> = {
 
 const REGION_CLASSIFICATION_SOURCE_IDS: Record<Exclude<GlobalEnglishRegion, 'US'>, string[]> = {
   UK: ['ons-soc-2020', 'ons-ashe-table-2'],
-  CA: ['statcan-noc-2021', 'jobbank-wage-methodology'],
+  CA: ['statcan-noc-2021', 'jobbank-wage-methodology', 'jobbank-outlooks-methodology'],
   AU: ['abs-anzsco-2022', 'jsa-occupation-profiles'],
 };
 
@@ -332,6 +399,13 @@ export function getRegionalOccupationMapping(
   return crosswalk.anzsco2022;
 }
 
+export function getRegionalWageOutlookAdapter(
+  region: GlobalEnglishRegion,
+): RegionalWageOutlookAdapter | undefined {
+  if (region === 'US') return undefined;
+  return REGIONAL_WAGE_OUTLOOK_ADAPTERS[region];
+}
+
 export function getRegionalLaborMarketDisclosure(
   region: GlobalEnglishRegion,
   socCode: string,
@@ -348,19 +422,24 @@ export function getRegionalLaborMarketDisclosure(
   }
 
   const classification = getRegionalOccupationMapping(socCode, region);
+  const adapter = getRegionalWageOutlookAdapter(region);
   const sourceIds = REGION_CLASSIFICATION_SOURCE_IDS[region];
   const localLabel = REGION_LABELS[region];
   const mappingText = classification
     ? `A ${localLabel} classification mapping is available as ${classification.code} (${classification.title}).`
     : `No reviewed ${localLabel} classification mapping is available for this O*NET occupation yet.`;
+  const adapterText = adapter
+    ? `${adapter.label} is registered, but local wage/outlook rows are not joined yet.`
+    : `No ${localLabel} wage/outlook adapter is registered yet.`;
 
   return {
     region,
     shouldShow: true,
     heading: `${localLabel} labor-market basis`,
-    message: `${mappingText} Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until the ${localLabel} wage/outlook adapter supplies source-dated local values.`,
+    message: `${mappingText} ${adapterText} Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until source-dated local values pass adapter validation.`,
     classification,
-    wageStatus: 'not_integrated_disclosure_required',
+    wageStatus: adapter?.valueStatus ?? 'not_integrated_disclosure_required',
+    adapter,
     sourceIds,
   };
 }
