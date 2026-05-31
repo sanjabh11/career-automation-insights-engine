@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSavedAnalysesUnified } from "@/hooks/useSavedAnalysesUnified";
 
+type SavedAnalysisItem = ReturnType<typeof useSavedAnalysesUnified>["savedAnalyses"][number];
+
 const ComparePage: React.FC = () => {
   const { savedAnalyses, isLoading } = useSavedAnalysesUnified();
   const [selected, setSelected] = useState<string[]>([]);
@@ -17,7 +19,7 @@ const ComparePage: React.FC = () => {
   };
 
   const selectedItems = useMemo(
-    () => savedAnalyses.filter((a: any) => selected.includes(a.id)),
+    () => savedAnalyses.filter((a: SavedAnalysisItem) => selected.includes(a.id)),
     [savedAnalyses, selected]
   );
 
@@ -36,7 +38,7 @@ const ComparePage: React.FC = () => {
           <div className="text-[var(--text-tertiary)] text-sm">No saved analyses available.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {savedAnalyses.map((a: any) => (
+            {savedAnalyses.map((a: SavedAnalysisItem) => (
               <div key={a.id} className={`border rounded-md p-3 bg-[var(--bg-tertiary)] ${selected.includes(a.id) ? 'ring-2 ring-[var(--accent-primary)]' : ''}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
@@ -71,7 +73,7 @@ const ComparePage: React.FC = () => {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {selectedItems.map((a: any) => (
+        {selectedItems.map((a: SavedAnalysisItem) => (
           <Card key={a.id} className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="font-semibold">{a.occupation_title}</div>
