@@ -9,6 +9,7 @@ type Json =
   | Json[];
 
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/posthog";
 
 /**
  * Track an analytics event for the current user (basic interface).
@@ -20,15 +21,22 @@ export async function trackAnalyticsEvent(payload: {
   event_data?: Json;    // Use Json type explicitly!
   page_url?: string;
 }) {
-  // DISABLED: Analytics events table has schema issues
-  // Re-enable after fixing analytics_events table schema in Supabase
-  return;
+  const eventType = payload.event_name.trim();
+  if (!eventType) return;
+
+  const pageUrl = payload.page_url ?? (typeof window !== "undefined" ? window.location.pathname : "");
+  const eventPayload = sanitizeAnalyticsPayload({
+    category: payload.event_category,
+    data: payload.event_data ?? {},
+    page_url: pageUrl,
+  });
+
+  trackEvent(eventType, eventPayload as Record<string, unknown>);
 
   try {
     // In local dev, skip analytics unless explicitly enabled
-    const envAny = (import.meta as any)?.env || {};
-    const enableDev = envAny.VITE_ENABLE_ANALYTICS_DEV === 'true';
-    const isDevBuild = !!envAny.DEV;
+    const enableDev = import.meta.env.VITE_ENABLE_ANALYTICS_DEV === 'true';
+    const isDevBuild = import.meta.env.DEV;
 
     if (!enableDev && isDevBuild) {
       // Never send analytics in local dev by default
@@ -45,17 +53,39 @@ export async function trackAnalyticsEvent(payload: {
       return;
     }
 
-    // Insert using correct column names matching the analytics_events table schema
+    // Match public.analytics_events(event_type, payload) from the baseline migration.
     await supabase.from('analytics_events').insert({
       user_id,
-      event_name: payload.event_name,
-      event_category: payload.event_category,
-      event_data: payload.event_data ?? {},
-      page_url: payload.page_url ?? window.location.pathname,
-      user_agent: navigator.userAgent,
+      event_type: eventType,
+      payload: {
+        ...eventPayload,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+        tracked_at: new Date().toISOString(),
+      },
     });
   } catch (error) {
     console.warn("Analytics event not tracked:", error);
   }
 }
 
+function sanitizeAnalyticsPayload(value: Json): Json {
+  if (typeof value === "string") {
+    return value
+      .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email-redacted]")
+      .slice(0, 500);
+  }
+
+  if (Array.isArray(value)) {
+    return value.slice(0, 25).map(sanitizeAnalyticsPayload);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value)
+        .slice(0, 50)
+        .map(([key, nestedValue]) => [key, sanitizeAnalyticsPayload(nestedValue)])
+    );
+  }
+
+  return value;
+}

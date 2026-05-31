@@ -22,6 +22,11 @@
 - [x] Phase D: Add visible U.S.-basis wage/outlook disclosure for non-US English locales
 - [x] Phase D: Add UK locale Playwright smoke and global-English static verifier
 - [x] Phase D: Run Phase D type, lint, proof, commercial, global-English, and E2E checks
+- [x] Phase E: Re-enable analytics persistence against the real `analytics_events` schema
+- [x] Phase E: Add APO activation, proof-artifact activation, and commercial lead capture events
+- [x] Phase E: Add activation/retention event contract, retention cohorts, and commercial validation gates
+- [x] Phase E: Prepare design-partner onboarding checklist and case-study capture template
+- [x] Phase E: Verify bootcamp CTA remains hidden until a real Stripe price exists
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -42,3 +47,7 @@
 - Phase D `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests after adding UK global-English disclosure coverage.
 - Phase D `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,507 problems; Phase D touched files pass file-scoped ESLint.
 - Phase D deliberately does not claim localized UK/CA/AU wage values. The UI labels non-US views as U.S. O*NET/BLS basis until source-dated local wage/outlook adapters are integrated.
+- Phase E `npm run verify:commercial-validation` passed and confirms activation/retention instrumentation, design-partner onboarding, case-study capture, live MRR/partner/outcome gates, and hidden bootcamp CTA boundary.
+- Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including build and commercial route smoke.
+- Phase E `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,506 problems; Phase E touched files pass file-scoped ESLint.
+- Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.

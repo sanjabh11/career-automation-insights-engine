@@ -316,6 +316,11 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
         event_category: 'engagement',
         event_data: { code: occupation.code, title: occupation.title, latency }
       });
+      trackAnalyticsEvent({
+        event_name: 'activation_apo_result_viewed',
+        event_category: 'activation',
+        event_data: { code: occupation.code, latency }
+      });
       onOccupationSelect(data as Record<string, unknown>);
       toast({
         title: 'APO Analysis Complete',

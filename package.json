@@ -12,6 +12,7 @@
     "smoke:skill-adjacency": "node scripts/verify-skill-adjacency-embedding.mjs",
     "e2e:smoke": "playwright test",
     "verify:global-english": "node scripts/verify-global-english-localization.mjs",
+    "verify:commercial-validation": "node scripts/verify-phase-e-commercial-validation.mjs",
     "index:commercial": "node scripts/generate-commercialization-index.mjs",
     "lint": "eslint .",
     "lint:commercial": "node scripts/lint-commercial-scope.mjs",

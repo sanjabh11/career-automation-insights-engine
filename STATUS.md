@@ -10,18 +10,19 @@ The APO Dashboard is an active decision-support product, not an externally calib
 
 ## Verification Baseline
 
-Last observed Phase D local baseline:
+Last observed Phase E local baseline:
 
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 1,507 existing problems observed, including `SAFE_BACKUP`, archived functions, explicit `any`, empty blocks, and `require()` style imports. Phase D touched files passed file-scoped ESLint. |
+| `npm run lint` | Fail | 1,506 existing problems observed, including `SAFE_BACKUP`, archived functions, explicit `any`, empty blocks, and `require()` style imports. Phase E touched files passed file-scoped ESLint. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
 | `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook disclosure status. |
+| `npm run verify:commercial-validation` | Pass | Confirmed Phase E activation/retention instrumentation, design-partner checklist, case-study template, commercial evidence gates, and hidden bootcamp CTA boundary. |
 | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` | Pass | 6 Playwright smoke tests passed: auth, APO run, Veterans crosswalk, Stripe test-mode checkout, white-label report export, and UK global-English disclosure. |
 
 ## Active Proof Boundaries
@@ -32,6 +33,7 @@ Last observed Phase D local baseline:
 - Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise. For UK, Canada, and Australia browser locales, APO result UI now shows a visible U.S.-basis disclosure and local classification mapping when one of the Phase D sample rows is available.
 - Phase D does not claim localized UK, Canada, or Australia wage/outlook values. Those adapters remain gated on source-specific joins that preserve release dates, suppression notes, and methodology boundaries.
 - Stripe subscription price IDs exist for core tiers; bootcamp checkout is disabled until a real live Stripe price is supplied.
+- Phase E instrumentation prepares activation, retention, design-partner, case-study, and revenue gates. It does not prove live MRR, committed partners, or outcomes until external evidence is attached.
 
 ## Remediation Phases
 
@@ -40,8 +42,8 @@ Last observed Phase D local baseline:
 | A | Truth and claims reconciliation | PR open |
 | B | APO validation, calibration, model cards, and uncertainty disclosure | PR open |
 | C | Runtime verification, embedding fix, crosswalk proof, E2E smoke | PR open |
-| D | Global-English crosswalks and UK/CA/AU wage/outlook localization or disclosure | Complete locally; ready for Phase D PR |
-| E | Commercial validation, activation/retention instrumentation, partners, and MRR proof | Pending |
+| D | Global-English crosswalks and UK/CA/AU wage/outlook localization or disclosure | PR open |
+| E | Commercial validation, activation/retention instrumentation, partners, and MRR proof | Local instrumentation complete; live proof still blocked/manual |
 
 ## Manual Gates
 
@@ -85,3 +87,11 @@ Ask before:
 - Official source-link fetch checks returned 200 for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
 - `OccupationAnalysis` now shows a regional labor-market disclosure for non-US English locales, including the local classification mapping when available and the statement that wage/outlook values remain U.S. O*NET/BLS basis until localized adapters supply source-dated values.
 - `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser smoke tests, including the UK locale disclosure check for Software Developers mapped to UK SOC `2134`.
+
+## Phase E Acceptance Evidence
+
+- `trackAnalyticsEvent` now writes to the actual `analytics_events` schema using `event_type` and `payload`, mirrors configured events to PostHog, skips local dev persistence by default, and redacts/truncates string payloads before storage.
+- PostHog initialization uses an explicit 2026-01-30 defaults snapshot and `identified_only` person profiles; `useSession` identifies/resets users without storing email in the analytics payload.
+- APO success emits `activation_apo_result_viewed`, coach sample generation emits `activation_proof_artifact_created`, and commercial lead capture emits `commercial_lead_captured` without including contact email or report HTML.
+- `commercialLaunchReadiness.ts`, `/proof-pack-gallery`, and `docs/commercialization/phase-e-commercial-validation-playbook.md` define activation/retention event contracts, retention cohort definitions, design-partner onboarding steps, case-study capture fields, and explicit commercial validation gates.
+- Live MRR > $0, at least three committed design partners, and permissioned documented outcomes remain manual/external gates. Local source/test proof must not be described as commercial validation.

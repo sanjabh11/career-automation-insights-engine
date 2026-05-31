@@ -339,6 +339,11 @@ export default function SampleReportPage() {
       branded: !!resolvedBrandConfig.companyName,
       artifact_capture_requested: !!resolvedBrandConfig.contactEmail,
     });
+    trackEvent('activation_proof_artifact_created', {
+      artifact_type: 'coach-sample-report',
+      buyer_segment: 'career-coach',
+      branded: !!resolvedBrandConfig.companyName,
+    });
     const reportPayload = generateSampleReportPayload(selectedData, resolvedBrandConfig);
     const win = window.open('', '_blank');
     if (win) {

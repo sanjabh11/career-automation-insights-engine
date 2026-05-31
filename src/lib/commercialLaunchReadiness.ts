@@ -81,7 +81,259 @@ export interface BuyerLandingRoadmapItem {
   maturity: number;
 }
 
+export interface ActivationRetentionEventSpec {
+  eventName: string;
+  funnelStage: "activation" | "retention" | "revenue" | "commercial_validation";
+  trigger: string;
+  analysisUse: string;
+  sourceSystem: "posthog" | "supabase_analytics_events" | "commercial_leads_metadata" | "stripe_dashboard";
+  privacyBoundary: string;
+  currentProof: string;
+  remainingAction: string;
+  maturity: number;
+}
+
+export interface RetentionCohortDefinition {
+  cohort: string;
+  startEvent: string;
+  returnEvent: string;
+  period: string;
+  successCriterion: string;
+  currentProof: string;
+  remainingAction: string;
+  maturity: number;
+}
+
+export interface CommercialValidationEvidenceGate {
+  gate: string;
+  requiredEvidence: string;
+  currentProof: string;
+  status: "local_ready" | "manual_required" | "blocked";
+  doesNotProve: string;
+}
+
+export interface DesignPartnerOnboardingStep {
+  step: string;
+  owner: "founder" | "partner" | "staff-review";
+  artifact: string;
+  acceptanceEvidence: string;
+  boundary: string;
+}
+
+export interface CaseStudyCaptureTemplateField {
+  field: string;
+  prompt: string;
+  requiredFor: string;
+  privacyBoundary: string;
+}
+
 export const PILOT_VALIDATION_WORKSHEET_FILENAME = "proof-pack-pilot-validation-worksheet.csv";
+
+export const phaseECommercialValidationAsOf = "2026-05-31";
+
+export const activationRetentionEventCatalog: ActivationRetentionEventSpec[] = [
+  {
+    eventName: "search_success",
+    funnelStage: "activation",
+    trigger: "User receives occupation search results.",
+    analysisUse: "Top-of-funnel product engagement and search-to-APO conversion.",
+    sourceSystem: "supabase_analytics_events",
+    privacyBoundary: "Payload is bounded to event category, page path, result count, and redacted/truncated strings.",
+    currentProof: "SearchInterface emits search_success through trackAnalyticsEvent; the hook now writes event_type/payload to analytics_events when enabled.",
+    remainingAction: "Confirm production analytics table accepts rows after the owner deploys the Phase E migration/runtime stack.",
+    maturity: 3.7,
+  },
+  {
+    eventName: "activation_apo_result_viewed",
+    funnelStage: "activation",
+    trigger: "Authenticated user receives the first APO result view.",
+    analysisUse: "Primary activation candidate for APO Dashboard users.",
+    sourceSystem: "supabase_analytics_events",
+    privacyBoundary: "Payload stores occupation code and latency only, not resume text, student data, or contact information.",
+    currentProof: "SearchInterface emits activation_apo_result_viewed immediately after calculate-apo succeeds.",
+    remainingAction: "Compare this event against 4-week and 8-week return cohorts once live event volume exists.",
+    maturity: 3.9,
+  },
+  {
+    eventName: "activation_proof_artifact_created",
+    funnelStage: "activation",
+    trigger: "Coach or staff user generates a sample proof artifact.",
+    analysisUse: "Commercial activation candidate for coaches and proof-pack reviewers.",
+    sourceSystem: "posthog",
+    privacyBoundary: "Payload excludes contact email and report HTML; artifact persistence has a separate consent gate.",
+    currentProof: "SampleReportPage emits activation_proof_artifact_created with artifact type and buyer segment.",
+    remainingAction: "Promote to a Supabase/server event after live lead volume proves this is a stable activation signal.",
+    maturity: 3.6,
+  },
+  {
+    eventName: "commercial_lead_captured",
+    funnelStage: "commercial_validation",
+    trigger: "Consent-backed commercial lead capture persists or enters the offline queue.",
+    analysisUse: "Measures partner-review interest without treating lead capture as revenue.",
+    sourceSystem: "posthog",
+    privacyBoundary: "Event payload stores source, buyer segment, and persistence status only; email stays in commercial_leads under consent controls.",
+    currentProof: "captureCommercialLead emits commercial_lead_captured after RPC persistence or offline fallback.",
+    remainingAction: "Join only aggregate lead counts to case-study and paid-signal fields for launch reviews.",
+    maturity: 3.8,
+  },
+  {
+    eventName: "founder_led_pilot_outreach_click",
+    funnelStage: "commercial_validation",
+    trigger: "Tracked outreach link click from a consent-safe campaign export.",
+    analysisUse: "Manual outreach A/B learning and review-call conversion tracking.",
+    sourceSystem: "commercial_leads_metadata",
+    privacyBoundary: "UTM and lead ID are operational campaign metadata; do not use as consent proof by themselves.",
+    currentProof: "commercialLeadOps exports tracked links and a named analytics_event_name for each campaign row.",
+    remainingAction: "Connect deployed-domain click ingestion or provider webhook sync-back after founder-led validation.",
+    maturity: 3.4,
+  },
+  {
+    eventName: "checkout_completed",
+    funnelStage: "revenue",
+    trigger: "Stripe redirects a subscription checkout success back to the app.",
+    analysisUse: "Revenue conversion event candidate; not MRR proof until reconciled with Stripe live mode and active subscription state.",
+    sourceSystem: "posthog",
+    privacyBoundary: "Payload stores tier only; billing identifiers remain in Stripe and payment_transactions.",
+    currentProof: "UserDashboardPage emits checkout_completed on checkout success URL state.",
+    remainingAction: "Reconcile against live Stripe subscription and MRR report before claiming revenue.",
+    maturity: 3.2,
+  },
+];
+
+export const retentionCohortDefinitions: RetentionCohortDefinition[] = [
+  {
+    cohort: "APO activated users",
+    startEvent: "activation_apo_result_viewed",
+    returnEvent: "activation_apo_result_viewed",
+    period: "4-week and 8-week recurring retention",
+    successCriterion: "Retained users return to run or view another APO result in a later weekly cohort.",
+    currentProof: "Client event is instrumented; PostHog/Supabase can compute retention once live events exist.",
+    remainingAction: "Attach live cohort export with cohort sizes before making retention claims.",
+    maturity: 3.4,
+  },
+  {
+    cohort: "Coach proof-artifact users",
+    startEvent: "activation_proof_artifact_created",
+    returnEvent: "activation_proof_artifact_created",
+    period: "8-week recurring retention",
+    successCriterion: "Coach or staff users return to create a second proof artifact or capture a commercial lead.",
+    currentProof: "Sample report and commercial lead events are instrumented without storing contact email in analytics payloads.",
+    remainingAction: "Collect enough live coach review rows to compare artifact activation to follow-up meetings.",
+    maturity: 3.2,
+  },
+  {
+    cohort: "Design-partner review pipeline",
+    startEvent: "commercial_lead_captured",
+    returnEvent: "founder_led_pilot_outreach_click",
+    period: "30-day pilot-review return window",
+    successCriterion: "Design partner returns to a tracked proof artifact and logs usefulness, trust objection, or meeting data.",
+    currentProof: "Lead ops has tracked links, response fields, usefulness score, paid pilot signal, and case-study permission.",
+    remainingAction: "Founder-led outreach must create real rows; empty fixtures do not prove partner commitment.",
+    maturity: 3.1,
+  },
+];
+
+export const commercialValidationEvidenceGates: CommercialValidationEvidenceGate[] = [
+  {
+    gate: "Live MRR greater than zero",
+    requiredEvidence: "Stripe live-mode active subscription, payment transaction, and MRR export showing total_mrr > 0.",
+    currentProof: "Checkout source and success event hooks exist; no live revenue proof is attached in this repo.",
+    status: "blocked",
+    doesNotProve: "Test-mode checkout, local route smoke, or a configured price ID does not prove live MRR.",
+  },
+  {
+    gate: "Three committed design partners",
+    requiredEvidence: "At least three named coach/career-center/workforce partners with accepted pilot scope, next step, and contact permission.",
+    currentProof: "Lead ops, pilot worksheet, response metrics, and onboarding checklist exist.",
+    status: "manual_required",
+    doesNotProve: "A downloaded sample, email open, or polite reply does not prove a committed partner.",
+  },
+  {
+    gate: "Documented outcomes",
+    requiredEvidence: "Permissioned case-study rows with baseline workflow, artifact reviewed, buyer quote, outcome, caveat, and publication permission.",
+    currentProof: "Case-study permission and response notes are captured in commercial_leads metadata; template fields are defined below.",
+    status: "manual_required",
+    doesNotProve: "A single anecdote does not prove market-wide outcomes or job-placement impact.",
+  },
+  {
+    gate: "Bootcamp CTA hidden or real Stripe price",
+    requiredEvidence: "No runtime placeholder price ID; bootcamp checkout remains hidden until a real live Stripe price is supplied.",
+    currentProof: "BOOTCAMP_PRICING.checkoutStatus is hidden_pending_live_price and stripePriceId is undefined.",
+    status: "local_ready",
+    doesNotProve: "Hidden CTA does not prove bootcamp demand or payment fulfillment.",
+  },
+];
+
+export const designPartnerOnboardingChecklist: DesignPartnerOnboardingStep[] = [
+  {
+    step: "Select design partner segment",
+    owner: "founder",
+    artifact: "Pilot validation worksheet row",
+    acceptanceEvidence: "Buyer segment, reviewer role, organization, and reviewed proof artifact are recorded.",
+    boundary: "Segment selection is a scoping decision, not proof of product-market fit.",
+  },
+  {
+    step: "Confirm planning-only use",
+    owner: "partner",
+    artifact: "Decision-boundary confirmation",
+    acceptanceEvidence: "Partner confirms no hiring, firing, pay, promotion, discipline, layoff, or individual-ranking use.",
+    boundary: "Confirmation supports pilot framing only and does not certify legal compliance.",
+  },
+  {
+    step: "Run artifact review",
+    owner: "staff-review",
+    artifact: "Sample report, cohort proof pack, or role-level CSV audit",
+    acceptanceEvidence: "Usefulness score, trust objection, and missing-source notes are recorded.",
+    boundary: "Review feedback is qualitative until tied to repeated usage, payment, or delivery outcomes.",
+  },
+  {
+    step: "Capture paid-pilot signal",
+    owner: "founder",
+    artifact: "Lead ops response metrics",
+    acceptanceEvidence: "Budget, procurement path, paid discovery interest, or signed next-step scope is recorded.",
+    boundary: "Paid intent is not MRR until live payment and fulfillment are reconciled.",
+  },
+  {
+    step: "Approve case-study use",
+    owner: "partner",
+    artifact: "Case-study permission field and approved quote",
+    acceptanceEvidence: "Permission, redaction level, quote owner, and publishable outcome are recorded.",
+    boundary: "Do not publish private resume, student, workforce, or contact data without explicit permission.",
+  },
+];
+
+export const caseStudyCaptureTemplate: CaseStudyCaptureTemplateField[] = [
+  {
+    field: "baseline_workflow",
+    prompt: "What coaching, advising, or workforce-planning workflow existed before the APO proof artifact?",
+    requiredFor: "All case studies",
+    privacyBoundary: "Describe the workflow, not private client, student, employee, or resume content.",
+  },
+  {
+    field: "artifact_reviewed",
+    prompt: "Which exact sample report, cohort pack, or role-level audit did the partner review?",
+    requiredFor: "Attribution and reproducibility",
+    privacyBoundary: "Use artifact IDs or public sample routes when possible.",
+  },
+  {
+    field: "measured_change",
+    prompt: "What changed after review: meeting booked, pilot scoped, report purchased, workflow adopted, or objection retired?",
+    requiredFor: "Outcome documentation",
+    privacyBoundary: "Do not convert qualitative feedback into numeric impact without measurement.",
+  },
+  {
+    field: "approved_quote",
+    prompt: "What exact quote may be used publicly, and who approved it?",
+    requiredFor: "Public proof",
+    privacyBoundary: "Quote must be permissioned and redact sensitive data by default.",
+  },
+  {
+    field: "does_not_prove",
+    prompt: "Which claims are explicitly not supported by this case study?",
+    requiredFor: "Every public case study",
+    privacyBoundary: "Must include no job-placement, wage-gain, legal-compliance, or market-wide-demand claim unless separately proven.",
+  },
+];
 
 export const commercialLaunchReadinessMilestones: CommercialLaunchReadinessMilestone[] = [
   {

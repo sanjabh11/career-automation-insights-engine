@@ -17,9 +17,13 @@ import {
 } from "@/lib/localLaborMarketSnapshot";
 import { commercialLaunchGateItems, functionSecurityReviewGroups } from "@/lib/commercialLaunchGate";
 import {
+  activationRetentionEventCatalog,
   buildPilotValidationWorksheetCsv,
   buyerLandingPageRoadmap,
+  caseStudyCaptureTemplate,
   commercialLaunchReadinessMilestones,
+  commercialValidationEvidenceGates,
+  designPartnerOnboardingChecklist,
   manualWcagEvidenceChecklist,
   outreachSequenceTemplates,
   paymentFulfillmentStatusItems,
@@ -27,6 +31,7 @@ import {
   pilotFeedbackCaptureFields,
   pilotValidationTargets,
   pilotValidationWorksheetColumns,
+  retentionCohortDefinitions,
   sourceFreshnessDashboardRows,
 } from "@/lib/commercialLaunchReadiness";
 import {
@@ -978,6 +983,112 @@ export default function ProofPackGalleryPage() {
             Does not prove market demand, revenue, legal compliance, employment outcomes, or buyer adoption until real
             review rows, payment proof, and permissioned case-study evidence are attached.
           </p>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-phase-e-commercial-validation="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Phase E commercial validation gates</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Commercial confidence is earned only after live revenue, committed design partners, and permissioned
+                outcomes are attached. Local implementation can prepare the instrumentation and capture workflow, but it
+                does not prove MRR or partner commitment.
+              </p>
+            </div>
+            <Badge className="border-amber-400/30 bg-amber-400/10 text-amber-100">
+              95% remains unearned
+            </Badge>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            {commercialValidationEvidenceGates.map((gate) => (
+              <article key={gate.gate} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-commercial-validation-gate={gate.gate}>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-semibold text-white">{gate.gate}</h3>
+                  <Badge variant="outline" className={gate.status === "blocked" ? "border-red-400/40 text-red-200" : gate.status === "local_ready" ? "border-emerald-400/40 text-emerald-200" : "border-amber-400/40 text-amber-100"}>
+                    {gate.status.replace("_", " ")}
+                  </Badge>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{gate.requiredEvidence}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-400">{gate.currentProof}</p>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{gate.doesNotProve}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-6 xl:grid-cols-2">
+            <div className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-activation-retention-events="true">
+              <h3 className="text-xl font-semibold text-white">Activation and retention event contract</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                Event names are kept explicit so PostHog funnels and Supabase cohort exports can use the same contract.
+              </p>
+              <div className="mt-5 space-y-3">
+                {activationRetentionEventCatalog.map((event) => (
+                  <article key={event.eventName} className="rounded-md border border-slate-800 p-3" data-activation-retention-event={event.eventName}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <code className="text-sm text-emerald-200">{event.eventName}</code>
+                      <Badge variant="outline" className="border-slate-600 text-slate-300">{event.funnelStage}</Badge>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{event.trigger}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">{event.analysisUse}</p>
+                    <p className="mt-2 text-xs leading-5 text-amber-100">{event.privacyBoundary}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-retention-cohort-definitions="true">
+              <h3 className="text-xl font-semibold text-white">Retention cohort definitions</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                These cohorts define what to export once live events exist; empty local fixtures do not satisfy the gate.
+              </p>
+              <div className="mt-5 space-y-3">
+                {retentionCohortDefinitions.map((cohort) => (
+                  <article key={cohort.cohort} className="rounded-md border border-slate-800 p-3" data-retention-cohort={cohort.cohort}>
+                    <h4 className="font-semibold text-white">{cohort.cohort}</h4>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                      <code className="text-emerald-200">{cohort.startEvent}</code> to <code className="text-emerald-200">{cohort.returnEvent}</code>
+                    </p>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">{cohort.period}: {cohort.successCriterion}</p>
+                    <p className="mt-2 text-xs leading-5 text-amber-100">{cohort.remainingAction}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-6 xl:grid-cols-2">
+            <div className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-design-partner-onboarding="true">
+              <h3 className="text-xl font-semibold text-white">Design-partner onboarding checklist</h3>
+              <div className="mt-5 space-y-3">
+                {designPartnerOnboardingChecklist.map((step) => (
+                  <article key={step.step} className="rounded-md border border-slate-800 p-3" data-design-partner-step={step.step}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h4 className="font-semibold text-white">{step.step}</h4>
+                      <Badge variant="outline" className="border-slate-600 text-slate-300">{step.owner}</Badge>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{step.acceptanceEvidence}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">{step.artifact}</p>
+                    <p className="mt-2 text-xs leading-5 text-amber-100">{step.boundary}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-case-study-capture-template="true">
+              <h3 className="text-xl font-semibold text-white">Case-study capture template</h3>
+              <div className="mt-5 space-y-3">
+                {caseStudyCaptureTemplate.map((field) => (
+                  <article key={field.field} className="rounded-md border border-slate-800 p-3" data-case-study-field={field.field}>
+                    <code className="text-sm text-emerald-200">{field.field}</code>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{field.prompt}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-400">{field.requiredFor}</p>
+                    <p className="mt-2 text-xs leading-5 text-amber-100">{field.privacyBoundary}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="mt-12 grid gap-6 lg:grid-cols-2">
