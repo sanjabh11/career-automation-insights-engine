@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-05-31T22:02:28.512Z
+Generated: 2026-05-31T22:07:20.684Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
