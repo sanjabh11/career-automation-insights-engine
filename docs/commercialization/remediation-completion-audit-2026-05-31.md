@@ -30,7 +30,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Report evidence | `npm run verify:report-evidence` from Phase E gate run | Pass |
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
-| Commercial verifier | `npm run verify:commercial` from Phase E gate run | Pass, including build and commercial route smoke |
+| Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
 | Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
 | Full lint | `npm run lint` from Phase E gate run | Fail on inherited repo-wide lint debt: 1,506 problems, mainly `SAFE_BACKUP`, archived functions, legacy explicit `any`, empty blocks, and CommonJS require usage |
 

@@ -19,7 +19,7 @@ Last observed Phase E local baseline:
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
-| `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
+| `npm run verify:commercial` | Pass | Passed, including the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook disclosure status. |
 | `npm run verify:commercial-validation` | Pass | Confirmed Phase E activation/retention instrumentation, design-partner checklist, case-study template, commercial evidence gates, and hidden bootcamp CTA boundary. |
