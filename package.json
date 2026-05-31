@@ -11,6 +11,7 @@
     "generate:phase-b-validation": "node scripts/generate-phase-b-validation-artifacts.mjs",
     "smoke:skill-adjacency": "node scripts/verify-skill-adjacency-embedding.mjs",
     "e2e:smoke": "playwright test",
+    "verify:global-english": "node scripts/verify-global-english-localization.mjs",
     "index:commercial": "node scripts/generate-commercialization-index.mjs",
     "lint": "eslint .",
     "lint:commercial": "node scripts/lint-commercial-scope.mjs",

@@ -175,7 +175,7 @@ export const EmploymentOutlookCard: React.FC<EmploymentOutlookCardProps> = ({
           {/* Data Source Footer */}
           <div className="pt-4 border-t border-gray-200">
             <p className="text-xs text-muted-foreground text-center">
-              Data sourced from O*NET Online • Updated regularly
+              U.S. O*NET/BLS basis unless a localized source is shown
             </p>
           </div>
         </div>
