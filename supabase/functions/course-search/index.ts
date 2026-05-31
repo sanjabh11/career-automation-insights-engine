@@ -29,6 +29,17 @@ interface CourseResult {
   prerequisites?: string[];
 }
 
+interface SerpApiOrganicResult {
+  title?: string;
+  link?: string;
+  snippet?: string;
+}
+
+interface SerpApiSearchResponse {
+  error?: string;
+  organic_results?: SerpApiOrganicResult[];
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -60,7 +71,7 @@ Deno.serve(async (req) => {
           hl: 'en',
           gl: 'us',
           num: '10',
-        });
+        }) as SerpApiSearchResponse;
         
         if (data.error) {
           console.error(`SerpAPI error for ${skill}:`, data.error);
@@ -71,7 +82,7 @@ Deno.serve(async (req) => {
         console.log(`Found ${organicResults.length} results for ${skill}`);
 
         // Process results and extract course information
-        organicResults.forEach((result: any, index: number) => {
+        organicResults.forEach((result, index) => {
           if (isCourseResult(result, skill)) {
             const course = processCourseResult(result, skill, index);
             if (course) {
@@ -122,7 +133,7 @@ Deno.serve(async (req) => {
   }
 });
 
-function isCourseResult(result: any, skill: string): boolean {
+function isCourseResult(result: SerpApiOrganicResult, skill: string): boolean {
   const title = (result.title || '').toLowerCase();
   const snippet = (result.snippet || '').toLowerCase();
   const url = (result.link || '').toLowerCase();
@@ -143,25 +154,28 @@ function isCourseResult(result: any, skill: string): boolean {
   return (hasCourseKeywords || hasPlatformKeywords) && hasSkillKeyword;
 }
 
-function processCourseResult(result: any, skill: string, index: number): CourseResult | null {
+function processCourseResult(result: SerpApiOrganicResult, skill: string, index: number): CourseResult | null {
   try {
-    const provider = extractProvider(result.link);
-    const duration = extractDuration(result.snippet);
-    const level = extractLevel(result.snippet, result.title);
-    const rating = extractRating(result.snippet);
-    const price = extractPrice(result.snippet, result.title);
+    const link = result.link || '#';
+    const title = result.title || 'Untitled Course';
+    const snippet = result.snippet || '';
+    const provider = extractProvider(link);
+    const duration = extractDuration(snippet);
+    const level = extractLevel(snippet, title);
+    const rating = extractRating(snippet);
+    const price = extractPrice(snippet, title);
     
     return {
       id: `course_${Date.now()}_${index}`,
-      title: result.title || 'Untitled Course',
+      title,
       provider: provider,
-      url: result.link || '#',
+      url: link,
       duration: duration,
       level: level,
       rating: rating,
       price: price,
       skills: [skill],
-      description: result.snippet || 'No description available',
+      description: snippet || 'No description available',
       prerequisites: []
     };
   } catch (error) {
