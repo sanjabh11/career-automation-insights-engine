@@ -21,6 +21,14 @@ interface OccupationOption {
     description?: string;
 }
 
+interface BridgeTransition {
+    from_soc: string;
+    to_soc: string;
+    overlap: number;
+    missing_skills?: string[];
+    courses?: string[];
+}
+
 interface BridgePathData {
     origin_soc: string;
     origin_title?: string;
@@ -33,14 +41,10 @@ interface BridgePathData {
     total_distance: number;
     path_length: number;
     feasibility_score: number;
-    transitions?: Array<{
-        from_soc: string;
-        to_soc: string;
-        overlap: number;
-        missing_skills?: string[];
-        courses?: string[];
-    }>;
+    transitions?: BridgeTransition[];
 }
+
+type JsonRecord = Record<string, unknown>;
 
 const EXAMPLE_PATHS: Array<{
     label: string;
@@ -64,15 +68,105 @@ const EXAMPLE_PATHS: Array<{
     },
 ];
 
-function normalizeOccupation(item: any): OccupationOption | null {
-    const code = item?.occupation_code || item?.code || item?.onetsoc_code;
-    const title = item?.occupation_title || item?.title || item?.name;
+const isRecord = (value: unknown): value is JsonRecord =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+    typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+
+const asNumber = (value: unknown): number | undefined =>
+    typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+
+const asStringArray = (value: unknown): string[] =>
+    Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+
+const asNumberArray = (value: unknown): number[] =>
+    Array.isArray(value)
+        ? value.filter((item): item is number => typeof item === 'number' && Number.isFinite(item))
+        : [];
+
+function normalizeOccupation(item: unknown): OccupationOption | null {
+    if (!isRecord(item)) return null;
+
+    const code = asString(item.occupation_code) || asString(item.code) || asString(item.onetsoc_code);
+    const title = asString(item.occupation_title) || asString(item.title) || asString(item.name);
     if (!code || !title) return null;
 
     return {
         code,
         title,
-        description: item?.description || item?.summary || 'O*NET occupation profile',
+        description: asString(item.description) || asString(item.summary) || 'O*NET occupation profile',
+    };
+}
+
+function normalizeTransition(value: unknown): BridgeTransition | null {
+    if (!isRecord(value)) return null;
+
+    const from_soc = asString(value.from_soc);
+    const to_soc = asString(value.to_soc);
+    const overlap = asNumber(value.overlap);
+
+    if (!from_soc || !to_soc || overlap === undefined) return null;
+
+    const missing_skills = asStringArray(value.missing_skills);
+    const courses = asStringArray(value.courses);
+
+    return {
+        from_soc,
+        to_soc,
+        overlap,
+        ...(missing_skills.length > 0 ? { missing_skills } : {}),
+        ...(courses.length > 0 ? { courses } : {}),
+    };
+}
+
+function normalizeBridgePath(value: unknown): BridgePathData | null {
+    if (!isRecord(value)) return null;
+
+    const origin_soc = asString(value.origin_soc);
+    const destination_soc = asString(value.destination_soc);
+    const path_socs = asStringArray(value.path_socs);
+    const skill_overlaps = asNumberArray(value.skill_overlaps);
+    const avg_skill_overlap = asNumber(value.avg_skill_overlap);
+    const total_distance = asNumber(value.total_distance);
+    const path_length = asNumber(value.path_length);
+    const feasibility_score = asNumber(value.feasibility_score);
+
+    if (
+        !origin_soc ||
+        !destination_soc ||
+        path_socs.length === 0 ||
+        avg_skill_overlap === undefined ||
+        total_distance === undefined ||
+        path_length === undefined ||
+        feasibility_score === undefined
+    ) {
+        return null;
+    }
+
+    const origin_title = asString(value.origin_title);
+    const destination_title = asString(value.destination_title);
+    const path_titles = asStringArray(value.path_titles);
+    const transitions = Array.isArray(value.transitions)
+        ? value.transitions.flatMap((transition) => {
+            const normalizedTransition = normalizeTransition(transition);
+            return normalizedTransition ? [normalizedTransition] : [];
+        })
+        : [];
+
+    return {
+        origin_soc,
+        ...(origin_title ? { origin_title } : {}),
+        destination_soc,
+        ...(destination_title ? { destination_title } : {}),
+        path_socs,
+        ...(path_titles.length > 0 ? { path_titles } : {}),
+        skill_overlaps,
+        avg_skill_overlap,
+        total_distance,
+        path_length,
+        feasibility_score,
+        ...(transitions.length > 0 ? { transitions } : {}),
     };
 }
 
@@ -121,13 +215,16 @@ export default function BridgeRolePathway({
 
             if (error) throw error;
 
-            const occupations = Array.isArray((data as any)?.occupations)
-                ? (data as any).occupations
+            const response = isRecord(data) ? data : {};
+            const occupations = Array.isArray(response.occupations)
+                ? response.occupations
                 : [];
 
             const normalized = occupations
-                .map(normalizeOccupation)
-                .filter(Boolean) as OccupationOption[];
+                .flatMap((occupation) => {
+                    const normalizedOccupation = normalizeOccupation(occupation);
+                    return normalizedOccupation ? [normalizedOccupation] : [];
+                });
 
             setResults(normalized);
             setStatusMessage(
@@ -135,12 +232,13 @@ export default function BridgeRolePathway({
                     ? `Found ${normalized.length} matching occupation${normalized.length === 1 ? '' : 's'}.`
                     : 'No matching occupations found. Try a broader title.'
             );
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Unable to search occupations';
             console.error('Occupation search failed:', error);
             setResults([]);
             toast({
                 title: 'Occupation Search Failed',
-                description: error.message || 'Unable to search occupations',
+                description: message,
                 variant: 'destructive'
             });
         } finally {
@@ -193,30 +291,36 @@ export default function BridgeRolePathway({
 
             if (error) throw error;
 
-            if (data && data.success) {
-                setPathData(data.path);
+            const response = isRecord(data) ? data : {};
+            const normalizedPath = response.success === true
+                ? normalizeBridgePath(response.path)
+                : null;
+
+            if (normalizedPath) {
+                setPathData(normalizedPath);
                 setStatusMessage('Bridge path calculated. Review feasibility and skill overlap before using it with a client.');
 
                 toast({
                     title: 'Path Found',
-                    description: `Found ${data.path.path_length === 0 ? 'a direct' : data.path.path_length + '-step'} transition path`,
+                    description: `Found ${normalizedPath.path_length === 0 ? 'a direct' : normalizedPath.path_length + '-step'} transition path`,
                 });
             } else {
                 setPathData(null);
                 setStatusMessage('No feasible path was found for this pair. Try a closer target role.');
                 toast({
                     title: 'No Path Found',
-                    description: data?.error || 'No feasible transition path found',
+                    description: asString(response.error) || 'No feasible transition path found',
                     variant: 'destructive'
                 });
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to find bridge roles';
             console.error('Error finding bridge roles:', error);
             setPathData(null);
             setStatusMessage('Bridge-role calculation failed. Check Edge Function access and seeded occupation data.');
             toast({
                 title: 'Bridge Search Failed',
-                description: error.message || 'Failed to find bridge roles',
+                description: message,
                 variant: 'destructive'
             });
         } finally {
