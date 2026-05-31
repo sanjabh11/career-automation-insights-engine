@@ -6,32 +6,58 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
+type JobZone = {
+  zone_number: number | string;
+  zone_name?: string | null;
+  title?: string | null;
+  description?: string | null;
+  occupationCount?: number | null;
+};
+
+type JobZoneOccupation = {
+  occupation_code: string;
+  occupation_title?: string | null;
+};
+
+type JobZonesResponse = {
+  zones: JobZone[];
+  totalZones: number;
+  source?: string;
+};
+
+type JobZoneDetailResponse = {
+  zone: JobZone;
+  occupations: JobZoneOccupation[];
+  occupationCount: number;
+  source?: string;
+};
+
 export default function BrowseJobZones() {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery<JobZonesResponse>({
     queryKey: ["browse-job-zones"],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("browse-job-zones", {
         method: "POST",
         body: { includeOccupations: false },
-      } as any);
+      });
       if (error) throw error;
-      return data as { zones: any[]; totalZones: number; source?: string };
+      return data as JobZonesResponse;
     },
     staleTime: 60_000,
   });
 
-  const { data: zoneDetails, isLoading: zoneLoading, refetch: refetchZone } = useQuery({
+  const { data: zoneDetails, isLoading: zoneLoading, refetch: refetchZone } = useQuery<JobZoneDetailResponse | null>({
     queryKey: ["browse-job-zones", selectedZone],
     queryFn: async () => {
       if (!selectedZone) return null;
       const { data, error } = await supabase.functions.invoke("browse-job-zones", {
         body: { zone: selectedZone, includeOccupations: true },
-      } as any);
+      });
       if (error) throw error;
-      return data as { zone: any; occupations: any[]; occupationCount: number; source?: string };
+      return data as JobZoneDetailResponse;
     },
     enabled: selectedZone !== null,
     staleTime: 60_000,
@@ -39,7 +65,7 @@ export default function BrowseJobZones() {
 
   const zones = data?.zones || [];
   const source = data?.source || "db";
-  const zsrc = (zoneDetails as any)?.source || "db";
+  const zsrc = zoneDetails?.source || "db";
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -94,7 +120,7 @@ export default function BrowseJobZones() {
                 ← Back to all zones
               </Button>
               <div className="text-sm text-muted-foreground">
-                Zone {selectedZone} • {(zoneDetails as any)?.occupationCount || 0} occupations
+                Zone {selectedZone} • {zoneDetails?.occupationCount || 0} occupations
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -109,7 +135,7 @@ export default function BrowseJobZones() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {(zoneDetails as any)?.occupations?.map((o: any) => (
+            {zoneDetails?.occupations.map((o) => (
               <Card
                 key={o.occupation_code}
                 className="p-4 cursor-pointer hover:shadow-md transition"
