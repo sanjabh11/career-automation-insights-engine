@@ -2,8 +2,30 @@ import React from "react";
 import { Shield, TrendingUp, Clock, Gauge, Info, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+interface PremiumExternalSignals {
+  industrySector?: string | null;
+  blsTrendPct?: number | null;
+  sectorDelayMonths?: number | null;
+  econViabilityDiscount?: number | null;
+}
+
+interface ConfidenceIntervalInput {
+  lower?: number | null;
+  upper?: number | null;
+  iterations?: number | null;
+  n?: number | null;
+}
+
+interface PremiumOccupationSummaryInput {
+  overallAPO?: number | null;
+  confidence?: string | null;
+  timeline?: string | null;
+  externalSignals?: PremiumExternalSignals | null;
+  ci?: ConfidenceIntervalInput | null;
+}
+
 interface PremiumReportSummaryProps {
-  occupation: any;
+  occupation: PremiumOccupationSummaryInput;
   overallAPO: number;
 }
 
@@ -14,20 +36,34 @@ function gradeFromAPO(apo: number) {
   return { grade: "A", label: "Lower Exposure", color: "from-emerald-500 to-teal-500" };
 }
 
+function finiteNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+function clampPercent(value: number): number {
+  return Math.max(0, Math.min(100, value));
+}
+
+function normalizeConfidenceInterval(input?: ConfidenceIntervalInput | null) {
+  const lower = finiteNumber(input?.lower);
+  const upper = finiteNumber(input?.upper);
+  if (lower === undefined || upper === undefined) return undefined;
+
+  const iterations = finiteNumber(input?.iterations ?? input?.n);
+  return {
+    lower,
+    upper,
+    ...(iterations !== undefined && iterations > 0 ? { iterations } : {}),
+  };
+}
+
 export default function PremiumReportSummary({ occupation, overallAPO }: PremiumReportSummaryProps) {
-  const score = Math.max(0, Math.min(100, Number(occupation?.overallAPO ?? overallAPO ?? 0)));
+  const score = clampPercent(finiteNumber(occupation?.overallAPO) ?? finiteNumber(overallAPO) ?? 0);
   const g = gradeFromAPO(score);
-  const confidence = String(occupation?.confidence || "medium");
-  const timeline = String(occupation?.timeline || "2031-2035");
+  const confidence = occupation?.confidence?.trim() || "medium";
+  const timeline = occupation?.timeline?.trim() || "2031-2035";
   const sector = occupation?.externalSignals?.industrySector ?? null;
-  const ciRaw = occupation?.ci;
-  const ci = ciRaw && typeof ciRaw === 'object'
-    ? {
-        lower: Number((ciRaw as any).lower),
-        upper: Number((ciRaw as any).upper),
-        iterations: Number((ciRaw as any).iterations || (ciRaw as any).n || 0) || undefined,
-      }
-    : undefined;
+  const ci = normalizeConfidenceInterval(occupation?.ci);
 
   const conic = `conic-gradient(rgb(45 212 168) ${score}%, #e5e7eb 0)`; // teal accent
   const conicPremium = `conic-gradient(rgb(45 212 168) ${score}%, #e5e7eb 0)`; // teal accent
