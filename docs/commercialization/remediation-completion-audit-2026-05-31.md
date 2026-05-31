@@ -2,7 +2,7 @@
 
 Status date: 2026-05-31
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through runtime env bootstrap type-hardening
+Latest local remediation evidence reviewed: Phase E follow-up through AI Impact Dashboard search parsing type-hardening
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -32,7 +32,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
 | Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
-| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 106 explicit-`any` errors and 34 React warnings after inactive backup/archive trees, mechanical non-`any` errors, and runtime env bootstrap, AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, O*NET enrichment hook, saved-analyses unified hook, saved-analyses remote hook, Occupation Detail, Operations telemetry, export utility, econ-sync, explain-APO, find-bridge-roles, generate-learning-path, search-tasks, manage-context, search-occupations, serpapi-jobs, useSkills error `any` casts, Crosswalk Wizard payload `any` casts, and Saved Analyses Panel callback/share `any` casts were cleared |
+| Full lint | `npm run lint` from Phase E follow-up gate run | Fail on active type-hardening debt: 103 explicit-`any` errors and 34 React warnings after inactive backup/archive trees, mechanical non-`any` errors, and runtime env bootstrap, AI Impact Dashboard search parsing, AI Impact Planner, Outcomes KPI, calculate-APO, Industry dashboard, Validation calibration, Job Zones, Skill Adjacency Graph, O*NET enrichment, Whop webhook, roadmap-generation, task-analysis, BLS sync, heatmap snapshot, skill recommendation, intelligent task-assessment test, personalized skill-recommendation test, Bridge Role Pathway, Ecosystem Risk Card, Premium Report Summary, O*NET enrichment hook, saved-analyses unified hook, saved-analyses remote hook, Occupation Detail, Operations telemetry, export utility, econ-sync, explain-APO, find-bridge-roles, generate-learning-path, search-tasks, manage-context, search-occupations, serpapi-jobs, useSkills error `any` casts, Crosswalk Wizard payload `any` casts, and Saved Analyses Panel callback/share `any` casts were cleared |
 
 ## Unmet Or Externally Blocked Gates
 

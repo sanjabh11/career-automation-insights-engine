@@ -38,6 +38,39 @@ interface Task {
   confidence?: number;
 }
 
+type SearchOccupationRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is SearchOccupationRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function getStringField(value: unknown, keys: string[]): string | undefined {
+  if (!isRecord(value)) return undefined;
+
+  for (const key of keys) {
+    const candidate = value[key];
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate;
+    }
+  }
+
+  return undefined;
+}
+
+function normalizeOccupation(value: unknown): Occupation | null {
+  const code = getStringField(value, ['occupation_code', 'code']);
+  const title = getStringField(value, ['occupation_title', 'title']);
+
+  if (!code || !title) return null;
+
+  const description = getStringField(value, ['description', 'summary']);
+  return {
+    code,
+    title,
+    ...(description ? { description } : {}),
+  };
+}
+
 export function AIImpactDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -87,17 +120,13 @@ export function AIImpactDashboard() {
         throw new Error('Unexpected response from search function');
       }
 
-      const occupationsPayload = Array.isArray((data as any).occupations)
-        ? (data as any).occupations
+      const occupationsPayload = isRecord(data) && Array.isArray(data.occupations)
+        ? data.occupations
         : [];
 
       const results: Occupation[] = occupationsPayload
-        .map((o: any) => ({
-          code: o.occupation_code || o.code,
-          title: o.occupation_title || o.title,
-          description: o.description || o.summary,
-        }))
-        .filter((o: Occupation) => o.code && o.title);
+        .map(normalizeOccupation)
+        .filter((occupation): occupation is Occupation => occupation !== null);
 
       setOccupations(results);
     } catch (error) {
