@@ -7,6 +7,18 @@ const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+type BridgeSupabaseClient = ReturnType<typeof createClient>;
+
+type BridgePathResult = {
+    path_socs: string[];
+    skill_overlaps: number[];
+    avg_skill_overlap: number;
+    total_distance: number;
+    path_length: number;
+    feasibility_score: number;
+    algorithm_used: 'a_star';
+};
+
 /**
  * Find Bridge Roles using A* Pathfinding
  * 
@@ -159,7 +171,7 @@ serve(async (req) => {
 });
 
 // Helper function to get occupation skills
-async function getOccupationSkills(supabase: any, socCode: string): Promise<Set<string>> {
+async function getOccupationSkills(supabase: BridgeSupabaseClient, socCode: string): Promise<Set<string>> {
     const skills = new Set<string>();
 
     // Get knowledge requirements
@@ -169,7 +181,7 @@ async function getOccupationSkills(supabase: any, socCode: string): Promise<Set<
         .eq('onetsoc_code', socCode)
         .gte('data_value', 3.0); // Moderate importance threshold
 
-    knowledge?.forEach((k: any) => skills.add(`knowledge:${k.element_id}`));
+    knowledge?.forEach((k) => skills.add(`knowledge:${k.element_id}`));
 
     // Get ability requirements
     const { data: abilities } = await supabase
@@ -178,7 +190,7 @@ async function getOccupationSkills(supabase: any, socCode: string): Promise<Set<
         .eq('onetsoc_code', socCode)
         .gte('data_value', 3.0);
 
-    abilities?.forEach((a: any) => skills.add(`ability:${a.element_id}`));
+    abilities?.forEach((a) => skills.add(`ability:${a.element_id}`));
 
     return skills;
 }
@@ -193,13 +205,13 @@ function calculateSkillOverlap(skillsA: Set<string>, skillsB: Set<string>): numb
 
 // A* pathfinding to find optimal bridge roles
 async function findBridgePath(
-    supabase: any,
+    supabase: BridgeSupabaseClient,
     origin: string,
     destination: string,
     originSkills: Set<string>,
     destSkills: Set<string>,
     maxLength: number
-): Promise<any | null> {
+): Promise<BridgePathResult | null> {
     // Get related occupations from O*NET
     const { data: relatedOccupations } = await supabase
         .from('onet_occupation_enrichment')
