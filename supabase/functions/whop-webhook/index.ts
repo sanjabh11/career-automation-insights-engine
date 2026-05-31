@@ -20,6 +20,123 @@ const whopWebhookSecret = Deno.env.get('WHOP_WEBHOOK_SECRET')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+type JsonRecord = Record<string, unknown>;
+
+interface WhopEntity {
+  id?: string;
+}
+
+interface WhopUser extends WhopEntity {
+  email?: string;
+}
+
+interface WhopCompany extends WhopEntity {
+  title?: string;
+  name?: string;
+  description?: string;
+  owner?: WhopEntity;
+}
+
+interface WhopMembership extends WhopEntity {
+  license_key?: string;
+  expires_at?: string;
+  valid?: boolean;
+}
+
+interface WhopPlan extends WhopEntity {
+  internal_notes?: string;
+  renewal_product_id?: string;
+}
+
+type WhopPayment = WhopEntity;
+type WhopProduct = WhopEntity;
+
+interface WhopEventData {
+  membership?: WhopMembership;
+  user?: WhopUser;
+  company?: WhopCompany;
+  plan?: WhopPlan;
+  payment?: WhopPayment;
+  product?: WhopProduct;
+}
+
+interface WhopWebhookEvent {
+  id?: string;
+  event?: string;
+  data?: WhopEventData;
+  raw?: JsonRecord;
+}
+
+const isRecord = (value: unknown): value is JsonRecord =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.trim() ? value.trim() : undefined;
+
+const toWhopEntity = (value: unknown): WhopEntity | undefined =>
+  isRecord(value) ? { id: asString(value.id) } : undefined;
+
+const toWhopUser = (value: unknown): WhopUser | undefined => {
+  if (!isRecord(value)) return undefined;
+  return {
+    id: asString(value.id),
+    email: asString(value.email),
+  };
+};
+
+const toWhopCompany = (value: unknown): WhopCompany | undefined => {
+  if (!isRecord(value)) return undefined;
+  return {
+    id: asString(value.id),
+    title: asString(value.title),
+    name: asString(value.name),
+    description: asString(value.description),
+    owner: toWhopEntity(value.owner),
+  };
+};
+
+const toWhopMembership = (value: unknown): WhopMembership | undefined => {
+  if (!isRecord(value)) return undefined;
+  return {
+    id: asString(value.id),
+    license_key: asString(value.license_key),
+    expires_at: asString(value.expires_at),
+    valid: typeof value.valid === 'boolean' ? value.valid : undefined,
+  };
+};
+
+const toWhopPlan = (value: unknown): WhopPlan | undefined => {
+  if (!isRecord(value)) return undefined;
+  return {
+    id: asString(value.id),
+    internal_notes: asString(value.internal_notes),
+    renewal_product_id: asString(value.renewal_product_id),
+  };
+};
+
+const parseWhopEvent = (body: string): WhopWebhookEvent => {
+  const payload = JSON.parse(body) as unknown;
+  if (!isRecord(payload)) return {};
+  const data = isRecord(payload.data) ? payload.data : {};
+
+  return {
+    id: asString(payload.id),
+    event: asString(payload.event),
+    raw: payload,
+    data: {
+      membership: toWhopMembership(data.membership),
+      user: toWhopUser(data.user),
+      company: toWhopCompany(data.company),
+      plan: toWhopPlan(data.plan),
+      payment: toWhopEntity(data.payment),
+      product: toWhopEntity(data.product),
+    },
+  };
+};
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : 'Unknown error';
+
 // CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,20 +159,21 @@ serve(async (req) => {
       return new Response('Invalid signature', { status: 401 });
     }
 
-    const event = JSON.parse(body);
+    const event = parseWhopEvent(body);
+    const eventId = event.id || crypto.randomUUID();
     console.log(`[Whop Webhook] Received event: ${event.event}`);
 
     // Log event for audit
     const { error: logError } = await supabase
       .from('whop_webhook_events')
       .insert({
-        whop_event_id: event.id || crypto.randomUUID(),
+        whop_event_id: eventId,
         event_type: event.event,
         whop_user_id: event.data?.user?.id,
         whop_membership_id: event.data?.membership?.id,
         whop_company_id: event.data?.company?.id,
         whop_product_id: event.data?.product?.id,
-        payload: event,
+        payload: event.raw ?? event,
         processed: false,
       });
 
@@ -105,7 +223,7 @@ serve(async (req) => {
           processed = true; // Mark as processed to avoid retries
       }
     } catch (err) {
-      errorMessage = err.message;
+      errorMessage = getErrorMessage(err);
       console.error(`[Whop Webhook] Error processing ${event.event}:`, err);
     }
 
@@ -117,7 +235,7 @@ serve(async (req) => {
         processed_at: processed ? new Date().toISOString() : null,
         error_message: errorMessage,
       })
-      .eq('whop_event_id', event.id);
+      .eq('whop_event_id', eventId);
 
     return new Response(
       JSON.stringify({ received: true, processed }),
@@ -130,7 +248,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('[Whop Webhook] Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: getErrorMessage(error) }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -179,7 +297,7 @@ function verifyWebhookSignature(
 // EVENT HANDLERS
 // ============================================================================
 
-async function handleMembershipValid(data: any) {
+async function handleMembershipValid(data: WhopEventData = {}) {
   const { membership, user, company, plan } = data;
   
   console.log(`[Whop] Membership valid: ${membership?.id} for user ${user?.id}`);
@@ -207,7 +325,7 @@ async function handleMembershipValid(data: any) {
   }
 }
 
-async function handleMembershipInvalid(data: any) {
+async function handleMembershipInvalid(data: WhopEventData = {}) {
   const { membership, user, company } = data;
   
   console.log(`[Whop] Membership invalid: ${membership?.id} for user ${user?.id}`);
@@ -238,7 +356,7 @@ async function handleMembershipInvalid(data: any) {
     .eq('whop_user_id', user?.id);
 }
 
-async function handleMembershipCreated(data: any) {
+async function handleMembershipCreated(data: WhopEventData = {}) {
   const { membership, user, company, plan } = data;
   
   console.log(`[Whop] Membership created: ${membership?.id} for user ${user?.id}`);
@@ -263,7 +381,7 @@ async function handleMembershipCreated(data: any) {
   });
 }
 
-async function handlePaymentCompleted(data: any) {
+async function handlePaymentCompleted(data: WhopEventData = {}) {
   const { payment, membership, user } = data;
   
   console.log(`[Whop] Payment completed: ${payment?.id} for membership ${membership?.id}`);
@@ -289,7 +407,7 @@ async function handlePaymentCompleted(data: any) {
   }
 }
 
-async function handlePaymentFailed(data: any) {
+async function handlePaymentFailed(data: WhopEventData = {}) {
   const { payment, membership, user } = data;
   
   console.log(`[Whop] Payment failed: ${payment?.id} for membership ${membership?.id}`);
@@ -308,7 +426,7 @@ async function handlePaymentFailed(data: any) {
   // TODO: Send notification to user about failed payment
 }
 
-async function handleCompanyUpdate(data: any) {
+async function handleCompanyUpdate(data: WhopEventData = {}) {
   const { company } = data;
   
   console.log(`[Whop] Company update: ${company?.id}`);
@@ -320,7 +438,7 @@ async function handleCompanyUpdate(data: any) {
 // HELPER FUNCTIONS
 // ============================================================================
 
-function mapPlanToTier(planIdentifier: string | null): string {
+function mapPlanToTier(planIdentifier: string | null | undefined): string {
   if (!planIdentifier) return 'free';
   
   const lower = planIdentifier.toLowerCase();
@@ -334,7 +452,7 @@ function mapPlanToTier(planIdentifier: string | null): string {
   return 'free';
 }
 
-async function ensureCommunityExists(company: any) {
+async function ensureCommunityExists(company?: WhopCompany) {
   if (!company?.id) return;
 
   const { data: existing } = await supabase
