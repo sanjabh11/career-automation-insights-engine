@@ -8,6 +8,41 @@ import { supabase } from "@/integrations/supabase/client";
 import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle, ShieldCheck, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+type ApoLogRow = {
+  latency_ms?: number | null;
+  tokens_used?: number | null;
+  created_at?: string | null;
+  user_id?: string | null;
+  error?: string | null;
+  cohort?: string | null;
+};
+
+type WebVitalRow = {
+  name?: string | null;
+  value?: number | null;
+  created_at?: string | null;
+};
+
+type OutcomeKpi = {
+  analyses30: number;
+  analyses90: number;
+  mau90: number;
+  tokens90: number;
+  p95Latency: number;
+  p99Latency: number;
+  p95LCP: number;
+  uptimePct: number;
+  errorBudgetUsed: number;
+  totalRequests30: number;
+  failures30: number;
+};
+
+type OutcomesQueryData = {
+  kpi: OutcomeKpi;
+  apoLogs: ApoLogRow[];
+  vitals: WebVitalRow[];
+};
+
 function percentile(arr: number[], p: number) {
   if (arr.length === 0) return 0;
   const s = [...arr].sort((a, b) => a - b);
@@ -22,7 +57,7 @@ export default function OutcomesPage() {
   const [cohort, setCohort] = React.useState<string>("all");
   const [useSyntheticCohort, setUseSyntheticCohort] = React.useState(false);
 
-  const { data: kpis, isLoading } = useQuery({
+  const { data: kpis, isLoading } = useQuery<OutcomesQueryData>({
     queryKey: ["outcomes-kpis", cohort],
     queryFn: async () => {
       // Saved analyses counts (proxy for outcomes created/exports)
@@ -39,34 +74,36 @@ export default function OutcomesPage() {
         .order("created_at", { ascending: false })
         .limit(2000);
       if (cohort !== "all") {
-        apoQuery = (apoQuery as any).eq("cohort", cohort);
+        apoQuery = apoQuery.eq("cohort", cohort);
       }
-      const { data: apoLogs } = await apoQuery;
+      const { data: apoLogData } = await apoQuery;
+      const apoLogs = (apoLogData || []) as ApoLogRow[];
 
       // Web vitals for performance (last 14 days)
       const d14 = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: vitals } = await (supabase as any)
+      const { data: vitalsData } = await supabase
         .from("web_vitals")
         .select("name, value, created_at")
         .gte("created_at", d14)
         .order("created_at", { ascending: false })
         .limit(1000);
+      const vitals = (vitalsData || []) as WebVitalRow[];
 
       // Aggregate
-      const latencies = (apoLogs || []).map((l: any) => Number(l.latency_ms || 0)).filter((n) => n > 0);
-      const tokens = (apoLogs || []).map((l: any) => Number(l.tokens_used || 0)).filter((n) => n > 0);
-      const users90 = new Set((apoLogs || []).map((l: any) => l.user_id).filter(Boolean));
-      const logs30 = (apoLogs || []).filter((l: any) => new Date(l.created_at).toISOString() >= d30);
+      const latencies = apoLogs.map((l) => Number(l.latency_ms || 0)).filter((n) => n > 0);
+      const tokens = apoLogs.map((l) => Number(l.tokens_used || 0)).filter((n) => n > 0);
+      const users90 = new Set(apoLogs.map((l) => l.user_id).filter(Boolean));
+      const logs30 = apoLogs.filter((l) => l.created_at && new Date(l.created_at).toISOString() >= d30);
       const total30 = logs30.length;
-      const failures30 = logs30.filter((l: any) => l.error && String(l.error).trim().length > 0).length;
+      const failures30 = logs30.filter((l) => l.error && String(l.error).trim().length > 0).length;
       const uptimePct = total30 > 0 ? Math.round(((total30 - failures30) / total30) * 10000) / 100 : 100;
       const SLO = 99.5; // percent
       const allowedErrors = Math.max(1, Math.floor((1 - SLO / 100) * total30));
       const errorBudgetUsed = Math.min(100, Math.round((failures30 / allowedErrors) * 100));
 
-      const lcpValues = (vitals || [])
-        .filter((v: any) => (v.name || "").toUpperCase().includes("LCP"))
-        .map((v: any) => Number(v.value || 0));
+      const lcpValues = vitals
+        .filter((v) => (v.name || "").toUpperCase().includes("LCP"))
+        .map((v) => Number(v.value || 0));
 
       const kpi = {
         analyses30: sa30.count ?? 0,
@@ -82,14 +119,14 @@ export default function OutcomesPage() {
         failures30,
       };
 
-      return { kpi, apoLogs: apoLogs || [], vitals: vitals || [] };
+      return { kpi, apoLogs, vitals };
     },
     staleTime: 60_000,
   });
 
   const csv = useMemo(() => {
     if (!kpis) return "";
-    const { kpi } = kpis as any;
+    const { kpi } = kpis;
     const rows = [
       ["Metric", "Value"],
       ["Analyses (30d)", kpi.analyses30],
@@ -116,6 +153,8 @@ export default function OutcomesPage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const kpi = kpis?.kpi;
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -193,16 +232,16 @@ export default function OutcomesPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Analyses (30 days)</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : (kpis as any)?.kpi.analyses30}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : kpi?.analyses30}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Analyses (90 days)</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : (kpis as any)?.kpi.analyses90}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : kpi?.analyses90}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Monthly Active Users (90d)</div>
           <div className="text-3xl font-bold flex items-center gap-2">
-            <Users className="h-6 w-6 text-green-600" /> {isLoading ? "–" : (kpis as any)?.kpi.mau90}
+            <Users className="h-6 w-6 text-green-600" /> {isLoading ? "–" : kpi?.mau90}
           </div>
         </Card>
       </div>
@@ -210,30 +249,30 @@ export default function OutcomesPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Latency p95 (ms)</div>
-          <div className="text-3xl font-bold flex items-center gap-2"><Clock className="h-6 w-6 text-green-600" />{isLoading ? "–" : (kpis as any)?.kpi.p95Latency}</div>
+          <div className="text-3xl font-bold flex items-center gap-2"><Clock className="h-6 w-6 text-green-600" />{isLoading ? "–" : kpi?.p95Latency}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Latency p99 (ms)</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : (kpis as any)?.kpi.p99Latency}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : kpi?.p99Latency}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Tokens Used (90d)</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : (kpis as any)?.kpi.tokens90}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : kpi?.tokens90}</div>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Uptime (30d)</div>
-          <div className="text-3xl font-bold flex items-center gap-2"><ShieldCheck className="h-6 w-6 text-green-600" />{isLoading ? "–" : `${(kpis as any)?.kpi.uptimePct}%`}</div>
+          <div className="text-3xl font-bold flex items-center gap-2"><ShieldCheck className="h-6 w-6 text-green-600" />{isLoading ? "–" : `${kpi?.uptimePct}%`}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Error Budget Used</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : `${(kpis as any)?.kpi.errorBudgetUsed}%`}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : `${kpi?.errorBudgetUsed}%`}</div>
         </Card>
         <Card className="p-4">
           <div className="text-sm text-muted-foreground">Requests/Failures (30d)</div>
-          <div className="text-3xl font-bold">{isLoading ? "–" : `${(kpis as any)?.kpi.totalRequests30}/${(kpis as any)?.kpi.failures30}`}</div>
+          <div className="text-3xl font-bold">{isLoading ? "–" : `${kpi?.totalRequests30}/${kpi?.failures30}`}</div>
         </Card>
       </div>
 
@@ -253,9 +292,9 @@ export default function OutcomesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(kpis as any)?.apoLogs?.slice(0, 20).map((r: any, i: number) => (
+              {kpis?.apoLogs.slice(0, 20).map((r, i) => (
                 <TableRow key={i}>
-                  <TableCell className="text-xs">{new Date(r.created_at).toLocaleString()}</TableCell>
+                  <TableCell className="text-xs">{r.created_at ? new Date(r.created_at).toLocaleString() : "—"}</TableCell>
                   <TableCell>{r.latency_ms}</TableCell>
                   <TableCell>{r.tokens_used}</TableCell>
                 </TableRow>
@@ -270,7 +309,7 @@ export default function OutcomesPage() {
           <h3 className="font-semibold">Web Vitals Summary (LCP p95 over last 14d)</h3>
         </div>
         <div className="text-sm text-muted-foreground">
-          {isLoading ? "Loading…" : `${(kpis as any)?.kpi.p95LCP || 0} ms`}
+          {isLoading ? "Loading…" : `${kpi?.p95LCP || 0} ms`}
         </div>
       </Card>
 

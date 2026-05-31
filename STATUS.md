@@ -15,7 +15,7 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | 342 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner payload paths. |
+| `npm run lint` | Fail | 319 explicit-`any` errors and 34 React warnings remain after excluding inactive backups/archives, clearing mechanical lint errors, and type-hardening the AI Impact Planner and Outcomes KPI payload paths. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
