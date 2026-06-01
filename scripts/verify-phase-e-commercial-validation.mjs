@@ -123,12 +123,17 @@ assert(/stripe-test-checkout-proof-latest\.json/.test(files.liveGateEvidenceComp
 assert(/stripe-live-mrr-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume Stripe live MRR proof artifacts');
 assert(/production-calibration-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume production calibration proof artifacts');
 assert(/live-auth-e2e-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume authenticated live e2e proof artifacts');
+assert(/validateLiveEvidence/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must return the validation follow-up command');
+assert(/finalReadOnlyLedger/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must return the read-only final ledger command');
+assert(/refreshTrackedLedger/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must return the tracked-ledger refresh command');
 assert(/future-dated/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject future-dated metadata');
 assert(/later than asOf/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject observedAt later than asOf');
 assert(/COMMERCIAL_EVIDENCE_HASH_SALT/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must support owner-held hash salt env');
 assert(/validateCommercialEvidence/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must validate composed records');
 assert(/partnerRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held partner refs');
 assert(/outcomeRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held outcome refs');
+assert(/finalReadOnlyLedger/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must return the read-only final ledger command');
+assert(/refreshTrackedLedger/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must return the tracked-ledger refresh command');
 assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');
 assert(/documented_outcomes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover documented outcomes');
 assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted partner records');
@@ -137,6 +142,8 @@ assert(/uniqueDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier),
 assert(/uniqueOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique outcome hashes');
 assert(/future-dated/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject future-dated metadata');
 assert(/later than asOf/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject record dates later than asOf');
+assert(/composeFromOwnerIntake/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must publish the owner-intake compose command');
+assert(/refreshTrackedLedger/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must publish the tracked-ledger refresh command');
 assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/2026-06-01\.apo-commercial-evidence-intake\.v1/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must declare the expected schema version');

@@ -467,6 +467,8 @@ const checks = [
       /"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs"/,
       /"verify:commercial-evidence-records:write": "node scripts\/verify-commercial-evidence-records\.mjs --write"/,
       /"verify:repo-presentation": "node scripts\/verify-repo-presentation\.mjs"/,
+      /"verify:repo-presentation:github": "node scripts\/verify-repo-presentation\.mjs --with-github-api"/,
+      /"verify:repo-presentation:write": "node scripts\/verify-repo-presentation\.mjs --with-github-api --write"/,
       /"verify:data-provenance": "node scripts\/verify-commercial-data-provenance\.mjs --write"/,
       /"verify:onet-task-ratings": "node scripts\/verify-onet-task-ratings-ingest\.mjs"/,
       /"verify:onet-task-ratings-live": "node scripts\/verify-onet-task-ratings-live\.mjs --write"/,

@@ -8,6 +8,8 @@ When describing this repository to GitHub, open-source, or tool-access reviewers
 
 > APO Dashboard uses Codex-assisted maintenance for PR review, CI triage, regression-test coverage, Supabase/Stripe/Gemini integration checks, and source-labeled workforce data-pipeline updates. The repository is MIT-licensed and actively maintained, but it does not use stars, popularity, commercial traction, or broad adoption as proof of maturity.
 
+Application copy should explain which review, CI, regression, and data-pipeline workload Codex reduces for maintainers. Avoid broad claims about market leadership, scientific validation, popularity, or production certification.
+
 Avoid language that frames the repository as externally validated, market-proven, broadly adopted, award-ready, or production-certified unless the exact evidence is present in the current branch and linked from the PR.
 
 ## Good First Contribution Areas

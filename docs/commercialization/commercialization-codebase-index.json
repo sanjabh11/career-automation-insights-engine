@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:22:40.697Z",
+  "generatedAt": "2026-06-01T10:33:49.743Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -713,6 +713,14 @@
     {
       "name": "verify:repo-presentation",
       "command": "node scripts/verify-repo-presentation.mjs"
+    },
+    {
+      "name": "verify:repo-presentation:github",
+      "command": "node scripts/verify-repo-presentation.mjs --with-github-api"
+    },
+    {
+      "name": "verify:repo-presentation:write",
+      "command": "node scripts/verify-repo-presentation.mjs --with-github-api --write"
     },
     {
       "name": "verify:report-evidence",

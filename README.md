@@ -12,10 +12,10 @@ GitHub metadata and public-review framing should stay grounded in what this repo
 
 | Weak signal | Current handling | Approved framing |
 | --- | --- | --- |
-| Repository description | The GitHub repository description is set to "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines." | Cite this as scope, not adoption. |
-| License visibility | The repository uses MIT licensing in `LICENSE`; GitHub will expose the license field after the license file is present on the default branch. | Say "MIT-licensed source code" only when the current branch or default branch includes `LICENSE`. |
+| Repository description | As of 2026-06-01, the GitHub API returns "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines." | Cite this as scope, not adoption. Recheck with `npm run verify:repo-presentation:github`. |
+| License visibility | The repository uses MIT licensing in `LICENSE` and `package.json`. GitHub derives the API `license` field from the default branch, so it may remain `null` until the default branch includes `LICENSE`. | Say "MIT-licensed source code" only when the current branch or default branch includes `LICENSE`; do not claim the default-branch API has detected it until it does. |
 | Stars and popularity | Stars are not used as evidence of maturity or adoption. | Emphasize active maintenance, PR review, CI checks, regression tests, and source-labeled data-pipeline maintenance. |
-| External applications | Reviewer-facing copy should be operational rather than promotional. | Focus on how Codex helps reduce maintainer burden across PR review, CI failures, regression coverage, Supabase/Stripe/Gemini integration checks, and data-source refresh work. |
+| External applications | Reviewer-facing copy should be operational rather than promotional. | Focus on how Codex reduces maintainer burden across PR review, CI failures, regression coverage, Supabase/Stripe/Gemini integration checks, and data-source refresh work. |
 
 ## Current Evidence Boundary
 
@@ -91,6 +91,7 @@ npm run verify:commercial
 | --- | --- | --- |
 | PR review baseline | `npx tsc --noEmit`, `npm run lint`, `npm run verify:secrets` | Catch TypeScript, lint, and secret hygiene regressions before review. |
 | Repository presentation | `npm run verify:repo-presentation` | Keep license, GitHub-description framing, and no-star/adoption boundaries reviewable. |
+| GitHub metadata audit | `npm run verify:repo-presentation:github`, `npm run verify:repo-presentation:write` | Recheck the GitHub API description, branch-visible license file, star-boundary framing, and tracked repo-presentation audit artifact. |
 | Proof-pack regression | `npm run verify:commercial` | Rebuild commercial evidence ledgers, run trust/data-provenance/build checks, and smoke commercial routes. |
 | Runtime smoke | `.github/workflows/phase-c-runtime-smoke.yml`, `npm run smoke:skill-adjacency`, `npm run e2e:smoke` | Keep embedding, APO, crosswalk, checkout, report-export, and proof-boundary flows from drifting. |
 | Source/data maintenance | `npm run verify:data-provenance`, `npm run verify:sources` | Track source-labeled artifacts, checksums, and official-source refresh boundaries. |
