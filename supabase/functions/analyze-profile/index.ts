@@ -42,7 +42,7 @@ interface ProfileAnalysisResult {
     estimatedDuration?: string;
   }>;
   matchScore?: number;
-  matchFactors?: Record<string, any>;
+  matchFactors?: Record<string, unknown>;
   estimatedTransitionMonths?: number;
 }
 

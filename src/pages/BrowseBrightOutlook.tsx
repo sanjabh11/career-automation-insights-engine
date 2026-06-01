@@ -14,6 +14,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function BrowseBrightOutlook() {
   const PAGE_SIZE = 20;
+  const categories: Array<{ label: string; value: string | undefined }> = [
+    { label: "All", value: undefined },
+    { label: "Rapid Growth", value: "Rapid Growth" },
+    { label: "Numerous Openings", value: "Numerous Openings" },
+    { label: "New & Emerging", value: "New & Emerging" },
+  ];
   const [results, setResults] = useState<OnetEnrichmentData[]>([]);
   const [total, setTotal] = useState(0);
   const [offset, setOffset] = useState(0);
@@ -98,17 +104,12 @@ export default function BrowseBrightOutlook() {
           <div className="space-y-2">
             <div className="text-xs text-muted-foreground">Category</div>
             <div className="flex flex-wrap gap-2">
-              {[
-                { label: "All", value: undefined },
-                { label: "Rapid Growth", value: "Rapid Growth" },
-                { label: "Numerous Openings", value: "Numerous Openings" },
-                { label: "New & Emerging", value: "New & Emerging" },
-              ].map((c) => (
+              {categories.map((c) => (
                 <Button
                   key={c.label}
                   size="sm"
                   variant={(category ?? "All") === (c.value ?? "All") ? "default" : "outline"}
-                  onClick={() => setCategory(c.value as any)}
+                  onClick={() => setCategory(c.value)}
                 >
                   {c.label}
                 </Button>

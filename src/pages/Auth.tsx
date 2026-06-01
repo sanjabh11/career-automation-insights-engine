@@ -93,8 +93,8 @@ const Auth = () => {
         // Full reload to update state everywhere
         window.location.href = "/";
       }
-    } catch (err: any) {
-      const raw = err?.message || "";
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "";
       const friendly = mapAuthError(raw);
       setError(friendly);
       setPending(false);

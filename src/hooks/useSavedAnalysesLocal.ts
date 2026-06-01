@@ -4,7 +4,7 @@ export interface SavedAnalysis {
   id: string;
   occupation_code: string;
   occupation_title: string;
-  analysis_data: any;
+  analysis_data: unknown;
   tags: string[];
   notes?: string;
   created_at: string;

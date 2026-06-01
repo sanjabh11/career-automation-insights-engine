@@ -61,6 +61,20 @@ interface MemberSummary {
   riskScore: number | null;
 }
 
+interface WhopMembershipRow {
+  id: string;
+  whop_user_id: string;
+  tier: string | null;
+  valid: boolean | null;
+  created_at: string;
+  profile?: {
+    id: string;
+    email: string | null;
+    display_name: string | null;
+    updated_at: string | null;
+  } | null;
+}
+
 interface UsageMetric {
   name: string;
   count: number;
@@ -216,7 +230,7 @@ export function CommunityDashboard() {
       if (membersError) {
         console.error('Error loading members:', membersError);
       } else if (membersData) {
-        const formattedMembers: MemberSummary[] = membersData.map((m: any) => ({
+        const formattedMembers: MemberSummary[] = (membersData as WhopMembershipRow[]).map((m) => ({
           id: m.id,
           email: m.profile?.email || 'Unknown',
           displayName: m.profile?.display_name || m.whop_user_id,

@@ -3,9 +3,15 @@
 
 export interface GeminiResponse {
   text: string;
-  usageMetadata?: Record<string, any>;
+  usageMetadata?: Record<string, unknown>;
   latency_ms?: number;
 }
+
+type GeminiFunctionResponse = {
+  text: string;
+  usageMetadata?: Record<string, unknown>;
+  latency_ms?: number;
+};
 
 import { supabase } from '@/integrations/supabase/client';
 
@@ -28,6 +34,7 @@ export class GeminiService {
       throw new Error(error.message || 'Edge function gemini-generate failed');
     }
     // Expected shape: { text, usageMetadata, latency_ms }
-    return { text: data.text, usageMetadata: data.usageMetadata, latency_ms: data.latency_ms ?? latency };
+    const response = data as GeminiFunctionResponse;
+    return { text: response.text, usageMetadata: response.usageMetadata, latency_ms: response.latency_ms ?? latency };
   }
 }

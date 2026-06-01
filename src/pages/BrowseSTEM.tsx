@@ -9,6 +9,12 @@ import { formatWage } from "@/types/onet-enrichment";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
+type StemMembershipRow = {
+  occupation_code: string;
+  stem_occupation_type?: string | null;
+  job_family?: string | null;
+};
+
 export default function BrowseSTEM() {
   const { search, results, total, hasMore, loadMore, isSearching } = useAdvancedSearch();
   const [stemMeta, setStemMeta] = useState<Record<string, { type?: string; family?: string }>>({});
@@ -29,7 +35,7 @@ export default function BrowseSTEM() {
         .in("occupation_code", codes);
       if (!error && data) {
         const map: Record<string, { type?: string; family?: string }> = {};
-        data.forEach((row: any) => {
+        (data as StemMembershipRow[]).forEach((row) => {
           map[row.occupation_code] = {
             type: row.stem_occupation_type || undefined,
             family: row.job_family || undefined,

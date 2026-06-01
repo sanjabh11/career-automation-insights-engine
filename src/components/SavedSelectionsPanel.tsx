@@ -13,7 +13,7 @@ interface SavedSelectionsPanelProps<T> {
   listName?: string;
 }
 
-export function SavedSelectionsPanel<T extends any[]>({
+export function SavedSelectionsPanel<T extends unknown[]>({
   selections,
   onLoad,
   listName,

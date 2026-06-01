@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Download, FileText, Table } from 'lucide-react';
-import { exportToCSV, exportAnalysisToPDF, CareerAnalysisData } from '@/utils/export';
+import { exportToCSV, exportAnalysisToPDF, CareerAnalysisData, CareerExportData } from '@/utils/export';
 import { toast } from 'sonner';
 
 interface ExportCareersModalProps {
   open: boolean;
   onClose: () => void;
-  selectedJobs: any[];
+  selectedJobs: CareerExportData[];
 }
 
 export const ExportCareersModal: React.FC<ExportCareersModalProps> = ({

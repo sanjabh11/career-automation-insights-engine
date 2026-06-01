@@ -10,7 +10,7 @@ interface LLMLogEntry {
   prompt: string;
   response: string;
   model?: string;
-  generation_config?: Record<string, any>;
+  generation_config?: Record<string, unknown>;
   tokens_used?: number;
   latency_ms: number;
   prompt_hash?: string;
