@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,7 +39,7 @@ export function JobMarketPanel({ jobTitle }: JobMarketPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchJobMarketData = async () => {
+  const fetchJobMarketData = useCallback(async () => {
     if (!jobTitle) return;
     
     setIsLoading(true);
@@ -87,13 +87,13 @@ export function JobMarketPanel({ jobTitle }: JobMarketPanelProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [jobTitle, toast]);
 
   useEffect(() => {
     if (jobTitle) {
       fetchJobMarketData();
     }
-  }, [jobTitle]);
+  }, [jobTitle, fetchJobMarketData]);
 
   const formatSalary = (amount: number) => {
     if (amount >= 1000000) {

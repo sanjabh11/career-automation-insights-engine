@@ -33,7 +33,7 @@ export default function UserDashboardPage() {
       newParams.delete('credits');
       setSearchParams(newParams, { replace: true });
     }
-  }, [checkoutStatus]);
+  }, [checkoutStatus, checkoutTier, creditsPurchased, searchParams, setSearchParams]);
 
   const handleLoadAnalysis = (analysis: SavedAnalysisItem) => {
     localStorage.setItem('loadedAnalysis', JSON.stringify(analysis));

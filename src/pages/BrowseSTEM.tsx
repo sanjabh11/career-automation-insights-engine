@@ -22,7 +22,7 @@ export default function BrowseSTEM() {
 
   useEffect(() => {
     search("", { stem: true });
-  }, []);
+  }, [search]);
 
   // Fetch STEM membership metadata for currently visible results
   useEffect(() => {

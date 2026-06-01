@@ -8,7 +8,7 @@
  * who don't have an active session. Real data shown for authenticated users.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Users, 
   TrendingUp, 
@@ -137,6 +137,7 @@ const DEMO_MEMBERS: MemberSummary[] = [
 
 export function CommunityDashboard() {
   const { session } = useSession();
+  const userId = session?.user?.id;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState<CommunityStats | null>(null);
@@ -145,13 +146,9 @@ export function CommunityDashboard() {
   const [communityName, setCommunityName] = useState<string>('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [session]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     // If no session, show demo data (for Whop reviewers)
-    if (!session?.user) {
+    if (!userId) {
       setIsPreviewMode(true);
       setStats(DEMO_STATS);
       setMembers(DEMO_MEMBERS);
@@ -169,7 +166,7 @@ export function CommunityDashboard() {
       const { data: community, error: communityError } = await supabase
         .from('whop_communities')
         .select('*')
-        .eq('owner_profile_id', session.user.id)
+        .eq('owner_profile_id', userId)
         .single();
 
       if (communityError) {
@@ -249,7 +246,11 @@ export function CommunityDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

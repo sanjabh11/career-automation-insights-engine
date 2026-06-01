@@ -63,6 +63,26 @@ export function WhopAuthProvider({ children }: WhopAuthProviderProps) {
 
   const isWhopEnabled = isWhopConfigured();
 
+  const refreshSession = useCallback(async (): Promise<boolean> => {
+    try {
+      const refreshToken = localStorage.getItem(WHOP_REFRESH_TOKEN_KEY);
+      if (!refreshToken) return false;
+
+      const tokens = await refreshWhopToken(refreshToken);
+
+      const expiresAt = Date.now() + (tokens.expires_in * 1000);
+      localStorage.setItem(WHOP_ACCESS_TOKEN_KEY, tokens.access_token);
+      localStorage.setItem(WHOP_REFRESH_TOKEN_KEY, tokens.refresh_token);
+      localStorage.setItem(WHOP_EXPIRES_AT_KEY, expiresAt.toString());
+
+      return true;
+    } catch (error) {
+      console.error('[WhopAuth] Token refresh failed:', error);
+      clearStorage();
+      return false;
+    }
+  }, []);
+
   // Initialize from storage
   useEffect(() => {
     if (!isWhopEnabled) {
@@ -139,7 +159,7 @@ export function WhopAuthProvider({ children }: WhopAuthProviderProps) {
     };
 
     initializeAuth();
-  }, [isWhopEnabled]);
+  }, [isWhopEnabled, refreshSession]);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -251,26 +271,6 @@ export function WhopAuthProvider({ children }: WhopAuthProviderProps) {
       membership: null,
       error: null,
     });
-  }, []);
-
-  const refreshSession = useCallback(async (): Promise<boolean> => {
-    try {
-      const refreshToken = localStorage.getItem(WHOP_REFRESH_TOKEN_KEY);
-      if (!refreshToken) return false;
-
-      const tokens = await refreshWhopToken(refreshToken);
-      
-      const expiresAt = Date.now() + (tokens.expires_in * 1000);
-      localStorage.setItem(WHOP_ACCESS_TOKEN_KEY, tokens.access_token);
-      localStorage.setItem(WHOP_REFRESH_TOKEN_KEY, tokens.refresh_token);
-      localStorage.setItem(WHOP_EXPIRES_AT_KEY, expiresAt.toString());
-
-      return true;
-    } catch (error) {
-      console.error('[WhopAuth] Token refresh failed:', error);
-      clearStorage();
-      return false;
-    }
   }, []);
 
   const syncWithSupabase = useCallback(async () => {

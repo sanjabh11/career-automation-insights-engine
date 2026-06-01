@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -92,14 +92,6 @@ export function AIImpactDashboard() {
     }
   }, []);
 
-  // Save to localStorage when occupation changes
-  useEffect(() => {
-    if (selectedOccupation) {
-      localStorage.setItem('selectedOccupation', JSON.stringify(selectedOccupation));
-      fetchTasks(selectedOccupation.code);
-    }
-  }, [selectedOccupation]);
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
@@ -137,7 +129,7 @@ export function AIImpactDashboard() {
     }
   };
 
-  const fetchTasks = async (occupationCode: string) => {
+  const fetchTasks = useCallback(async (occupationCode: string) => {
     setIsLoadingTasks(true);
     try {
       // First check if we have cached tasks
@@ -178,7 +170,15 @@ export function AIImpactDashboard() {
     } finally {
       setIsLoadingTasks(false);
     }
-  };
+  }, [selectedOccupation?.title]);
+
+  // Save to localStorage when occupation changes
+  useEffect(() => {
+    if (selectedOccupation) {
+      localStorage.setItem('selectedOccupation', JSON.stringify(selectedOccupation));
+      fetchTasks(selectedOccupation.code);
+    }
+  }, [selectedOccupation, fetchTasks]);
 
   const handleSelectOccupation = (occupation: Occupation) => {
     setSelectedOccupation(occupation);

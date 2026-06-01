@@ -53,7 +53,7 @@ External context used for current claims, as of 2026-05-31:
 - Production calibration against live APO logs and sourced expert-label rows.
 - UK/Canada/Australia localized wage and outlook values from source-dated adapter joins.
 - Paid customer traction, MRR, or partner outcomes.
-- Zero-warning lint cleanliness; current active baseline passes with 27 React hook/Fast Refresh warnings.
+- Zero-warning lint cleanliness; current active baseline passes with 19 React hook/Fast Refresh warnings.
 
 ## Local Development
 
