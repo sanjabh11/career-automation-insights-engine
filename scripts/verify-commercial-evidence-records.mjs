@@ -55,7 +55,11 @@ function resolveInputPath(requestedPath, baseRoot = repoRoot) {
 
 function containsPhoneLikeNumber(source) {
   const candidates = source.match(/\+?\d[\d().\-\s]{8,}\d/g) || [];
-  return candidates.some((candidate) => candidate.replace(/\D/g, '').length >= 10);
+  return candidates.some((candidate) => {
+    const digits = candidate.replace(/\D/g, '');
+    const hasPhoneSeparator = /^\+/.test(candidate) || /[().\-\s]/.test(candidate);
+    return digits.length >= 10 && hasPhoneSeparator;
+  });
 }
 
 function detectSecretOrPrivatePatternIds(source) {

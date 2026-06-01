@@ -2,7 +2,11 @@
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateLiveGateEvidence } from './lib/liveGateEvidence.mjs';
+import {
+  LIVE_GATE_EVIDENCE_GATE_IDS,
+  LIVE_GATE_EVIDENCE_REQUIRED_COUNT,
+  validateLiveGateEvidence,
+} from './lib/liveGateEvidence.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +26,7 @@ console.log(JSON.stringify({
   ok: result.errors.length === 0,
   found: result.found,
   evidencePath: result.evidencePath,
+  requiredGateIds: LIVE_GATE_EVIDENCE_GATE_IDS,
   acceptedGateIds: result.acceptedGateIds,
   rejectedGateIds: result.rejectedGateIds,
   errorCount: result.errors.length,
@@ -33,7 +38,7 @@ if (result.errors.length > 0) {
 } else if (requireAny && result.acceptedGateIds.length === 0) {
   console.error('No accepted live-gate evidence item was found.');
   process.exitCode = 1;
-} else if (requireAll && result.acceptedGateIds.length < 6) {
+} else if (requireAll && result.acceptedGateIds.length < LIVE_GATE_EVIDENCE_REQUIRED_COUNT) {
   console.error('Not all live-gate evidence items are accepted.');
   process.exitCode = 1;
 }

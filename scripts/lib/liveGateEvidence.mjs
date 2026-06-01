@@ -4,16 +4,18 @@ import path from 'node:path';
 export const LIVE_GATE_EVIDENCE_SCHEMA_VERSION = '2026-05-31.apo-live-gate-evidence.v1';
 export const DEFAULT_LIVE_GATE_EVIDENCE_PATH = 'docs/commercialization/live-gate-evidence.local.json';
 
-const REQUIRED_GATE_IDS = new Set([
+export const LIVE_GATE_EVIDENCE_GATE_IDS = [
   'real_stripe_test_checkout',
   'production_calibration_run',
   'authenticated_live_artifact_e2e',
   'live_mrr_gt_zero',
-  'three_committed_partners',
-  'documented_outcomes',
-]);
+];
+export const LIVE_GATE_EVIDENCE_REQUIRED_COUNT = LIVE_GATE_EVIDENCE_GATE_IDS.length;
 
-const SECRET_PATTERNS = [
+const REQUIRED_GATE_IDS = new Set(LIVE_GATE_EVIDENCE_GATE_IDS);
+
+const SECRET_OR_PRIVATE_PATTERNS = [
+  { id: 'email_address', pattern: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/ },
   { id: 'stripe_secret_key', pattern: /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\b/ },
   { id: 'stripe_webhook_secret', pattern: /\bwhsec_[A-Za-z0-9]{16,}\b/ },
   { id: 'google_api_key', pattern: /\bAIza[A-Za-z0-9_-]{25,}\b/ },
@@ -32,8 +34,19 @@ function isSha256(value) {
   return typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value) && !/^sha256:0{64}$/.test(value);
 }
 
-function detectSecretPatternIds(source) {
-  return SECRET_PATTERNS.filter((item) => item.pattern.test(source)).map((item) => item.id);
+function containsPhoneLikeNumber(source) {
+  const candidates = source.match(/\+?\d[\d().\-\s]{8,}\d/g) || [];
+  return candidates.some((candidate) => {
+    const digits = candidate.replace(/\D/g, '');
+    const hasPhoneSeparator = /^\+/.test(candidate) || /[().\-\s]/.test(candidate);
+    return digits.length >= 10 && hasPhoneSeparator;
+  });
+}
+
+function detectSecretOrPrivatePatternIds(source) {
+  const ids = SECRET_OR_PRIVATE_PATTERNS.filter((item) => item.pattern.test(source)).map((item) => item.id);
+  if (containsPhoneLikeNumber(source)) ids.push('phone_like_number');
+  return ids;
 }
 
 function gateRequirementError(item) {
@@ -61,16 +74,6 @@ function gateRequirementError(item) {
       if (summary.totalMrrGreaterThanZero !== true) return 'requires evidenceSummary.totalMrrGreaterThanZero=true';
       if (!Number.isInteger(summary.activeSubscriptionCount) || summary.activeSubscriptionCount <= 0) return 'requires positive evidenceSummary.activeSubscriptionCount';
       if (!Number.isInteger(summary.paidInvoiceCount) || summary.paidInvoiceCount <= 0) return 'requires positive evidenceSummary.paidInvoiceCount';
-      return null;
-    case 'three_committed_partners':
-      if (item.evidenceType !== 'design_partner_commitments') return 'requires evidenceType=design_partner_commitments';
-      if (!Number.isInteger(summary.recordCount) || summary.recordCount < 3) return 'requires evidenceSummary.recordCount>=3';
-      if (summary.permissioned !== true) return 'requires evidenceSummary.permissioned=true';
-      return null;
-    case 'documented_outcomes':
-      if (item.evidenceType !== 'permissioned_outcomes') return 'requires evidenceType=permissioned_outcomes';
-      if (!Number.isInteger(summary.recordCount) || summary.recordCount < 1) return 'requires evidenceSummary.recordCount>=1';
-      if (summary.permissioned !== true) return 'requires evidenceSummary.permissioned=true';
       return null;
     default:
       return `unknown gateId ${item.gateId}`;
@@ -127,8 +130,8 @@ export function validateLiveGateEvidence({ root, evidencePath } = {}) {
   }
 
   const source = fs.readFileSync(absolutePath, 'utf8');
-  const secretPatternIds = detectSecretPatternIds(source);
-  const errors = secretPatternIds.map((id) => `evidence file contains a high-confidence secret pattern: ${id}`);
+  const secretPatternIds = detectSecretOrPrivatePatternIds(source);
+  const errors = secretPatternIds.map((id) => `evidence file contains a high-confidence secret or private-contact pattern: ${id}`);
   let parsed = null;
 
   try {

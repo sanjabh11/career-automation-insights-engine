@@ -36,7 +36,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
-| Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
+| Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because credential-gated live proof and commercial partner/outcome evidence are still missing |
 | Full lint | `npm run lint` from Phase E follow-up gate run | Pass: 0 errors and 0 warnings after inactive backup/archive trees, mechanical non-`any` errors, the active explicit-`any` backlog, active hook-dependency warnings, and provider/page/UI Fast Refresh export warnings were cleared across frontend components/hooks/pages/services plus Supabase Edge Function, shared library, and test boundaries |
 
 ## Unmet Or Externally Blocked Gates
@@ -52,4 +52,4 @@ This audit checks the active remediation objective against current repo and GitH
 
 ## Decision
 
-Local implementation for phases A-E is in place and verified as far as this workspace can prove without secrets, migrations, deployments, payments, or real partner activity. `docs/commercialization/remediation-external-gates-latest.md` is the current non-mutating ledger for remaining live/manual evidence. The active goal should remain open because the original plan's Phase C and Phase E live/commercial gates are not fully proven.
+Local implementation for phases A-E is in place and verified as far as this workspace can prove without secrets, migrations, deployments, payments, or real partner activity. `docs/commercialization/remediation-external-gates-latest.md` is the current non-mutating ledger for remaining credential-gated live proof and commercial partner/outcome evidence. The active goal should remain open because the original plan's Phase C and Phase E live/commercial gates are not fully proven.

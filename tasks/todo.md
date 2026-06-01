@@ -30,7 +30,7 @@
 - [x] Phase E: Prepare design-partner onboarding checklist and case-study capture template
 - [x] Phase E: Verify bootcamp CTA remains hidden until a real Stripe price exists
 - [x] Cross-phase: Add non-mutating external gate ledger for the remaining live/manual acceptance evidence
-- [x] Cross-phase: Add redacted live-gate evidence intake verifier for owner-held proof metadata
+- [x] Cross-phase: Add redacted live-gate evidence intake verifier for owner-held credential-gated proof metadata
 - [x] Cross-phase: Narrow repo lint away from inactive backups/archives and clear mechanical non-`any` lint errors
 
 ## Review
@@ -62,6 +62,6 @@
 - Follow-up live-MRR handoff cleanup added `npm run verify:stripe-live-mrr`, which reads Stripe live active subscriptions and paid invoices, rejects test-mode keys, and writes redacted proof metadata when owner live Stripe credentials are present. Current local run is `skipped_missing_env`.
 - Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. Current local run is `skipped_missing_env`.
 - Follow-up commercial evidence cleanup added `npm run verify:commercial-evidence-records`, which validates redacted founder-held design-partner commitments and permissioned documented outcomes without storing names, contacts, contracts, notes, quotes, or customer data. The remediation gate ledger now consumes those records and can mark the partner/outcome gates as externally proven when the accepted counts satisfy the gate. Current local run is `no_local_evidence`.
-- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because live/manual evidence is still missing.
-- `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof.
+- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because credential-gated live proof and commercial partner/outcome evidence are still missing.
+- `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof, and the verifier now rejects private-contact patterns.
 - Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.

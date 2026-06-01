@@ -15,9 +15,9 @@ Phase E does not complete commercial validation. It prepares the instrumentation
 
 ## Redacted Evidence Intake
 
-Use `docs/commercialization/live-gate-evidence-template.json` only as a schema template. Put owner-held, redacted proof metadata in `docs/commercialization/live-gate-evidence.local.json` or pass another path with `LIVE_GATE_EVIDENCE_PATH`; the default local file is ignored by git. Run `npm run verify:live-gate-evidence` before `npm run verify:remediation-gates`.
+Use `docs/commercialization/live-gate-evidence-template.json` only as a schema template for credential-gated live proof: Stripe test checkout, production calibration, authenticated live artifact e2e, and live MRR. Put owner-held, redacted proof metadata in `docs/commercialization/live-gate-evidence.local.json` or pass another path with `LIVE_GATE_EVIDENCE_PATH`; the default local file is ignored by git. Run `npm run verify:live-gate-evidence` before `npm run verify:remediation-gates`.
 
-The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret patterns and only upgrades a live/manual gate when the gate-specific redacted evidence item passes validation.
+The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret and private-contact patterns and only upgrades a credential-gated live proof gate when the gate-specific redacted evidence item passes validation. Use the commercial evidence records template for design-partner commitments and documented outcomes.
 
 ## Commercial Evidence Records
 

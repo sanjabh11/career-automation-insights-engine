@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T05:44:29.460Z",
+  "generatedAt": "2026-06-01T05:53:37.771Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -57,7 +57,7 @@
       "id": "redacted_live_gate_evidence_intake",
       "label": "Redacted live-gate evidence intake verifier",
       "status": "locally_proven",
-      "evidence": "A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates.",
+      "evidence": "A non-secret redacted evidence schema, template, and verifier are wired for the remaining credential-gated live proof gates.",
       "neededEvidence": "Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`.",
       "sourceBoundary": "local verifier and redacted owner-evidence schema",
       "doesNotProve": [

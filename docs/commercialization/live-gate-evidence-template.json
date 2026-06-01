@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
   "asOf": "2026-05-31",
-  "sourceBoundary": "Redacted owner-attested evidence only. Raw screenshots, exports, customer details, and secrets remain owner-held outside the repository.",
+  "sourceBoundary": "Redacted owner-attested evidence for credential-gated live proof only. Raw screenshots, exports, customer details, and secrets remain owner-held outside the repository. Use commercial-evidence-records.local.json for design-partner and outcome records.",
   "evidenceItems": [
     {
       "gateId": "real_stripe_test_checkout",
@@ -87,49 +87,6 @@
         "Retention",
         "Product-market fit",
         "Future revenue"
-      ]
-    },
-    {
-      "gateId": "three_committed_partners",
-      "status": "proven",
-      "observedAt": "2026-05-31T00:00:00Z",
-      "evidenceType": "design_partner_commitments",
-      "redactionBoundary": "Partner names, contact details, contract artifacts, and private pilot notes are redacted or owner-held unless permissioned.",
-      "artifactHashes": [
-        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-      ],
-      "evidenceSummary": {
-        "recordCount": 3,
-        "permissioned": true,
-        "pilotScopeAccepted": true,
-        "nextStepRecorded": true
-      },
-      "doesNotProve": [
-        "Revenue",
-        "Successful outcomes",
-        "Market-wide demand"
-      ]
-    },
-    {
-      "gateId": "documented_outcomes",
-      "status": "proven",
-      "observedAt": "2026-05-31T00:00:00Z",
-      "evidenceType": "permissioned_outcomes",
-      "redactionBoundary": "Individual names, private workflow details, and raw quotes remain redacted or owner-held unless permissioned.",
-      "artifactHashes": [
-        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-      ],
-      "evidenceSummary": {
-        "recordCount": 1,
-        "permissioned": true,
-        "baselineWorkflowCaptured": true,
-        "outcomeCaptured": true,
-        "quoteApprovalCaptured": true
-      },
-      "doesNotProve": [
-        "Guaranteed career outcomes",
-        "Causal impact",
-        "Generalizable demand"
       ]
     }
   ]

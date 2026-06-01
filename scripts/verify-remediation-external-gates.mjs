@@ -435,7 +435,7 @@ function main() {
       liveGateEvidence.errors.length
         ? `The redacted evidence file is present but invalid with ${liveGateEvidence.errors.length} verifier error(s).`
         : liveGateEvidenceIntakeReady
-          ? 'A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates.'
+          ? 'A non-secret redacted evidence schema, template, and verifier are wired for the remaining credential-gated live proof gates.'
           : 'The redacted evidence intake verifier is missing or miswired.',
       'Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`.',
       {
