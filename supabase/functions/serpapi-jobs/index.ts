@@ -41,6 +41,11 @@ interface SerpApiJobResult {
   via?: string;
 }
 
+interface SerpApiJobsResponse {
+  error?: string;
+  jobs_results?: SerpApiJobResult[];
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -58,7 +63,7 @@ serve(async (req) => {
       hl: 'en',
       gl: 'us',
       num: '10',
-    });
+    }) as SerpApiJobsResponse;
     console.log('SerpAPI response received, jobs found:', data.jobs_results?.length || 0);
 
     if (data.error) {

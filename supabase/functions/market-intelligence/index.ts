@@ -16,6 +16,15 @@ const requestSchema = z.object({
   timeframe: z.number().min(1).max(10).optional().default(5),
 });
 
+type SerpJobMarketResponse = {
+  totalJobs?: number;
+  averageSalary?: number | string | null;
+  topLocations?: Array<{ location?: string | null }>;
+  trending?: boolean;
+};
+
+type MarketIntelligenceAnalysis = Record<string, unknown>;
+
 /**
  * Market Intelligence Analyzer
  * 
@@ -54,12 +63,12 @@ export async function handler(req: Request) {
       );
       
       if (jobsResponse.ok) {
-        const jobData = await jobsResponse.json();
+        const jobData = await jobsResponse.json() as SerpJobMarketResponse;
         jobMarketContext = `
 Current Job Market Data:
 - Total job postings: ${jobData.totalJobs || "Unknown"}
 - Average salary: ${jobData.averageSalary ? `$${jobData.averageSalary}` : "Data unavailable"}
-- Top locations: ${jobData.topLocations?.map((l: any) => l.location).join(", ") || "N/A"}
+- Top locations: ${jobData.topLocations?.map((l) => l.location).filter(Boolean).join(", ") || "N/A"}
 - Market trending: ${jobData.trending ? "Yes" : "No"}
 `;
       }
@@ -131,7 +140,7 @@ Output ONLY valid JSON in this exact format:
     });
 
     // Parse JSON response
-    let analysis: any;
+    let analysis: MarketIntelligenceAnalysis;
     try {
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("No JSON found in response");

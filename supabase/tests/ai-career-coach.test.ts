@@ -12,21 +12,21 @@ Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", "fake-service-role-key");
 // Track intervals to clear after test to avoid leak detection
 const _setInterval = globalThis.setInterval;
 const _clearInterval = globalThis.clearInterval;
-const __intervalIds: number[] = [];
-globalThis.setInterval = (
-  handler: TimerHandler,
-  timeout?: number,
-  ...args: any[]
-): number => {
-  const id = _setInterval(handler, timeout as any, ...args);
+type IntervalId = ReturnType<typeof globalThis.setInterval>;
+const __intervalIds: IntervalId[] = [];
+globalThis.setInterval = ((handler, timeout, ...args) => {
+  const id = _setInterval(handler, timeout, ...args);
   __intervalIds.push(id);
   return id;
-};
+}) as typeof globalThis.setInterval;
 
 // Mock global fetch for Gemini and Supabase insert
 const originalFetch = globalThis.fetch;
 
-globalThis.fetch = async (input: Request | string, init?: RequestInit): Promise<Response> => {
+globalThis.fetch = async (
+  input: Parameters<typeof fetch>[0],
+  init?: Parameters<typeof fetch>[1],
+): Promise<Response> => {
   // Mock Gemini request
   if (typeof input === "string" && input.includes("gemini-2.5-flash")) {
     return new Response(
@@ -43,7 +43,7 @@ globalThis.fetch = async (input: Request | string, init?: RequestInit): Promise<
   if (typeof input === "string" && input.includes("/rest/v1/llm_logs")) {
     return new Response(null, { status: 201 });
   }
-  return originalFetch(input as any, init);
+  return originalFetch(input, init);
 };
 
 // Import function handler (dynamic import to allow env mocks first)

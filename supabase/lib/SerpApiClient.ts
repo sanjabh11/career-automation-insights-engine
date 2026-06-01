@@ -18,13 +18,26 @@ const resultSchema = z.object({
 });
 export type CourseResult = z.infer<typeof resultSchema>;
 
+type SerpApiOrganicResult = {
+  title?: string;
+  link?: string;
+  snippet?: string;
+};
+
+type SerpApiCourseSearchResponse = {
+  organic_results?: SerpApiOrganicResult[];
+};
+
+export type SerpApiSearchResponse = Record<string, unknown>;
+
 export async function searchCourses(query: string, limit = 5): Promise<CourseResult[]> {
   if (!serpApiKey) throw new Error("SerpAPI key missing (expected SERPAPI_API_KEY)");
   const url = `https://serpapi.com/search.json?engine=google&q=${encodeURIComponent(query)}&num=${limit}&api_key=${serpApiKey}`;
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`SerpAPI error ${resp.status}`);
-  const data = await resp.json();
-  const results = (data.organic_results || []).slice(0, limit).map((r: any) => ({
+  const data = await resp.json() as SerpApiCourseSearchResponse;
+  const organicResults = Array.isArray(data.organic_results) ? data.organic_results : [];
+  const results = organicResults.slice(0, limit).map((r) => ({
     title: r.title,
     link: r.link,
     snippet: r.snippet,
@@ -36,7 +49,7 @@ export async function searchCourses(query: string, limit = 5): Promise<CourseRes
  * Generic SerpAPI search helper.
  * Usage example (Google Jobs): serpApiSearch({ engine: 'google_jobs', q, hl: 'en', gl: 'us', num: '10' })
  */
-export async function serpApiSearch(params: Record<string, string>): Promise<any> {
+export async function serpApiSearch(params: Record<string, string>): Promise<SerpApiSearchResponse> {
   if (!serpApiKey) throw new Error("SerpAPI key missing (expected SERPAPI_API_KEY)");
   const search = new URLSearchParams({ ...params, api_key: serpApiKey });
   const url = `https://serpapi.com/search.json?${search.toString()}`;
