@@ -715,6 +715,17 @@ serve(async (req) => {
         const insertPayload = {
           occupation_code: occupation.code,
           occupation_title: occupation.title,
+          validated_output: transformedData as unknown as Record<string, unknown>,
+          schema_valid: true,
+          confidence_avg: (() => {
+            const confidenceMap = { low: 0.3, medium: 0.6, high: 0.85 } as const;
+            const categoryConfidences = Object.values(categoryScores).map((score) => confidenceMap[score.confidence]);
+            return categoryConfidences.length
+              ? categoryConfidences.reduce((sum, value) => sum + value, 0) / categoryConfidences.length
+              : 0.6;
+          })(),
+          model_version: effectiveModel,
+          calculation_method: transformedData.metadata.calculation_method,
           prompt_hash: pHash,
           model: effectiveModel,
           generation_config: effectiveConfig as unknown as Record<string, unknown>,
