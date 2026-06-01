@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T12:34:30.605Z",
+  "generatedAt": "2026-06-01T16:57:25.924Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -871,9 +871,9 @@
         "allow-missing-env"
       ],
       "caveat": "Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.",
-      "bytes": 15342,
-      "rows": 358,
-      "sha256": "9ecd6c43fda8af1d689d11ee565e8331f56ac2cf11a0aea8dba5d9a9b8d582ce",
+      "bytes": 16193,
+      "rows": 378,
+      "sha256": "8d153c505632ad66a398826183b597735a05d728cc013ec53bf1ae2720a95b85",
       "failures": [],
       "passed": true
     },

@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-06-01T12:34:30.605Z
+Generated: 2026-06-01T16:57:25.924Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -39,7 +39,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `owner-evidence-workspace-prep` | Owner evidence local workspace prep helper | `scripts/prepare-owner-evidence-workspace.mjs` | commercial-verifier | 289 | `d9e6f4c3c4f8202b...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `owner-evidence-closeout-bundle` | Owner evidence closeout bundle | `scripts/closeout-owner-evidence.mjs` | commercial-verifier | 217 | `505fbbac2ab9e6f5...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `remediation-completion-audit-verifier` | Remediation completion audit verifier | `scripts/verify-remediation-completion-audit.mjs` | commercial-verifier | 218 | `50d17d063318683b...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-live-auth-e2e-verifier` | Authenticated live resume proof artifact e2e verifier | `scripts/verify-commercial-live-auth-e2e.mjs` | live-verifier | 358 | `9ecd6c43fda8af1d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
+| `commercial-live-auth-e2e-verifier` | Authenticated live resume proof artifact e2e verifier | `scripts/verify-commercial-live-auth-e2e.mjs` | live-verifier | 378 | `8d153c505632ad66...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,218 | `76d4598f2c47d281...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `owasp-file-upload`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
 | `resume-proof-report-artifact-client` | Resume proof-report artifact client | `src/lib/resumeProofReportArtifacts.ts` | privacy-runtime | 152 | `2ff26b17a34b668d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-proof-report-artifact-migration` | Resume proof-report artifact migration | `supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql` | supabase-migration | 282 | `7ca18c1ef3788b23...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
