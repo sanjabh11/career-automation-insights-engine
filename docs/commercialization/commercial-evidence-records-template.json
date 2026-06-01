@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
   "asOf": "2026-06-01",
-  "sourceBoundary": "Redacted founder-held commercial evidence records only. Partner names, contact details, contracts, raw interview notes, private quotes, and customer data remain owner-held outside the repository.",
+  "sourceBoundary": "Redacted founder-held commercial evidence records only. Partner and outcome hashes must be unique; partner names, contact details, contracts, raw interview notes, private quotes, and customer data remain owner-held outside the repository.",
   "designPartnerCommitments": [
     {
       "partnerIdHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",

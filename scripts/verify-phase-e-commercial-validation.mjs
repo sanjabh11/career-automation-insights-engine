@@ -111,6 +111,8 @@ assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier),
 assert(/documented_outcomes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover documented outcomes');
 assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted partner records');
 assert(/acceptedOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted outcome records');
+assert(/uniqueDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique partner hashes');
+assert(/uniqueOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique outcome hashes');
 assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');

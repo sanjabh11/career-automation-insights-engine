@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-01T06:04:16.412Z",
+  "generatedAt": "2026-06-01T06:31:43.771Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
-  "requireComplete": true,
+  "requireComplete": false,
   "gates": [
     {
       "id": "phase_a_truth_claims",
@@ -121,8 +121,8 @@
       "id": "three_committed_partners",
       "label": "Three committed design partners",
       "status": "blocked_missing_owner_evidence_records",
-      "evidence": "Redacted commercial-evidence record verifier is ready; 0 accepted owner-held partner commitment record(s) are attached.",
-      "neededEvidence": "At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held partner commitment hash(es) are attached.",
+      "neededEvidence": "At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
       "sourceBoundary": "owner redacted commercial-evidence records",
       "doesNotProve": [
         "Revenue",
@@ -134,7 +134,7 @@
       "id": "documented_outcomes",
       "label": "Permissioned documented outcomes",
       "status": "blocked_missing_owner_evidence_records",
-      "evidence": "Redacted commercial-evidence record verifier is ready; 0 accepted owner-held documented outcome record(s) are attached.",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held documented outcome hash(es) are attached.",
       "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.",
       "sourceBoundary": "owner redacted commercial-evidence records",
       "doesNotProve": [
@@ -149,7 +149,7 @@
     "Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
     "Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
     "Live MRR greater than zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.",
-    "Three committed design partners: At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+    "Three committed design partners: At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
     "Permissioned documented outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text."
   ],
   "liveGateEvidence": {
@@ -171,6 +171,8 @@
     "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
     "acceptedDesignPartnerCount": 0,
     "acceptedOutcomeCount": 0,
+    "uniqueDesignPartnerCount": 0,
+    "uniqueOutcomeCount": 0,
     "partnerGateSatisfied": false,
     "outcomeGateSatisfied": false,
     "errorCount": 0,

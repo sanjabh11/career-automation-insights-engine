@@ -143,12 +143,14 @@ Template: \`${artifact.commercialEvidenceRecords.templatePath}\`
 Default local file: \`${artifact.commercialEvidenceRecords.defaultPath}\`
 Current file found: ${artifact.commercialEvidenceRecords.found ? 'yes' : 'no'}
 Accepted design partner records: ${artifact.commercialEvidenceRecords.acceptedDesignPartnerCount}
+Unique design partner hashes: ${artifact.commercialEvidenceRecords.uniqueDesignPartnerCount}
 Accepted outcome records: ${artifact.commercialEvidenceRecords.acceptedOutcomeCount}
+Unique outcome hashes: ${artifact.commercialEvidenceRecords.uniqueOutcomeCount}
 Partner gate satisfied: ${artifact.commercialEvidenceRecords.partnerGateSatisfied ? 'yes' : 'no'}
 Outcome gate satisfied: ${artifact.commercialEvidenceRecords.outcomeGateSatisfied ? 'yes' : 'no'}
 Validation errors: ${artifact.commercialEvidenceRecords.errorCount}
 
-The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
+The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
 
 ## Command
 
@@ -205,7 +207,7 @@ function main() {
         id,
         label,
         'externally_proven_redacted_evidence_attached',
-        `Redacted commercial evidence records are accepted by \`verify:commercial-evidence-records\` (${commercialEvidenceRecords.acceptedDesignPartnerCount} partner record(s), ${commercialEvidenceRecords.acceptedOutcomeCount} outcome record(s)); raw proof artifacts and private details remain owner-held.`,
+        `Redacted commercial evidence records are accepted by \`verify:commercial-evidence-records\` (${commercialEvidenceRecords.uniqueDesignPartnerCount} unique partner hash(es), ${commercialEvidenceRecords.uniqueOutcomeCount} unique outcome hash(es)); raw proof artifacts and private details remain owner-held.`,
         'Keep the redacted records current and preserve owner-held raw proof for audit.',
         {
           ...options,
@@ -275,6 +277,8 @@ function main() {
       'acceptedOutcomeCount',
       'partnerGateSatisfied',
       'outcomeGateSatisfied',
+      'uniqueDesignPartnerCount',
+      'uniqueOutcomeCount',
       'commercial-evidence-records.local.json',
     ]) &&
     containsAll(commercialEvidenceRecordsTemplate, [
@@ -503,9 +507,9 @@ function main() {
       commercialEvidenceRecords.partnerGateSatisfied,
       commercialEvidenceRecordsReady,
       commercialEvidenceRecordsReady
-        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.acceptedDesignPartnerCount} accepted owner-held partner commitment record(s) are attached.`
+        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.uniqueDesignPartnerCount} unique accepted owner-held partner commitment hash(es) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
-      'At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.',
+      'At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.',
       {
         sourceBoundary: 'owner redacted commercial-evidence records',
         doesNotProve: ['Revenue', 'Successful outcomes', 'Market-wide demand'],
@@ -517,7 +521,7 @@ function main() {
       commercialEvidenceRecords.outcomeGateSatisfied,
       commercialEvidenceRecordsReady,
       commercialEvidenceRecordsReady
-        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.acceptedOutcomeCount} accepted owner-held documented outcome record(s) are attached.`
+        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.uniqueOutcomeCount} unique accepted owner-held documented outcome hash(es) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
       'At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.',
       {
@@ -564,6 +568,8 @@ function main() {
       inputPath: commercialEvidenceRecords.inputPath,
       acceptedDesignPartnerCount: commercialEvidenceRecords.acceptedDesignPartnerCount,
       acceptedOutcomeCount: commercialEvidenceRecords.acceptedOutcomeCount,
+      uniqueDesignPartnerCount: commercialEvidenceRecords.uniqueDesignPartnerCount,
+      uniqueOutcomeCount: commercialEvidenceRecords.uniqueOutcomeCount,
       partnerGateSatisfied: commercialEvidenceRecords.partnerGateSatisfied,
       outcomeGateSatisfied: commercialEvidenceRecords.outcomeGateSatisfied,
       errorCount: commercialEvidenceRecords.errors.length,

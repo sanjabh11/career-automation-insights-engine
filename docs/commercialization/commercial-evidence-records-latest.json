@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T06:02:20.970Z",
+  "generatedAt": "2026-06-01T06:31:41.717Z",
   "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
   "gateIds": [
     "three_committed_partners",
@@ -9,9 +9,11 @@
   "found": false,
   "status": "no_local_evidence",
   "confidence": "bounded_redacted_commercial_evidence_records",
-  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.",
+  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. Partner and outcome hashes must be unique. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.",
   "acceptedDesignPartnerCount": 0,
   "acceptedOutcomeCount": 0,
+  "uniqueDesignPartnerCount": 0,
+  "uniqueOutcomeCount": 0,
   "partnerGateSatisfied": false,
   "outcomeGateSatisfied": false,
   "evidenceHash": null,

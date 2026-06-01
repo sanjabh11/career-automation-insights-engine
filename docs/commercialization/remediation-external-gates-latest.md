@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-06-01T06:04:16.412Z
+Generated: 2026-06-01T06:31:43.771Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
@@ -18,8 +18,8 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 | Production calibration run | blocked_missing_owner_secret_or_live_evidence | Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY. | Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact. |
 | Authenticated live artifact e2e | blocked_missing_owner_secret_or_live_evidence | Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD. | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
 | Live MRR greater than zero | blocked_missing_owner_secret_or_live_evidence | Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY. | Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence. |
-| Three committed design partners | blocked_missing_owner_evidence_records | Redacted commercial-evidence record verifier is ready; 0 accepted owner-held partner commitment record(s) are attached. | At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission. |
-| Permissioned documented outcomes | blocked_missing_owner_evidence_records | Redacted commercial-evidence record verifier is ready; 0 accepted owner-held documented outcome record(s) are attached. | At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text. |
+| Three committed design partners | blocked_missing_owner_evidence_records | Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held partner commitment hash(es) are attached. | At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission. |
+| Permissioned documented outcomes | blocked_missing_owner_evidence_records | Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held documented outcome hash(es) are attached. | At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text. |
 
 ## Remaining Manual Evidence
 
@@ -27,7 +27,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 - Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.
 - Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.
 - Live MRR greater than zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.
-- Three committed design partners: At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.
+- Three committed design partners: At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.
 - Permissioned documented outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.
 
 ## Redacted Live Evidence Intake
@@ -49,12 +49,14 @@ Template: `docs/commercialization/commercial-evidence-records-template.json`
 Default local file: `docs/commercialization/commercial-evidence-records.local.json`
 Current file found: no
 Accepted design partner records: 0
+Unique design partner hashes: 0
 Accepted outcome records: 0
+Unique outcome hashes: 0
 Partner gate satisfied: no
 Outcome gate satisfied: no
 Validation errors: 0
 
-The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
+The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
 
 ## Command
 

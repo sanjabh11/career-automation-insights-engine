@@ -68,6 +68,23 @@ function detectSecretOrPrivatePatternIds(source) {
   return ids;
 }
 
+function addDuplicateHashErrors(errors, items, fieldName, pathName) {
+  const indexesByValue = new Map();
+
+  items.forEach((item, index) => {
+    if (!isPlainObject(item) || typeof item[fieldName] !== 'string') return;
+    const indexes = indexesByValue.get(item[fieldName]) || [];
+    indexes.push(index);
+    indexesByValue.set(item[fieldName], indexes);
+  });
+
+  for (const indexes of indexesByValue.values()) {
+    if (indexes.length > 1) {
+      errors.push(`${pathName}.${fieldName} must be unique; duplicate hash appears at indexes ${indexes.join(', ')}`);
+    }
+  }
+}
+
 function addRequiredBoolean(errors, value, pathName) {
   if (value !== true) errors.push(`${pathName} must be true`);
 }
@@ -130,6 +147,8 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
       errors: [],
       acceptedDesignPartnerCount: 0,
       acceptedOutcomeCount: 0,
+      uniqueDesignPartnerCount: 0,
+      uniqueOutcomeCount: 0,
       partnerGateSatisfied: false,
       outcomeGateSatisfied: false,
     };
@@ -148,6 +167,8 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
 
   let acceptedDesignPartnerCount = 0;
   let acceptedOutcomeCount = 0;
+  const acceptedDesignPartnerHashes = new Set();
+  const acceptedOutcomeHashes = new Set();
 
   if (parsed) {
     if (!isPlainObject(parsed)) errors.push('commercial evidence file root must be an object');
@@ -160,9 +181,13 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
     if (!Array.isArray(parsed.designPartnerCommitments)) {
       errors.push('designPartnerCommitments must be an array');
     } else {
+      addDuplicateHashErrors(errors, parsed.designPartnerCommitments, 'partnerIdHash', 'designPartnerCommitments');
       parsed.designPartnerCommitments.forEach((item, index) => {
         const result = validateDesignPartner(item, index);
-        if (result.accepted) acceptedDesignPartnerCount += 1;
+        if (result.accepted) {
+          acceptedDesignPartnerCount += 1;
+          acceptedDesignPartnerHashes.add(item.partnerIdHash);
+        }
         errors.push(...result.errors);
       });
     }
@@ -170,9 +195,13 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
     if (!Array.isArray(parsed.documentedOutcomes)) {
       errors.push('documentedOutcomes must be an array');
     } else {
+      addDuplicateHashErrors(errors, parsed.documentedOutcomes, 'outcomeIdHash', 'documentedOutcomes');
       parsed.documentedOutcomes.forEach((item, index) => {
         const result = validateOutcome(item, index);
-        if (result.accepted) acceptedOutcomeCount += 1;
+        if (result.accepted) {
+          acceptedOutcomeCount += 1;
+          acceptedOutcomeHashes.add(item.outcomeIdHash);
+        }
         errors.push(...result.errors);
       });
     }
@@ -185,8 +214,10 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
     errors,
     acceptedDesignPartnerCount,
     acceptedOutcomeCount,
-    partnerGateSatisfied: errors.length === 0 && acceptedDesignPartnerCount >= 3,
-    outcomeGateSatisfied: errors.length === 0 && acceptedOutcomeCount >= 1,
+    uniqueDesignPartnerCount: acceptedDesignPartnerHashes.size,
+    uniqueOutcomeCount: acceptedOutcomeHashes.size,
+    partnerGateSatisfied: errors.length === 0 && acceptedDesignPartnerHashes.size >= 3,
+    outcomeGateSatisfied: errors.length === 0 && acceptedOutcomeHashes.size >= 1,
     evidenceHash: `sha256:${sha256(source)}`,
   };
 }
@@ -207,9 +238,11 @@ export function renderArtifact(result) {
           : 'no_local_evidence',
     confidence: 'bounded_redacted_commercial_evidence_records',
     caveat:
-      'This verifier validates redacted founder-held commercial evidence metadata only. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.',
+      'This verifier validates redacted founder-held commercial evidence metadata only. Partner and outcome hashes must be unique. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.',
     acceptedDesignPartnerCount: result.acceptedDesignPartnerCount,
     acceptedOutcomeCount: result.acceptedOutcomeCount,
+    uniqueDesignPartnerCount: result.uniqueDesignPartnerCount,
+    uniqueOutcomeCount: result.uniqueOutcomeCount,
     partnerGateSatisfied: result.partnerGateSatisfied,
     outcomeGateSatisfied: result.outcomeGateSatisfied,
     evidenceHash: result.evidenceHash || null,
@@ -249,6 +282,8 @@ function main() {
     inputPath: result.inputPath,
     acceptedDesignPartnerCount: result.acceptedDesignPartnerCount,
     acceptedOutcomeCount: result.acceptedOutcomeCount,
+    uniqueDesignPartnerCount: result.uniqueDesignPartnerCount,
+    uniqueOutcomeCount: result.uniqueOutcomeCount,
     partnerGateSatisfied: result.partnerGateSatisfied,
     outcomeGateSatisfied: result.outcomeGateSatisfied,
     errorCount: result.errors.length,
