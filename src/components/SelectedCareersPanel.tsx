@@ -2,10 +2,11 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import type { SelectedOccupation } from "./APODashboard";
 
 interface SelectedCareersPanelProps {
-  selectedJobs: any[];
-  calculateOverallAPO: (occ: any) => number;
+  selectedJobs: SelectedOccupation[];
+  calculateOverallAPO: (occ: SelectedOccupation) => number;
   handleRemoveSelected: (code: string) => void;
 }
 
