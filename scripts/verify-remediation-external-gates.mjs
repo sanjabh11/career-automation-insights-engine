@@ -26,6 +26,11 @@ function hasFlag(flag) {
   return process.argv.includes(flag);
 }
 
+function readFlagValue(name) {
+  const index = process.argv.indexOf(name);
+  return index >= 0 ? process.argv[index + 1] : undefined;
+}
+
 function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), 'utf8');
 }
@@ -158,13 +163,15 @@ The commercial evidence verifier accepts only redacted metadata and owner-held a
 npm run verify:remediation-gates
 \`\`\`
 
-Use \`npm run verify:remediation-gates -- --require-complete\` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.
+Use \`npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete\` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.
 `;
 }
 
 function main() {
   const generatedAt = new Date().toISOString();
   const requireComplete = hasFlag('--require-complete');
+  const liveEvidencePath = readFlagValue('--live-evidence') || readFlagValue('--live-gate-evidence');
+  const commercialEvidencePath = readFlagValue('--commercial-evidence') || readFlagValue('--commercial-records');
   const presentEnvNames = loadPresentEnvNames();
   const packageJson = JSON.parse(read('package.json'));
   const packageScripts = packageJson.scripts || {};
@@ -179,8 +186,8 @@ function main() {
   const globalEnglish = readOptional('src/lib/globalEnglishLocalization.ts');
   const occupationAnalysis = readOptional('src/components/OccupationAnalysis.tsx');
   const readinessModel = readOptional('src/lib/commercialLaunchReadiness.ts');
-  const liveGateEvidence = validateLiveGateEvidence({ root });
-  const commercialEvidenceRecords = validateCommercialEvidence({ root });
+  const liveGateEvidence = validateLiveGateEvidence({ root, evidencePath: liveEvidencePath });
+  const commercialEvidenceRecords = validateCommercialEvidence({ root, inputPath: commercialEvidencePath });
   const acceptedLiveGateEvidence = new Set(liveGateEvidence.acceptedGateIds);
 
   function externalGate(id, label, status, evidence, neededEvidence, options = {}) {

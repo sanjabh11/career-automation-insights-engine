@@ -588,6 +588,8 @@ const checks = [
     file: 'scripts/verify-remediation-external-gates.mjs',
     expected: [
       /validateLiveGateEvidence/,
+      /--live-evidence/,
+      /--commercial-evidence/,
       /redacted_live_gate_evidence_intake/,
       /externally_proven_redacted_evidence_attached/,
       /Redacted Live Evidence Intake/,

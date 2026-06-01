@@ -64,4 +64,4 @@ The commercial evidence verifier accepts only redacted metadata and owner-held a
 npm run verify:remediation-gates
 ```
 
-Use `npm run verify:remediation-gates -- --require-complete` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.
+Use `npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.

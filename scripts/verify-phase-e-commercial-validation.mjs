@@ -37,6 +37,7 @@ const files = {
   productionCalibrationVerifier: read('scripts/verify-production-calibration-run.mjs'),
   liveGateEvidenceTemplate: read('docs/commercialization/live-gate-evidence-template.json'),
   gitignore: read('.gitignore'),
+  remediationGatesVerifier: read('scripts/verify-remediation-external-gates.mjs'),
 };
 
 assert(!/DISABLED: Analytics events table has schema issues/.test(files.analyticsHook), 'analytics hook must not remain disabled');
@@ -123,6 +124,8 @@ assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate),
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/docs\/commercialization\/live-gate-evidence\.local\.json/.test(files.gitignore), 'owner-held live evidence file must be gitignored');
 assert(/docs\/commercialization\/commercial-evidence-records\.local\.json/.test(files.gitignore), 'owner-held commercial evidence records file must be gitignored');
+assert(/--live-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit live evidence path');
+assert(/--commercial-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit commercial evidence path');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
 assert(/livemode=false/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must verify Stripe test mode');
 assert(/stripe_live_mrr_export/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must declare the redacted evidence type');
