@@ -2,6 +2,8 @@
 
 As of 2026-06-01, this repository contains the APO Dashboard: a Vite, React, TypeScript, Supabase, Stripe/Whop, and Gemini application for career automation-exposure research and coaching workflows.
 
+The repository is maintained as a reviewable decision-support codebase. Its strongest current signals are active maintenance, pull-request evidence, CI regression gates, data-provenance checks, and redacted commercial proof templates; it does not claim broad adoption, scientific validation, or commercial traction.
+
 The product should be described as a decision-support tool. It estimates automation exposure and transition options from O*NET-centered occupation data, LLM-assisted task analysis, and commercial proof-pack workflows. It does not predict job loss, make employment decisions, certify scientific validity, or prove local labor-market outcomes.
 
 ## Current Evidence Boundary
@@ -41,7 +43,7 @@ External context used for current claims, as of 2026-05-31:
 - Postgres migrations for APO logs, O*NET enrichment, calibration scaffolding, expert assessments, monetization, subscriptions, resume proof artifacts, and commercial lead operations.
 - Public APO/task model cards, calibration report, reliability plot, and calibration JSON.
 - Global-English crosswalk/disclosure scaffolding for O*NET to ESCO, UK SOC, Canada NOC, and Australia ANZSCO sample coverage, plus source-registered UK/Canada/Australia wage/outlook adapter contracts.
-- Commercial verifiers for report evidence, secret hygiene, trust boundaries, data provenance, release checks, live Supabase readiness, and route smoke.
+- Commercial verifiers for report evidence, secret hygiene, trust boundaries, data provenance, release checks, live Supabase readiness, route smoke, and redacted owner-held evidence records.
 - Activation/retention instrumentation, commercial validation gates, design-partner onboarding checklist, and case-study capture template.
 - Stripe subscription utilities with real Defender and Coach Pro price IDs.
 
@@ -71,6 +73,22 @@ Some commercial verifiers intentionally regenerate timestamped evidence docs. Us
 ```bash
 npm run verify:commercial
 ```
+
+## Maintenance And Review Focus
+
+| Workflow | Command or artifact | Use |
+| --- | --- | --- |
+| PR review baseline | `npx tsc --noEmit`, `npm run lint`, `npm run verify:secrets` | Catch TypeScript, lint, and secret hygiene regressions before review. |
+| Proof-pack regression | `npm run verify:commercial` | Rebuild commercial evidence ledgers, run trust/data-provenance/build checks, and smoke commercial routes. |
+| Runtime smoke | `.github/workflows/phase-c-runtime-smoke.yml`, `npm run smoke:skill-adjacency`, `npm run e2e:smoke` | Keep embedding, APO, crosswalk, checkout, report-export, and proof-boundary flows from drifting. |
+| Source/data maintenance | `npm run verify:data-provenance`, `npm run verify:sources` | Track source-labeled artifacts, checksums, and official-source refresh boundaries. |
+| Owner-held evidence | `npm run compose:live-gate-evidence`, `npm run compose:commercial-evidence-records` | Convert owner-run proof artifacts or partner/outcome intake into redacted, gitignored local evidence files. |
+
+See `CONTRIBUTING.md` for the pull-request checklist and claim-boundary rules.
+
+## License
+
+MIT. See `LICENSE`.
 
 ## Canonical Status
 
