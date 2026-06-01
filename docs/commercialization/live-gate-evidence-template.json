@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
   "asOf": "2026-05-31",
-  "sourceBoundary": "Redacted owner-attested evidence for credential-gated live proof only. Raw screenshots, exports, customer details, secrets, and future-dated proof metadata remain outside the repository. Use commercial-evidence-records.local.json for design-partner and outcome records.",
+  "sourceBoundary": "Redacted owner-attested evidence for credential-gated live proof only. Raw screenshots, exports, customer details, secrets, future-dated proof metadata, and item dates later than asOf remain outside the repository. Use commercial-evidence-records.local.json for design-partner and outcome records.",
   "evidenceItems": [
     {
       "gateId": "real_stripe_test_checkout",

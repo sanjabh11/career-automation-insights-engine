@@ -40,18 +40,30 @@ function isIsoDate(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}(?:T[\d:.+-]+Z?)?$/.test(value);
 }
 
-function parseEvidenceDate(value) {
+function parseEvidenceDateBounds(value) {
   if (!isIsoDate(value)) return null;
   const timestamp = Date.parse(value);
-  return Number.isFinite(timestamp) ? timestamp : null;
+  if (!Number.isFinite(timestamp)) return null;
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+  return {
+    start: timestamp,
+    end: isDateOnly ? timestamp + 86_400_000 - 1 : timestamp,
+  };
 }
 
 function addEvidenceDateErrors(errors, value, pathName) {
-  const timestamp = parseEvidenceDate(value);
-  if (timestamp === null) {
+  const bounds = parseEvidenceDateBounds(value);
+  if (bounds === null) {
     errors.push(`${pathName} must be an ISO date or datetime`);
-  } else if (timestamp > Date.now()) {
+  } else if (bounds.start > Date.now()) {
     errors.push(`${pathName} must not be future-dated`);
+  }
+}
+
+function addNotAfterAsOfError(errors, value, asOfBounds, pathName) {
+  const bounds = parseEvidenceDateBounds(value);
+  if (bounds !== null && asOfBounds !== null && bounds.start > asOfBounds.end) {
+    errors.push(`${pathName} must not be later than asOf`);
   }
 }
 
@@ -110,7 +122,7 @@ function validateDoesNotProve(errors, value, pathName) {
   }
 }
 
-function validateDesignPartner(item, index) {
+function validateDesignPartner(item, index, asOfBounds) {
   const errors = [];
   const prefix = `designPartnerCommitments[${index}]`;
 
@@ -118,6 +130,7 @@ function validateDesignPartner(item, index) {
   if (!isSha256(item.partnerIdHash)) errors.push(`${prefix}.partnerIdHash must be a non-placeholder sha256 hash`);
   if (typeof item.segment !== 'string' || item.segment.trim().length < 3) errors.push(`${prefix}.segment is required`);
   addEvidenceDateErrors(errors, item.committedAt, `${prefix}.committedAt`);
+  addNotAfterAsOfError(errors, item.committedAt, asOfBounds, `${prefix}.committedAt`);
   addRequiredBoolean(errors, item.permissioned, `${prefix}.permissioned`);
   addRequiredBoolean(errors, item.contactPermission, `${prefix}.contactPermission`);
   addRequiredBoolean(errors, item.pilotScopeAccepted, `${prefix}.pilotScopeAccepted`);
@@ -130,13 +143,14 @@ function validateDesignPartner(item, index) {
   return { accepted: errors.length === 0, errors };
 }
 
-function validateOutcome(item, index) {
+function validateOutcome(item, index, asOfBounds) {
   const errors = [];
   const prefix = `documentedOutcomes[${index}]`;
 
   if (!isPlainObject(item)) return { accepted: false, errors: [`${prefix} must be an object`] };
   if (!isSha256(item.outcomeIdHash)) errors.push(`${prefix}.outcomeIdHash must be a non-placeholder sha256 hash`);
   addEvidenceDateErrors(errors, item.observedAt, `${prefix}.observedAt`);
+  addNotAfterAsOfError(errors, item.observedAt, asOfBounds, `${prefix}.observedAt`);
   addRequiredBoolean(errors, item.permissioned, `${prefix}.permissioned`);
   addRequiredBoolean(errors, item.baselineWorkflowCaptured, `${prefix}.baselineWorkflowCaptured`);
   if (typeof item.artifactReviewed !== 'string' || item.artifactReviewed.trim().length < 3) errors.push(`${prefix}.artifactReviewed is required`);
@@ -184,11 +198,13 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
   let acceptedOutcomeCount = 0;
   const acceptedDesignPartnerHashes = new Set();
   const acceptedOutcomeHashes = new Set();
+  let asOfBounds = null;
 
   if (parsed) {
     if (!isPlainObject(parsed)) errors.push('commercial evidence file root must be an object');
     if (parsed.schemaVersion !== SCHEMA_VERSION) errors.push(`schemaVersion must be ${SCHEMA_VERSION}`);
     addEvidenceDateErrors(errors, parsed.asOf, 'asOf');
+    asOfBounds = parseEvidenceDateBounds(parsed.asOf);
     if (typeof parsed.sourceBoundary !== 'string' || parsed.sourceBoundary.length < 20) {
       errors.push('sourceBoundary must describe the owner-held evidence and redaction boundary');
     }
@@ -198,7 +214,7 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
     } else {
       addDuplicateHashErrors(errors, parsed.designPartnerCommitments, 'partnerIdHash', 'designPartnerCommitments');
       parsed.designPartnerCommitments.forEach((item, index) => {
-        const result = validateDesignPartner(item, index);
+        const result = validateDesignPartner(item, index, asOfBounds);
         if (result.accepted) {
           acceptedDesignPartnerCount += 1;
           acceptedDesignPartnerHashes.add(item.partnerIdHash);
@@ -212,7 +228,7 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
     } else {
       addDuplicateHashErrors(errors, parsed.documentedOutcomes, 'outcomeIdHash', 'documentedOutcomes');
       parsed.documentedOutcomes.forEach((item, index) => {
-        const result = validateOutcome(item, index);
+        const result = validateOutcome(item, index, asOfBounds);
         if (result.accepted) {
           acceptedOutcomeCount += 1;
           acceptedOutcomeHashes.add(item.outcomeIdHash);

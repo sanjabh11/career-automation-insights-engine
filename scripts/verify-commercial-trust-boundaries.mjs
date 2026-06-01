@@ -515,6 +515,7 @@ const checks = [
       /live_mrr_gt_zero/,
       /artifactHashes/,
       /future-dated/,
+      /later than asOf/,
     ],
   },
   {
@@ -556,6 +557,7 @@ const checks = [
       /outcomeGateSatisfied/,
       /commercial-evidence-records\.local\.json/,
       /future-dated/,
+      /later than asOf/,
     ],
   },
   {
@@ -569,6 +571,7 @@ const checks = [
       /outcomeIdHash/,
       /unique/,
       /future-dated/,
+      /later than asOf/,
       /doesNotProve/,
     ],
   },

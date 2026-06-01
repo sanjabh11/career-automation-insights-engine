@@ -109,6 +109,7 @@ assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --w
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
 assert(/future-dated/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject future-dated metadata');
+assert(/later than asOf/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject observedAt later than asOf');
 assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');
 assert(/documented_outcomes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover documented outcomes');
 assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted partner records');
@@ -116,6 +117,7 @@ assert(/acceptedOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'co
 assert(/uniqueDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique partner hashes');
 assert(/uniqueOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique outcome hashes');
 assert(/future-dated/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject future-dated metadata');
+assert(/later than asOf/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject record dates later than asOf');
 assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
