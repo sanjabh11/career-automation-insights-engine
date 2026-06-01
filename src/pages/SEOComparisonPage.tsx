@@ -20,7 +20,7 @@ import { occupationRiskData, occupationSlugs, type OccupationRiskData } from '@/
 import { SEOReportDownload } from '@/components/SEOReportDownload';
 
 /** Generate all valid comparison pairs for internal linking */
-export function getComparisonPairs(): { slug1: string; slug2: string; label: string }[] {
+function getComparisonPairs(): { slug1: string; slug2: string; label: string }[] {
   const popular = [
     'accountant', 'software-developer', 'registered-nurse', 'lawyer',
     'graphic-designer', 'data-entry-clerk', 'marketing-manager', 'teacher-k12',

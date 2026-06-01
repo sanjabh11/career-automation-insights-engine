@@ -19,7 +19,7 @@ import {
 import { occupationRiskData, type OccupationRiskData } from '@/data/occupationRiskData';
 
 /** Get unique industries + slug-safe names from occupation data */
-export function getIndustries(): { slug: string; name: string; count: number; avgRisk: number }[] {
+function getIndustries(): { slug: string; name: string; count: number; avgRisk: number }[] {
   const industryMap = new Map<string, { name: string; occupations: { slug: string; data: OccupationRiskData }[] }>();
 
   for (const [slug, data] of Object.entries(occupationRiskData)) {

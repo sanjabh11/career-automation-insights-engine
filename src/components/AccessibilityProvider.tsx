@@ -1,24 +1,8 @@
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
-interface AccessibilityContextType {
-  isHighContrast: boolean;
-  isReducedMotion: boolean;
-  fontSize: 'small' | 'medium' | 'large';
-  toggleHighContrast: () => void;
-  setFontSize: (size: 'small' | 'medium' | 'large') => void;
-  announceToScreenReader: (message: string) => void;
-}
-
-const AccessibilityContext = createContext<AccessibilityContextType | null>(null);
-
-export function useAccessibility() {
-  const context = useContext(AccessibilityContext);
-  if (!context) {
-    throw new Error('useAccessibility must be used within AccessibilityProvider');
-  }
-  return context;
-}
+import React, { useEffect, useState } from 'react';
+import {
+  AccessibilityContext,
+  type AccessibilityContextType,
+} from '@/components/accessibilityContextValue';
 
 interface AccessibilityProviderProps {
   children: React.ReactNode;

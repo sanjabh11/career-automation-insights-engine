@@ -4,7 +4,7 @@
  */
 
 import { useSubscription } from './useSubscription';
-import { useUpgradePrompt } from '@/contexts/UpgradePromptContext';
+import { useUpgradePrompt } from '@/contexts/upgradePromptContextValue';
 
 export const useSubscriptionWithPrompts = () => {
   const subscription = useSubscription();
