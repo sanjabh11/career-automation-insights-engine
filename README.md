@@ -90,6 +90,7 @@ npm run verify:commercial
 | Workflow | Command or artifact | Use |
 | --- | --- | --- |
 | PR review baseline | `npx tsc --noEmit`, `npm run lint`, `npm run verify:secrets` | Catch TypeScript, lint, and secret hygiene regressions before review. |
+| Repository presentation | `npm run verify:repo-presentation` | Keep license, GitHub-description framing, and no-star/adoption boundaries reviewable. |
 | Proof-pack regression | `npm run verify:commercial` | Rebuild commercial evidence ledgers, run trust/data-provenance/build checks, and smoke commercial routes. |
 | Runtime smoke | `.github/workflows/phase-c-runtime-smoke.yml`, `npm run smoke:skill-adjacency`, `npm run e2e:smoke` | Keep embedding, APO, crosswalk, checkout, report-export, and proof-boundary flows from drifting. |
 | Source/data maintenance | `npm run verify:data-provenance`, `npm run verify:sources` | Track source-labeled artifacts, checksums, and official-source refresh boundaries. |

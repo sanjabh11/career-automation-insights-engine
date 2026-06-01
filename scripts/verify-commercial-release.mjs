@@ -64,6 +64,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-secret-hygiene.mjs'],
   },
   {
+    id: 'repo-presentation',
+    label: 'Verify repository presentation, license, and adoption-claim boundaries',
+    command: ['node', 'scripts/verify-repo-presentation.mjs'],
+  },
+  {
     id: 'build',
     label: 'Build production bundle',
     command: ['npm', 'run', 'build'],
@@ -157,7 +162,7 @@ Options:
 Default gate:
   index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
   data provenance, redacted live-gate evidence intake, commercial evidence records, remediation gate ledger,
-  scoped commercial lint, production build, route smoke.
+  scoped commercial lint, secret hygiene, repository presentation, production build, route smoke.
 `);
 }
 

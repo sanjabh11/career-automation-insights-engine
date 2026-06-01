@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T09:54:16.359Z",
+  "generatedAt": "2026-06-01T10:14:51.810Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -709,6 +709,10 @@
     {
       "name": "verify:remediation-gates:write",
       "command": "node scripts/verify-remediation-external-gates.mjs --write"
+    },
+    {
+      "name": "verify:repo-presentation",
+      "command": "node scripts/verify-repo-presentation.mjs"
     },
     {
       "name": "verify:report-evidence",

@@ -18,8 +18,9 @@ Last observed Phase E local baseline:
 | `npm run lint` | Pass | 0 ESLint errors and 0 warnings after excluding inactive backups/archives, clearing active explicit-`any` debt, stabilizing hook dependencies, and splitting provider/UI Fast Refresh export boundaries. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
+| `npm run verify:repo-presentation` | Pass | Confirms MIT license file/package metadata, GitHub-description framing, no-star/adoption boundaries, and maintainer-burden reviewer wording. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
-| `npm run verify:commercial` | Pass | Passed, including the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
+| `npm run verify:commercial` | Pass | Passed, including repository-presentation checks, the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims, unsupported outcome/correlation copy, or dead local WEF PDF path. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
