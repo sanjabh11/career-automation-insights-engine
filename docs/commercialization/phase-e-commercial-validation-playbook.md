@@ -36,6 +36,18 @@ Required local or CI secret names:
 
 Optional variables: `CHECKOUT_TEST_ORIGIN`, `STRIPE_TEST_TIER`, and `STRIPE_TEST_BILLING_PERIOD`. A passing test-mode Checkout Session still does not prove live revenue, webhook fulfillment, report-credit mutation, MRR, or bootcamp demand.
 
+## Live MRR Proof
+
+Run `npm run verify:stripe-live-mrr` only with owner-controlled live-mode Stripe credentials. The command lists live active subscriptions, checks fixed recurring subscription-item prices, looks for paid invoices for active subscriptions, and writes `docs/commercialization/stripe-live-mrr-proof-latest.json` with hashes and redacted metadata only. It does not create charges, refund charges, change subscriptions, store customer identities, or print raw Stripe payloads.
+
+Required local or CI secret names:
+
+| Variable | Purpose |
+| --- | --- |
+| `STRIPE_LIVE_SECRET_KEY`, `STRIPE_LIVE_RESTRICTED_KEY`, or `STRIPE_SECRET_KEY` | Live-mode Stripe key used for read-only subscription and invoice checks; test-mode keys are rejected |
+
+Prefer a restricted read-only key with access to subscriptions and invoices. Optional variables: `STRIPE_LIVE_MRR_MAX_PAGES` and `STRIPE_LIVE_MRR_CURRENCY`. A passing live-MRR proof still does not prove retention, product-market fit, future revenue, accounting-recognized revenue, webhook fulfillment, or commercial outcomes.
+
 ## Production Calibration Proof
 
 Run `npm run verify:production-calibration` only after the target Supabase project already has the approved calibration migrations, the deployed `calibrate-ece` Edge Function, function-level service-role secret, APO logs, and approved expert-assessment rows. The verifier invokes the deployed Edge Function with an anon key, validates that the response used `apo_overall_vs_expert_assessments`, requires ECE to be within `[0,1]`, and requires positive matched prediction pairs, expert rows, reliability bins, and a calibration run id. It writes `docs/commercialization/production-calibration-proof-latest.json` with hashes and redacted metadata only.
@@ -87,3 +99,4 @@ Use PostHog funnels and Supabase `analytics_events` exports with the same event 
 - [PostHog funnel docs](https://posthog.com/docs/product-analytics/funnels), as of 2026-05-31: funnels should use clear sequential steps and simple success events before adding optional complexity.
 - [PostHog JavaScript docs](https://posthog.com/docs/libraries/js), as of 2026-05-31: identified users and SDK defaults are explicit setup choices.
 - [Stripe Checkout Sessions](https://docs.stripe.com/payments/checkout-sessions) and [Stripe test mode](https://docs.stripe.com/test-mode), as of 2026-05-31: Checkout Sessions should reference real Stripe Price objects; test mode or sandbox objects do not prove live revenue.
+- [Stripe Subscriptions list API](https://docs.stripe.com/api/subscriptions/list) and [Stripe Invoices list API](https://docs.stripe.com/api/invoices/list), as of 2026-06-01: active subscriptions and paid invoices can be read through the API; this repo stores only redacted proof metadata and hashes.

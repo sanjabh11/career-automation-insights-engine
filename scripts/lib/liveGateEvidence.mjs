@@ -59,6 +59,8 @@ function gateRequirementError(item) {
       if (item.evidenceType !== 'stripe_live_mrr_export') return 'requires evidenceType=stripe_live_mrr_export';
       if (summary.liveMode !== true) return 'requires evidenceSummary.liveMode=true';
       if (summary.totalMrrGreaterThanZero !== true) return 'requires evidenceSummary.totalMrrGreaterThanZero=true';
+      if (!Number.isInteger(summary.activeSubscriptionCount) || summary.activeSubscriptionCount <= 0) return 'requires positive evidenceSummary.activeSubscriptionCount';
+      if (!Number.isInteger(summary.paidInvoiceCount) || summary.paidInvoiceCount <= 0) return 'requires positive evidenceSummary.paidInvoiceCount';
       return null;
     case 'three_committed_partners':
       if (item.evidenceType !== 'design_partner_commitments') return 'requires evidenceType=design_partner_commitments';

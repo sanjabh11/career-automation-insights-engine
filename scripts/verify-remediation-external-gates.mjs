@@ -149,6 +149,7 @@ function main() {
   const packageScripts = packageJson.scripts || {};
   const stripeRuntime = readOptional('src/lib/stripe.ts');
   const stripeTestCheckoutVerifier = readOptional('scripts/verify-stripe-test-checkout.mjs');
+  const stripeLiveMrrVerifier = readOptional('scripts/verify-stripe-live-mrr.mjs');
   const productionCalibrationVerifier = readOptional('scripts/verify-production-calibration-run.mjs');
   const calibrationFunction = readOptional('supabase/functions/calibrate-ece/index.ts');
   const completionAudit = readOptional('docs/commercialization/remediation-completion-audit-2026-05-31.md');
@@ -244,6 +245,25 @@ function main() {
     ]) &&
     exists('supabase/functions/create-checkout-session/index.ts') &&
     containsAll(stripeRuntime, ['checkoutStatus: \'hidden_pending_live_price\'', 'stripePriceId: undefined']);
+
+  const liveMrrMissing = missingGroups(presentEnvNames, [
+    {
+      label: 'STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY',
+      aliases: ['STRIPE_LIVE_SECRET_KEY', 'STRIPE_LIVE_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'],
+    },
+  ]);
+  const liveMrrLocalReady =
+    packageScripts['verify:stripe-live-mrr'] === 'node scripts/verify-stripe-live-mrr.mjs --write' &&
+    exists('scripts/verify-stripe-live-mrr.mjs') &&
+    containsAll(stripeLiveMrrVerifier, [
+      'stripe_live_mrr_export',
+      'totalMrrGreaterThanZero',
+      'activeSubscriptionCount',
+      'paidInvoiceCount',
+      'failed_non_live_stripe_key',
+      'status',
+      'active',
+    ]);
 
   const calibrationMissing = missingGroups(presentEnvNames, [
     { label: 'SUPABASE_URL or VITE_SUPABASE_URL', aliases: ['SUPABASE_URL', 'VITE_SUPABASE_URL'] },
@@ -393,10 +413,15 @@ function main() {
     externalGate(
       'live_mrr_gt_zero',
       'Live MRR greater than zero',
-      'manual_external_evidence_required',
-      'No live Stripe subscription, payment transaction, or MRR export is stored in this repo.',
-      'Stripe live-mode and database evidence showing `total_mrr > 0`.',
-      { sourceBoundary: 'manual commercial evidence gate' }
+      statusForExternalGate(liveMrrMissing, liveMrrLocalReady),
+      liveMrrMissing.length
+        ? `Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: ${liveMrrMissing.join(', ')}.`
+        : 'Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.',
+      'Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.',
+      {
+        sourceBoundary: 'owner live Stripe credential gate',
+        doesNotProve: ['Retention', 'Product-market fit', 'Future revenue', 'Accounting-recognized revenue'],
+      }
     ),
     externalGate(
       'three_committed_partners',

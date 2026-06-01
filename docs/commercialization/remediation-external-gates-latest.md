@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-06-01T04:59:52.388Z
+Generated: 2026-06-01T05:12:35.863Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
@@ -17,7 +17,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 | Real Stripe test-mode checkout | blocked_missing_owner_secret_or_live_evidence | Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_SECRET_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD. | Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact. |
 | Production calibration run | blocked_missing_owner_secret_or_live_evidence | Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY. | Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact. |
 | Authenticated live artifact e2e | blocked_missing_owner_secret_or_live_evidence | Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD. | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
-| Live MRR greater than zero | manual_external_evidence_required | No live Stripe subscription, payment transaction, or MRR export is stored in this repo. | Stripe live-mode and database evidence showing `total_mrr > 0`. |
+| Live MRR greater than zero | blocked_missing_owner_secret_or_live_evidence | Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY. | Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence. |
 | Three committed design partners | manual_external_evidence_required | Onboarding checklist exists, but named partner commitments are not stored in this repo. | At least three permissioned partner records with pilot scope, next step, and contact permission. |
 | Permissioned documented outcomes | manual_external_evidence_required | Case-study capture template exists, but permissioned outcome records are not stored in this repo. | Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text. |
 
@@ -26,7 +26,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 - Real Stripe test-mode checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.
 - Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.
 - Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.
-- Live MRR greater than zero: Stripe live-mode and database evidence showing `total_mrr > 0`.
+- Live MRR greater than zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.
 - Three committed design partners: At least three permissioned partner records with pilot scope, next step, and contact permission.
 - Permissioned documented outcomes: Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text.
 

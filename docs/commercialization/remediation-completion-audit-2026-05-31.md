@@ -2,7 +2,7 @@
 
 Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through production calibration verifier handoff
+Latest local remediation evidence reviewed: Phase E follow-up through live MRR verifier handoff
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -28,6 +28,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Phase E commercial validation instrumentation | `npm run verify:commercial-validation` | Pass: analytics persistence, PostHog identified-only capture, activation events, commercial lead capture event, commercial evidence gates, hidden bootcamp CTA |
 | Impact/outcomes proof-boundary copy | `PLAYWRIGHT_CHANNEL=chrome npx playwright test tests/e2e/proof-boundary-copy.spec.ts --workers=1 --reporter=line`; `npm run verify:claim-boundaries` | Pass: `/impact` no longer renders hard-coded wage, skill-accuracy, decision-speed, or testimonial claims; `/outcomes` no longer renders static correlation/wage-growth claims |
 | Stripe test checkout verifier | `node scripts/verify-stripe-test-checkout.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, and requires owner-supplied test credentials plus `STRIPE_TEST_PRICE_ID` before creating a Checkout Session |
+| Stripe live MRR verifier | `node scripts/verify-stripe-live-mrr.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, rejects test-mode keys, and requires owner-supplied live Stripe credentials plus active subscription and paid-invoice evidence before proving live MRR |
 | Production calibration verifier | `node scripts/verify-production-calibration-run.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, and requires owner-supplied Supabase target credentials plus an already deployed `calibrate-ece` function with approved live APO logs and expert labels before proving a calibration run |
 | TypeScript | `npx tsc --noEmit` from Phase E gate run | Pass |
 | Report evidence | `npm run verify:report-evidence` from Phase E gate run | Pass |
@@ -44,7 +45,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Real Stripe test-mode checkout | Shell has Stripe/Supabase test credentials and `STRIPE_TEST_PRICE_ID` unset; current Playwright checkout is a mocked route smoke, and `stripe-test-checkout-proof-latest.json` is `skipped_missing_env`, not a real Checkout Session | Owner-provided test secrets plus `npm run verify:stripe-test-checkout` output showing `create-checkout-session` created a Stripe test-mode Checkout Session without printing secrets |
 | Live calibration against production data | Migrations/functions and owner-run verifier are implemented locally, but no Supabase migration, Edge Function deployment, or live calibration invocation was applied because destructive/deploy/live steps require approval and owner credentials | Approved migration/deploy, expert-label rows, APO logs, and `npm run verify:production-calibration` output from the target project |
 | UK/CA/AU localized wage values | Phase D intentionally shows U.S.-basis disclosure rather than fabricated local wages | Source-dated ONS/Job Bank or StatCan/JSA or ABS adapters with tested joins and visible release metadata |
-| Live MRR > 0 | No live Stripe active subscription, payment transaction, or MRR export is attached | Stripe live-mode and database evidence showing `total_mrr > 0` |
+| Live MRR > 0 | Owner-run Stripe live-MRR verifier exists, but no live Stripe key or accepted redacted live evidence file is attached | Owner-run `npm run verify:stripe-live-mrr` output or accepted redacted evidence showing live-mode active subscription, paid invoice, and `total_mrr > 0` |
 | >=3 committed design partners | Lead ops and onboarding capture are implemented, but no named partner commitments are present | At least three permissioned partner records with pilot scope, next step, and contact permission |
 | Documented outcomes | Case-study capture fields exist, but no permissioned outcome rows are present | Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text |
 

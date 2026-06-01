@@ -16,6 +16,7 @@
     "verify:remediation-gates": "node scripts/verify-remediation-external-gates.mjs",
     "verify:live-gate-evidence": "node scripts/verify-live-gate-evidence.mjs",
     "verify:stripe-test-checkout": "node scripts/verify-stripe-test-checkout.mjs --write",
+    "verify:stripe-live-mrr": "node scripts/verify-stripe-live-mrr.mjs --write",
     "verify:production-calibration": "node scripts/verify-production-calibration-run.mjs --write",
     "verify:commercial-validation": "node scripts/verify-phase-e-commercial-validation.mjs",
     "index:commercial": "node scripts/generate-commercialization-index.mjs",

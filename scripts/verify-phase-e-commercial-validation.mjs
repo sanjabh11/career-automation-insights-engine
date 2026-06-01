@@ -30,6 +30,7 @@ const files = {
   packageJson: read('package.json'),
   liveGateEvidenceVerifier: read('scripts/verify-live-gate-evidence.mjs'),
   stripeTestCheckoutVerifier: read('scripts/verify-stripe-test-checkout.mjs'),
+  stripeLiveMrrVerifier: read('scripts/verify-stripe-live-mrr.mjs'),
   productionCalibrationVerifier: read('scripts/verify-production-calibration-run.mjs'),
   liveGateEvidenceTemplate: read('docs/commercialization/live-gate-evidence-template.json'),
 };
@@ -88,18 +89,27 @@ assert(
   'https://posthog.com/docs/libraries/js',
   'https://docs.stripe.com/payments/checkout-sessions',
   'https://docs.stripe.com/test-mode',
+  'https://docs.stripe.com/api/subscriptions/list',
+  'https://docs.stripe.com/api/invoices/list',
   'npm run verify:live-gate-evidence',
   'npm run verify:stripe-test-checkout',
+  'npm run verify:stripe-live-mrr',
   'npm run verify:production-calibration',
   'live-gate-evidence-template.json',
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
 
 assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
+assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
 assert(/livemode=false/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must verify Stripe test mode');
+assert(/stripe_live_mrr_export/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must declare the redacted evidence type');
+assert(/totalMrrGreaterThanZero/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must check total MRR');
+assert(/activeSubscriptionCount/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must count active subscriptions');
+assert(/paidInvoiceCount/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must count paid invoices');
+assert(/failed_non_live_stripe_key/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must reject non-live Stripe keys');
 assert(/calibrate-ece/.test(files.productionCalibrationVerifier), 'production calibration verifier must call the calibration Edge Function');
 assert(/apo_overall_vs_expert_assessments/.test(files.productionCalibrationVerifier), 'production calibration verifier must verify the calibration method');
 assert(/pairsCount/.test(files.productionCalibrationVerifier), 'production calibration verifier must verify matched prediction pairs');

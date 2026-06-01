@@ -80,6 +80,7 @@
         "liveMode": true,
         "totalMrrGreaterThanZero": true,
         "activeSubscriptionCount": 1,
+        "paidInvoiceCount": 1,
         "currency": "usd"
       },
       "doesNotProve": [

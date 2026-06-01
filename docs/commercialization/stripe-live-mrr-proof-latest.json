@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-06-01T05:12:08.444Z",
+  "gateId": "live_mrr_gt_zero",
+  "evidenceType": "stripe_live_mrr_export",
+  "status": "skipped_missing_env",
+  "confidence": "bounded_stripe_live_mrr_readonly",
+  "caveat": "This verifier reads Stripe live-mode active subscriptions and paid invoices, then records redacted metadata showing whether fixed recurring subscription MRR is greater than zero. It does not create charges, refund charges, change subscriptions, store customer identities, or prove retention, product-market fit, future revenue, or accounting-recognized revenue.",
+  "docsAsOf": "2026-06-01",
+  "docsReferences": [
+    "https://docs.stripe.com/api/subscriptions/list",
+    "https://docs.stripe.com/api/invoices/list",
+    "https://docs.stripe.com/test-mode"
+  ],
+  "doesNotProve": [
+    "Retention",
+    "Product-market fit",
+    "Future revenue",
+    "Accounting-recognized revenue",
+    "Webhook fulfillment",
+    "Commercial outcomes"
+  ],
+  "manualInterventionIfSkipped": [
+    "Provide a live-mode Stripe restricted or secret key via STRIPE_LIVE_SECRET_KEY, STRIPE_LIVE_RESTRICTED_KEY, or STRIPE_SECRET_KEY; test-mode keys are rejected.",
+    "Prefer a restricted read-only key with read access for subscriptions and invoices.",
+    "Run npm run verify:stripe-live-mrr. Do not paste Stripe keys, customer emails, subscription IDs, invoice IDs, or raw Stripe payloads into chat or tracked files.",
+    "Attach only redacted proof metadata through docs/commercialization/live-gate-evidence.local.json when owner-held proof is accepted."
+  ],
+  "request": {
+    "activeSubscriptionPagesLimit": 10,
+    "currency": "all"
+  },
+  "checks": [
+    {
+      "id": "stripe-live-key-present",
+      "label": "Stripe live-mode key is configured",
+      "passed": false,
+      "message": "Missing: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY"
+    }
+  ],
+  "missingEnv": [
+    "STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY"
+  ]
+}

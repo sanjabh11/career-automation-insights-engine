@@ -530,6 +530,18 @@ const checks = [
     ],
   },
   {
+    id: 'stripe-live-mrr-verifier',
+    file: 'scripts/verify-stripe-live-mrr.mjs',
+    expected: [
+      /stripe_live_mrr_export/,
+      /totalMrrGreaterThanZero/,
+      /activeSubscriptionCount/,
+      /paidInvoiceCount/,
+      /failed_non_live_stripe_key/,
+      /skipped_missing_env/,
+    ],
+  },
+  {
     id: 'remediation-gates-redacted-evidence-intake',
     file: 'scripts/verify-remediation-external-gates.mjs',
     expected: [
