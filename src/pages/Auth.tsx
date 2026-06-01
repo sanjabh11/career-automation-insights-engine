@@ -7,7 +7,7 @@ import { Loader2, Shield } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useAuthMode } from "@/contexts/WhopAppContext";
+import { useAuthMode } from "@/contexts/useWhopApp";
 
 function mapAuthError(raw: string): string {
   const lower = raw.toLowerCase();

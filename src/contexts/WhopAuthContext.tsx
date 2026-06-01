@@ -6,7 +6,7 @@
  * Works alongside Supabase auth for hybrid authentication.
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, ReactNode } from 'react';
 import { 
   getWhopAuthUrl, 
   exchangeCodeForToken, 
@@ -18,35 +18,13 @@ import {
   WhopTokens,
 } from '@/integrations/whop/client';
 import { supabase } from '@/integrations/supabase/client';
+import { WhopAuthContext, type WhopAuthState } from '@/contexts/WhopAuthContextCore';
 
 // Whop session storage keys
 const WHOP_ACCESS_TOKEN_KEY = 'whop_access_token';
 const WHOP_REFRESH_TOKEN_KEY = 'whop_refresh_token';
 const WHOP_EXPIRES_AT_KEY = 'whop_expires_at';
 const WHOP_USER_KEY = 'whop_user';
-
-interface WhopAuthState {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  user: WhopUser | null;
-  membership: {
-    id: string;
-    tier: 'free' | 'pro' | 'enterprise';
-    valid: boolean;
-    expiresAt: string | null;
-  } | null;
-  error: string | null;
-}
-
-interface WhopAuthContextValue extends WhopAuthState {
-  loginWithWhop: () => void;
-  logout: () => Promise<void>;
-  refreshSession: () => Promise<boolean>;
-  syncWithSupabase: () => Promise<void>;
-  isWhopEnabled: boolean;
-}
-
-const WhopAuthContext = createContext<WhopAuthContextValue | null>(null);
 
 interface WhopAuthProviderProps {
   children: ReactNode;
@@ -338,14 +316,4 @@ async function syncUserWithSupabase(
   }
 }
 
-// Hook to use Whop auth
-export function useWhopAuth() {
-  const context = useContext(WhopAuthContext);
-  if (!context) {
-    throw new Error('useWhopAuth must be used within WhopAuthProvider');
-  }
-  return context;
-}
-
-// Export types
-export type { WhopAuthState, WhopAuthContextValue };
+export type { WhopAuthContextValue, WhopAuthState } from '@/contexts/WhopAuthContextCore';

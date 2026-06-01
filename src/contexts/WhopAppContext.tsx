@@ -10,70 +10,16 @@
  * - Bypassing traditional auth when in Whop mode
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import React, { useEffect, useState, useCallback, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
-// Types for Whop context
-interface WhopUser {
-  id: string;
-  username: string;
-  email: string;
-  profilePicUrl?: string;
-}
-
-interface WhopMembership {
-  id: string;
-  productId: string;
-  planId: string;
-  status: 'active' | 'trialing' | 'canceled' | 'past_due';
-  valid: boolean;
-  accessLevel: 'none' | 'customer' | 'admin';
-}
-
-interface WhopExperience {
-  id: string;
-  name: string;
-  companyId: string;
-}
-
-// Whop tier mapping to internal subscription tiers
-export type WhopTier = 'free' | 'pro' | 'enterprise';
-
-interface WhopAppContextValue {
-  // State
-  isWhopEmbed: boolean;
-  isLoading: boolean;
-  isInitialized: boolean;
-  error: string | null;
-  
-  // User info
-  whopUser: WhopUser | null;
-  membership: WhopMembership | null;
-  experience: WhopExperience | null;
-  accessLevel: 'none' | 'customer' | 'admin';
-  
-  // Internal profile (synced with Supabase)
-  profileId: string | null;
-  
-  // Actions
-  refreshContext: () => Promise<void>;
-  requestUpgrade: () => void;  // Trigger Whop native upgrade flow
-  
-  // Utilities
-  isCustomer: boolean;
-  isAdmin: boolean;
-  hasAccess: boolean;
-  
-  // Freemium model flags
-  isFreeTier: boolean;  // True if user doesn't have premium membership
-  isPremiumTier: boolean;  // True if user has valid premium membership
-  
-  // Whop monetization
-  whopTier: WhopTier;  // Current tier based on Whop membership
-  canAccessFeature: (feature: string) => boolean;  // Feature gating helper
-}
-
-const WhopAppContext = createContext<WhopAppContextValue | null>(null);
+import {
+  WhopAppContext,
+  type WhopAppContextValue,
+  type WhopExperience,
+  type WhopMembership,
+  type WhopTier,
+  type WhopUser,
+} from '@/contexts/WhopAppContextCore';
 
 // Check if we're running inside a Whop iframe
 function detectWhopIframe(): boolean {
@@ -382,46 +328,4 @@ export function WhopAppProvider({ children, forceWhopMode = false }: WhopAppProv
   );
 }
 
-// Hook to use Whop context
-export function useWhopApp() {
-  const context = useContext(WhopAppContext);
-  if (!context) {
-    throw new Error('useWhopApp must be used within a WhopAppProvider');
-  }
-  return context;
-}
-
-// Hook to check if we should use Whop auth vs traditional auth
-export function useAuthMode() {
-  const { isWhopEmbed, isInitialized } = useWhopApp();
-  
-  return {
-    isWhopMode: isWhopEmbed,
-    isTraditionalMode: !isWhopEmbed,
-    isReady: isInitialized,
-  };
-}
-
-// Hook to get the current user (from either Whop or Supabase)
-export function useCurrentUser() {
-  const { isWhopEmbed, whopUser, membership, profileId, hasAccess } = useWhopApp();
-  
-  if (isWhopEmbed && whopUser) {
-    return {
-      id: profileId || whopUser.id,
-      email: whopUser.email,
-      username: whopUser.username,
-      avatarUrl: whopUser.profilePicUrl,
-      isAuthenticated: true,
-      tier: membership?.valid ? 'pro' : 'free',
-      source: 'whop' as const,
-      hasAccess,
-    };
-  }
-  
-  // Return null if in Whop mode but no user yet
-  // The traditional auth flow will handle non-Whop mode
-  return null;
-}
-
-export { WhopAppContext };
+export type { WhopTier } from '@/contexts/WhopAppContextCore';

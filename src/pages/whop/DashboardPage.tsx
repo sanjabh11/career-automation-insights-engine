@@ -12,7 +12,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useWhopApp } from '@/contexts/WhopAppContext';
+import { useWhopApp } from '@/contexts/useWhopApp';
 import { CommunityDashboard } from '@/components/whop/CommunityDashboard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Settings, Eye, Crown } from 'lucide-react';
