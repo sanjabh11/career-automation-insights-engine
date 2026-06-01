@@ -59,6 +59,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-remediation-external-gates.mjs', '--write'],
   },
   {
+    id: 'remediation-completion-audit',
+    label: 'Write APO remediation completion audit',
+    command: ['node', 'scripts/verify-remediation-completion-audit.mjs', '--write'],
+  },
+  {
     id: 'lint-commercial',
     label: 'Lint commercial proof-pack files',
     command: ['node', 'scripts/lint-commercial-scope.mjs'],
@@ -166,8 +171,9 @@ Options:
 
 Default gate:
   index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
-  data provenance, redacted live-gate evidence intake, commercial evidence records, remediation gate ledger,
-  scoped commercial lint, secret hygiene, repository presentation, production build, route smoke.
+  data provenance, redacted live-gate evidence intake, commercial evidence records, owner-evidence fixture smoke,
+  remediation gate ledger, remediation completion audit, scoped commercial lint, secret hygiene,
+  repository presentation, production build, route smoke.
 `);
 }
 

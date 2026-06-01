@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:44:35.066Z",
+  "generatedAt": "2026-06-01T11:08:57.193Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -770,6 +770,30 @@
       "passed": true
     },
     {
+      "id": "remediation-completion-audit-verifier",
+      "label": "Remediation completion audit verifier",
+      "path": "scripts/verify-remediation-completion-audit.mjs",
+      "type": "commercial-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "phaseDeliverables",
+        "confidenceDelta",
+        "remainingExternalGates",
+        "Keep the active goal open",
+        "remediation-completion-audit-latest.md"
+      ],
+      "caveat": "Generates a phase-by-phase closeout ledger from current gate artifacts and repo evidence; it does not convert local proof into owner-held live or commercial evidence.",
+      "bytes": 11624,
+      "rows": 218,
+      "sha256": "50d17d063318683b86ed571c0ae9046553e187f246d5060677c5d6ae6d2b005e",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "commercial-live-auth-e2e-verifier",
       "label": "Authenticated live resume proof artifact e2e verifier",
       "path": "scripts/verify-commercial-live-auth-e2e.mjs",
@@ -1270,7 +1294,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "916dad7a5db29c34da904c6edc60535cc492298d18e8f05a3eefb01087fc3a5c",
+      "sha256": "673f90421053684b51ecc7ceaf65ab67146c8e5a5b94f2a90096d5303b49fbeb",
       "failures": [],
       "passed": true
     },

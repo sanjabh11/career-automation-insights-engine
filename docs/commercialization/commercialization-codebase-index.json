@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:44:32.478Z",
+  "generatedAt": "2026-06-01T11:08:55.718Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -705,6 +705,14 @@
     {
       "name": "verify:production-calibration",
       "command": "node scripts/verify-production-calibration-run.mjs --write"
+    },
+    {
+      "name": "verify:remediation-completion-audit",
+      "command": "node scripts/verify-remediation-completion-audit.mjs"
+    },
+    {
+      "name": "verify:remediation-completion-audit:write",
+      "command": "node scripts/verify-remediation-completion-audit.mjs --write"
     },
     {
       "name": "verify:remediation-gates",

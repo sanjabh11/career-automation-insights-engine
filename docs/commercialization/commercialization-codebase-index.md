@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T10:44:32.478Z
+Generated: 2026-06-01T11:08:55.718Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -156,6 +156,8 @@ Policies:
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
 | `verify:owner-evidence-fixtures` | `node scripts/verify-owner-evidence-fixture-path.mjs` |
 | `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
+| `verify:remediation-completion-audit` | `node scripts/verify-remediation-completion-audit.mjs` |
+| `verify:remediation-completion-audit:write` | `node scripts/verify-remediation-completion-audit.mjs --write` |
 | `verify:remediation-gates` | `node scripts/verify-remediation-external-gates.mjs` |
 | `verify:remediation-gates:write` | `node scripts/verify-remediation-external-gates.mjs --write` |
 | `verify:repo-presentation` | `node scripts/verify-repo-presentation.mjs` |
@@ -171,7 +173,7 @@ Policies:
 
 Required commercial pre-demo gate:
 
-1. `npm run verify:commercial` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, remediation external-gate ledger, commercial lint/build checks, and route smoke proof
+1. `npm run verify:commercial` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, owner-evidence fixture smoke, remediation external-gate ledger, remediation completion audit, commercial lint/build checks, and route smoke proof
 2. `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` when Chromium startup is stable; this writes `docs/commercialization/commercial-accessibility-audit-latest.md` and `.json`
 3. `npm run verify:sources` when DNS/network access is available
 4. `npm audit --omit=dev --audit-level=high` when registry access is available
@@ -179,7 +181,7 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR across `main`, `live-auth-e2e-closeout`, and the Phase A-E remediation branch chain, refreshes the remediation external-gate ledger through `verify:commercial`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
+- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR across `main`, `live-auth-e2e-closeout`, and the Phase A-E remediation branch chain, refreshes the remediation external-gate ledger and completion audit through `verify:commercial`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
 
 ## Remaining Index Gaps
 

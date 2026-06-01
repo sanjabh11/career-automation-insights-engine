@@ -1,10 +1,11 @@
 {
-  "checkedAt": "2026-06-01T10:33:08.747Z",
+  "checkedAt": "2026-06-01T11:05:20.319Z",
   "repository": "sanjabh11/career-automation-insights-engine",
   "branch": "phase-e-commercial-validation",
   "local": {
     "licenseFilePresent": true,
     "packageLicense": "MIT",
+    "packageDescription": "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines.",
     "maintainerBurdenCopy": true
   },
   "github": {

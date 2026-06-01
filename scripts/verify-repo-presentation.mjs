@@ -138,6 +138,11 @@ const checks = [
     test: (source) => JSON.parse(source).license === 'MIT',
   },
   {
+    id: 'package-description-metadata',
+    file: 'package.json',
+    test: (source) => JSON.parse(source).description === approvedGithubDescription,
+  },
+  {
     id: 'readme-repo-description-framing',
     file: 'README.md',
     test: (source) =>
@@ -238,6 +243,7 @@ if (failures.length > 0) {
       local: {
         licenseFilePresent: true,
         packageLicense: 'MIT',
+        packageDescription: approvedGithubDescription,
         maintainerBurdenCopy: true,
       },
       github: {

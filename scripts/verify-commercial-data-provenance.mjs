@@ -244,6 +244,15 @@ const artifacts = [
     caveat: 'Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.',
   },
   {
+    id: 'remediation-completion-audit-verifier',
+    label: 'Remediation completion audit verifier',
+    path: 'scripts/verify-remediation-completion-audit.mjs',
+    type: 'commercial-verifier',
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['phaseDeliverables', 'confidenceDelta', 'remainingExternalGates', 'Keep the active goal open', 'remediation-completion-audit-latest.md'],
+    caveat: 'Generates a phase-by-phase closeout ledger from current gate artifacts and repo evidence; it does not convert local proof into owner-held live or commercial evidence.',
+  },
+  {
     id: 'commercial-live-auth-e2e-verifier',
     label: 'Authenticated live resume proof artifact e2e verifier',
     path: 'scripts/verify-commercial-live-auth-e2e.mjs',

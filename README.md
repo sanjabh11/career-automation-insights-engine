@@ -97,6 +97,7 @@ npm run verify:commercial
 | Source/data maintenance | `npm run verify:data-provenance`, `npm run verify:sources` | Track source-labeled artifacts, checksums, and official-source refresh boundaries. |
 | Owner-held evidence | `npm run compose:live-gate-evidence`, `npm run compose:commercial-evidence-records` | Convert owner-run proof artifacts or partner/outcome intake into redacted, gitignored local evidence files. |
 | Evidence path fixture | `npm run verify:owner-evidence-fixtures` | Exercise the full redacted evidence validator and final remediation-gate path with temporary synthetic non-secret fixtures; this proves schema compatibility only, not live or commercial proof. |
+| Completion audit | `npm run verify:remediation-completion-audit`, `npm run verify:remediation-completion-audit:write` | Generate the current phase-by-phase closeout ledger with PR summaries, key files, commands, acceptance evidence, confidence deltas, and remaining external gates. |
 
 See `CONTRIBUTING.md` for the pull-request checklist and claim-boundary rules.
 

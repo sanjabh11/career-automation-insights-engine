@@ -34,6 +34,7 @@ const files = {
   commercialEvidenceRecordsComposer: read('scripts/compose-commercial-evidence-records.mjs'),
   commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
   ownerEvidenceFixtureVerifier: read('scripts/verify-owner-evidence-fixture-path.mjs'),
+  remediationCompletionAuditVerifier: read('scripts/verify-remediation-completion-audit.mjs'),
   commercialEvidenceIntakeTemplate: read('docs/commercialization/commercial-evidence-intake-template.json'),
   commercialEvidenceRecordsTemplate: read('docs/commercialization/commercial-evidence-records-template.json'),
   stripeTestCheckoutVerifier: read('scripts/verify-stripe-test-checkout.mjs'),
@@ -114,6 +115,8 @@ assert(/"compose:commercial-evidence-records": "node scripts\/compose-commercial
 assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs"/.test(files.packageJson), 'commercial evidence records verifier script must be wired as read-only by default');
 assert(/"verify:commercial-evidence-records:write": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records write verifier script must be wired explicitly');
 assert(/"verify:owner-evidence-fixtures": "node scripts\/verify-owner-evidence-fixture-path\.mjs"/.test(files.packageJson), 'owner evidence fixture verifier script must be wired');
+assert(/"verify:remediation-completion-audit": "node scripts\/verify-remediation-completion-audit\.mjs"/.test(files.packageJson), 'remediation completion audit verifier script must be wired');
+assert(/"verify:remediation-completion-audit:write": "node scripts\/verify-remediation-completion-audit\.mjs --write"/.test(files.packageJson), 'remediation completion audit write script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
@@ -151,6 +154,10 @@ assert(/verify-commercial-evidence-records\.mjs/.test(files.ownerEvidenceFixture
 assert(/verify-remediation-external-gates\.mjs/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must exercise final remediation gates');
 assert(/goalCompleteWithSyntheticFixtures/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must prove the synthetic complete path reaches goalComplete');
 assert(/Synthetic non-secret metadata only/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must describe its non-proof fixture boundary');
+assert(/phaseDeliverables/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must publish per-phase deliverables');
+assert(/confidenceDelta/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must include confidence delta');
+assert(/remainingExternalGates/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must include remaining external gates');
+assert(/Keep the active goal open/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must preserve incomplete goal boundary when live evidence is missing');
 assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/2026-06-01\.apo-commercial-evidence-intake\.v1/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must declare the expected schema version');
@@ -162,6 +169,7 @@ assert(/--live-evidence/.test(files.remediationGatesVerifier), 'remediation gate
 assert(/--commercial-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit commercial evidence path');
 assert(/--write/.test(files.remediationGatesVerifier), 'remediation gate verifier must require explicit --write for tracked ledger artifacts');
 assert(/owner-evidence-fixtures/.test(read('scripts/verify-commercial-release.mjs')), 'commercial release verifier must run the owner evidence fixture path before final ledger generation');
+assert(/remediation-completion-audit/.test(read('scripts/verify-commercial-release.mjs')), 'commercial release verifier must generate the remediation completion audit');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
 assert(/livemode=false/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must verify Stripe test mode');
 assert(/stripe_live_mrr_export/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must declare the redacted evidence type');
