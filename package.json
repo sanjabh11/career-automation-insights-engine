@@ -43,6 +43,7 @@
     "verify:onet-task-ratings-live": "node scripts/verify-onet-task-ratings-live.mjs --write",
     "verify:resume-parser-live": "node scripts/verify-resume-parser-live.mjs --write",
     "verify:report-evidence": "node scripts/verify-report-evidence.mjs",
+    "verify:repo-presentation": "node scripts/verify-repo-presentation.mjs",
     "verify:secrets": "node scripts/verify-secret-hygiene.mjs",
     "verify:live-closeout-readiness": "node scripts/verify-live-closeout-readiness.mjs",
     "smoke:commercial": "node scripts/smoke-commercial-routes.mjs",

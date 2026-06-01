@@ -2,6 +2,14 @@
 
 As of 2026-06-01, this repository is maintained as a reviewable decision-support application, not as a popularity or adoption claim. Contributions should reduce maintainer burden, strengthen regression coverage, or improve source-labeled career and workforce data pipelines.
 
+## Reviewer And Program Framing
+
+When describing this repository to GitHub, open-source, or tool-access reviewers, use maintainer-burden language:
+
+> APO Dashboard uses Codex-assisted maintenance for PR review, CI triage, regression-test coverage, Supabase/Stripe/Gemini integration checks, and source-labeled workforce data-pipeline updates. The repository is MIT-licensed and actively maintained, but it does not use stars, popularity, commercial traction, or broad adoption as proof of maturity.
+
+Avoid language that frames the repository as externally validated, market-proven, broadly adopted, award-ready, or production-certified unless the exact evidence is present in the current branch and linked from the PR.
+
 ## Good First Contribution Areas
 
 | Area | Useful contribution | Proof expected |

@@ -6,6 +6,17 @@ The repository is maintained as a reviewable decision-support codebase. Its stro
 
 The product should be described as a decision-support tool. It estimates automation exposure and transition options from O*NET-centered occupation data, LLM-assisted task analysis, and commercial proof-pack workflows. It does not predict job loss, make employment decisions, certify scientific validity, or prove local labor-market outcomes.
 
+## Repository Presentation
+
+GitHub metadata and public-review framing should stay grounded in what this repository can prove:
+
+| Weak signal | Current handling | Approved framing |
+| --- | --- | --- |
+| Repository description | The GitHub repository description is set to "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines." | Cite this as scope, not adoption. |
+| License visibility | The repository uses MIT licensing in `LICENSE`; GitHub will expose the license field after the license file is present on the default branch. | Say "MIT-licensed source code" only when the current branch or default branch includes `LICENSE`. |
+| Stars and popularity | Stars are not used as evidence of maturity or adoption. | Emphasize active maintenance, PR review, CI checks, regression tests, and source-labeled data-pipeline maintenance. |
+| External applications | Reviewer-facing copy should be operational rather than promotional. | Focus on how Codex helps reduce maintainer burden across PR review, CI failures, regression coverage, Supabase/Stripe/Gemini integration checks, and data-source refresh work. |
+
 ## Current Evidence Boundary
 
 | Area | Current evidence | Boundary |
