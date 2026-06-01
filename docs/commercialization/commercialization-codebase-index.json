@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T09:11:44.492Z",
+  "generatedAt": "2026-06-01T09:34:46.123Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -640,6 +640,10 @@
     },
     {
       "name": "verify:commercial-evidence-records",
+      "command": "node scripts/verify-commercial-evidence-records.mjs"
+    },
+    {
+      "name": "verify:commercial-evidence-records:write",
       "command": "node scripts/verify-commercial-evidence-records.mjs --write"
     },
     {
@@ -701,6 +705,10 @@
     {
       "name": "verify:remediation-gates",
       "command": "node scripts/verify-remediation-external-gates.mjs"
+    },
+    {
+      "name": "verify:remediation-gates:write",
+      "command": "node scripts/verify-remediation-external-gates.mjs --write"
     },
     {
       "name": "verify:report-evidence",

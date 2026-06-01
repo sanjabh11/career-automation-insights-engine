@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T09:11:44.492Z
+Generated: 2026-06-01T09:34:46.123Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -139,7 +139,8 @@ Policies:
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
 | `verify:commercial-browser` | `node scripts/verify-commercial-browser.mjs` |
 | `verify:commercial-deployment` | `node scripts/generate-commercial-supabase-deployment-packet.mjs` |
-| `verify:commercial-evidence-records` | `node scripts/verify-commercial-evidence-records.mjs --write` |
+| `verify:commercial-evidence-records` | `node scripts/verify-commercial-evidence-records.mjs` |
+| `verify:commercial-evidence-records:write` | `node scripts/verify-commercial-evidence-records.mjs --write` |
 | `verify:commercial-full` | `node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey` |
 | `verify:commercial-live-auth-e2e` | `node scripts/verify-commercial-live-auth-e2e.mjs --write` |
 | `verify:commercial-live-supabase` | `node scripts/verify-commercial-live-supabase.mjs --write` |
@@ -155,6 +156,7 @@ Policies:
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
 | `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
 | `verify:remediation-gates` | `node scripts/verify-remediation-external-gates.mjs` |
+| `verify:remediation-gates:write` | `node scripts/verify-remediation-external-gates.mjs --write` |
 | `verify:report-evidence` | `node scripts/verify-report-evidence.mjs` |
 | `verify:resume-parser-live` | `node scripts/verify-resume-parser-live.mjs --write` |
 | `verify:secrets` | `node scripts/verify-secret-hygiene.mjs` |

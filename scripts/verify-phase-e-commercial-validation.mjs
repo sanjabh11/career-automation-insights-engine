@@ -110,7 +110,8 @@ assert(
 assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
 assert(/"compose:live-gate-evidence": "node scripts\/compose-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence composer script must be wired');
 assert(/"compose:commercial-evidence-records": "node scripts\/compose-commercial-evidence-records\.mjs"/.test(files.packageJson), 'commercial evidence records composer script must be wired');
-assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records verifier script must be wired');
+assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs"/.test(files.packageJson), 'commercial evidence records verifier script must be wired as read-only by default');
+assert(/"verify:commercial-evidence-records:write": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records write verifier script must be wired explicitly');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
@@ -145,6 +146,7 @@ assert(/docs\/commercialization\/commercial-evidence-intake\.local\.json/.test(f
 assert(/docs\/commercialization\/commercial-evidence-records\.local\.json/.test(files.gitignore), 'owner-held commercial evidence records file must be gitignored');
 assert(/--live-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit live evidence path');
 assert(/--commercial-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit commercial evidence path');
+assert(/--write/.test(files.remediationGatesVerifier), 'remediation gate verifier must require explicit --write for tracked ledger artifacts');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
 assert(/livemode=false/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must verify Stripe test mode');
 assert(/stripe_live_mrr_export/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must declare the redacted evidence type');

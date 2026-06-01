@@ -157,19 +157,21 @@ Validation errors: ${artifact.commercialEvidenceRecords.errorCount}
 
 The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
 
-## Command
+## Commands
 
 \`\`\`bash
 npm run verify:remediation-gates
+npm run verify:remediation-gates:write
 \`\`\`
 
-Use \`npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete\` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.
+Use \`npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete\` only when all external evidence has been attached and you want the read-only command to fail closed until every gate is proven. Use \`npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete\` when you also want to refresh this tracked artifact.
 `;
 }
 
 function main() {
   const generatedAt = new Date().toISOString();
   const requireComplete = hasFlag('--require-complete');
+  const shouldWrite = hasFlag('--write');
   const liveEvidencePath = readFlagValue('--live-evidence') || readFlagValue('--live-gate-evidence');
   const commercialEvidencePath = readFlagValue('--commercial-evidence') || readFlagValue('--commercial-records');
   const presentEnvNames = loadPresentEnvNames();
@@ -274,7 +276,8 @@ function main() {
     ]);
 
   const commercialEvidenceRecordsReady =
-    packageScripts['verify:commercial-evidence-records'] === 'node scripts/verify-commercial-evidence-records.mjs --write' &&
+    packageScripts['verify:commercial-evidence-records'] === 'node scripts/verify-commercial-evidence-records.mjs' &&
+    packageScripts['verify:commercial-evidence-records:write'] === 'node scripts/verify-commercial-evidence-records.mjs --write' &&
     exists('scripts/verify-commercial-evidence-records.mjs') &&
     exists('docs/commercialization/commercial-evidence-records-template.json') &&
     containsAll(commercialEvidenceRecordsVerifier, [
@@ -584,9 +587,11 @@ function main() {
     },
   };
 
-  fs.mkdirSync(path.join(root, 'docs/commercialization'), { recursive: true });
-  fs.writeFileSync(path.join(root, OUTPUT_JSON), `${JSON.stringify(artifact, null, 2)}\n`);
-  fs.writeFileSync(path.join(root, OUTPUT_MD), renderMarkdown(artifact));
+  if (shouldWrite) {
+    fs.mkdirSync(path.join(root, 'docs/commercialization'), { recursive: true });
+    fs.writeFileSync(path.join(root, OUTPUT_JSON), `${JSON.stringify(artifact, null, 2)}\n`);
+    fs.writeFileSync(path.join(root, OUTPUT_MD), renderMarkdown(artifact));
+  }
 
   console.log(JSON.stringify({
     ok: liveGateEvidence.errors.length === 0 && commercialEvidenceRecords.errors.length === 0,
@@ -594,7 +599,7 @@ function main() {
     liveGateEvidence: artifact.liveGateEvidence,
     commercialEvidenceRecords: artifact.commercialEvidenceRecords,
     gates: gates.map((item) => ({ id: item.id, status: item.status })),
-    wrote: [OUTPUT_JSON, OUTPUT_MD],
+    wrote: shouldWrite ? [OUTPUT_JSON, OUTPUT_MD] : null,
   }, null, 2));
 
   if (liveGateEvidence.errors.length > 0) {

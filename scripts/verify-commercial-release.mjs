@@ -51,7 +51,7 @@ const DEFAULT_STEPS = [
   {
     id: 'remediation-gates',
     label: 'Write APO remediation external gate ledger',
-    command: ['node', 'scripts/verify-remediation-external-gates.mjs'],
+    command: ['node', 'scripts/verify-remediation-external-gates.mjs', '--write'],
   },
   {
     id: 'lint-commercial',

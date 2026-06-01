@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-06-01T09:11:50.503Z
+Generated: 2026-06-01T09:34:50.174Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
@@ -58,10 +58,11 @@ Validation errors: 0
 
 The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
 
-## Command
+## Commands
 
 ```bash
 npm run verify:remediation-gates
+npm run verify:remediation-gates:write
 ```
 
-Use `npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete` only when all external evidence has been attached and you want the command to fail closed until every gate is proven.
+Use `npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete` only when all external evidence has been attached and you want the read-only command to fail closed until every gate is proven. Use `npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete` when you also want to refresh this tracked artifact.
