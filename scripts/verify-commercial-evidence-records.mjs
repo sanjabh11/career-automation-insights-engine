@@ -40,6 +40,21 @@ function isIsoDate(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}(?:T[\d:.+-]+Z?)?$/.test(value);
 }
 
+function parseEvidenceDate(value) {
+  if (!isIsoDate(value)) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function addEvidenceDateErrors(errors, value, pathName) {
+  const timestamp = parseEvidenceDate(value);
+  if (timestamp === null) {
+    errors.push(`${pathName} must be an ISO date or datetime`);
+  } else if (timestamp > Date.now()) {
+    errors.push(`${pathName} must not be future-dated`);
+  }
+}
+
 function isSha256(value) {
   return typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value) && !/^sha256:0{64}$/.test(value);
 }
@@ -102,7 +117,7 @@ function validateDesignPartner(item, index) {
   if (!isPlainObject(item)) return { accepted: false, errors: [`${prefix} must be an object`] };
   if (!isSha256(item.partnerIdHash)) errors.push(`${prefix}.partnerIdHash must be a non-placeholder sha256 hash`);
   if (typeof item.segment !== 'string' || item.segment.trim().length < 3) errors.push(`${prefix}.segment is required`);
-  if (!isIsoDate(item.committedAt)) errors.push(`${prefix}.committedAt must be an ISO date or datetime`);
+  addEvidenceDateErrors(errors, item.committedAt, `${prefix}.committedAt`);
   addRequiredBoolean(errors, item.permissioned, `${prefix}.permissioned`);
   addRequiredBoolean(errors, item.contactPermission, `${prefix}.contactPermission`);
   addRequiredBoolean(errors, item.pilotScopeAccepted, `${prefix}.pilotScopeAccepted`);
@@ -121,7 +136,7 @@ function validateOutcome(item, index) {
 
   if (!isPlainObject(item)) return { accepted: false, errors: [`${prefix} must be an object`] };
   if (!isSha256(item.outcomeIdHash)) errors.push(`${prefix}.outcomeIdHash must be a non-placeholder sha256 hash`);
-  if (!isIsoDate(item.observedAt)) errors.push(`${prefix}.observedAt must be an ISO date or datetime`);
+  addEvidenceDateErrors(errors, item.observedAt, `${prefix}.observedAt`);
   addRequiredBoolean(errors, item.permissioned, `${prefix}.permissioned`);
   addRequiredBoolean(errors, item.baselineWorkflowCaptured, `${prefix}.baselineWorkflowCaptured`);
   if (typeof item.artifactReviewed !== 'string' || item.artifactReviewed.trim().length < 3) errors.push(`${prefix}.artifactReviewed is required`);
@@ -173,7 +188,7 @@ export function validateCommercialEvidence({ inputPath, root: requestedRoot } = 
   if (parsed) {
     if (!isPlainObject(parsed)) errors.push('commercial evidence file root must be an object');
     if (parsed.schemaVersion !== SCHEMA_VERSION) errors.push(`schemaVersion must be ${SCHEMA_VERSION}`);
-    if (!isIsoDate(parsed.asOf)) errors.push('asOf must be an ISO date or datetime');
+    addEvidenceDateErrors(errors, parsed.asOf, 'asOf');
     if (typeof parsed.sourceBoundary !== 'string' || parsed.sourceBoundary.length < 20) {
       errors.push('sourceBoundary must describe the owner-held evidence and redaction boundary');
     }

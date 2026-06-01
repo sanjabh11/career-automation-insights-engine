@@ -514,6 +514,7 @@ const checks = [
       /authenticated_live_artifact_e2e/,
       /live_mrr_gt_zero/,
       /artifactHashes/,
+      /future-dated/,
     ],
   },
   {
@@ -554,6 +555,7 @@ const checks = [
       /partnerGateSatisfied/,
       /outcomeGateSatisfied/,
       /commercial-evidence-records\.local\.json/,
+      /future-dated/,
     ],
   },
   {
@@ -566,6 +568,7 @@ const checks = [
       /partnerIdHash/,
       /outcomeIdHash/,
       /unique/,
+      /future-dated/,
       /doesNotProve/,
     ],
   },

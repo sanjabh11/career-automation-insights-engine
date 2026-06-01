@@ -30,6 +30,21 @@ function isIsoDate(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}(?:T[\d:.+-]+Z?)?$/.test(value);
 }
 
+function parseEvidenceDate(value) {
+  if (!isIsoDate(value)) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function addEvidenceDateErrors(errors, value, pathName) {
+  const timestamp = parseEvidenceDate(value);
+  if (timestamp === null) {
+    errors.push(`${pathName} must be an ISO date or datetime`);
+  } else if (timestamp > Date.now()) {
+    errors.push(`${pathName} must not be future-dated`);
+  }
+}
+
 function isSha256(value) {
   return typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value) && !/^sha256:0{64}$/.test(value);
 }
@@ -87,7 +102,7 @@ function validateItem(item, index) {
   if (!isPlainObject(item)) return { gateId: null, accepted: false, errors: [`${prefix} must be an object`] };
   if (!REQUIRED_GATE_IDS.has(item.gateId)) errors.push(`${prefix}.gateId must be one of the required remediation gate ids`);
   if (item.status !== 'proven') errors.push(`${prefix}.status must be "proven" to count as accepted evidence`);
-  if (!isIsoDate(item.observedAt)) errors.push(`${prefix}.observedAt must be an ISO date or datetime`);
+  addEvidenceDateErrors(errors, item.observedAt, `${prefix}.observedAt`);
   if (typeof item.evidenceType !== 'string' || item.evidenceType.length < 3) errors.push(`${prefix}.evidenceType is required`);
   if (typeof item.redactionBoundary !== 'string' || item.redactionBoundary.length < 12) errors.push(`${prefix}.redactionBoundary must describe what was redacted or owner-held`);
   if (typeof item.evidenceSummary !== 'object' || item.evidenceSummary === null || Array.isArray(item.evidenceSummary)) errors.push(`${prefix}.evidenceSummary must be an object`);
@@ -148,7 +163,7 @@ export function validateLiveGateEvidence({ root, evidencePath } = {}) {
     if (parsed.schemaVersion !== LIVE_GATE_EVIDENCE_SCHEMA_VERSION) {
       errors.push(`schemaVersion must be ${LIVE_GATE_EVIDENCE_SCHEMA_VERSION}`);
     }
-    if (!isIsoDate(parsed.asOf)) errors.push('asOf must be an ISO date or datetime');
+    addEvidenceDateErrors(errors, parsed.asOf, 'asOf');
     if (typeof parsed.sourceBoundary !== 'string' || parsed.sourceBoundary.length < 12) {
       errors.push('sourceBoundary must describe the evidence source and owner-held boundary');
     }
