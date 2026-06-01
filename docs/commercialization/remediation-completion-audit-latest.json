@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-01T18:35:41.377Z",
+  "generatedAt": "2026-06-01T18:47:20.966Z",
   "branch": "phase-e-commercial-validation",
-  "sourceHeadAtGeneration": "bd0d660",
+  "sourceHeadAtGeneration": "82f0a3f",
   "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
   "goalComplete": false,
   "phaseDeliverables": [
@@ -153,15 +153,20 @@
     "Hosted CI proves this branch behavior, not target production data state.",
     "UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated."
   ],
-  "currentBranchFilesChangedCount": 218,
+  "currentBranchFilesChangedCount": 244,
   "currentBranchFilesChangedSample": [
     ".github/workflows/commercial-proof-pack.yml",
     ".github/workflows/phase-c-runtime-smoke.yml",
     ".gitignore",
+    ".phase-loop/master-plan.md",
+    ".phase-loop/phase-ledger.jsonl",
+    ".phase-loop/ratchets.json",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
     "STATUS.md",
+    "docs/commercialization/commercial-accessibility-audit-latest.json",
+    "docs/commercialization/commercial-accessibility-audit-latest.md",
     "docs/commercialization/commercial-evidence-intake-template.json",
     "docs/commercialization/commercial-evidence-records-latest.json",
     "docs/commercialization/commercial-evidence-records-template.json",
@@ -184,17 +189,12 @@
     "docs/commercialization/remediation-external-gates-latest.json",
     "docs/commercialization/remediation-external-gates-latest.md",
     "docs/commercialization/source-refresh-manifest.md",
+    "docs/commercialization/source-verification-latest.json",
     "docs/commercialization/stripe-live-mrr-proof-latest.json",
     "docs/commercialization/stripe-test-checkout-proof-latest.json",
     "eslint.config.js",
-    "netlify/functions/apo-proxy.ts",
-    "netlify/functions/onet-proxy.ts",
-    "package-lock.json",
-    "package.json",
-    "scripts/closeout-owner-evidence.mjs",
-    "scripts/compose-commercial-evidence-records.mjs",
-    "scripts/compose-live-gate-evidence.mjs",
-    "scripts/generate-commercialization-index.mjs"
+    "index.html",
+    "netlify/functions/apo-proxy.ts"
   ],
   "errors": []
 }

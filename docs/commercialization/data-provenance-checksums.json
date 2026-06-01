@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T18:35:37.007Z",
+  "generatedAt": "2026-06-01T18:47:19.212Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -1144,7 +1144,7 @@
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
       "bytes": 19431,
       "rows": 619,
-      "sha256": "15836160f1b805e0b92349e2175e7105777696f7cadfba871b43e3624a02cafd",
+      "sha256": "0611b371afdf906fb72071c74f5295f51030779632176943b165256768c6b4e3",
       "failures": [],
       "passed": true
     },
@@ -1174,7 +1174,7 @@
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
       "bytes": 7065,
       "rows": 53,
-      "sha256": "cf48d6b7833e1bcc4ac272666f128efad129b162df60ee35f5febfe8bd7d6c45",
+      "sha256": "f060381881ac2e463dcf0de95bfb8418d4ff7ee3b1ae0e0bdc53d6c3ed27e320",
       "failures": [],
       "passed": true
     },
@@ -1316,9 +1316,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 12959,
-      "rows": 289,
-      "sha256": "24a4796ffbf79ee7ac6daa6d89d7f6fb1e88cddff365aa2f1bcd6ac6358af9df",
+      "bytes": 14212,
+      "rows": 310,
+      "sha256": "508262fe0e3309bbed6bf48b9ebebca3bd0a3f064f429e268e1eb03eed9ed732",
       "failures": [],
       "passed": true
     },
@@ -1344,9 +1344,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 5462,
-      "rows": 76,
-      "sha256": "52bd30a6050e748048dbf0d45f6ee4793ce8cdb8b0e8e15f155b7c3b394ac7c8",
+      "bytes": 6105,
+      "rows": 83,
+      "sha256": "4f3fbfc5f48a16f11fb110ccfc61b8b92f39341b2946c69fdbc1703848d4a965",
       "failures": [],
       "passed": true
     },

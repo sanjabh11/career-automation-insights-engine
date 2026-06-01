@@ -24,6 +24,7 @@ const claimVerifier = read('scripts/verify-claim-boundaries.mjs');
 const outcomeMigration = read('supabase/migrations/20260601120000_create_revealed_transition_flywheel.sql');
 const outcomeSurvey = read('src/components/outcomes/OutcomeSurvey.tsx');
 const commercialReadiness = read('src/lib/commercialLaunchReadiness.ts');
+const deploymentPacketGenerator = read('scripts/generate-commercial-supabase-deployment-packet.mjs');
 const packageJson = JSON.parse(read('package.json'));
 const commercialWorkflow = read('.github/workflows/commercial-proof-pack.yml');
 
@@ -85,6 +86,15 @@ for (const token of ['consent_to_research', 'selected_transition_option', 'does_
   assertIncludes(outcomeSurvey, token, 'outcome survey intake');
 }
 
+for (const token of [
+  'Part II revealed-transition flywheel',
+  '20260601120000_create_revealed_transition_flywheel.sql',
+  'supabase functions deploy record-outcome --project-ref kvunnankqgfokeufvsrv',
+  'Deploy `record-outcome` only after the Part II migration exists remotely',
+]) {
+  assertIncludes(deploymentPacketGenerator, token, 'Part II live deployment packet');
+}
+
 assertIncludes(commercialReadiness, 'coachCommercializationWorkflow', 'coach commercialization workflow');
 assertIncludes(commercialReadiness, 'Run white-label automation defense audit', 'coach commercialization workflow');
 assertIncludes(claimVerifier, 'career-insurance-public-copy', 'claim-boundary verifier');
@@ -137,6 +147,7 @@ console.log(JSON.stringify({
     scienceBackbone: true,
     buyerJourneyCopy: true,
     revealedTransitionFlywheel: true,
+    liveActivationPacket: true,
     globalEnglishFallbacks: true,
     coachCommercializationWorkflow: true,
     releaseVerifier: true,
