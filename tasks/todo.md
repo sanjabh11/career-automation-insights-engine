@@ -32,6 +32,7 @@
 - [x] Cross-phase: Add non-mutating external gate ledger for the remaining live/manual acceptance evidence
 - [x] Cross-phase: Add redacted live-gate evidence intake verifier for owner-held credential-gated proof metadata
 - [x] Cross-phase: Narrow repo lint away from inactive backups/archives and clear mechanical non-`any` lint errors
+- [x] Cross-phase: Wire Phase C runtime smoke and commercial proof-pack CI to the Phase C/D/E branch chain
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -46,7 +47,7 @@
 - Phase B route and artifact crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans`, `/docs/reports/apo-calibration-report.html`, `/docs/reports/apo-reliability-curve.svg`, `/docs/model_cards/APO_MODEL_CARD.html`, and `/docs/model_cards/TASK_MODEL_CARD.html`.
 - Phase B `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,534 problems; `supabase/functions/calibrate-ece/index.ts` passes file-scoped ESLint.
 - Phase C `npm run smoke:skill-adjacency` passed with `gemini-embedding-001`, 768 dimensions, and a non-empty adjacency result.
-- Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export.
+- Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export. The CI workflow now covers Phase C/D/E branch-chain pull requests and pushes.
 - Phase C `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,529 problems; Phase C touched files pass file-scoped ESLint.
 - The bootcamp placeholder Stripe price ID no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
 - Phase D `npm run verify:global-english-sources` provides the reproducible network-backed source-link check for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.

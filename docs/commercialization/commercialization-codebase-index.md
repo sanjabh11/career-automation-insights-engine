@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T05:53:35.896Z
+Generated: 2026-06-01T06:02:19.975Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -173,7 +173,7 @@ Required commercial pre-demo gate:
 
 CI boundary:
 
-- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, refreshes the remediation external-gate ledger through `verify:commercial`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
+- `.github/workflows/commercial-proof-pack.yml` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR across `main` and the Phase C/D/E branch chain, refreshes the remediation external-gate ledger through `verify:commercial`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
 
 ## Remaining Index Gaps
 

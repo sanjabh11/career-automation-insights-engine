@@ -2,7 +2,7 @@
 
 Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through commercial evidence records verifier handoff
+Latest local remediation evidence reviewed: Phase E follow-up through phase-chain CI wiring and evidence-gate cleanup
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -14,7 +14,7 @@ This audit checks the active remediation objective against current repo and GitH
 | B | [#6](https://github.com/sanjabh11/career-automation-insights-engine/pull/6) | `phase-a-truth-claims-reconciliation` | Open, non-draft, mergeable |
 | C | [#7](https://github.com/sanjabh11/career-automation-insights-engine/pull/7) | `phase-b-validation-calibration` | Open, non-draft, mergeable; `Phase C Runtime Smoke` check succeeded |
 | D | [#8](https://github.com/sanjabh11/career-automation-insights-engine/pull/8) | `phase-c-runtime-verification-bugfixes` | Open, non-draft, mergeable |
-| E | [#9](https://github.com/sanjabh11/career-automation-insights-engine/pull/9) | `phase-d-global-english-localization` | Open, non-draft, mergeable |
+| E | [#9](https://github.com/sanjabh11/career-automation-insights-engine/pull/9) | `phase-d-global-english-localization` | Open, non-draft, mergeable; Phase C runtime smoke and commercial proof-pack workflows now include the Phase C/D/E branch chain |
 
 ## Current Verification Evidence
 

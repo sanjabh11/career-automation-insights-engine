@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T05:53:37.408Z",
+  "generatedAt": "2026-06-01T06:02:20.683Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -1013,13 +1013,16 @@
         "name: Commercial Proof Pack",
         "permissions:",
         "contents: read",
+        "phase-c-runtime-verification-bugfixes",
+        "phase-d-global-english-localization",
+        "phase-e-commercial-validation",
         "npm run verify:commercial -- --with-a11y --with-journey",
         "npm run verify:commercial-network"
       ],
       "caveat": "Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.",
-      "bytes": 1114,
-      "rows": 39,
-      "sha256": "d831d1ab23f28d68ab42919f89ff9248784d5fa86fab90fa3d3a4855709e02cf",
+      "bytes": 1370,
+      "rows": 45,
+      "sha256": "60cdef205a709a9c0f8b05ae4b2e02c3c575313b7102b5b50b530b06be73346b",
       "failures": [],
       "passed": true
     },
@@ -1037,13 +1040,41 @@
         "name: Commercial Proof Pack",
         "permissions:",
         "contents: read",
+        "phase-c-runtime-verification-bugfixes",
+        "phase-d-global-english-localization",
+        "phase-e-commercial-validation",
         "npm run verify:commercial -- --with-a11y --with-journey",
         "npm run verify:commercial-network"
       ],
       "caveat": "Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.",
-      "bytes": 1114,
-      "rows": 39,
-      "sha256": "d831d1ab23f28d68ab42919f89ff9248784d5fa86fab90fa3d3a4855709e02cf",
+      "bytes": 1370,
+      "rows": 45,
+      "sha256": "60cdef205a709a9c0f8b05ae4b2e02c3c575313b7102b5b50b530b06be73346b",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "phase-c-runtime-smoke-ci-workflow-installed",
+      "label": "Phase C runtime smoke CI workflow installed",
+      "path": ".github/workflows/phase-c-runtime-smoke.yml",
+      "type": "ci-workflow",
+      "sourceIds": [
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "name: Phase C Runtime Smoke",
+        "permissions:",
+        "contents: read",
+        "phase-c-runtime-verification-bugfixes",
+        "phase-d-global-english-localization",
+        "phase-e-commercial-validation",
+        "npm run smoke:skill-adjacency",
+        "npm run e2e:smoke"
+      ],
+      "caveat": "Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the Phase C/D/E branch chain; hosted green-run evidence must still be inspected after push.",
+      "bytes": 1226,
+      "rows": 43,
+      "sha256": "adb659f5bfbd2e08d3a01a0be8a7dd1219a7b207238a56f1dc06c58dd1958d77",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1158,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "4ed57e210d3341b5a4e5ed32340563c57e852dba8224033efd38c0ffb7c3466f",
+      "sha256": "fe5e87325a34f9bceff6d81c4bb38b697233746f2246fe8859c30f07d6d514aa",
       "failures": [],
       "passed": true
     },

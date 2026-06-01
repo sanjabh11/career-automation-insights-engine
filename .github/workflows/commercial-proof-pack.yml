@@ -4,10 +4,16 @@ on:
   pull_request:
     branches:
       - main
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   push:
     branches:
       - commercialization-proof-packs
       - main
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   workflow_dispatch:
   schedule:
     - cron: "17 8 * * 1"

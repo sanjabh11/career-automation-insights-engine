@@ -95,7 +95,7 @@ Ask before:
 - `npm run smoke:skill-adjacency` passed with a 768-dimensional generated-vector contract and non-empty deterministic adjacency result.
 - Veterans MOC crosswalk now calls O*NET's military crosswalk endpoint with branch mapping instead of the generic crosswalk path.
 - `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser smoke tests: auth sign-in, APO run, Veterans crosswalk, Stripe test-mode checkout redirect, and white-label report export.
-- Phase C runtime smoke is wired into `.github/workflows/phase-c-runtime-smoke.yml` for pull requests.
+- Phase C runtime smoke is wired into `.github/workflows/phase-c-runtime-smoke.yml` for pull requests and pushes across the Phase C/D/E branch chain, including `phase-e-commercial-validation`.
 - The bootcamp placeholder Stripe price ID was removed from runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
 
 ## Phase D Acceptance Evidence
@@ -119,4 +119,5 @@ Ask before:
 - `scripts/verify-stripe-live-mrr.mjs`, `docs/commercialization/stripe-live-mrr-proof-latest.json`, and `npm run verify:stripe-live-mrr` provide a read-only live Stripe MRR harness for the remaining revenue proof gate. The current artifact is `skipped_missing_env`, not live MRR proof.
 - `scripts/verify-production-calibration-run.mjs`, `docs/commercialization/production-calibration-proof-latest.json`, and `npm run verify:production-calibration` provide a deployed calibration-function harness for the remaining production calibration proof gate. The current artifact is `skipped_missing_env`, not production calibration proof.
 - `npm run verify:remediation-gates` now summarizes the entire A-E remediation boundary and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`.
+- `.github/workflows/phase-c-runtime-smoke.yml` and `.github/workflows/commercial-proof-pack.yml` now include the Phase C/D/E branch chain for push/PR CI coverage. Hosted green-run evidence must still be inspected after each workflow-affecting push before claiming CI-green status.
 - Live MRR > $0, at least three committed design partners, and permissioned documented outcomes remain manual/external gates. Local source/test proof must not be described as commercial validation.

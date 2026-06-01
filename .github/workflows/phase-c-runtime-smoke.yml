@@ -7,6 +7,14 @@ on:
       - live-auth-e2e-closeout
       - phase-a-truth-claims-reconciliation
       - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
+  push:
+    branches:
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   workflow_dispatch:
 
 permissions:
