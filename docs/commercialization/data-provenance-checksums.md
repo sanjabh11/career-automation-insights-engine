@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-06-01T09:34:49.307Z
+Generated: 2026-06-01T09:54:18.322Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -44,12 +44,12 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `responsible-ai-trust-center` | Responsible AI trust center | `src/pages/ResponsibleAIPage.tsx` | commercial-page | 364 | `277c33f59f2892ef...` | `nist-ai-rmf`, `iso-42001`, `wcag-22`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `supabase-edge-functions`, `llm-output` | pass |
 | `commercial-accessibility-audit-json` | Commercial accessibility audit JSON artifact | `docs/commercialization/commercial-accessibility-audit-latest.json` | verification-artifact | 619 | `87cb33bfce98324a...` | `wcag-22`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `commercial-accessibility-audit-markdown` | Commercial accessibility audit Markdown packet | `docs/commercialization/commercial-accessibility-audit-latest.md` | verification-artifact | 53 | `f594d2e8d8ffe92c...` | `wcag-22`, `ada-ai-hiring-guidance`, `llm-output` | pass |
-| `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 45 | `60cdef205a709a9c...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
-| `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 45 | `60cdef205a709a9c...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
-| `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 43 | `adb659f5bfbd2e08...` | `llm-output` | pass |
+| `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 51 | `805490676ce2d6fe...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
+| `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 51 | `805490676ce2d6fe...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
+| `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 46 | `eb9042b5a7c1873c...` | `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 289 | `24a4796ffbf79ee7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `71b7e6aa9f4be5d2...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `4e8a36bef06ceabc...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
@@ -92,7 +92,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `commercial-accessibility-audit-markdown`: Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.
 - `commercial-proof-pack-ci-workflow-template`: Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.
 - `commercial-proof-pack-ci-workflow-installed`: Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.
-- `phase-c-runtime-smoke-ci-workflow-installed`: Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the Phase C/D/E branch chain; hosted green-run evidence must still be inspected after push.
+- `phase-c-runtime-smoke-ci-workflow-installed`: Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the A-E remediation branch chain; hosted green-run evidence must still be inspected after push.
 - `commercial-live-supabase-verifier`: Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.
 - `commercial-supabase-deployment-packet`: Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.
 - `commercial-supabase-deployment-runbook`: Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.

@@ -321,7 +321,7 @@ const artifacts = [
     path: 'docs/commercialization/commercial-proof-pack.workflow.yml',
     type: 'ci-workflow-template',
     sourceIds: ['nist-ai-rmf', 'wcag-22', 'llm-output'],
-    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
+    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'live-auth-e2e-closeout', 'phase-a-truth-claims-reconciliation', 'phase-b-validation-calibration', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
     caveat: 'Reference workflow template for commercial proof-pack CI; the installed .github workflow and hosted run evidence are tracked separately.',
   },
   {
@@ -330,7 +330,7 @@ const artifacts = [
     path: '.github/workflows/commercial-proof-pack.yml',
     type: 'ci-workflow',
     sourceIds: ['nist-ai-rmf', 'wcag-22', 'llm-output'],
-    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
+    expectedSnippets: ['name: Commercial Proof Pack', 'permissions:', 'contents: read', 'live-auth-e2e-closeout', 'phase-a-truth-claims-reconciliation', 'phase-b-validation-calibration', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run verify:commercial -- --with-a11y --with-journey', 'npm run verify:commercial-network'],
     caveat: 'Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.',
   },
   {
@@ -339,8 +339,8 @@ const artifacts = [
     path: '.github/workflows/phase-c-runtime-smoke.yml',
     type: 'ci-workflow',
     sourceIds: ['llm-output'],
-    expectedSnippets: ['name: Phase C Runtime Smoke', 'permissions:', 'contents: read', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run smoke:skill-adjacency', 'npm run e2e:smoke'],
-    caveat: 'Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the Phase C/D/E branch chain; hosted green-run evidence must still be inspected after push.',
+    expectedSnippets: ['name: Phase C Runtime Smoke', 'permissions:', 'contents: read', 'live-auth-e2e-closeout', 'phase-a-truth-claims-reconciliation', 'phase-b-validation-calibration', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run smoke:skill-adjacency', 'npm run e2e:smoke'],
+    caveat: 'Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the A-E remediation branch chain; hosted green-run evidence must still be inspected after push.',
   },
   {
     id: 'commercial-live-supabase-verifier',

@@ -12,6 +12,9 @@ on:
       - phase-e-commercial-validation
   push:
     branches:
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
       - phase-c-runtime-verification-bugfixes
       - phase-d-global-english-localization
       - phase-e-commercial-validation
