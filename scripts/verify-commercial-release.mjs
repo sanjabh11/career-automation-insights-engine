@@ -49,6 +49,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-commercial-evidence-records.mjs', '--write'],
   },
   {
+    id: 'owner-evidence-prep',
+    label: 'Inspect owner-evidence local prep status',
+    command: ['node', 'scripts/prepare-owner-evidence-workspace.mjs'],
+  },
+  {
     id: 'owner-evidence-fixtures',
     label: 'Verify redacted owner-evidence fixture completion path',
     command: ['node', 'scripts/verify-owner-evidence-fixture-path.mjs'],
@@ -171,7 +176,8 @@ Options:
 
 Default gate:
   index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
-  data provenance, redacted live-gate evidence intake, commercial evidence records, owner-evidence fixture smoke,
+  data provenance, redacted live-gate evidence intake, commercial evidence records, owner-evidence prep status,
+  owner-evidence fixture smoke,
   remediation gate ledger, remediation completion audit, scoped commercial lint, secret hygiene,
   repository presentation, production build, route smoke.
 `);

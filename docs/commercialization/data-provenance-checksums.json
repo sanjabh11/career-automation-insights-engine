@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T11:39:28.927Z",
+  "generatedAt": "2026-06-01T12:34:30.605Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -770,6 +770,31 @@
       "passed": true
     },
     {
+      "id": "owner-evidence-workspace-prep",
+      "label": "Owner evidence local workspace prep helper",
+      "path": "scripts/prepare-owner-evidence-workspace.mjs",
+      "type": "commercial-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "buildEnvTemplate",
+        ".env.local",
+        "commercial-evidence-intake-template.json",
+        "COMMERCIAL_EVIDENCE_HASH_SALT",
+        "readyForCloseout",
+        "--require-ready"
+      ],
+      "caveat": "Creates or inspects ignored local scaffolding for owner-held evidence collection; placeholders, unloaded env values, and local templates do not satisfy final proof gates.",
+      "bytes": 10852,
+      "rows": 289,
+      "sha256": "d9e6f4c3c4f8202bda219dbb9dd949e57cfb980d250690ae0fafc8af5a2cb36a",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "owner-evidence-closeout-bundle",
       "label": "Owner evidence closeout bundle",
       "path": "scripts/closeout-owner-evidence.mjs",
@@ -1321,7 +1346,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "9393c496ccf8d8ca9184e97749ba612fb3674fac9d3d7eae2b644b27f1d2757b",
+      "sha256": "daa41dc83a9854999ac39f4ed5d0ae5ee08d8f35fe717bc1002791c3e0736295",
       "failures": [],
       "passed": true
     },

@@ -25,6 +25,8 @@
     "verify:commercial-evidence-records": "node scripts/verify-commercial-evidence-records.mjs",
     "verify:commercial-evidence-records:write": "node scripts/verify-commercial-evidence-records.mjs --write",
     "verify:owner-evidence-fixtures": "node scripts/verify-owner-evidence-fixture-path.mjs",
+    "prepare:owner-evidence": "node scripts/prepare-owner-evidence-workspace.mjs",
+    "verify:owner-evidence-prep": "node scripts/prepare-owner-evidence-workspace.mjs",
     "closeout:owner-evidence": "node scripts/closeout-owner-evidence.mjs",
     "verify:owner-evidence-closeout": "node scripts/closeout-owner-evidence.mjs --allow-incomplete",
     "verify:stripe-test-checkout": "node scripts/verify-stripe-test-checkout.mjs --write",

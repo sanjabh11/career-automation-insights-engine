@@ -596,6 +596,20 @@ const checks = [
     ],
   },
   {
+    id: 'owner-evidence-workspace-prep',
+    file: 'scripts/prepare-owner-evidence-workspace.mjs',
+    expected: [
+      /buildEnvTemplate/,
+      /\.env\.local/,
+      /commercial-evidence-intake-template\.json/,
+      /COMMERCIAL_EVIDENCE_HASH_SALT/,
+      /readyForCloseout/,
+      /--require-ready/,
+      /never prints secret values/,
+      /placeholder/,
+    ],
+  },
+  {
     id: 'commercial-evidence-records-composer',
     file: 'scripts/compose-commercial-evidence-records.mjs',
     expected: [

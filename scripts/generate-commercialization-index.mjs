@@ -141,8 +141,9 @@ const featureMap = [
       'scripts/verify-report-evidence.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-supabase-function-governance.mjs',
+      'scripts/prepare-owner-evidence-workspace.mjs',
     ],
-    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof.',
   },
   {
     feature: 'Source provenance and claim boundaries',

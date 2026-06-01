@@ -244,6 +244,15 @@ const artifacts = [
     caveat: 'Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.',
   },
   {
+    id: 'owner-evidence-workspace-prep',
+    label: 'Owner evidence local workspace prep helper',
+    path: 'scripts/prepare-owner-evidence-workspace.mjs',
+    type: 'commercial-verifier',
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['buildEnvTemplate', '.env.local', 'commercial-evidence-intake-template.json', 'COMMERCIAL_EVIDENCE_HASH_SALT', 'readyForCloseout', '--require-ready'],
+    caveat: 'Creates or inspects ignored local scaffolding for owner-held evidence collection; placeholders, unloaded env values, and local templates do not satisfy final proof gates.',
+  },
+  {
     id: 'owner-evidence-closeout-bundle',
     label: 'Owner evidence closeout bundle',
     path: 'scripts/closeout-owner-evidence.mjs',
