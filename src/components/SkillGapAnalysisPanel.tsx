@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,19 +12,22 @@ export function SkillGapAnalysisPanel() {
   const { userSkills, skillGaps, saveSkillGaps, analyzeSkillGaps } = useCareerPlanningStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  useEffect(() => {
+  const runSkillGapAnalysis = useCallback(() => {
     if (userSkills.length > 0) {
       const gaps = analyzeSkillGaps(userSkills);
       saveSkillGaps(gaps);
     }
-  }, [userSkills]);
+  }, [analyzeSkillGaps, saveSkillGaps, userSkills]);
+
+  useEffect(() => {
+    runSkillGapAnalysis();
+  }, [runSkillGapAnalysis]);
 
   const handleRefreshAnalysis = async () => {
     setIsAnalyzing(true);
     // Simulate analysis time
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const gaps = analyzeSkillGaps(userSkills);
-    saveSkillGaps(gaps);
+    runSkillGapAnalysis();
     setIsAnalyzing(false);
   };
 

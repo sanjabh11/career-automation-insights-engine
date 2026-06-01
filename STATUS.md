@@ -15,7 +15,7 @@ Last observed Phase E local baseline:
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Pass | 0 ESLint errors and 19 React hook/Fast Refresh warnings remain after excluding inactive backups/archives, clearing the active explicit-`any` backlog, and stabilizing several hook dependencies plus provider/page Fast Refresh exports. |
+| `npm run lint` | Pass | 0 ESLint errors and 15 Fast Refresh export-boundary warnings remain after excluding inactive backups/archives, clearing the active explicit-`any` backlog, and stabilizing active hook dependencies plus provider/page Fast Refresh exports. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |

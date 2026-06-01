@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,10 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
+const arraysEqual = (a: string[], b: string[]) => {
+  return a.length === b.length && a.every((val, i) => val === b[i]);
+};
+
 export function CourseRecommendationsPanel() {
   const { userSkills, courseRecommendations, saveCourseRecommendations } = useCareerPlanningStorage();
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,13 +23,6 @@ export function CourseRecommendationsPanel() {
   const [filteredCourses, setFilteredCourses] = useState<CourseRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastSearchSkills, setLastSearchSkills] = useState<string[]>([]);
-
-  useEffect(() => {
-    // Auto-search when user skills change
-    if (userSkills.length > 0 && !arraysEqual(userSkills.map(s => s.name), lastSearchSkills)) {
-      handleSearchCourses();
-    }
-  }, [userSkills]);
 
   useEffect(() => {
     let courses = courseRecommendations;
@@ -52,7 +49,7 @@ export function CourseRecommendationsPanel() {
     setFilteredCourses(courses);
   }, [courseRecommendations, searchTerm, selectedLevel, selectedProvider]);
 
-  const handleSearchCourses = async () => {
+  const handleSearchCourses = useCallback(async () => {
     if (userSkills.length === 0) {
       toast.error('Please add some skills first to get course recommendations');
       return;
@@ -89,7 +86,14 @@ export function CourseRecommendationsPanel() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [saveCourseRecommendations, selectedLevel, userSkills]);
+
+  useEffect(() => {
+    // Auto-search when user skills change
+    if (userSkills.length > 0 && !arraysEqual(userSkills.map(s => s.name), lastSearchSkills)) {
+      handleSearchCourses();
+    }
+  }, [handleSearchCourses, lastSearchSkills, userSkills]);
 
   const getRecommendedCourses = () => {
     if (userSkills.length === 0) return filteredCourses;
@@ -142,10 +146,6 @@ export function CourseRecommendationsPanel() {
       default:
         return 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)]';
     }
-  };
-
-  const arraysEqual = (a: string[], b: string[]) => {
-    return a.length === b.length && a.every((val, i) => val === b[i]);
   };
 
   return (

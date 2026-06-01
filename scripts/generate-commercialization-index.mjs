@@ -355,7 +355,7 @@ CI boundary:
 
 ## Remaining Index Gaps
 
-- Full repo lint is still legacy-failing outside the commercial proof-pack files.
+- Full repo lint now passes locally with 0 errors and 15 remaining Fast Refresh export-boundary warnings; zero-warning cleanup remains open.
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -156,6 +156,8 @@ export function AIImpactPlanner() {
   const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
   const [confidenceFilter, setConfidenceFilter] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const skillProgressRef = useRef(skillProgress);
+  skillProgressRef.current = skillProgress;
 
   // Education Path state
   const [timeCommitment, setTimeCommitment] = useState('5');
@@ -322,21 +324,6 @@ export function AIImpactPlanner() {
     }
   }, [selectedOccupation, tasks, skillProgress]);
 
-  // Load tasks when occupation is selected
-  useEffect(() => {
-    if (selectedOccupation) {
-      fetchTasks(selectedOccupation);
-      generateSkillRecommendations(selectedOccupation.title);
-    }
-  }, [selectedOccupation]);
-
-  // Fetch resources when skill recommendations change
-  useEffect(() => {
-    if (skillRecommendations.length > 0) {
-      fetchResources();
-    }
-  }, [skillRecommendations]);
-
   // Search for occupations
   const searchOccupations = async (query: string) => {
     if (!query.trim()) {
@@ -449,7 +436,7 @@ export function AIImpactPlanner() {
   };
 
   // Fetch tasks for selected occupation
-  const fetchTasks = async (occupation: Occupation) => {
+  const fetchTasks = useCallback(async (occupation: Occupation) => {
     setIsLoading(true);
     try {
       const { code, title } = occupation;
@@ -499,7 +486,7 @@ export function AIImpactPlanner() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   // Assess custom task using Gemini LLM
   const assessCustomTask = async () => {
@@ -744,7 +731,7 @@ export function AIImpactPlanner() {
   };
 
   // Generate skill recommendations
-  const generateSkillRecommendations = async (occupationTitle: string) => {
+  const generateSkillRecommendations = useCallback(async (occupationTitle: string) => {
     try {
       const occupationCode = selectedOccupation?.code || '';
       const { data, error } = await supabase.functions.invoke('skill-recommendations', {
@@ -756,7 +743,7 @@ export function AIImpactPlanner() {
       const skills: Skill[] = recs.map((rec) => ({
         name: rec.skill_name,
         explanation: rec.explanation,
-        inProgress: skillProgress[rec.skill_name] || false,
+        inProgress: skillProgressRef.current[rec.skill_name] || false,
       }));
 
       setSkillRecommendations(skills);
@@ -764,10 +751,10 @@ export function AIImpactPlanner() {
       console.error('Error generating skill recommendations:', error);
       toast.error('Failed to generate skill recommendations');
     }
-  };
+  }, [selectedOccupation?.code]);
 
   // Fetch reskilling resources based on skill recommendations
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       // Get skill areas from current skill recommendations
       const skillAreas = skillRecommendations.map(skill => skill.name);
@@ -837,7 +824,22 @@ export function AIImpactPlanner() {
       setResources([]);
       toast.error('Unable to load learning resources at this time');
     }
-  };
+  }, [skillRecommendations]);
+
+  // Load tasks when occupation is selected
+  useEffect(() => {
+    if (selectedOccupation) {
+      fetchTasks(selectedOccupation);
+      generateSkillRecommendations(selectedOccupation.title);
+    }
+  }, [selectedOccupation, fetchTasks, generateSkillRecommendations]);
+
+  // Fetch resources when skill recommendations change
+  useEffect(() => {
+    if (skillRecommendations.length > 0) {
+      fetchResources();
+    }
+  }, [skillRecommendations.length, fetchResources]);
 
   // Track skill progress
   const toggleSkillProgress = (skillName: string) => {
