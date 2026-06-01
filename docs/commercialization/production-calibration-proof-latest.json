@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-01T04:59:45.722Z",
-  "target": null,
-  "status": "skipped_missing_env",
+  "generatedAt": "2026-06-01T15:47:21.732Z",
+  "target": "https://kvunnankqgfokeufvsrv.supabase.co",
+  "status": "passed",
   "confidence": "bounded_production_calibration_run",
   "caveat": "This verifier invokes the deployed calibrate-ece Supabase Edge Function and validates only the redacted response shape and counts. It does not apply migrations, deploy functions, inspect raw expert labels, print secrets, or prove scientific validity beyond the returned sample.",
   "functionPreconditions": [
@@ -32,12 +32,62 @@
     {
       "id": "production-calibration-env",
       "label": "Production calibration target credentials are configured",
-      "passed": false,
-      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+      "passed": true,
+      "message": "Required target URL and anon key were provided without printing secret values."
+    },
+    {
+      "id": "calibration-method",
+      "label": "calibrate-ece used expert-assessment calibration method",
+      "passed": true,
+      "message": "The deployed function reported method=apo_overall_vs_expert_assessments."
+    },
+    {
+      "id": "calibration-ece-range",
+      "label": "ECE is a normalized finite value",
+      "passed": true,
+      "message": "Expected calibration error is finite and within [0,1].",
+      "ece": 0.325
+    },
+    {
+      "id": "calibration-sample-pairs",
+      "label": "Calibration joined live APO predictions to expert assessments",
+      "passed": true,
+      "message": "The deployed function returned at least one matched prediction/expert pair.",
+      "predictionPairCount": 2
+    },
+    {
+      "id": "calibration-expert-rows",
+      "label": "Calibration found expert assessment rows",
+      "passed": true,
+      "message": "The deployed function returned at least one expert assessment row.",
+      "expertAssessmentCount": 2
+    },
+    {
+      "id": "calibration-bins",
+      "label": "Reliability bins were produced",
+      "passed": true,
+      "message": "The deployed function produced reliability bins.",
+      "binsCount": 10
+    },
+    {
+      "id": "calibration-run-id",
+      "label": "Calibration run id is present",
+      "passed": true,
+      "message": "The deployed function returned a calibration run id.",
+      "runIdHash": "cd5be843a733a449"
     }
   ],
-  "missingEnv": [
-    "SUPABASE_URL or VITE_SUPABASE_URL",
-    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
-  ]
+  "evidenceSummary": {
+    "ece": 0.325,
+    "mae": 0.325,
+    "rmse": 0.3335416016031584,
+    "expertAssessmentCount": 2,
+    "predictionPairCount": 2,
+    "binsCount": 10,
+    "unmatchedApoLogs": 0,
+    "method": "apo_overall_vs_expert_assessments",
+    "source": "all",
+    "runIdHash": "cd5be843a733a449",
+    "targetProjectHash": "62cddc6a42785074"
+  }
 }
