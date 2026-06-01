@@ -422,7 +422,7 @@ const WorkshopBookingPage = () => {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="workshop_type">Workshop Type *</Label>
-                        <Select value={formData.workshop_type} onValueChange={(val: any) => updateFormData('workshop_type', val)}>
+                        <Select value={formData.workshop_type} onValueChange={(val) => updateFormData('workshop_type', val)}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -436,7 +436,7 @@ const WorkshopBookingPage = () => {
                       </div>
                       <div>
                         <Label htmlFor="delivery_mode">Delivery Mode *</Label>
-                        <Select value={formData.delivery_mode} onValueChange={(val: any) => updateFormData('delivery_mode', val)}>
+                        <Select value={formData.delivery_mode} onValueChange={(val) => updateFormData('delivery_mode', val)}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>

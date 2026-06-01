@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { EnhancedOccupationData } from "@/components/OccupationAnalysis";
 
 export interface ShareAnalysisData {
   analysis_id: string;
@@ -25,9 +26,18 @@ export interface SharedAnalysis {
   analysis_id: string;
 }
 
-interface ShareViewResponse {
+export interface SharedAnalysisPayload {
+  occupation_title?: string | null;
+  occupation_code?: string | null;
+  created_at?: string | null;
+  tags?: string[] | null;
+  notes?: string | null;
+  analysis_data?: EnhancedOccupationData | null;
+}
+
+export interface ShareViewResponse {
   success?: boolean;
-  analysis?: any;
+  analysis?: SharedAnalysisPayload;
   shared_by?: string;
   view_count?: number;
   error?: string;

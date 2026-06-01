@@ -82,7 +82,7 @@ type SupabaseLooseClient = {
   };
 };
 
-interface EnhancedOccupationData {
+export interface EnhancedOccupationData {
   code: string;
   title: string;
   description: string;

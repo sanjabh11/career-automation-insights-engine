@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OccupationAnalysis } from "@/components/OccupationAnalysis";
-import { useShareAnalysis } from "@/hooks/useShareAnalysis";
+import { type ShareViewResponse, useShareAnalysis } from "@/hooks/useShareAnalysis";
 import { Share2, Eye, Calendar, User } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SharedAnalysisPage() {
   const { shareToken } = useParams<{ shareToken: string }>();
-  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [analysisData, setAnalysisData] = useState<ShareViewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { getSharedAnalysis } = useShareAnalysis();
@@ -30,8 +30,8 @@ export default function SharedAnalysisPage() {
         } else {
           setError(result?.error || 'Analysis not found or access denied');
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to load shared analysis');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load shared analysis');
         toast.error('Failed to load shared analysis');
       } finally {
         setLoading(false);
@@ -133,7 +133,7 @@ export default function SharedAnalysisPage() {
                 <div className="mt-4">
                   <Label className="text-sm font-medium text-[var(--text-tertiary)]">Tags</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {analysis.tags.map((tag: string, index: number) => (
+                    {analysis.tags.map((tag, index) => (
                       <Badge key={index} variant="secondary">{tag}</Badge>
                     ))}
                   </div>
