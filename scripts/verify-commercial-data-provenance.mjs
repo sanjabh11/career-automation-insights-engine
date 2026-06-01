@@ -208,6 +208,15 @@ const artifacts = [
     caveat: 'Non-mutating deployed Edge Function proof gate; requires a project URL and anon key and proves only synthetic parser receipt behavior, not migration application, malware scanning, authenticated artifact e2e, or production PDF/DOC/DOCX extraction.',
   },
   {
+    id: 'commercial-live-gate-evidence-composer',
+    label: 'Live-gate evidence composer',
+    path: 'scripts/compose-live-gate-evidence.mjs',
+    type: 'live-verifier',
+    sourceIds: ['nist-ai-rmf', 'ada-ai-hiring-guidance', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['stripe-test-checkout-proof-latest.json', 'production-calibration-proof-latest.json', 'live-auth-e2e-proof-latest.json', 'stripe-live-mrr-proof-latest.json', 'validateLiveGateEvidence', 'DEFAULT_LIVE_GATE_EVIDENCE_PATH', 'status=passed', '--require-complete'],
+    caveat: 'Composes redacted metadata only after owner-run proof artifacts pass; it does not create Stripe sessions, query live systems, fabricate proof, or store raw customer/partner data.',
+  },
+  {
     id: 'commercial-live-auth-e2e-verifier',
     label: 'Authenticated live resume proof artifact e2e verifier',
     path: 'scripts/verify-commercial-live-auth-e2e.mjs',

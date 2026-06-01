@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T07:02:30.925Z",
+  "generatedAt": "2026-06-01T08:16:07.513Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -667,6 +667,34 @@
       "passed": true
     },
     {
+      "id": "commercial-live-gate-evidence-composer",
+      "label": "Live-gate evidence composer",
+      "path": "scripts/compose-live-gate-evidence.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "stripe-test-checkout-proof-latest.json",
+        "production-calibration-proof-latest.json",
+        "live-auth-e2e-proof-latest.json",
+        "stripe-live-mrr-proof-latest.json",
+        "validateLiveGateEvidence",
+        "DEFAULT_LIVE_GATE_EVIDENCE_PATH",
+        "status=passed",
+        "--require-complete"
+      ],
+      "caveat": "Composes redacted metadata only after owner-run proof artifacts pass; it does not create Stripe sessions, query live systems, fabricate proof, or store raw customer/partner data.",
+      "bytes": 13391,
+      "rows": 306,
+      "sha256": "91e582f26512232968682adb6091d0f96495259cf1a8ee5a1c340aa1e932bc49",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "commercial-live-auth-e2e-verifier",
       "label": "Authenticated live resume proof artifact e2e verifier",
       "path": "scripts/verify-commercial-live-auth-e2e.mjs",
@@ -1158,7 +1186,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "74c8172642c5823d934ee695490b95e57e3882b4e19468fed981e288dc9c404c",
+      "sha256": "892735352253b9a25517f40c7f99f3ecd735bf12001e96a6ee497bacbe7de91a",
       "failures": [],
       "passed": true
     },

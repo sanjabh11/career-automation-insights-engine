@@ -29,6 +29,7 @@ const files = {
   playbook: read('docs/commercialization/phase-e-commercial-validation-playbook.md'),
   packageJson: read('package.json'),
   liveGateEvidenceVerifier: read('scripts/verify-live-gate-evidence.mjs'),
+  liveGateEvidenceComposer: read('scripts/compose-live-gate-evidence.mjs'),
   liveGateEvidenceLibrary: read('scripts/lib/liveGateEvidence.mjs'),
   commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
   commercialEvidenceRecordsTemplate: read('docs/commercialization/commercial-evidence-records-template.json'),
@@ -105,11 +106,17 @@ assert(
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
 
 assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
+assert(/"compose:live-gate-evidence": "node scripts\/compose-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence composer script must be wired');
 assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records verifier script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
+assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must validate composed evidence');
+assert(/stripe-test-checkout-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume Stripe test checkout proof artifacts');
+assert(/stripe-live-mrr-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume Stripe live MRR proof artifacts');
+assert(/production-calibration-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume production calibration proof artifacts');
+assert(/live-auth-e2e-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume authenticated live e2e proof artifacts');
 assert(/future-dated/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject future-dated metadata');
 assert(/later than asOf/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject observedAt later than asOf');
 assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');

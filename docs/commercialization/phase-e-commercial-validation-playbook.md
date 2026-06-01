@@ -15,9 +15,11 @@ Phase E does not complete commercial validation. It prepares the instrumentation
 
 ## Redacted Evidence Intake
 
-Use `docs/commercialization/live-gate-evidence-template.json` only as a schema template for credential-gated live proof: Stripe test checkout, production calibration, authenticated live artifact e2e, and live MRR. Put owner-held, redacted proof metadata in `docs/commercialization/live-gate-evidence.local.json`, pass another path with `LIVE_GATE_EVIDENCE_PATH`, or pass the path directly to the final ledger with `npm run verify:remediation-gates -- --live-evidence <path>`. The default local file is ignored by git. Run `npm run verify:live-gate-evidence` before `npm run verify:remediation-gates`.
+Use `docs/commercialization/live-gate-evidence-template.json` only as a schema template for credential-gated live proof: Stripe test checkout, production calibration, authenticated live artifact e2e, and live MRR. After the four owner-run proof commands pass, run `npm run compose:live-gate-evidence -- --write --require-complete` to compose the gitignored redacted evidence file from the passing `*-proof-latest.json` artifacts. You can also put owner-held, redacted proof metadata in `docs/commercialization/live-gate-evidence.local.json`, pass another path with `LIVE_GATE_EVIDENCE_PATH`, or pass the path directly to the final ledger with `npm run verify:remediation-gates -- --live-evidence <path>`. The default local file is ignored by git. Run `npm run verify:live-gate-evidence` before `npm run verify:remediation-gates`.
 
 The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret and private-contact patterns, rejects future-dated `asOf` or `observedAt` metadata, rejects `observedAt` values later than `asOf`, and only upgrades a credential-gated live proof gate when the gate-specific redacted evidence item passes validation. Use the commercial evidence records template for design-partner commitments and documented outcomes.
+
+The composer fails closed when any source artifact is missing, skipped, failed, or lacks the summary fields required by the live-gate schema. It writes only to the ignored local evidence file unless you pass `--output <path>`, and it does not make skipped artifacts count as proof.
 
 ## Commercial Evidence Records
 
