@@ -37,6 +37,18 @@ When the commercial evidence composer writes a redacted records file, its JSON o
 
 Run `npm run verify:owner-evidence-fixtures` when changing the live-gate evidence schema, commercial evidence schema, or remediation gate logic. The command creates temporary synthetic non-secret files outside the repository and proves that `verify:live-gate-evidence`, `verify:commercial-evidence-records`, and `verify:remediation-gates -- --require-complete` agree on the complete path. This is a compatibility smoke test only; it does not prove live checkout, production calibration, live MRR, partner commitments, or documented outcomes.
 
+## Owner Evidence Closeout Bundle
+
+Run `npm run verify:owner-evidence-closeout` for a non-writing status pass over the whole owner-evidence path. It runs the live-gate composer, commercial evidence composer, live evidence verifier, commercial evidence verifier, and final remediation gate verifier in order, while allowing the run to remain incomplete. This is useful before owner evidence is ready because it reports which redacted files, proof artifacts, or partner/outcome records are still missing.
+
+After the owner-run Stripe, Supabase, calibration, authenticated live e2e, partner, and outcome evidence exists, run:
+
+```bash
+COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run closeout:owner-evidence -- --write --refresh-tracked
+```
+
+That command composes `docs/commercialization/live-gate-evidence.local.json` and `docs/commercialization/commercial-evidence-records.local.json`, validates both fail-closed, runs `verify-remediation-gates --require-complete`, and refreshes tracked remediation ledgers only when all external evidence gates are accepted. It does not print secret values or raw partner/customer data, and it must fail until all six external gates are represented by valid redacted evidence.
+
 ## Completion Audit
 
 Run `npm run verify:remediation-completion-audit:write` after refreshing the remediation gate ledger. It writes `docs/commercialization/remediation-completion-audit-latest.json` and `.md` with phase summaries, key files, commands, acceptance evidence, confidence deltas, and remaining external gates. The audit must keep `goalComplete=false` until the final live and commercial evidence gates are accepted.

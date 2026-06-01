@@ -34,6 +34,7 @@ const files = {
   commercialEvidenceRecordsComposer: read('scripts/compose-commercial-evidence-records.mjs'),
   commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
   ownerEvidenceFixtureVerifier: read('scripts/verify-owner-evidence-fixture-path.mjs'),
+  ownerEvidenceCloseout: read('scripts/closeout-owner-evidence.mjs'),
   remediationCompletionAuditVerifier: read('scripts/verify-remediation-completion-audit.mjs'),
   commercialEvidenceIntakeTemplate: read('docs/commercialization/commercial-evidence-intake-template.json'),
   commercialEvidenceRecordsTemplate: read('docs/commercialization/commercial-evidence-records-template.json'),
@@ -106,6 +107,8 @@ assert(
   'npm run verify:stripe-test-checkout',
   'npm run verify:stripe-live-mrr',
   'npm run verify:production-calibration',
+  'npm run verify:owner-evidence-closeout',
+  'npm run closeout:owner-evidence',
   'live-gate-evidence-template.json',
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
 
@@ -115,6 +118,8 @@ assert(/"compose:commercial-evidence-records": "node scripts\/compose-commercial
 assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs"/.test(files.packageJson), 'commercial evidence records verifier script must be wired as read-only by default');
 assert(/"verify:commercial-evidence-records:write": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records write verifier script must be wired explicitly');
 assert(/"verify:owner-evidence-fixtures": "node scripts\/verify-owner-evidence-fixture-path\.mjs"/.test(files.packageJson), 'owner evidence fixture verifier script must be wired');
+assert(/"closeout:owner-evidence": "node scripts\/closeout-owner-evidence\.mjs"/.test(files.packageJson), 'owner evidence closeout command must be wired');
+assert(/"verify:owner-evidence-closeout": "node scripts\/closeout-owner-evidence\.mjs --allow-incomplete"/.test(files.packageJson), 'owner evidence closeout status command must be wired');
 assert(/"verify:remediation-completion-audit": "node scripts\/verify-remediation-completion-audit\.mjs"/.test(files.packageJson), 'remediation completion audit verifier script must be wired');
 assert(/"verify:remediation-completion-audit:write": "node scripts\/verify-remediation-completion-audit\.mjs --write"/.test(files.packageJson), 'remediation completion audit write script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
@@ -154,6 +159,15 @@ assert(/verify-commercial-evidence-records\.mjs/.test(files.ownerEvidenceFixture
 assert(/verify-remediation-external-gates\.mjs/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must exercise final remediation gates');
 assert(/goalCompleteWithSyntheticFixtures/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must prove the synthetic complete path reaches goalComplete');
 assert(/Synthetic non-secret metadata only/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must describe its non-proof fixture boundary');
+assert(/compose-live-gate-evidence\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run live evidence composition');
+assert(/compose-commercial-evidence-records\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run commercial records composition');
+assert(/verify-live-gate-evidence\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must validate live evidence');
+assert(/verify-commercial-evidence-records\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must validate commercial evidence records');
+assert(/verify-remediation-external-gates\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run the final remediation gate');
+assert(/--allow-incomplete/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must support incomplete status runs');
+assert(/--stripe-test-artifact/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must pass through alternate live proof artifact paths');
+assert(/const refreshTracked = hasFlag\('--refresh-tracked'\)/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must not refresh tracked ledgers unless explicitly requested');
+assert(/COMMERCIAL_EVIDENCE_HASH_SALT/.test(files.playbook), 'Phase E playbook must document owner-held hash salt use for closeout');
 assert(/phaseDeliverables/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must publish per-phase deliverables');
 assert(/confidenceDelta/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must include confidence delta');
 assert(/remainingExternalGates/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must include remaining external gates');

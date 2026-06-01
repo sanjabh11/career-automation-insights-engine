@@ -244,6 +244,15 @@ const artifacts = [
     caveat: 'Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.',
   },
   {
+    id: 'owner-evidence-closeout-bundle',
+    label: 'Owner evidence closeout bundle',
+    path: 'scripts/closeout-owner-evidence.mjs',
+    type: 'commercial-verifier',
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['compose-live-gate-evidence.mjs', 'compose-commercial-evidence-records.mjs', 'verify-live-gate-evidence.mjs', 'verify-commercial-evidence-records.mjs', 'verify-remediation-external-gates.mjs', '--allow-incomplete', '--refresh-tracked', '--stripe-test-artifact'],
+    caveat: 'Runs the ordered redacted owner-evidence closeout path and fails closed unless all live/commercial gates are accepted; it does not print secrets or prove missing owner-held evidence.',
+  },
+  {
     id: 'remediation-completion-audit-verifier',
     label: 'Remediation completion audit verifier',
     path: 'scripts/verify-remediation-completion-audit.mjs',

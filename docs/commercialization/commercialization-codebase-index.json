@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T11:08:55.718Z",
+  "generatedAt": "2026-06-01T11:39:26.577Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -571,6 +571,10 @@
       "command": "vite build --mode development"
     },
     {
+      "name": "closeout:owner-evidence",
+      "command": "node scripts/closeout-owner-evidence.mjs"
+    },
+    {
       "name": "compose:commercial-evidence-records",
       "command": "node scripts/compose-commercial-evidence-records.mjs"
     },
@@ -697,6 +701,10 @@
     {
       "name": "verify:onet-task-ratings-live",
       "command": "node scripts/verify-onet-task-ratings-live.mjs --write"
+    },
+    {
+      "name": "verify:owner-evidence-closeout",
+      "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete"
     },
     {
       "name": "verify:owner-evidence-fixtures",

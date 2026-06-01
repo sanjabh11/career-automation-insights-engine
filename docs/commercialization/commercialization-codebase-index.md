@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T11:08:55.718Z
+Generated: 2026-06-01T11:39:26.577Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -154,6 +154,7 @@ Policies:
 | `verify:live-gate-evidence` | `node scripts/verify-live-gate-evidence.mjs` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
+| `verify:owner-evidence-closeout` | `node scripts/closeout-owner-evidence.mjs --allow-incomplete` |
 | `verify:owner-evidence-fixtures` | `node scripts/verify-owner-evidence-fixture-path.mjs` |
 | `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
 | `verify:remediation-completion-audit` | `node scripts/verify-remediation-completion-audit.mjs` |
@@ -174,10 +175,11 @@ Policies:
 Required commercial pre-demo gate:
 
 1. `npm run verify:commercial` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, owner-evidence fixture smoke, remediation external-gate ledger, remediation completion audit, commercial lint/build checks, and route smoke proof
-2. `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` when Chromium startup is stable; this writes `docs/commercialization/commercial-accessibility-audit-latest.md` and `.json`
-3. `npm run verify:sources` when DNS/network access is available
-4. `npm audit --omit=dev --audit-level=high` when registry access is available
-5. `npm run verify:commercial-browser` when macOS/CI browser startup is stable enough for the full lead/report/workforce journey
+2. `npm run verify:owner-evidence-closeout` to run the non-writing ordered owner-evidence closeout status bundle; after owner proof exists, run `npm run closeout:owner-evidence -- --write --refresh-tracked`
+3. `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` when Chromium startup is stable; this writes `docs/commercialization/commercial-accessibility-audit-latest.md` and `.json`
+4. `npm run verify:sources` when DNS/network access is available
+5. `npm audit --omit=dev --audit-level=high` when registry access is available
+6. `npm run verify:commercial-browser` when macOS/CI browser startup is stable enough for the full lead/report/workforce journey
 
 CI boundary:
 

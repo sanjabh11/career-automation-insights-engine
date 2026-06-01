@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T11:08:57.193Z",
+  "generatedAt": "2026-06-01T11:39:28.927Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -770,6 +770,33 @@
       "passed": true
     },
     {
+      "id": "owner-evidence-closeout-bundle",
+      "label": "Owner evidence closeout bundle",
+      "path": "scripts/closeout-owner-evidence.mjs",
+      "type": "commercial-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "compose-live-gate-evidence.mjs",
+        "compose-commercial-evidence-records.mjs",
+        "verify-live-gate-evidence.mjs",
+        "verify-commercial-evidence-records.mjs",
+        "verify-remediation-external-gates.mjs",
+        "--allow-incomplete",
+        "--refresh-tracked",
+        "--stripe-test-artifact"
+      ],
+      "caveat": "Runs the ordered redacted owner-evidence closeout path and fails closed unless all live/commercial gates are accepted; it does not print secrets or prove missing owner-held evidence.",
+      "bytes": 7931,
+      "rows": 217,
+      "sha256": "505fbbac2ab9e6f5afa1f39b2b8d7be9234bada4c266ea7f77dafbbe2b29cdcb",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "remediation-completion-audit-verifier",
       "label": "Remediation completion audit verifier",
       "path": "scripts/verify-remediation-completion-audit.mjs",
@@ -1294,7 +1321,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "673f90421053684b51ecc7ceaf65ab67146c8e5a5b94f2a90096d5303b49fbeb",
+      "sha256": "9393c496ccf8d8ca9184e97749ba612fb3674fac9d3d7eae2b644b27f1d2757b",
       "failures": [],
       "passed": true
     },
