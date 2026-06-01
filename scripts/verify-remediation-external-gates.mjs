@@ -8,6 +8,11 @@ import {
   LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
   validateLiveGateEvidence,
 } from './lib/liveGateEvidence.mjs';
+import {
+  DEFAULT_INPUT_PATH as DEFAULT_COMMERCIAL_EVIDENCE_RECORDS_PATH,
+  SCHEMA_VERSION as COMMERCIAL_EVIDENCE_RECORDS_SCHEMA_VERSION,
+  validateCommercialEvidence,
+} from './verify-commercial-evidence-records.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -131,6 +136,20 @@ Validation errors: ${artifact.liveGateEvidence.errorCount}
 
 The evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret patterns and does not print raw evidence contents.
 
+## Redacted Commercial Evidence Records
+
+Schema: \`${artifact.commercialEvidenceRecords.schemaVersion}\`
+Template: \`${artifact.commercialEvidenceRecords.templatePath}\`
+Default local file: \`${artifact.commercialEvidenceRecords.defaultPath}\`
+Current file found: ${artifact.commercialEvidenceRecords.found ? 'yes' : 'no'}
+Accepted design partner records: ${artifact.commercialEvidenceRecords.acceptedDesignPartnerCount}
+Accepted outcome records: ${artifact.commercialEvidenceRecords.acceptedOutcomeCount}
+Partner gate satisfied: ${artifact.commercialEvidenceRecords.partnerGateSatisfied ? 'yes' : 'no'}
+Outcome gate satisfied: ${artifact.commercialEvidenceRecords.outcomeGateSatisfied ? 'yes' : 'no'}
+Validation errors: ${artifact.commercialEvidenceRecords.errorCount}
+
+The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
+
 ## Command
 
 \`\`\`bash
@@ -159,6 +178,7 @@ function main() {
   const occupationAnalysis = readOptional('src/components/OccupationAnalysis.tsx');
   const readinessModel = readOptional('src/lib/commercialLaunchReadiness.ts');
   const liveGateEvidence = validateLiveGateEvidence({ root });
+  const commercialEvidenceRecords = validateCommercialEvidence({ root });
   const acceptedLiveGateEvidence = new Set(liveGateEvidence.acceptedGateIds);
 
   function externalGate(id, label, status, evidence, neededEvidence, options = {}) {
@@ -176,6 +196,37 @@ function main() {
         ...options,
         sourceBoundary: 'redacted owner evidence intake',
       }
+    );
+  }
+
+  function commercialEvidenceRecordsGate(id, label, satisfied, localReady, evidence, neededEvidence, options = {}) {
+    if (satisfied) {
+      return gate(
+        id,
+        label,
+        'externally_proven_redacted_evidence_attached',
+        `Redacted commercial evidence records are accepted by \`verify:commercial-evidence-records\` (${commercialEvidenceRecords.acceptedDesignPartnerCount} partner record(s), ${commercialEvidenceRecords.acceptedOutcomeCount} outcome record(s)); raw proof artifacts and private details remain owner-held.`,
+        'Keep the redacted records current and preserve owner-held raw proof for audit.',
+        {
+          ...options,
+          sourceBoundary: 'redacted commercial evidence records',
+        }
+      );
+    }
+
+    return gate(
+      id,
+      label,
+      commercialEvidenceRecords.errors.length
+        ? 'invalid_redacted_commercial_evidence_records'
+        : localReady
+          ? 'blocked_missing_owner_evidence_records'
+          : 'missing_local_verifier',
+      commercialEvidenceRecords.errors.length
+        ? `Redacted commercial evidence records are invalid with ${commercialEvidenceRecords.errors.length} verifier error(s).`
+        : evidence,
+      neededEvidence,
+      options
     );
   }
 
@@ -446,12 +497,13 @@ function main() {
         doesNotProve: ['Retention', 'Product-market fit', 'Future revenue', 'Accounting-recognized revenue'],
       }
     ),
-    externalGate(
+    commercialEvidenceRecordsGate(
       'three_committed_partners',
       'Three committed design partners',
-      commercialEvidenceRecordsReady ? 'blocked_missing_owner_evidence_records' : 'missing_local_verifier',
+      commercialEvidenceRecords.partnerGateSatisfied,
+      commercialEvidenceRecordsReady,
       commercialEvidenceRecordsReady
-        ? 'Redacted commercial-evidence record verifier is ready, but no accepted owner-held partner commitment records are attached.'
+        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.acceptedDesignPartnerCount} accepted owner-held partner commitment record(s) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
       'At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.',
       {
@@ -459,12 +511,13 @@ function main() {
         doesNotProve: ['Revenue', 'Successful outcomes', 'Market-wide demand'],
       }
     ),
-    externalGate(
+    commercialEvidenceRecordsGate(
       'documented_outcomes',
       'Permissioned documented outcomes',
-      commercialEvidenceRecordsReady ? 'blocked_missing_owner_evidence_records' : 'missing_local_verifier',
+      commercialEvidenceRecords.outcomeGateSatisfied,
+      commercialEvidenceRecordsReady,
       commercialEvidenceRecordsReady
-        ? 'Redacted commercial-evidence record verifier is ready, but no accepted owner-held documented outcome records are attached.'
+        ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.acceptedOutcomeCount} accepted owner-held documented outcome record(s) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
       'At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.',
       {
@@ -503,6 +556,19 @@ function main() {
       errorCount: liveGateEvidence.errors.length,
       errors: liveGateEvidence.errors,
     },
+    commercialEvidenceRecords: {
+      schemaVersion: COMMERCIAL_EVIDENCE_RECORDS_SCHEMA_VERSION,
+      templatePath: 'docs/commercialization/commercial-evidence-records-template.json',
+      defaultPath: DEFAULT_COMMERCIAL_EVIDENCE_RECORDS_PATH,
+      found: commercialEvidenceRecords.found,
+      inputPath: commercialEvidenceRecords.inputPath,
+      acceptedDesignPartnerCount: commercialEvidenceRecords.acceptedDesignPartnerCount,
+      acceptedOutcomeCount: commercialEvidenceRecords.acceptedOutcomeCount,
+      partnerGateSatisfied: commercialEvidenceRecords.partnerGateSatisfied,
+      outcomeGateSatisfied: commercialEvidenceRecords.outcomeGateSatisfied,
+      errorCount: commercialEvidenceRecords.errors.length,
+      errors: commercialEvidenceRecords.errors,
+    },
   };
 
   fs.mkdirSync(path.join(root, 'docs/commercialization'), { recursive: true });
@@ -510,15 +576,22 @@ function main() {
   fs.writeFileSync(path.join(root, OUTPUT_MD), renderMarkdown(artifact));
 
   console.log(JSON.stringify({
-    ok: liveGateEvidence.errors.length === 0,
+    ok: liveGateEvidence.errors.length === 0 && commercialEvidenceRecords.errors.length === 0,
     goalComplete,
     liveGateEvidence: artifact.liveGateEvidence,
+    commercialEvidenceRecords: artifact.commercialEvidenceRecords,
     gates: gates.map((item) => ({ id: item.id, status: item.status })),
     wrote: [OUTPUT_JSON, OUTPUT_MD],
   }, null, 2));
 
   if (liveGateEvidence.errors.length > 0) {
     console.error('Redacted live-gate evidence is invalid. See generated artifact for verifier-safe error details.');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (commercialEvidenceRecords.errors.length > 0) {
+    console.error('Redacted commercial evidence records are invalid. See generated artifact for verifier-safe error details.');
     process.exitCode = 1;
     return;
   }

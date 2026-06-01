@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T05:29:24.010Z",
+  "generatedAt": "2026-06-01T05:44:29.460Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -121,7 +121,7 @@
       "id": "three_committed_partners",
       "label": "Three committed design partners",
       "status": "blocked_missing_owner_evidence_records",
-      "evidence": "Redacted commercial-evidence record verifier is ready, but no accepted owner-held partner commitment records are attached.",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 accepted owner-held partner commitment record(s) are attached.",
       "neededEvidence": "At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
       "sourceBoundary": "owner redacted commercial-evidence records",
       "doesNotProve": [
@@ -134,7 +134,7 @@
       "id": "documented_outcomes",
       "label": "Permissioned documented outcomes",
       "status": "blocked_missing_owner_evidence_records",
-      "evidence": "Redacted commercial-evidence record verifier is ready, but no accepted owner-held documented outcome records are attached.",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 accepted owner-held documented outcome record(s) are attached.",
       "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.",
       "sourceBoundary": "owner redacted commercial-evidence records",
       "doesNotProve": [
@@ -160,6 +160,19 @@
     "evidencePath": "docs/commercialization/live-gate-evidence.local.json",
     "acceptedGateIds": [],
     "rejectedGateIds": [],
+    "errorCount": 0,
+    "errors": []
+  },
+  "commercialEvidenceRecords": {
+    "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
+    "templatePath": "docs/commercialization/commercial-evidence-records-template.json",
+    "defaultPath": "docs/commercialization/commercial-evidence-records.local.json",
+    "found": false,
+    "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
+    "acceptedDesignPartnerCount": 0,
+    "acceptedOutcomeCount": 0,
+    "partnerGateSatisfied": false,
+    "outcomeGateSatisfied": false,
     "errorCount": 0,
     "errors": []
   }

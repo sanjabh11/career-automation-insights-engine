@@ -7,17 +7,16 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const root = path.resolve(__dirname, '..');
+const repoRoot = path.resolve(__dirname, '..');
 
-const SCHEMA_VERSION = '2026-06-01.apo-commercial-evidence-records.v1';
+export const SCHEMA_VERSION = '2026-06-01.apo-commercial-evidence-records.v1';
 const PARTNER_GATE_ID = 'three_committed_partners';
 const OUTCOME_GATE_ID = 'documented_outcomes';
-const DEFAULT_INPUT_PATH = 'docs/commercialization/commercial-evidence-records.local.json';
+export const DEFAULT_INPUT_PATH = 'docs/commercialization/commercial-evidence-records.local.json';
 const OUTPUT_PATH = 'docs/commercialization/commercial-evidence-records-latest.json';
 
 const SECRET_OR_PRIVATE_PATTERNS = [
   { id: 'email_address', pattern: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/ },
-  { id: 'phone_like_number', pattern: /\+?\d[\d().\-\s]{8,}\d/ },
   { id: 'stripe_secret_key', pattern: /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\b/ },
   { id: 'stripe_webhook_secret', pattern: /\bwhsec_[A-Za-z0-9]{16,}\b/ },
   { id: 'google_api_key', pattern: /\bAIza[A-Za-z0-9_-]{25,}\b/ },
@@ -49,13 +48,20 @@ function sha256(value) {
   return createHash('sha256').update(String(value)).digest('hex');
 }
 
-function resolveInputPath(requestedPath) {
+function resolveInputPath(requestedPath, baseRoot = repoRoot) {
   const candidate = requestedPath || process.env.COMMERCIAL_EVIDENCE_RECORDS_PATH || DEFAULT_INPUT_PATH;
-  return path.isAbsolute(candidate) ? candidate : path.join(root, candidate);
+  return path.isAbsolute(candidate) ? candidate : path.join(baseRoot, candidate);
+}
+
+function containsPhoneLikeNumber(source) {
+  const candidates = source.match(/\+?\d[\d().\-\s]{8,}\d/g) || [];
+  return candidates.some((candidate) => candidate.replace(/\D/g, '').length >= 10);
 }
 
 function detectSecretOrPrivatePatternIds(source) {
-  return SECRET_OR_PRIVATE_PATTERNS.filter((item) => item.pattern.test(source)).map((item) => item.id);
+  const ids = SECRET_OR_PRIVATE_PATTERNS.filter((item) => item.pattern.test(source)).map((item) => item.id);
+  if (containsPhoneLikeNumber(source)) ids.push('phone_like_number');
+  return ids;
 }
 
 function addRequiredBoolean(errors, value, pathName) {
@@ -107,9 +113,10 @@ function validateOutcome(item, index) {
   return { accepted: errors.length === 0, errors };
 }
 
-function validateCommercialEvidence({ inputPath } = {}) {
-  const absolutePath = resolveInputPath(inputPath);
-  const relativePath = path.relative(root, absolutePath) || path.basename(absolutePath);
+export function validateCommercialEvidence({ inputPath, root: requestedRoot } = {}) {
+  const baseRoot = requestedRoot || repoRoot;
+  const absolutePath = resolveInputPath(inputPath, baseRoot);
+  const relativePath = path.relative(baseRoot, absolutePath) || path.basename(absolutePath);
 
   if (!fs.existsSync(absolutePath)) {
     return {
@@ -180,7 +187,7 @@ function validateCommercialEvidence({ inputPath } = {}) {
   };
 }
 
-function renderArtifact(result) {
+export function renderArtifact(result) {
   return {
     generatedAt: new Date().toISOString(),
     schemaVersion: SCHEMA_VERSION,
@@ -228,8 +235,8 @@ function main() {
   const artifact = renderArtifact(result);
 
   if (shouldWrite) {
-    fs.mkdirSync(path.join(root, 'docs/commercialization'), { recursive: true });
-    fs.writeFileSync(path.join(root, OUTPUT_PATH), `${JSON.stringify(artifact, null, 2)}\n`);
+    fs.mkdirSync(path.join(repoRoot, 'docs/commercialization'), { recursive: true });
+    fs.writeFileSync(path.join(repoRoot, OUTPUT_PATH), `${JSON.stringify(artifact, null, 2)}\n`);
   }
 
   console.log(JSON.stringify({
@@ -256,4 +263,5 @@ function main() {
   }
 }
 
-main();
+const isDirectRun = process.argv[1] && path.resolve(process.argv[1]) === __filename;
+if (isDirectRun) main();
