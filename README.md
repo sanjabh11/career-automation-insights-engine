@@ -1,6 +1,6 @@
 # Career Automation Insights Engine
 
-As of 2026-05-31, this repository contains the APO Dashboard: a Vite, React, TypeScript, Supabase, Stripe/Whop, and Gemini application for career automation-exposure research and coaching workflows.
+As of 2026-06-01, this repository contains the APO Dashboard: a Vite, React, TypeScript, Supabase, Stripe/Whop, and Gemini application for career automation-exposure research and coaching workflows.
 
 The product should be described as a decision-support tool. It estimates automation exposure and transition options from O*NET-centered occupation data, LLM-assisted task analysis, and commercial proof-pack workflows. It does not predict job loss, make employment decisions, certify scientific validity, or prove local labor-market outcomes.
 
@@ -53,7 +53,7 @@ External context used for current claims, as of 2026-05-31:
 - Production calibration against live APO logs and sourced expert-label rows.
 - UK/Canada/Australia localized wage and outlook values from source-dated adapter joins.
 - Paid customer traction, MRR, or partner outcomes.
-- Full lint cleanliness; current baseline lint still fails on existing active, backup, and archived code.
+- Zero-warning lint cleanliness; current active baseline passes with 27 React hook/Fast Refresh warnings.
 
 ## Local Development
 

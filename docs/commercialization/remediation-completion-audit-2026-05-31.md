@@ -1,8 +1,8 @@
 # APO Dashboard Remediation Completion Audit
 
-Status date: 2026-05-31
+Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through utility type-boundary hardening
+Latest local remediation evidence reviewed: Phase E follow-up through Fast Refresh lint warning reduction
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -32,7 +32,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Commercial trust | `npm run verify:commercial-trust` from Phase E gate run | Pass |
 | Commercial verifier | `npm run verify:commercial` from Phase E gate run, then rerun after adding the remediation-gate step | Pass, including remediation-gate ledger, build, and commercial route smoke |
 | Remediation external gates | `npm run verify:remediation-gates` | Pass as a non-mutating readiness ledger; `goalComplete=false` because live/manual evidence is still missing |
-| Full lint | `npm run lint` from Phase E follow-up gate run | Pass: 0 errors and 31 React hook/component warnings after inactive backup/archive trees, mechanical non-`any` errors, and the active explicit-`any` backlog were cleared across frontend components/hooks/pages/services plus Supabase Edge Function, shared library, and test boundaries |
+| Full lint | `npm run lint` from Phase E follow-up gate run | Pass: 0 errors and 27 React hook/Fast Refresh warnings after inactive backup/archive trees, mechanical non-`any` errors, the active explicit-`any` backlog, and several provider/page Fast Refresh export warnings were cleared across frontend components/hooks/pages/services plus Supabase Edge Function, shared library, and test boundaries |
 
 ## Unmet Or Externally Blocked Gates
 
