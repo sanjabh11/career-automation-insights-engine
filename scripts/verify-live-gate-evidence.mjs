@@ -18,17 +18,21 @@ function readFlagValue(name) {
 }
 
 const requireAny = process.argv.includes('--require-any');
-const requireAll = process.argv.includes('--require-all');
+const requireComplete = process.argv.includes('--require-complete') || process.argv.includes('--require-all');
 const evidencePath = readFlagValue('--evidence');
 const result = validateLiveGateEvidence({ root, evidencePath });
+const acceptedGateIdSet = new Set(result.acceptedGateIds);
+const complete = LIVE_GATE_EVIDENCE_GATE_IDS.every((gateId) => acceptedGateIdSet.has(gateId));
+const requirementsSatisfied = (!requireAny || result.acceptedGateIds.length > 0) && (!requireComplete || complete);
 
 console.log(JSON.stringify({
-  ok: result.errors.length === 0,
+  ok: result.errors.length === 0 && requirementsSatisfied,
   found: result.found,
   evidencePath: result.evidencePath,
   requiredGateIds: LIVE_GATE_EVIDENCE_GATE_IDS,
   acceptedGateIds: result.acceptedGateIds,
   rejectedGateIds: result.rejectedGateIds,
+  complete,
   errorCount: result.errors.length,
   errors: result.errors,
 }, null, 2));
@@ -38,7 +42,7 @@ if (result.errors.length > 0) {
 } else if (requireAny && result.acceptedGateIds.length === 0) {
   console.error('No accepted live-gate evidence item was found.');
   process.exitCode = 1;
-} else if (requireAll && result.acceptedGateIds.length < LIVE_GATE_EVIDENCE_REQUIRED_COUNT) {
+} else if (requireComplete && !complete) {
   console.error('Not all live-gate evidence items are accepted.');
   process.exitCode = 1;
 }

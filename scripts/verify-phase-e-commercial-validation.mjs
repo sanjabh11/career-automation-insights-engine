@@ -115,6 +115,8 @@ assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkou
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
+assert(/--require-complete/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must support the documented --require-complete flag');
+assert(/complete/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must expose completion state');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must validate composed evidence');
 assert(/stripe-test-checkout-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume Stripe test checkout proof artifacts');
 assert(/stripe-live-mrr-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume Stripe live MRR proof artifacts');
