@@ -50,9 +50,9 @@ function getRiskColor(risk: number): string {
 }
 
 function getRiskLabel(risk: number): string {
-  if (risk <= 30) return 'Low Risk';
-  if (risk <= 60) return 'Medium Risk';
-  return 'High Risk';
+  if (risk <= 30) return 'Lower Exposure';
+  if (risk <= 60) return 'Moderate Exposure';
+  return 'Higher Exposure';
 }
 
 function ComparisonColumn({ data, slug, side }: { data: OccupationRiskData; slug: string; side: 'left' | 'right' }) {
@@ -68,7 +68,7 @@ function ComparisonColumn({ data, slug, side }: { data: OccupationRiskData; slug
         </div>
       </Link>
 
-      {/* Risk Score */}
+      {/* Exposure estimate */}
       <div className="text-center p-4 bg-card border rounded-xl">
         <div className={`text-4xl font-bold ${riskColor}`}>{data.overallRisk}%</div>
         <Progress value={data.overallRisk} className="h-2 my-2" />
@@ -91,10 +91,10 @@ function ComparisonColumn({ data, slug, side }: { data: OccupationRiskData; slug
         </div>
       </div>
 
-      {/* High Risk Tasks */}
+      {/* Higher exposure tasks */}
       <div>
         <h3 className="font-semibold text-sm mb-2 flex items-center gap-1">
-          <ShieldX className="h-4 w-4 text-red-500" /> At-Risk Tasks
+          <ShieldX className="h-4 w-4 text-red-500" /> Tasks To Review
         </h3>
         <div className="space-y-1.5">
           {data.highRiskTasks.map((t, i) => (
@@ -105,10 +105,10 @@ function ComparisonColumn({ data, slug, side }: { data: OccupationRiskData; slug
         </div>
       </div>
 
-      {/* Safe Skills */}
+      {/* Resilience skills */}
       <div>
         <h3 className="font-semibold text-sm mb-2 flex items-center gap-1">
-          <ShieldCheck className="h-4 w-4 text-emerald-500" /> Human Skills
+          <ShieldCheck className="h-4 w-4 text-emerald-500" /> Resilience Skills
         </h3>
         <div className="space-y-1.5">
           {data.safeSkills.map((s, i) => (
@@ -137,7 +137,7 @@ function ComparisonColumn({ data, slug, side }: { data: OccupationRiskData; slug
       <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
         <div className="text-xs text-muted-foreground">Bridge Role</div>
         <div className="font-semibold">{data.bridgeRole}</div>
-        <div className="text-xs text-emerald-500">{data.bridgeRoleRisk}% risk</div>
+        <div className="text-xs text-emerald-500">{data.bridgeRoleRisk}% exposure estimate</div>
       </div>
     </div>
   );
@@ -155,9 +155,9 @@ export default function SEOComparisonPage() {
 
   useEffect(() => {
     if (data1 && data2) {
-      document.title = `${data1.title} vs ${data2.title}: Which is More AI-Proof? | Automation Insights`;
+      document.title = `${data1.title} vs ${data2.title}: Automation Defense Comparison | Automation Insights`;
       const metaDesc = document.querySelector('meta[name="description"]');
-      const desc = `Compare ${data1.title} (${data1.overallRisk}% risk) vs ${data2.title} (${data2.overallRisk}% risk). Side-by-side AI automation risk analysis with salary, growth, and reskilling recommendations.`;
+      const desc = `Compare ${data1.title} (${data1.overallRisk}% exposure estimate) vs ${data2.title} (${data2.overallRisk}% exposure estimate). Side-by-side automation-defense planning context with salary, growth, and reskilling recommendations.`;
       if (metaDesc) {
         metaDesc.setAttribute('content', desc);
       } else {
@@ -196,8 +196,8 @@ export default function SEOComparisonPage() {
     );
   }
 
-  const safer = data1.overallRisk <= data2.overallRisk ? data1 : data2;
-  const riskier = data1.overallRisk > data2.overallRisk ? data1 : data2;
+  const lowerExposure = data1.overallRisk <= data2.overallRisk ? data1 : data2;
+  const higherExposure = data1.overallRisk > data2.overallRisk ? data1 : data2;
   const riskDiff = Math.abs(data1.overallRisk - data2.overallRisk);
 
   return (
@@ -206,7 +206,7 @@ export default function SEOComparisonPage() {
       <section className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto text-center">
           <Badge variant="outline" className="mb-4">
-            <ArrowLeftRight className="h-3 w-3 mr-1" /> AI Risk Comparison
+            <ArrowLeftRight className="h-3 w-3 mr-1" /> Automation Defense Comparison
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             <span className="text-primary">{data1.title}</span>
@@ -214,7 +214,7 @@ export default function SEOComparisonPage() {
             <span className="text-primary">{data2.title}</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
-            Which career is more resilient to AI automation? Side-by-side analysis using O*NET data.
+            Which occupation has a lower decision-support exposure estimate? Side-by-side planning context using O*NET data.
           </p>
 
           {/* Verdict Card */}
@@ -223,9 +223,9 @@ export default function SEOComparisonPage() {
               <Brain className="h-8 w-8 text-primary mx-auto mb-2" />
               <h2 className="text-lg font-bold mb-1">Verdict</h2>
               <p className="text-muted-foreground">
-                <strong className="text-emerald-500">{safer.title}</strong> is{' '}
-                <strong>{riskDiff} percentage points safer</strong> than{' '}
-                <span className="text-red-400">{riskier.title}</span> from AI automation.
+                <strong className="text-emerald-500">{lowerExposure.title}</strong> has a{' '}
+                <strong>{riskDiff} percentage point lower exposure estimate</strong> than{' '}
+                <span className="text-red-400">{higherExposure.title}</span>. This is planning context, not a safety guarantee.
               </p>
             </CardContent>
           </Card>
@@ -243,7 +243,7 @@ export default function SEOComparisonPage() {
       {/* PDF Download */}
       <section className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <SEOReportDownload data={safer} occupationSlug={data1.overallRisk <= data2.overallRisk ? slug1 : slug2} />
+          <SEOReportDownload data={lowerExposure} occupationSlug={data1.overallRisk <= data2.overallRisk ? slug1 : slug2} />
         </div>
       </section>
 

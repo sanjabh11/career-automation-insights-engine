@@ -349,9 +349,19 @@ export const OccupationAnalysis = ({
                 <Badge variant="outline" className="text-[10px]">
                   Adapter: {regionalDisclosure.adapter.valueStatus.replace(/_/g, ' ')}
                 </Badge>
+                {regionalDisclosure.localValueStatus && (
+                  <Badge variant="outline" className="text-[10px]">
+                    Local values: {regionalDisclosure.localValueStatus.status.replace(/_/g, ' ')}
+                  </Badge>
+                )}
                 <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
                   Join requirement: {regionalDisclosure.adapter.joinLevel}
                 </span>
+                {regionalDisclosure.localValueStatus && (
+                  <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
+                    Local wage/outlook fallback: {regionalDisclosure.localValueStatus.reason}
+                  </span>
+                )}
               </div>
             )}
             {regionalSources.length > 0 && (

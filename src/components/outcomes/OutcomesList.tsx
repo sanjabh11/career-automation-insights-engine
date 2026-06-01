@@ -12,6 +12,9 @@ interface OutcomeRow {
   new_salary: number | null;
   transition_months: number | null;
   satisfaction_score: number | null;
+  selected_transition_option: string | null;
+  artifact_reviewed: boolean | null;
+  consent_to_research: boolean | null;
 }
 
 const getErrorMessage = (error: unknown, fallback: string) =>
@@ -72,6 +75,8 @@ export function OutcomesList() {
                 <th className="text-right p-2">New Salary</th>
                 <th className="text-right p-2">Months</th>
                 <th className="text-right p-2">Satisfaction</th>
+                <th className="text-left p-2">Revealed choice</th>
+                <th className="text-left p-2">Consent</th>
               </tr>
             </thead>
             <tbody>
@@ -83,6 +88,8 @@ export function OutcomesList() {
                   <td className="p-2 text-right">{r.new_salary != null ? `$${Math.round(r.new_salary).toLocaleString()}` : '—'}</td>
                   <td className="p-2 text-right">{r.transition_months ?? '—'}</td>
                   <td className="p-2 text-right">{r.satisfaction_score ?? '—'}</td>
+                  <td className="p-2">{r.selected_transition_option || (r.artifact_reviewed ? 'Artifact reviewed' : '—')}</td>
+                  <td className="p-2">{r.consent_to_research ? 'Research OK' : 'Private'}</td>
                 </tr>
               ))}
             </tbody>

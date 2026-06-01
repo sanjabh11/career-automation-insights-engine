@@ -87,8 +87,8 @@ export default function WhopDiscoverPage() {
             </h1>
             
             <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
-              Get your personalized Automation Risk Score and a roadmap to future-proof 
-              your career. Powered by real labor market data and advanced AI.
+              Get a decision-support exposure estimate and a career resilience roadmap.
+              Source-labeled labor-market data and AI assistance are bounded for planning use.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

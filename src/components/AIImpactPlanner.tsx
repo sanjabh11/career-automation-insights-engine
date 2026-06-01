@@ -1119,7 +1119,7 @@ export function AIImpactPlanner() {
                   <li>Search and select your occupation</li>
                   <li>View tasks categorized by automation potential</li>
                   <li>Add your own tasks to assess their AI impact</li>
-                  <li>Explore skill recommendations to future-proof your career</li>
+                  <li>Explore skill recommendations for career resilience planning</li>
                   <li>Find resources to develop those skills</li>
                 </ol>
                 <div className="mt-4 p-3 bg-[var(--accent-primary)]/10 rounded-md text-sm text-[var(--accent-primary)]">

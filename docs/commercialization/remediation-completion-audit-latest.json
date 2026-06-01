@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-01T12:34:33.966Z",
+  "generatedAt": "2026-06-01T18:35:41.377Z",
   "branch": "phase-e-commercial-validation",
-  "sourceHeadAtGeneration": "bc701f5",
+  "sourceHeadAtGeneration": "bd0d660",
   "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
   "goalComplete": false,
   "phaseDeliverables": [
@@ -112,25 +112,25 @@
     {
       "id": "real_stripe_test_checkout",
       "label": "Real Stripe test-mode checkout",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "status": "ready_for_owner_live_run",
       "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact."
     },
     {
       "id": "production_calibration_run",
       "label": "Production calibration run",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "status": "ready_for_owner_live_run",
       "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact."
     },
     {
       "id": "authenticated_live_artifact_e2e",
       "label": "Authenticated live artifact e2e",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "status": "ready_for_owner_live_run",
       "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts."
     },
     {
       "id": "live_mrr_gt_zero",
       "label": "Live MRR greater than zero",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "status": "ready_for_owner_live_run",
       "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence."
     },
     {
@@ -153,7 +153,7 @@
     "Hosted CI proves this branch behavior, not target production data state.",
     "UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated."
   ],
-  "currentBranchFilesChangedCount": 213,
+  "currentBranchFilesChangedCount": 218,
   "currentBranchFilesChangedSample": [
     ".github/workflows/commercial-proof-pack.yml",
     ".github/workflows/phase-c-runtime-smoke.yml",
@@ -172,6 +172,7 @@
     "docs/commercialization/data-provenance-checksums.md",
     "docs/commercialization/github-repo-presentation-latest.json",
     "docs/commercialization/github-repo-presentation-latest.md",
+    "docs/commercialization/live-auth-e2e-proof-latest.json",
     "docs/commercialization/live-gate-evidence-template.json",
     "docs/commercialization/live-supabase-deployment-packet.json",
     "docs/commercialization/live-supabase-deployment-runbook.md",
@@ -193,8 +194,7 @@
     "scripts/closeout-owner-evidence.mjs",
     "scripts/compose-commercial-evidence-records.mjs",
     "scripts/compose-live-gate-evidence.mjs",
-    "scripts/generate-commercialization-index.mjs",
-    "scripts/lib/liveGateEvidence.mjs"
+    "scripts/generate-commercialization-index.mjs"
   ],
   "errors": []
 }

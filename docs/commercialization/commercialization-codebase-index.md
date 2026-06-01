@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T12:34:28.157Z
+Generated: 2026-06-01T18:35:34.199Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -85,9 +85,11 @@ Policies:
 
 ## Source Registry Coverage
 
+- `abs-osca-2024`
 - `ada-ai-hiring-guidance`
 - `ai-workforce-consortium-2025`
 - `anthropic-economic-index`
+- `anthropic-economic-index-2026`
 - `anthropic-observed-exposure`
 - `bls-ai-mlr-2025`
 - `bls-emp`
@@ -101,6 +103,7 @@ Policies:
 - `eeoc-employment-selection-procedures`
 - `esco`
 - `ferpa-student-privacy`
+- `ilo-genai-jobs-2025`
 - `iso-42001`
 - `lightcast`
 - `llm-output`
@@ -113,6 +116,7 @@ Policies:
 - `onet-task-categories`
 - `onet-task-ratings`
 - `onet-task-statements`
+- `openai-eloundou-gpts-are-gpts`
 - `openai-gdpval`
 - `owasp-file-upload`
 - `serpapi`
@@ -157,6 +161,7 @@ Policies:
 | `verify:owner-evidence-closeout` | `node scripts/closeout-owner-evidence.mjs --allow-incomplete` |
 | `verify:owner-evidence-fixtures` | `node scripts/verify-owner-evidence-fixture-path.mjs` |
 | `verify:owner-evidence-prep` | `node scripts/prepare-owner-evidence-workspace.mjs` |
+| `verify:part-ii` | `node scripts/verify-part-ii-release-gates.mjs` |
 | `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
 | `verify:remediation-completion-audit` | `node scripts/verify-remediation-completion-audit.mjs` |
 | `verify:remediation-completion-audit:write` | `node scripts/verify-remediation-completion-audit.mjs --write` |

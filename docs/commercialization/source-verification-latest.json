@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T09:09:13.546Z",
+  "generatedAt": "2026-06-01T18:32:57.633Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -129,8 +129,8 @@
       "url": "https://www.bls.gov/oes/tables.htm",
       "status": 200,
       "ok": true,
-      "contentSha256": "962c925ce0dbfb43c9ee29cf2234fd0818e3185367a1520c91881f5445d68faa",
-      "byteLength": 99730,
+      "contentSha256": "1bb4a1f862524d6fd126509e90872d9fca06ac8b76b7f5fe891d222fda463440",
+      "byteLength": 99749,
       "evidence": [
         {
           "label": "May 2025 OEWS table section",
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "40e58d5c609c512c34529b0f322d7932dc9ef9676284c7e761afd6f424c0851f",
-      "byteLength": 233752,
+      "contentSha256": "2935aa7fd821bf3c4689986584b25fdb2360a6b3e357f278e4d9e59799013aa5",
+      "byteLength": 234696,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "ed0c635a2885a0915655ba45ce5da717c32a287da79949befd8b97e9781b4db2",
+      "contentSha256": "ed0d329d41569eacb103c6a8a5387bbbde0f7b05126521a05586e61e9718beb4",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,8 +229,8 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "cce31c1252cc6f871a7e1781a99b1b3f6ea72e5ea430bbfa10555b6ed91f6424",
-      "byteLength": 303692,
+      "contentSha256": "209c266c3e07923648932646922677b60aa4e38903a787652ef6ec392e47ddc3",
+      "byteLength": 304115,
       "evidence": [
         {
           "label": "Future of Jobs Report 2025 title",
@@ -238,6 +238,46 @@
         },
         {
           "label": "World Economic Forum source",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ilo-genai-jobs-2025",
+      "label": "ILO Generative AI and jobs 2025 update",
+      "url": "https://www.ilo.org/publications/generative-ai-and-jobs-2025-update",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "9a2fcdaace9a14adac73999caa7900a952ffd3f4a4ac14ebdeca568ec93082ca",
+      "byteLength": 65232,
+      "evidence": [
+        {
+          "label": "ILO 2025 GenAI jobs update title",
+          "matched": true
+        },
+        {
+          "label": "occupational exposure evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "openai-eloundou-gpts-are-gpts",
+      "label": "GPTs are GPTs exposure paper",
+      "url": "https://arxiv.org/abs/2303.10130",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "995ae44f100f477903c0b322175f861d2a297a66d31c03633c443986d1b60c0b",
+      "byteLength": 48391,
+      "evidence": [
+        {
+          "label": "GPTs are GPTs title",
+          "matched": true
+        },
+        {
+          "label": "labor market impact potential evidence",
           "matched": true
         }
       ],
@@ -269,8 +309,8 @@
       "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2025/m09/ai-workforce-consortium-finds-78-of-ict-roles-now-include-ai-technical-skills-while-human-skills-gain-priority-for-responsible-tech-adoption.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "7fec3f9e56b4296594db6cbae4a20f0ae6b5afd64cd1b534cc2d3babcbfbe378",
-      "byteLength": 114397,
+      "contentSha256": "a7dc86fe9160bed1d3cf09490f0e95e4c642edb5e09e0445bff9df663ae3a659",
+      "byteLength": 116284,
       "evidence": [
         {
           "label": "AI Workforce Consortium source",
@@ -289,8 +329,8 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "3260a5d776ee0558c991e64e0a6c86d51cedf237b7c70ff369eccf82718d7040",
-      "byteLength": 74698,
+      "contentSha256": "e1953810b8bf4309077a83d9443a94e28924721f5b15558eff29e8fbe886c1b9",
+      "byteLength": 74690,
       "evidence": [
         {
           "label": "NACE career readiness definition",
@@ -309,7 +349,7 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "90eb4893c4688914687d5298b4db72ce522f186d584c00b18392508b8c386425",
+      "contentSha256": "2323c285650eb35eddd889f2a9a52344083372aa2e78ea07a5df2eca34356991",
       "byteLength": 41890,
       "evidence": [
         {
@@ -329,8 +369,8 @@
       "url": "https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records",
       "status": 200,
       "ok": true,
-      "contentSha256": "d0eab110bd9d7a665d583b001659cae5beeeb10abf6894adb01ee1ba6f81ccb3",
-      "byteLength": 34707,
+      "contentSha256": "3d0941259d458d4643dabe5d094839d5396366967b0345b2ff3d629dd9a46bb6",
+      "byteLength": 34695,
       "evidence": [
         {
           "label": "PII for education records title",
@@ -349,7 +389,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "91c6314967d8068cd3a9f905099026d778ecd2496c108325f693a9af0ebecaf6",
+      "contentSha256": "4b8bc99497377c1be2f673fdb7c53fcb6878c68c6dc903abbf63199944742fb8",
       "byteLength": 73088,
       "evidence": [
         {
@@ -369,8 +409,8 @@
       "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
       "status": 200,
       "ok": true,
-      "contentSha256": "6284829a069e52dab85ff174909782717593f2b926feebd8227d0524a16c4688",
-      "byteLength": 165940,
+      "contentSha256": "fdf662dace8068a597504e1141594fa6986c59d56cab7b7172348ca1dd49f9bc",
+      "byteLength": 165714,
       "evidence": [
         {
           "label": "Anthropic Economic Index title",
@@ -384,13 +424,33 @@
       "passed": true
     },
     {
+      "id": "anthropic-economic-index-2026",
+      "label": "Anthropic Economic Index January 2026",
+      "url": "https://www.anthropic.com/research/anthropic-economic-index-january-2026-report",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "a51ba5936638437df311f088bd67e26201fdc4f112dd087b9ec79376b4c14802",
+      "byteLength": 437476,
+      "evidence": [
+        {
+          "label": "January 2026 Economic Index title",
+          "matched": true
+        },
+        {
+          "label": "automation and augmentation evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "anthropic-observed-exposure",
       "label": "Anthropic observed AI exposure research",
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "a7eb89c66dcdeec152cf466fb312e13d504af3466911e963a84e01c1b2ba7656",
-      "byteLength": 210582,
+      "contentSha256": "2ce672f22c3221b4f83383ef60f0a1f02b4973d5ae70511983719b604a3bc6eb",
+      "byteLength": 212998,
       "evidence": [
         {
           "label": "observed exposure methodology",
@@ -429,8 +489,8 @@
       "url": "https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm",
       "status": 200,
       "ok": true,
-      "contentSha256": "7f39647ede45679f4093fa5764fd531b015e1c9d2e25e6925e99ad5114507c15",
-      "byteLength": 134358,
+      "contentSha256": "87233b2c1a2bf8f09beebf7c5317bff397a1ab3de104838f2a2b8b05aecd6364",
+      "byteLength": 134431,
       "evidence": [
         {
           "label": "AI impacts article title",
@@ -509,8 +569,8 @@
       "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
       "status": 200,
       "ok": true,
-      "contentSha256": "20972fdb75aad4a87adc7ba2e29325d8a4fd0ad987f86f469da430d2a83cfff0",
-      "byteLength": 183444,
+      "contentSha256": "432353a0d57c08dfa5552e006885219658cbb83a4531020b42fdddfff91c0f3c",
+      "byteLength": 181283,
       "evidence": [
         {
           "label": "CFPB circular title",
@@ -529,8 +589,8 @@
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "9dc728599ce5a3840d284be42abecc43a236f2dc19ce2e208952904fc1a53f13",
-      "byteLength": 121776,
+      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
+      "byteLength": 121777,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -549,7 +609,7 @@
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
       "status": 200,
       "ok": true,
-      "contentSha256": "10597647af94734463742e45fef410a1fb63af98542248babfb22374d3e330f2",
+      "contentSha256": "ffb852e28627fb2a7621966c0f67ecd545f97e5cd42f0307fa55eb03ee95804c",
       "byteLength": 53582,
       "evidence": [
         {
@@ -564,13 +624,33 @@
       "passed": true
     },
     {
+      "id": "abs-osca-2024",
+      "label": "ABS OSCA 2024",
+      "url": "https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "dcdb16c31b08e8a35cc9cff9e14224d7bf4ba0cd830cf15e65afde8a71c136a1",
+      "byteLength": 91695,
+      "evidence": [
+        {
+          "label": "OSCA 2024 title",
+          "matched": true
+        },
+        {
+          "label": "replacement boundary evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "workera-positioning",
       "label": "Workera skills intelligence positioning",
       "url": "https://www.workera.ai/product-overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "974fae85df50b091d3ecd383aaf067acc28a1cbecd5b6a6db2d4f23b15456a09",
-      "byteLength": 177053,
+      "contentSha256": "e29c01c2273033e6ab0eda59bec66cfcaee4b382fda998e877d217c8b9184b16",
+      "byteLength": 199217,
       "evidence": [
         {
           "label": "Workera product page",
@@ -589,8 +669,8 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "3369dfc8a0aa012fe6a8c06296bdb8e70cfdded0f3e1e98044d1cf32118d50b1",
-      "byteLength": 91198,
+      "contentSha256": "954f59b9003d7c50be9283062d3b9ea4786d994a6ae3f488b7ba3eba68e2bdf7",
+      "byteLength": 91339,
       "evidence": [
         {
           "label": "AI Risk Management Framework title",
@@ -629,8 +709,8 @@
       "url": "https://supabase.com/docs/guides/functions",
       "status": 200,
       "ok": true,
-      "contentSha256": "2c0b4bdb8204532aecc6abcbfeefc12eb88e658bc7a02ce682389a9f3b7343b1",
-      "byteLength": 181975,
+      "contentSha256": "f07975879a1d559d9298d79a1b52a34031e7ac66a84226ea58ee05b98efa4c96",
+      "byteLength": 180517,
       "evidence": [
         {
           "label": "Supabase Edge Functions title",

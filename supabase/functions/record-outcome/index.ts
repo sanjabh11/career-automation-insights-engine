@@ -42,6 +42,13 @@ const OutcomeSchema = z.object({
   new_salary: z.number().min(0).optional(),
   transition_months: z.number().min(0).max(120).optional(),
   satisfaction_score: z.number().min(1).max(10).optional(),
+  consent_to_research: z.boolean().optional(),
+  consent_to_contact: z.boolean().optional(),
+  transition_plan_ref: z.string().max(255).optional(),
+  selected_transition_option: z.string().max(255).optional(),
+  options_presented: z.array(z.string().max(255)).max(12).optional(),
+  artifact_reviewed: z.boolean().optional(),
+  does_not_prove_acknowledged: z.boolean().optional(),
 });
 
 serve(async (req) => {
@@ -90,6 +97,22 @@ serve(async (req) => {
 
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } });
+    }
+
+    if (body.selected_transition_option || body.artifact_reviewed || body.options_presented?.length) {
+      await supabase
+        .from('revealed_transition_events')
+        .insert([{
+          user_id,
+          outcome_id: data.id,
+          event_type: body.selected_transition_option ? 'option_selected' : body.artifact_reviewed ? 'artifact_reviewed' : 'option_presented',
+          target_occupation: body.goal_occupation,
+          options_presented: body.options_presented ?? [],
+          selected_option: body.selected_transition_option ? { label: body.selected_transition_option } : null,
+          consent_to_research: body.consent_to_research ?? false,
+          consent_to_contact: body.consent_to_contact ?? false,
+          artifact_reviewed: body.artifact_reviewed ?? false,
+        }]);
     }
 
     return new Response(JSON.stringify({ ok: true, outcome: data }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json' } });

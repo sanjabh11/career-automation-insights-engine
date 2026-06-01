@@ -32,6 +32,7 @@ export interface GlobalOccupationCrosswalk {
   ukSoc2020: RegionalOccupationMapping;
   noc2021: RegionalOccupationMapping;
   anzsco2022: RegionalOccupationMapping;
+  osca2024?: RegionalOccupationMapping;
 }
 
 export interface RegionalLaborMarketDisclosure {
@@ -42,7 +43,21 @@ export interface RegionalLaborMarketDisclosure {
   classification?: RegionalOccupationMapping;
   wageStatus: 'us_basis' | 'source_registered_adapter_pending' | 'not_integrated_disclosure_required';
   adapter?: RegionalWageOutlookAdapter;
+  localValueStatus?: RegionalWageOutlookFallback;
   sourceIds: string[];
+}
+
+export type RegionalValueAvailability =
+  | 'localized_value_available'
+  | 'unavailable_source_join_pending'
+  | 'suppressed_or_quality_limited';
+
+export interface RegionalWageOutlookFallback {
+  status: RegionalValueAvailability;
+  wageLabel: string;
+  outlookLabel: string;
+  reason: string;
+  displayBoundary: string;
 }
 
 export interface RegionalWageOutlookAdapter {
@@ -52,6 +67,7 @@ export interface RegionalWageOutlookAdapter {
   wageSourceIds: string[];
   outlookSourceIds: string[];
   classificationField: 'ukSoc2020' | 'noc2021' | 'anzsco2022';
+  forwardClassificationField?: 'osca2024';
   joinLevel: string;
   requiredFields: string[];
   releaseMetadataRequired: string[];
@@ -118,6 +134,13 @@ export const GLOBAL_ENGLISH_OFFICIAL_SOURCES: Record<string, OfficialSource> = {
     asOf: GLOBAL_ENGLISH_SOURCE_DATE,
     claimBoundary: 'Use only after joining ANZSCO-level profile data and preserving JSA suppression and update notes.',
   },
+  'abs-osca-2024': {
+    id: 'abs-osca-2024',
+    name: 'ABS OSCA 2024',
+    url: 'https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024',
+    asOf: GLOBAL_ENGLISH_SOURCE_DATE,
+    claimBoundary: 'Use as Australia forward-classification context; local values still need a source table that declares OSCA or an explicit ANZSCO transition basis.',
+  },
 };
 
 export const REGIONAL_WAGE_OUTLOOK_ADAPTERS: Record<
@@ -152,14 +175,15 @@ export const REGIONAL_WAGE_OUTLOOK_ADAPTERS: Record<
   },
   AU: {
     region: 'AU',
-    label: 'JSA occupation profile adapter',
+    label: 'JSA occupation profile adapter with OSCA transition boundary',
     valueStatus: 'source_registered_adapter_pending',
-    wageSourceIds: ['jsa-occupation-profiles'],
-    outlookSourceIds: ['jsa-occupation-profiles'],
+    wageSourceIds: ['jsa-occupation-profiles', 'abs-osca-2024'],
+    outlookSourceIds: ['jsa-occupation-profiles', 'abs-osca-2024'],
     classificationField: 'anzsco2022',
-    joinLevel: 'ANZSCO occupation profile, with 4-digit values preferred where 6-digit earnings or growth values are unavailable.',
-    requiredFields: ['anzsco', 'employed', 'median_weekly_earnings', 'annual_employment_growth', 'source_basis', 'not_applicable_or_suppressed_status'],
-    releaseMetadataRequired: ['source_period', 'profile_url', 'osca_transition_note'],
+    forwardClassificationField: 'osca2024',
+    joinLevel: 'JSA occupation profile with declared ANZSCO basis, plus OSCA 2024 transition note when the Australian source has not yet migrated.',
+    requiredFields: ['anzsco_or_osca', 'classification_basis', 'employed', 'median_weekly_earnings', 'annual_employment_growth', 'source_basis', 'not_applicable_or_suppressed_status'],
+    releaseMetadataRequired: ['source_period', 'profile_url', 'classification_basis', 'osca_transition_note'],
     displayBoundary: 'Do not display Australia wage or outlook values until JSA rows preserve ANZSCO level, N/A values, suppression, and OSCA transition notes.',
     suppressionBoundary: 'JSA notes that ANZSCO-based occupation pages will stop receiving updates and some 6-digit or high-error estimates are not produced.',
   },
@@ -358,7 +382,34 @@ const REGION_LABELS: Record<GlobalEnglishRegion, string> = {
 const REGION_CLASSIFICATION_SOURCE_IDS: Record<Exclude<GlobalEnglishRegion, 'US'>, string[]> = {
   UK: ['ons-soc-2020', 'ons-ashe-table-2'],
   CA: ['statcan-noc-2021', 'jobbank-wage-methodology', 'jobbank-outlooks-methodology'],
-  AU: ['abs-anzsco-2022', 'jsa-occupation-profiles'],
+  AU: ['abs-anzsco-2022', 'abs-osca-2024', 'jsa-occupation-profiles'],
+};
+
+export const REGIONAL_WAGE_OUTLOOK_FALLBACKS: Record<
+  Exclude<GlobalEnglishRegion, 'US'>,
+  RegionalWageOutlookFallback
+> = {
+  UK: {
+    status: 'unavailable_source_join_pending',
+    wageLabel: 'UK wage unavailable',
+    outlookLabel: 'UK outlook unavailable',
+    reason: 'ONS ASHE Table 2 is registered, but source-dated rows have not been joined to this occupation in the app.',
+    displayBoundary: 'Show U.S.-basis values only with disclosure until an ASHE edition, quality flag, and SOC join are attached.',
+  },
+  CA: {
+    status: 'unavailable_source_join_pending',
+    wageLabel: 'Canada wage unavailable',
+    outlookLabel: 'Canada outlook unavailable',
+    reason: 'Job Bank wage and 3-year outlook methods are registered, but NOC/geography rows have not been joined to this occupation.',
+    displayBoundary: 'Show unavailable or undetermined status rather than imputing Canada wages or outlooks from U.S. values.',
+  },
+  AU: {
+    status: 'suppressed_or_quality_limited',
+    wageLabel: 'Australia wage unavailable',
+    outlookLabel: 'Australia outlook unavailable',
+    reason: 'JSA occupation profiles and ABS OSCA 2024 are registered, but the current app has no source row proving the classification basis for this occupation.',
+    displayBoundary: 'Show ANZSCO/OSCA transition context and do not infer Australian wage or outlook values from U.S. or stale ANZSCO rows.',
+  },
 };
 
 export function normalizeSocCode(code: string): string {
@@ -399,6 +450,17 @@ export function getRegionalOccupationMapping(
   return crosswalk.anzsco2022;
 }
 
+export function getAustraliaOscaTransitionMapping(socCode: string): RegionalOccupationMapping | undefined {
+  const crosswalk = resolveGlobalEnglishCrosswalk(socCode);
+  if (!crosswalk) return undefined;
+  return crosswalk.osca2024 ?? {
+    code: 'OSCA review pending',
+    title: `${crosswalk.title} requires OSCA 2024 transition review before Australian local values display`,
+    sourceId: 'abs-osca-2024',
+    quality: 'manual_review_required',
+  };
+}
+
 export function getRegionalWageOutlookAdapter(
   region: GlobalEnglishRegion,
 ): RegionalWageOutlookAdapter | undefined {
@@ -425,6 +487,10 @@ export function getRegionalLaborMarketDisclosure(
   const adapter = getRegionalWageOutlookAdapter(region);
   const sourceIds = REGION_CLASSIFICATION_SOURCE_IDS[region];
   const localLabel = REGION_LABELS[region];
+  const localValueStatus = REGIONAL_WAGE_OUTLOOK_FALLBACKS[region];
+  const oscaText = region === 'AU'
+    ? ' OSCA 2024 is treated as the forward Australian classification boundary; ANZSCO rows remain transition context only.'
+    : '';
   const mappingText = classification
     ? `A ${localLabel} classification mapping is available as ${classification.code} (${classification.title}).`
     : `No reviewed ${localLabel} classification mapping is available for this O*NET occupation yet.`;
@@ -436,10 +502,11 @@ export function getRegionalLaborMarketDisclosure(
     region,
     shouldShow: true,
     heading: `${localLabel} labor-market basis`,
-    message: `${mappingText} ${adapterText} Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until source-dated local values pass adapter validation.`,
+    message: `${mappingText} ${adapterText}${oscaText} Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until source-dated local values pass adapter validation. Current local value status: ${localValueStatus.wageLabel}; ${localValueStatus.outlookLabel}.`,
     classification,
     wageStatus: adapter?.valueStatus ?? 'not_integrated_disclosure_required',
     adapter,
+    localValueStatus,
     sourceIds,
   };
 }

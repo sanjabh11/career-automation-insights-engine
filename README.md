@@ -27,11 +27,11 @@ GitHub metadata and public-review framing should stay grounded in what this repo
 | Validation artifacts | APO/task model cards, calibration report, reliability curve, and calibration JSON are served from `public/docs`. | These artifacts document the current method and fixture evidence; they do not certify scientific validity. |
 | Commercial proof pack | Report evidence, trust-boundary, data-provenance, and commercial release verifiers exist. | Some verifiers generate timestamped docs; live secrets/payment proof remain owner-controlled. |
 | Payments | Stripe subscription price IDs exist for Defender and Coach Pro; bootcamp checkout is hidden with no runtime placeholder price ID. | Live checkout success, live MRR, and bootcamp demand are not proven. |
-| Localization | O*NET/BLS-centered U.S. data is the current wage/outlook backbone. Phase D adds 20 sample ESCO, UK SOC, Canada NOC, and Australia ANZSCO mappings plus source-registered UK/Canada/Australia wage/outlook adapter contracts and a visible U.S.-basis disclosure. | UK, Canada, and Australia wage/outlook values are not localized until source-dated adapter joins are imported and validated. |
+| Localization | O*NET/BLS-centered U.S. data is the current wage/outlook backbone. Phase D/Part II add 20 sample ESCO, UK SOC, Canada NOC, Australia ANZSCO mappings, an OSCA 2024 forward-classification boundary, source-registered UK/Canada/Australia wage/outlook adapter contracts, and explicit unavailable/suppressed local-value fallbacks. | UK, Canada, and Australia wage/outlook values are not localized until source-dated adapter joins are imported and validated. |
 
 ## Source Anchors
 
-External context used for current claims, as of 2026-05-31:
+External context used for current claims, as of 2026-06-01:
 
 - Google Gemini embeddings API: https://ai.google.dev/api/embeddings
 - ILO Generative AI and Jobs 2025 update: https://www.ilo.org/publications/generative-ai-and-jobs-2025-update
@@ -45,6 +45,7 @@ External context used for current claims, as of 2026-05-31:
 - Canada Job Bank wage methodology: https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology
 - Canada Job Bank 3-year employment outlook methodology: https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology
 - ABS ANZSCO 2022 Australian update: https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022
+- ABS OSCA 2024: https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024
 - Jobs and Skills Australia occupation profiles: https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations
 
 ## What Is Implemented Now
@@ -54,6 +55,8 @@ External context used for current claims, as of 2026-05-31:
 - Postgres migrations for APO logs, O*NET enrichment, calibration scaffolding, expert assessments, monetization, subscriptions, resume proof artifacts, and commercial lead operations.
 - Public APO/task model cards, calibration report, reliability plot, and calibration JSON.
 - Global-English crosswalk/disclosure scaffolding for O*NET to ESCO, UK SOC, Canada NOC, and Australia ANZSCO sample coverage, plus source-registered UK/Canada/Australia wage/outlook adapter contracts.
+- Part II methodology registry for automation-defense planning: task exposure is not job loss, automation and augmentation are separated, stronger protection metaphors stay internal until legal review, and public UI copy uses decision-support exposure language.
+- Revealed-transition and partner-review schema scaffolding for consented options-presented, selected-path, artifact-review, partner-feedback, and outcome telemetry. The migration file is present but not applied.
 - Commercial verifiers for report evidence, secret hygiene, trust boundaries, data provenance, release checks, live Supabase readiness, route smoke, and redacted owner-held evidence records.
 - Activation/retention instrumentation, commercial validation gates, design-partner onboarding checklist, and case-study capture template.
 - Stripe subscription utilities with real Defender and Coach Pro price IDs.
@@ -77,6 +80,7 @@ npm run lint
 npm run verify:report-evidence
 npm run verify:secrets
 npm run verify:commercial-trust
+npm run verify:part-ii
 ```
 
 Some commercial verifiers intentionally regenerate timestamped evidence docs. Use them deliberately in PRs and review generated diffs before committing:

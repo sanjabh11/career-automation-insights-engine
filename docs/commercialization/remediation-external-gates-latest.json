@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T12:34:33.499Z",
+  "generatedAt": "2026-06-01T18:35:40.786Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -68,8 +68,8 @@
     {
       "id": "real_stripe_test_checkout",
       "label": "Real Stripe test-mode checkout",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
-      "evidence": "Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_SECRET_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD.",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.",
       "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.",
       "sourceBoundary": "owner credential gate",
       "doesNotProve": [
@@ -81,8 +81,8 @@
     {
       "id": "production_calibration_run",
       "label": "Production calibration run",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
-      "evidence": "Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:production-calibration` only after the target project already has approved migrations, deployed `calibrate-ece`, function secrets, APO logs, and expert labels.",
       "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
       "sourceBoundary": "owner credential and deployment-precondition gate",
       "doesNotProve": [
@@ -93,8 +93,8 @@
     {
       "id": "authenticated_live_artifact_e2e",
       "label": "Authenticated live artifact e2e",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
-      "evidence": "Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD.",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:commercial-live-auth-e2e` with a synthetic test user.",
       "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
       "sourceBoundary": "owner credential gate",
       "doesNotProve": [
@@ -106,8 +106,8 @@
     {
       "id": "live_mrr_gt_zero",
       "label": "Live MRR greater than zero",
-      "status": "blocked_missing_owner_secret_or_live_evidence",
-      "evidence": "Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY.",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.",
       "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.",
       "sourceBoundary": "owner live Stripe credential gate",
       "doesNotProve": [

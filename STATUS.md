@@ -1,8 +1,8 @@
 # APO Dashboard Status
 
 Status date: 2026-06-01
-Branch baseline: `live-auth-e2e-closeout`
-Baseline commit: `7ab9821`
+Branch baseline: `phase-e-commercial-validation`
+Baseline commit: `bd0d660`
 
 ## Current Position
 
@@ -24,8 +24,9 @@ Last observed Phase E local baseline:
 | `npm run verify:commercial` | Pass | Passed, including repository-presentation checks, the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 | `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims, unsupported outcome/correlation copy, or dead local WEF PDF path. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
-| `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
-| `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles. |
+| `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with OSCA 2024 forward boundary and explicit unavailable/suppressed local-value fallbacks. |
+| `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, ABS OSCA 2024, and Jobs and Skills Australia occupation profiles. |
+| `npm run verify:part-ii` | Pass | Confirms Part II science backbone, buyer-journey copy boundaries, revealed-transition flywheel scaffolding, global-English unavailable/suppressed fallbacks, coach commercialization workflow, and CI release-gate wiring. |
 | `npm run verify:commercial-validation` | Pass | Confirmed Phase E activation/retention instrumentation, design-partner checklist, case-study template, commercial evidence gates, and hidden bootcamp CTA boundary. |
 | `npm run verify:live-gate-evidence` | Pass | Confirmed the redacted evidence intake verifier is wired for credential-gated live proof, rejects future-dated proof metadata, rejects item dates later than `asOf`, and no local evidence file is currently attached. Use `npm run verify:live-gate-evidence -- --require-complete` for fail-closed final gate validation. |
 | `npm run verify:commercial-evidence-records` | Pass | Confirmed the redacted commercial evidence records verifier is wired as a read-only default check, requires unique partner/outcome hashes, rejects future-dated proof metadata, rejects record dates later than `asOf`, and no local partner/outcome evidence file is currently attached. A passing partner/outcome proof still requires owner-held permissioned records. |
@@ -44,8 +45,8 @@ Last observed Phase E local baseline:
 - APO outputs are automation-exposure estimates for coaching and planning. They are not job-loss predictions, employment decisions, salary guarantees, or scientific certification.
 - Public Phase B validation artifacts are served from `/docs/**`: APO model card, task model card, calibration report, and reliability plot.
 - The Phase B public calibration artifact is a source-backed fixture calculation for transparent documentation. Live database calibration still requires owner approval to apply migrations and run the Supabase Edge Function against production APO logs and approved expert labels.
-- Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise. For UK, Canada, and Australia browser locales, APO result UI now shows a visible U.S.-basis disclosure, local classification mapping when one of the Phase D sample rows is available, and the registered local wage/outlook adapter status.
-- Phase D does not claim localized UK, Canada, or Australia wage/outlook values. Source-registered adapter contracts exist for ONS ASHE, Canada Job Bank wage/outlook methods, and JSA occupation profiles, but local values remain gated on source-specific joins that preserve release dates, suppression notes, geography, and methodology boundaries.
+- Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise. For UK, Canada, and Australia browser locales, APO result UI now shows a visible U.S.-basis disclosure, local classification mapping when one of the Phase D sample rows is available, the registered local wage/outlook adapter status, and explicit unavailable/suppressed local-value fallback text.
+- Phase D/Part II do not claim localized UK, Canada, or Australia wage/outlook values. Source-registered adapter contracts exist for ONS ASHE, Canada Job Bank wage/outlook methods, JSA occupation profiles, and ABS OSCA 2024 transition handling, but local values remain gated on source-specific joins that preserve release dates, suppression notes, geography, methodology boundaries, and Australian classification basis.
 - Stripe subscription price IDs exist for core tiers; bootcamp checkout is disabled until a real live Stripe price is supplied.
 - Phase E instrumentation prepares activation, retention, design-partner, case-study, and revenue gates. It does not prove live MRR, committed partners, or outcomes until external evidence is attached.
 - GitHub repository metadata is scoped as presentation evidence only: the API description is visible as of 2026-06-01, `LICENSE` is present on the Phase E branch, and the GitHub API `license` field may remain `null` until the default branch includes the license file. Stars are not used as maturity, adoption, or commercial proof.
@@ -71,6 +72,18 @@ Last observed Phase E local baseline:
 | C | Runtime verification, embedding fix, crosswalk proof, E2E smoke | PR open |
 | D | Global-English crosswalks and UK/CA/AU wage/outlook localization or disclosure | PR open |
 | E | Commercial validation, activation/retention instrumentation, partners, and MRR proof | Local instrumentation complete; live proof still blocked/manual |
+
+## Part II Strategy Implementation
+
+| Phase | Objective | Current repo status |
+| --- | --- | --- |
+| II-0 | Baseline and claim freeze | `verify:claim-boundaries` now blocks public runtime wording for unsupported replacement, guarantee, protection-metaphor, ROI-multiple, and legacy score-label claims. |
+| II-A | Science backbone | `src/lib/automationDefenseMethodology.ts` and `src/lib/sourceManifest.ts` register ILO 2025, OpenAI/Eloundou, Anthropic January 2026, WEF 2025, NIST AI RMF, O*NET, and BLS AI boundaries. |
+| II-B | Niche product packaging | Public coach, SEO, pricing, Whop, and report surfaces now use automation-defense and decision-support exposure language instead of replacement or guarantee framing. |
+| II-C | Outcome and revealed-transition flywheel | Local migration scaffolding adds `revealed_transition_events`, `partner_artifact_reviews`, consent flags, options presented, selected option, artifact review, and does-not-prove acknowledgement. Migration is not applied. |
+| II-D | Global-English source upgrade | UK/CA/AU source adapters expose local unavailable/suppressed fallbacks; Australia adds ABS OSCA 2024 as the forward classification boundary while ANZSCO remains transition context. |
+| II-E | Coach commercialization engine | `coachCommercializationWorkflow` defines artifact review, white-label audit, revealed-choice, and owner-held-proof steps with acceptance gates. |
+| II-F | Evidence-grade release gate | `npm run verify:part-ii` is wired into `.github/workflows/commercial-proof-pack.yml`. |
 
 ## Manual Gates
 

@@ -81,6 +81,15 @@ export interface BuyerLandingRoadmapItem {
   maturity: number;
 }
 
+export interface CoachCommercializationWorkflowStep {
+  step: string;
+  routeOrArtifact: string;
+  owner: "founder" | "coach" | "client-review" | "owner-held-evidence";
+  proofToCapture: string;
+  claimBoundary: string;
+  acceptanceGate: string;
+}
+
 export interface ActivationRetentionEventSpec {
   eventName: string;
   funnelStage: "activation" | "retention" | "revenue" | "commercial_validation";
@@ -716,5 +725,40 @@ export const buyerLandingPageRoadmap: BuyerLandingRoadmapItem[] = [
     missingUi: "Payment fulfillment status, credit balance, receipt, and report delivery status.",
     nextAction: "Add after Stripe credit fulfillment is proven live.",
     maturity: 2.9,
+  },
+];
+
+export const coachCommercializationWorkflow: CoachCommercializationWorkflowStep[] = [
+  {
+    step: "Review sample artifact",
+    routeOrArtifact: "/sample-report and /proof-pack-gallery",
+    owner: "coach",
+    proofToCapture: "Reviewed artifact hash, buyer segment, usefulness score, trust objection, and reviewer permission state.",
+    claimBoundary: "Artifact review is product-learning evidence only; it does not prove paid demand or client outcomes.",
+    acceptanceGate: "At least three permissioned partner review records before public design-partner claims.",
+  },
+  {
+    step: "Run white-label automation defense audit",
+    routeOrArtifact: "/for-coaches and /tools/counselor-reports",
+    owner: "coach",
+    proofToCapture: "Client context reviewed, source IDs retained, limitation language retained, and human review confirmed.",
+    claimBoundary: "Use as a planning artifact, not a validated assessment or employment decision system.",
+    acceptanceGate: "Coach confirms planning-only language and no hiring/firing/eligibility use.",
+  },
+  {
+    step: "Capture revealed transition choice",
+    routeOrArtifact: "/outcomes and revealed_transition_events",
+    owner: "client-review",
+    proofToCapture: "Options presented, selected option, follow-up status, consent flags, and does-not-prove acknowledgement.",
+    claimBoundary: "Revealed choices are directional product telemetry, not placement, wage, or causal outcome proof.",
+    acceptanceGate: "Consent and does-not-prove acknowledgement required before outcome learning is aggregated.",
+  },
+  {
+    step: "Attach owner-held proof",
+    routeOrArtifact: "docs/commercialization redacted evidence templates",
+    owner: "owner-held-evidence",
+    proofToCapture: "Stripe live/test evidence, partner hashes, outcome hashes, and production calibration proof.",
+    claimBoundary: "No live MRR, committed-partner, or documented-outcome claim until redacted owner proof passes validators.",
+    acceptanceGate: "npm run closeout:owner-evidence -- --write --refresh-tracked after owner evidence is complete.",
   },
 ];

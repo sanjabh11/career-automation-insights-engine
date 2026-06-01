@@ -55,6 +55,7 @@
     "verify:repo-presentation:github": "node scripts/verify-repo-presentation.mjs --with-github-api",
     "verify:repo-presentation:write": "node scripts/verify-repo-presentation.mjs --with-github-api --write",
     "verify:secrets": "node scripts/verify-secret-hygiene.mjs",
+    "verify:part-ii": "node scripts/verify-part-ii-release-gates.mjs",
     "verify:live-closeout-readiness": "node scripts/verify-live-closeout-readiness.mjs",
     "smoke:commercial": "node scripts/smoke-commercial-routes.mjs",
     "verify:commercial-trust": "node scripts/verify-commercial-trust-boundaries.mjs",

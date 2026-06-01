@@ -45,6 +45,11 @@ const officialSourceLinks = [
     url: 'https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022',
   },
   {
+    id: 'abs-osca-2024',
+    name: 'ABS OSCA 2024',
+    url: 'https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024',
+  },
+  {
     id: 'jsa-occupation-profiles',
     name: 'Jobs and Skills Australia occupation profiles',
     url: 'https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations',
@@ -92,6 +97,7 @@ assert(source.includes('https://www.statcan.gc.ca/en/subjects/standard/noc/2021/
 assert(source.includes('https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology'), 'Canada Job Bank wage methodology source is required');
 assert(source.includes('https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology'), 'Canada Job Bank outlook methodology source is required');
 assert(source.includes('https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022'), 'ABS ANZSCO source is required');
+assert(source.includes('https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024'), 'ABS OSCA 2024 source is required');
 assert(source.includes('https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations'), 'JSA occupation profiles source is required');
 assert(socCount >= 20, `expected at least 20 sample O*NET occupations, found ${socCount}`);
 assert(escoCount >= 20, `expected at least 20 ESCO bridge rows, found ${escoCount}`);
@@ -104,10 +110,17 @@ assert(source.includes("wageStatus: adapter?.valueStatus ?? 'not_integrated_disc
 assert(source.includes('suppressionBoundary'), 'regional adapters must preserve suppression and quality boundaries');
 assert(source.includes('releaseMetadataRequired'), 'regional adapters must require release metadata before local values display');
 assert(source.includes('OSCA transition notes'), 'Australia adapter must preserve the ANZSCO-to-OSCA transition boundary');
+assert(source.includes("forwardClassificationField: 'osca2024'"), 'Australia adapter must declare OSCA 2024 as a forward classification boundary');
+assert(source.includes('REGIONAL_WAGE_OUTLOOK_FALLBACKS'), 'regional localized wage/outlook fallback registry is required');
+assert(source.includes('unavailable_source_join_pending'), 'non-US local values must expose unavailable fallback status');
+assert(source.includes('suppressed_or_quality_limited'), 'regional local values must expose suppression or quality-limited status');
+assert(source.includes('getAustraliaOscaTransitionMapping'), 'Australia OSCA transition helper is required');
 assert(analysis.includes('Regional labor-market disclosure'), 'OccupationAnalysis must render a regional labor-market disclosure note');
 assert(analysis.includes('getRegionalLaborMarketDisclosure'), 'OccupationAnalysis must use the global-English disclosure helper');
 assert(analysis.includes('Adapter:'), 'OccupationAnalysis must show regional adapter status');
 assert(analysis.includes('Join requirement:'), 'OccupationAnalysis must show regional adapter join requirements');
+assert(analysis.includes('Local values:'), 'OccupationAnalysis must show explicit local wage/outlook value availability');
+assert(analysis.includes('Local wage/outlook fallback:'), 'OccupationAnalysis must explain unavailable/suppressed local values');
 
 const result = {
   ok: true,
@@ -118,7 +131,7 @@ const result = {
   caMappings: caCount,
   auMappings: auCount,
   wageOutlookAdapters: adapterCount,
-  wageOutlookStatus: 'non-US displayed as U.S.-basis with source-registered local adapters pending validated joins',
+  wageOutlookStatus: 'non-US displayed as U.S.-basis with explicit unavailable/suppressed local fallback until source-dated joins pass validation',
 };
 
 if (withSourceFetch) {

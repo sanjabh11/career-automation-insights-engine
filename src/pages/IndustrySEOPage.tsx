@@ -91,9 +91,9 @@ export default function IndustrySEOPage() {
 
   useEffect(() => {
     if (currentIndustry) {
-      document.title = `AI Automation Risk in ${currentIndustry.name}: ${occupations.length} Jobs Analyzed | Automation Insights`;
+      document.title = `${currentIndustry.name} Automation Defense Estimates | Automation Insights`;
       const metaDesc = document.querySelector('meta[name="description"]');
-      const desc = `How will AI impact ${currentIndustry.name}? We analyzed ${occupations.length} occupations — average automation risk is ${avgRisk}%. See which roles are safest.`;
+      const desc = `Source-labeled automation-defense estimates for ${currentIndustry.name}, covering ${occupations.length} occupations with planning-only exposure context.`;
       if (metaDesc) {
         metaDesc.setAttribute('content', desc);
       } else {
@@ -113,7 +113,7 @@ export default function IndustrySEOPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <Badge variant="outline" className="mb-4"><Building2 className="h-3 w-3 mr-1" /> Industry Analysis</Badge>
-              <h1 className="text-3xl md:text-4xl font-bold mb-3">AI Automation Risk by Industry</h1>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3">Automation Defense Estimates by Industry</h1>
               <p className="text-lg text-muted-foreground">
                 How will AI impact your industry? Explore automation risk data for {Object.keys(occupationRiskData).length}+ occupations across {industries.length} sectors.
               </p>
@@ -171,7 +171,7 @@ export default function IndustrySEOPage() {
           <div className="text-center mb-8">
             <Badge variant="outline" className="mb-4"><Building2 className="h-3 w-3 mr-1" /> {currentIndustry.name}</Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-3">
-              AI Automation Risk in <span className="text-primary">{currentIndustry.name}</span>
+              Automation Defense Estimates in <span className="text-primary">{currentIndustry.name}</span>
             </h1>
             <p className="text-lg text-muted-foreground">
               {occupations.length} occupations analyzed — average automation risk is{' '}
@@ -199,14 +199,14 @@ export default function IndustrySEOPage() {
               <CardContent className="p-4 text-center">
                 <ShieldX className="h-6 w-6 text-red-500 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-red-500">{highRiskCount}</div>
-                <div className="text-xs text-muted-foreground">High Risk</div>
+                <div className="text-xs text-muted-foreground">Higher Exposure</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <ShieldCheck className="h-6 w-6 text-emerald-500 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-emerald-500">{lowRiskCount}</div>
-                <div className="text-xs text-muted-foreground">Low Risk</div>
+                <div className="text-xs text-muted-foreground">Lower Exposure</div>
               </CardContent>
             </Card>
           </div>
@@ -292,7 +292,7 @@ export default function IndustrySEOPage() {
                 <h2 className="text-xl font-bold mb-2">Are You a Career Coach?</h2>
                 <p className="text-muted-foreground text-sm mb-4">
                   Generate white-labeled "{currentIndustry.name} AI Readiness" reports for your clients.
-                  $10 per report. Clients pay $150+. <strong>That's 15x ROI.</strong>
+                  Generate source-labeled planning artifacts for review. Client pricing and ROI claims require your own engagement evidence.
                 </p>
                 <Link to="/for-coaches">
                   <Button size="lg">Learn About Coach Pro <ArrowRight className="ml-2 h-4 w-4" /></Button>

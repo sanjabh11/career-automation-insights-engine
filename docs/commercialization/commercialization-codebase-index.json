@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T12:34:28.157Z",
+  "generatedAt": "2026-06-01T18:35:34.199Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -719,6 +719,10 @@
       "command": "node scripts/prepare-owner-evidence-workspace.mjs"
     },
     {
+      "name": "verify:part-ii",
+      "command": "node scripts/verify-part-ii-release-gates.mjs"
+    },
+    {
       "name": "verify:production-calibration",
       "command": "node scripts/verify-production-calibration-run.mjs --write"
     },
@@ -780,9 +784,11 @@
     }
   ],
   "sourceIds": [
+    "abs-osca-2024",
     "ada-ai-hiring-guidance",
     "ai-workforce-consortium-2025",
     "anthropic-economic-index",
+    "anthropic-economic-index-2026",
     "anthropic-observed-exposure",
     "bls-ai-mlr-2025",
     "bls-emp",
@@ -796,6 +802,7 @@
     "eeoc-employment-selection-procedures",
     "esco",
     "ferpa-student-privacy",
+    "ilo-genai-jobs-2025",
     "iso-42001",
     "lightcast",
     "llm-output",
@@ -808,6 +815,7 @@
     "onet-task-categories",
     "onet-task-ratings",
     "onet-task-statements",
+    "openai-eloundou-gpts-are-gpts",
     "openai-gdpval",
     "owasp-file-upload",
     "serpapi",

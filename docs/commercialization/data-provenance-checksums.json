@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-01T16:57:25.924Z",
+  "generatedAt": "2026-06-01T18:35:37.007Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-25T09:09:13.546Z",
+    "generatedAt": "2026-06-01T18:32:57.633Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -48,9 +48,9 @@
         "reskillingSuggestions"
       ],
       "caveat": "Hand-curated SEO seed data; do not claim full O*NET 30.3/BLS-backed scoring until refreshed imports are checksum-verified.",
-      "bytes": 37581,
+      "bytes": 37620,
       "rows": 1043,
-      "sha256": "4b5826d0fb62c3a8eab8a617bd928371a8d2e344921fed8a75931ef74b405b41",
+      "sha256": "5859867da4dc6e21bd08e6cc70c0a0e0ae26a2c08d2590c9d03c49d82c1db30b",
       "failures": [],
       "passed": true
     },
@@ -179,9 +179,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 34853,
-      "rows": 573,
-      "sha256": "6c71e7e8df270bd3b19b64590c7c8a28fc1feb0ef779756f989c654fe5b85cb1",
+      "bytes": 38727,
+      "rows": 633,
+      "sha256": "c9a8de61f8b53f5e5bf2bfca06a622f64c9573e663c6c21c3656ddbf5ad92dd5",
       "failures": [],
       "passed": true
     },
@@ -509,9 +509,9 @@
         "create-checkout-session"
       ],
       "caveat": "Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.",
-      "bytes": 14321,
+      "bytes": 14347,
       "rows": 428,
-      "sha256": "310063bdd1eaf44efa42e5e4baaf9cc0794aa375200518398a6d6d675952c0fc",
+      "sha256": "2bc4cc0afb9897157acb33266cedb7b735871ec17aec23e052c33c14f7be4c68",
       "failures": [],
       "passed": true
     },
@@ -911,9 +911,9 @@
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
       "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 68407,
+      "bytes": 68420,
       "rows": 1218,
-      "sha256": "76d4598f2c47d281c6b97f208ad863f9ff70a1f71897debf90224d091866ac13",
+      "sha256": "592a4ef06380b84e0d0c102f74659558a5079069809ef773a5e849f86345326d",
       "failures": [],
       "passed": true
     },
@@ -1142,9 +1142,9 @@
         "WAI-ARIA Authoring Practices"
       ],
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
-      "bytes": 19425,
+      "bytes": 19431,
       "rows": 619,
-      "sha256": "87cb33bfce98324a2ebbca47a20430cdf22ef8c81272814479e81bd9e6f10018",
+      "sha256": "15836160f1b805e0b92349e2175e7105777696f7cadfba871b43e3624a02cafd",
       "failures": [],
       "passed": true
     },
@@ -1172,9 +1172,9 @@
         "WCAG-EM"
       ],
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
-      "bytes": 7053,
+      "bytes": 7065,
       "rows": 53,
-      "sha256": "f594d2e8d8ffe92cc701aaf4c3a80dce7c9001b88100dc3d26b888ed0911bf3c",
+      "sha256": "cf48d6b7833e1bcc4ac272666f128efad129b162df60ee35f5febfe8bd7d6c45",
       "failures": [],
       "passed": true
     },
@@ -1232,9 +1232,9 @@
         "npm run verify:commercial-network"
       ],
       "caveat": "Installed GitHub Actions workflow runs commercial proof-pack gates on push/PR; hosted green-run evidence must still be inspected after push.",
-      "bytes": 1598,
-      "rows": 51,
-      "sha256": "805490676ce2d6fe6df44c7cadd46223edeed7dc2ebb70870071db355d941121",
+      "bytes": 1678,
+      "rows": 53,
+      "sha256": "64636b8daf57ef0288f2987299ac5239ecc7d939918a4cabeac6a21b5948d3f4",
       "failures": [],
       "passed": true
     },
@@ -1346,7 +1346,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "daa41dc83a9854999ac39f4ed5d0ae5ee08d8f35fe717bc1002791c3e0736295",
+      "sha256": "52bd30a6050e748048dbf0d45f6ee4793ce8cdb8b0e8e15f155b7c3b394ac7c8",
       "failures": [],
       "passed": true
     },

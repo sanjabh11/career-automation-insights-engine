@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T05:11:21.328Z",
+  "generatedAt": "2026-06-01T18:38:22.598Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -82,7 +82,7 @@
       "label": "commercial trust center",
       "viewport": "mobile",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17021,
+      "bodyLength": 17117,
       "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
@@ -99,8 +99,8 @@
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "mobile",
-      "heading": "Generate \"Future-Proof\"\nClient Reports in 30 Seconds",
-      "bodyLength": 3134,
+      "heading": "Build Source-Labeled\nAutomation Defense Audits",
+      "bodyLength": 3182,
       "interactiveCount": 10,
       "automatedChecks": [
         "one visible h1",
@@ -190,7 +190,7 @@
       "label": "proof-pack gallery",
       "viewport": "mobile",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 53063,
+      "bodyLength": 59917,
       "interactiveCount": 29,
       "automatedChecks": [
         "one visible h1",
@@ -207,8 +207,8 @@
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "mobile",
-      "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2334,
+      "heading": "Accountant Automation Defense Estimate",
+      "bodyLength": 2416,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -242,7 +242,7 @@
       "label": "commercial trust center",
       "viewport": "tablet",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17021,
+      "bodyLength": 17117,
       "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
@@ -257,8 +257,8 @@
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "tablet",
-      "heading": "Generate \"Future-Proof\"\nClient Reports in 30 Seconds",
-      "bodyLength": 3134,
+      "heading": "Build Source-Labeled\nAutomation Defense Audits",
+      "bodyLength": 3182,
       "interactiveCount": 10,
       "automatedChecks": [
         "one visible h1",
@@ -338,7 +338,7 @@
       "label": "proof-pack gallery",
       "viewport": "tablet",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 53063,
+      "bodyLength": 59917,
       "interactiveCount": 29,
       "automatedChecks": [
         "one visible h1",
@@ -353,8 +353,8 @@
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "tablet",
-      "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2283,
+      "heading": "Accountant Automation Defense Estimate",
+      "bodyLength": 2432,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",
@@ -386,7 +386,7 @@
       "label": "commercial trust center",
       "viewport": "desktop",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17021,
+      "bodyLength": 17117,
       "interactiveCount": 5,
       "automatedChecks": [
         "one visible h1",
@@ -401,8 +401,8 @@
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "desktop",
-      "heading": "Generate \"Future-Proof\"\nClient Reports in 30 Seconds",
-      "bodyLength": 3191,
+      "heading": "Build Source-Labeled\nAutomation Defense Audits",
+      "bodyLength": 3239,
       "interactiveCount": 16,
       "automatedChecks": [
         "one visible h1",
@@ -482,7 +482,7 @@
       "label": "proof-pack gallery",
       "viewport": "desktop",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 53120,
+      "bodyLength": 59974,
       "interactiveCount": 35,
       "automatedChecks": [
         "one visible h1",
@@ -497,8 +497,8 @@
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "desktop",
-      "heading": "Will AI Replace Accountants?",
-      "bodyLength": 2296,
+      "heading": "Accountant Automation Defense Estimate",
+      "bodyLength": 2430,
       "interactiveCount": 25,
       "automatedChecks": [
         "one visible h1",

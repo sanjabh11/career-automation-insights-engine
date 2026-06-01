@@ -1,8 +1,8 @@
 # Remediation Completion Audit
 
-Generated: 2026-06-01T12:34:33.966Z
+Generated: 2026-06-01T18:35:41.377Z
 Branch: `phase-e-commercial-validation`
-Source head at generation: `bc701f5`
+Source head at generation: `bd0d660`
 Goal complete: no
 
 This generated audit is the current phase-by-phase closeout ledger for the APO Dashboard remediation plan. It is evidence-bound: local implementation and verifier coverage are separated from owner-held live proof, payment proof, partner commitments, and outcome evidence.
@@ -31,10 +31,10 @@ This generated audit is the current phase-by-phase closeout ledger for the APO D
 
 | Gate | Status | Needed evidence |
 | --- | --- | --- |
-| Real Stripe test-mode checkout | blocked_missing_owner_secret_or_live_evidence | Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact. |
-| Production calibration run | blocked_missing_owner_secret_or_live_evidence | Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact. |
-| Authenticated live artifact e2e | blocked_missing_owner_secret_or_live_evidence | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
-| Live MRR greater than zero | blocked_missing_owner_secret_or_live_evidence | Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence. |
+| Real Stripe test-mode checkout | ready_for_owner_live_run | Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact. |
+| Production calibration run | ready_for_owner_live_run | Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact. |
+| Authenticated live artifact e2e | ready_for_owner_live_run | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
+| Live MRR greater than zero | ready_for_owner_live_run | Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence. |
 | Three committed design partners | blocked_missing_owner_evidence_records | At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission. |
 | Permissioned documented outcomes | blocked_missing_owner_evidence_records | At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text. |
 

@@ -274,7 +274,7 @@ const PricingPage = () => {
               <Badge variant="outline" className="mx-auto mb-2 text-amber-500 border-amber-500/30">For Career Coaches</Badge>
               <CardTitle className="text-2xl">Coach Pro — White-Label Reports</CardTitle>
               <CardDescription className="text-base mt-2">
-                Generate branded AI career reports for your clients. Pay $10/report. Charge $150+. <strong>15x ROI.</strong>
+                Generate branded decision-support career reports for client planning sessions. Client pricing and ROI claims require your own engagement evidence.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">

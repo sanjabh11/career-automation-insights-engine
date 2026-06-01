@@ -121,6 +121,24 @@ const checks = [
     ],
   },
   {
+    id: 'ilo-genai-jobs-2025',
+    label: 'ILO Generative AI and jobs 2025 update',
+    url: 'https://www.ilo.org/publications/generative-ai-and-jobs-2025-update',
+    expected: [
+      { label: 'ILO 2025 GenAI jobs update title', pattern: /Generative AI and jobs.*2025 update/i },
+      { label: 'occupational exposure evidence', pattern: /occupational exposure|GenAI|employment shares/i },
+    ],
+  },
+  {
+    id: 'openai-eloundou-gpts-are-gpts',
+    label: 'GPTs are GPTs exposure paper',
+    url: 'https://arxiv.org/abs/2303.10130',
+    expected: [
+      { label: 'GPTs are GPTs title', pattern: /GPTs are GPTs/i },
+      { label: 'labor market impact potential evidence', pattern: /labor market impact potential|Large Language Models/i },
+    ],
+  },
+  {
     id: 'oecd-skills-outlook-2025',
     label: 'OECD Skills Outlook 2025',
     url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/12/oecd-skills-outlook-2025_ac37c7d4/26163cd3-en.pdf',
@@ -182,6 +200,15 @@ const checks = [
     expected: [
       { label: 'Anthropic Economic Index title', pattern: /Anthropic Economic Index/i },
       { label: 'O*NET task mapping evidence', pattern: /O\*NET|Occupational Information Network/i },
+    ],
+  },
+  {
+    id: 'anthropic-economic-index-2026',
+    label: 'Anthropic Economic Index January 2026',
+    url: 'https://www.anthropic.com/research/anthropic-economic-index-january-2026-report',
+    expected: [
+      { label: 'January 2026 Economic Index title', pattern: /Economic Index|Economic primitives/i },
+      { label: 'automation and augmentation evidence', pattern: /automation|augmentation|Claude/i },
     ],
   },
   {
@@ -263,6 +290,15 @@ const checks = [
     expected: [
       { label: 'ESCO v1.2.1 title', pattern: /ESCO v1\.2\.1/i },
       { label: 'last update date', pattern: /Last update 10\/12\/2025|December 2025/i },
+    ],
+  },
+  {
+    id: 'abs-osca-2024',
+    label: 'ABS OSCA 2024',
+    url: 'https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024',
+    expected: [
+      { label: 'OSCA 2024 title', pattern: /OSCA 2024|Occupation Standard Classification for Australia/i },
+      { label: 'replacement boundary evidence', pattern: /replaced the Australian and New Zealand Standard Classification of Occupations|ANZSCO/i },
     ],
   },
   {

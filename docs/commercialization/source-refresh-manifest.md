@@ -1,6 +1,6 @@
 # Source Refresh Manifest
 
-Date: 2026-05-25
+Date: 2026-06-01
 Code source: `src/lib/sourceManifest.ts`
 Purpose: Keep commercial reports honest about which public sources are current, which adapters are only ready boundaries, and which claims still require ingestion verification.
 
@@ -13,11 +13,14 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | BLS Employment Projections | 2024-34 occupational employment projections | Growth/outlook context | Directional labor-market context only; not employer-specific forecasting. |
 | BLS OEWS | May 2025 OEWS tables, published May 2026 | Wage and employment estimates | Use only after SOC/occupation mapping is verified. |
 | WEF Future of Jobs | 2025 edition, 2025-2030 horizon | Macro skill and technology trend framing | Use for directional narrative, not occupation scoring by itself. |
+| ILO Generative AI and jobs 2025 update | 2025 update | Task-exposure and transformation framing | Exposure and transformation pressure are not job-loss probabilities or worker-specific predictions. |
+| OpenAI / Eloundou GPTs are GPTs | 2023 arXiv / 2024 publication | LLM exposure definition and task-productivity framing | Use for exposure-method language only; do not claim APO reproduces the paper or predicts displacement. |
 | OECD Skills Outlook | 2025 edition | Skill-change, task-content change, and reskilling policy context | Use for skill-transition framing, not worker-specific guidance or local demand proof. |
 | AI Workforce Consortium ICT in Motion | 2025 report | AI-era role radar market-signal framing for AI-specific and specialized support roles | Use as emerging-role signal context, not title-level proof for every employer or region. |
 | NACE Career Readiness Competencies | Public competency framework reviewed May 2026 | Career-center and coach outreach framing, transferable-skill language, and student/alumni development context | Use to frame buyer workflows and development conversations; do not imply NACE validates the product, scores, or recommendations. |
 | DOL AI Literacy Framework | Training and Employment Notice No. 07-25, published February 13, 2026 | AI literacy, workforce-board, training-provider, and L&D pilot framing for role-specific AI skill development | Use as workforce and education context only; do not claim DOL endorsement, grant eligibility, or employment-outcome proof. |
 | Anthropic Economic Index | Initial 2025 index plus 2026 Economic Primitives updates | Observed AI use by O*NET task, automation/augmentation framing, adoption inequality caveats | Use as AI-use benchmark context only until task-level datasets are imported and validated. |
+| Anthropic Economic Index January 2026 | January 2026 report | Automation versus augmentation and observed Claude usage patterns | Observed product usage is not representative of all AI use, all regions, or labor-market outcomes. |
 | Anthropic observed exposure research | 2026 labor-market impacts research | Separates theoretical capability from observed automated, work-related AI use | Use for claim discipline; do not translate exposure directly into job-loss claims. |
 | OpenAI GDPval | First version, September 2025 | Economically valuable knowledge-work capability benchmark | Use for model-capability context only, not as a labor-market forecast. |
 | BLS AI Monthly Labor Review | February 2025 occupational case-study article | Claim discipline around exposure, uncertainty, and occupation-specific employment-projection nuance | Exposure does not imply rapid displacement; use to temper commercial claims. |
@@ -34,6 +37,7 @@ Purpose: Keep commercial reports honest about which public sources are current, 
 | Source | Status | Boundary |
 |---|---|---|
 | ESCO v1.2.1 | Adapter-ready | Needs import, crosswalk, and validation before powering scored U.S. reports. |
+| ABS OSCA 2024 | Adapter-ready | Forward Australian classification boundary; do not infer local wages or outlooks until the source table, classification basis, and suppression notes are joined. |
 | Lightcast | Adapter-ready | Requires licensed data agreement and ingestion adapter before any backed claims. |
 | Workera public positioning | Adapter-ready | Use only for market-positioning context; do not imply Workera-backed validation, integration, or comparable assessment depth. |
 | SerpAPI-compatible search | Adapter-ready | Requires query log, cache policy, timestamp, and jurisdiction before market-signal claims. |

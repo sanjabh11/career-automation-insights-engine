@@ -56,6 +56,9 @@ jobs:
       - name: Verify commercial proof pack
         run: npm run verify:commercial -- --with-a11y --with-journey
 
+      - name: Verify Part II release gates
+        run: npm run verify:part-ii
+
       - name: Verify official sources and production audit
         if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         run: npm run verify:commercial-network

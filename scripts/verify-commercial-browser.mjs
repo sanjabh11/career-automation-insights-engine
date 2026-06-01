@@ -497,7 +497,7 @@ async function verifyCoachSampleReport(page, baseUrl) {
 async function verifySeoReportDownload(page, baseUrl) {
   console.log('checking /automation-risk/accountant');
   await page.goto(`${baseUrl}/automation-risk/accountant`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
-  await assertVisible(page.getByRole('heading', { name: /Will AI Replace Accountants/i }), '/automation-risk/accountant heading');
+  await assertVisible(page.getByRole('heading', { name: /Accountant.*Automation Defense Estimate/i }), '/automation-risk/accountant heading');
 
   const downloadButton = page.getByRole('button', { name: /Download PDF/i });
   await page.getByPlaceholder('your@email.com').fill('pilot-reader@example.com');
@@ -510,7 +510,7 @@ async function verifySeoReportDownload(page, baseUrl) {
   await downloadButton.click();
   await verifyPopupReport(
     popupPromise,
-    ['AI Automation Risk Report', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat', 'Role validation', 'Needs posting validation', 'Learning And Provider Boundary', 'Local Labor-Market Proof Appendix', 'bls-laus'],
+    ['Automation Defense Estimate', 'Human Review Workflow', 'Client Delivery Readiness', 'Weight basis', 'O*NET Task Ratings', 'Changing', 'Unknown', 'Source caveat', 'Role validation', 'Needs posting validation', 'Learning And Provider Boundary', 'Local Labor-Market Proof Appendix', 'bls-laus'],
     'SEO occupation report'
   );
   await assertVisible(page.getByText(/Report Downloaded/i), 'SEO report downloaded success state');
