@@ -272,6 +272,11 @@ function main() {
     fs.writeFileSync(outputAbsolutePath, `${JSON.stringify(records, null, 2)}\n`);
   }
 
+  const composeCommand = `npm run compose:commercial-evidence-records -- --write --require-all`;
+  const validateCommand = `npm run verify:commercial-evidence-records -- --evidence ${outputDisplayPath} --require-all`;
+  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --require-complete`;
+  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --require-complete`;
+
   const result = {
     ok: errors.length === 0 && gateRequirementsSatisfied,
     schemaVersion: INTAKE_SCHEMA_VERSION,
@@ -286,9 +291,16 @@ function main() {
     outcomeGateSatisfied,
     errorCount: errors.length,
     errors,
-    nextCommand: canWrite
-      ? `npm run verify:remediation-gates -- --commercial-evidence ${outputDisplayPath} --require-complete`
-      : `npm run compose:commercial-evidence-records -- --write --require-all`,
+    nextCommand: canWrite ? validateCommand : composeCommand,
+    nextCommands: canWrite
+      ? {
+        validateCommercialEvidence: validateCommand,
+        finalReadOnlyLedger: finalReadOnlyLedgerCommand,
+        refreshTrackedLedger: refreshTrackedLedgerCommand,
+      }
+      : {
+        composeCommercialEvidence: composeCommand,
+      },
   };
 
   console.log(JSON.stringify(result, null, 2));

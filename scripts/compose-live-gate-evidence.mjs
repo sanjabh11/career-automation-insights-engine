@@ -314,6 +314,11 @@ function main() {
     fs.writeFileSync(outputAbsolutePath, `${JSON.stringify(evidence, null, 2)}\n`);
   }
 
+  const composeCommand = `npm run compose:live-gate-evidence -- --write --require-complete`;
+  const validateCommand = `npm run verify:live-gate-evidence -- --evidence ${outputDisplayPath} --require-complete`;
+  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --require-complete`;
+  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --require-complete`;
+
   const result = {
     ok: errors.length === 0 && (complete || allowPartial || !requireComplete),
     complete,
@@ -327,9 +332,16 @@ function main() {
     inputs,
     errorCount: errors.length,
     errors,
-    nextCommand: canWrite
-      ? `npm run verify:remediation-gates -- --live-evidence ${outputDisplayPath} --require-complete`
-      : `npm run compose:live-gate-evidence -- --write --require-complete`,
+    nextCommand: canWrite ? validateCommand : composeCommand,
+    nextCommands: canWrite
+      ? {
+        validateLiveEvidence: validateCommand,
+        finalReadOnlyLedger: finalReadOnlyLedgerCommand,
+        refreshTrackedLedger: refreshTrackedLedgerCommand,
+      }
+      : {
+        composeLiveEvidence: composeCommand,
+      },
   };
 
   console.log(JSON.stringify(result, null, 2));

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:14:52.917Z",
+  "generatedAt": "2026-06-01T10:22:41.419Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -688,9 +688,9 @@
         "--require-complete"
       ],
       "caveat": "Composes redacted metadata only after owner-run proof artifacts pass; it does not create Stripe sessions, query live systems, fabricate proof, or store raw customer/partner data.",
-      "bytes": 13391,
-      "rows": 306,
-      "sha256": "91e582f26512232968682adb6091d0f96495259cf1a8ee5a1c340aa1e932bc49",
+      "bytes": 14117,
+      "rows": 317,
+      "sha256": "100312bbc1bbe3bf51e295eed443a23a8d013a9fd12c53f409a13c45046f6d37",
       "failures": [],
       "passed": true
     },
@@ -714,9 +714,9 @@
         "--require-all"
       ],
       "caveat": "Composes salted hashes and redacted partner/outcome metadata from owner-held local intake; it does not store raw names, contacts, contracts, private notes, quotes, customer data, or the hash salt.",
-      "bytes": 11945,
-      "rows": 263,
-      "sha256": "9d121e2518e464eeb37ad0783790df180ce8608dfacdb45f7cfec1a7e7d3ee20",
+      "bytes": 12663,
+      "rows": 274,
+      "sha256": "9d5a97ae43953b10bbf866b50f69a381a65ab1a29cb90a56fba04dc52a05e6c1",
       "failures": [],
       "passed": true
     },
@@ -1246,7 +1246,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "239f9cafa8ddf4261ae6641f60ce9711c812d759348d09099077db907807080b",
+      "sha256": "23c4f3ef93fc6ce6dbc85e7e5b3ba18861f79d0627ed56ece97e147d86b83c54",
       "failures": [],
       "passed": true
     },

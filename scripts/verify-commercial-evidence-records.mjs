@@ -287,9 +287,18 @@ export function renderArtifact(result) {
     manualInterventionIfMissing: [
       'Collect at least three permissioned design-partner commitments with pilot scope, planning-only use confirmation, artifact reviewed, contact permission, and next step recorded.',
       'Collect at least one permissioned documented outcome with baseline workflow, artifact reviewed, measured change, approved quote, quote approval, and explicit does-not-prove boundaries.',
-      `Store only redacted metadata in ${DEFAULT_INPUT_PATH} or pass --evidence <path>; keep raw names, contacts, contracts, notes, and quotes owner-held.`,
-      'Run npm run verify:commercial-evidence-records and then npm run verify:remediation-gates.',
+      'Option A: place owner-held intake in docs/commercialization/commercial-evidence-intake.local.json with an owner-held hash salt, then run npm run compose:commercial-evidence-records -- --write --require-all.',
+      `Option B: store only redacted metadata in ${DEFAULT_INPUT_PATH} or pass --evidence <path>; keep raw names, contacts, contracts, notes, quotes, and salts owner-held.`,
+      'Validate the redacted records with npm run verify:commercial-evidence-records -- --require-all.',
+      'Run npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete as the read-only final gate.',
+      'Run npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete only when refreshing tracked closeout artifacts.',
     ],
+    nextCommands: {
+      composeFromOwnerIntake: 'npm run compose:commercial-evidence-records -- --write --require-all',
+      validateCommercialEvidence: 'npm run verify:commercial-evidence-records -- --require-all',
+      finalReadOnlyLedger: 'npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete',
+      refreshTrackedLedger: 'npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete',
+    },
     errors: result.errors,
   };
 }

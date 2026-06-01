@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-06-01T10:14:52.917Z
+Generated: 2026-06-01T10:22:41.419Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -32,8 +32,8 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `resume-analysis-edge-retention-boundary` | Resume analysis edge-function retention boundary | `supabase/functions/analyze-resume/index.ts` | edge-function | 292 | `1414ebd82f09f074...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `owasp-file-upload`, `supabase-edge-functions`, `llm-output` | pass |
 | `resume-server-parser-edge-boundary` | Resume server-side parser boundary Edge Function | `supabase/functions/parse-resume/index.ts` | edge-function | 244 | `55ae276b6ea8aff5...` | `owasp-file-upload`, `supabase-edge-functions`, `nist-ai-rmf`, `ada-ai-hiring-guidance` | pass |
 | `resume-parser-live-verifier` | Live resume parser receipt verifier | `scripts/verify-resume-parser-live.mjs` | live-verifier | 450 | `0adb0510f79d3f72...` | `owasp-file-upload`, `supabase-edge-functions`, `nist-ai-rmf`, `ada-ai-hiring-guidance` | pass |
-| `commercial-live-gate-evidence-composer` | Live-gate evidence composer | `scripts/compose-live-gate-evidence.mjs` | live-verifier | 306 | `91e582f265122329...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
-| `commercial-evidence-records-composer` | Commercial evidence records composer | `scripts/compose-commercial-evidence-records.mjs` | commercial-verifier | 263 | `9d121e2518e464ee...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-live-gate-evidence-composer` | Live-gate evidence composer | `scripts/compose-live-gate-evidence.mjs` | live-verifier | 317 | `100312bbc1bbe3bf...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
+| `commercial-evidence-records-composer` | Commercial evidence records composer | `scripts/compose-commercial-evidence-records.mjs` | commercial-verifier | 274 | `9d5a97ae43953b10...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `commercial-evidence-intake-template` | Commercial evidence intake template | `docs/commercialization/commercial-evidence-intake-template.json` | commercial-template | 43 | `228e202f7648338a...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `commercial-live-auth-e2e-verifier` | Authenticated live resume proof artifact e2e verifier | `scripts/verify-commercial-live-auth-e2e.mjs` | live-verifier | 358 | `9ecd6c43fda8af1d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,218 | `76d4598f2c47d281...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `owasp-file-upload`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
@@ -49,7 +49,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 46 | `eb9042b5a7c1873c...` | `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 289 | `24a4796ffbf79ee7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `239f9cafa8ddf426...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `23c4f3ef93fc6ce6...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
