@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T05:12:35.863Z",
+  "generatedAt": "2026-06-01T05:29:24.010Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -120,20 +120,28 @@
     {
       "id": "three_committed_partners",
       "label": "Three committed design partners",
-      "status": "manual_external_evidence_required",
-      "evidence": "Onboarding checklist exists, but named partner commitments are not stored in this repo.",
-      "neededEvidence": "At least three permissioned partner records with pilot scope, next step, and contact permission.",
-      "sourceBoundary": "manual commercial evidence gate",
-      "doesNotProve": []
+      "status": "blocked_missing_owner_evidence_records",
+      "evidence": "Redacted commercial-evidence record verifier is ready, but no accepted owner-held partner commitment records are attached.",
+      "neededEvidence": "At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+      "sourceBoundary": "owner redacted commercial-evidence records",
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
     },
     {
       "id": "documented_outcomes",
       "label": "Permissioned documented outcomes",
-      "status": "manual_external_evidence_required",
-      "evidence": "Case-study capture template exists, but permissioned outcome records are not stored in this repo.",
-      "neededEvidence": "Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text.",
-      "sourceBoundary": "manual commercial evidence gate",
-      "doesNotProve": []
+      "status": "blocked_missing_owner_evidence_records",
+      "evidence": "Redacted commercial-evidence record verifier is ready, but no accepted owner-held documented outcome records are attached.",
+      "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.",
+      "sourceBoundary": "owner redacted commercial-evidence records",
+      "doesNotProve": [
+        "Guaranteed career outcomes",
+        "Causal impact",
+        "Generalizable demand"
+      ]
     }
   ],
   "remainingManualEvidence": [
@@ -141,8 +149,8 @@
     "Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
     "Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
     "Live MRR greater than zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.",
-    "Three committed design partners: At least three permissioned partner records with pilot scope, next step, and contact permission.",
-    "Permissioned documented outcomes: Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text."
+    "Three committed design partners: At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+    "Permissioned documented outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text."
   ],
   "liveGateEvidence": {
     "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",

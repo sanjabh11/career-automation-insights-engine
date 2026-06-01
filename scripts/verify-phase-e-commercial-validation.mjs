@@ -29,6 +29,8 @@ const files = {
   playbook: read('docs/commercialization/phase-e-commercial-validation-playbook.md'),
   packageJson: read('package.json'),
   liveGateEvidenceVerifier: read('scripts/verify-live-gate-evidence.mjs'),
+  commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
+  commercialEvidenceRecordsTemplate: read('docs/commercialization/commercial-evidence-records-template.json'),
   stripeTestCheckoutVerifier: read('scripts/verify-stripe-test-checkout.mjs'),
   stripeLiveMrrVerifier: read('scripts/verify-stripe-live-mrr.mjs'),
   productionCalibrationVerifier: read('scripts/verify-production-calibration-run.mjs'),
@@ -92,6 +94,7 @@ assert(
   'https://docs.stripe.com/api/subscriptions/list',
   'https://docs.stripe.com/api/invoices/list',
   'npm run verify:live-gate-evidence',
+  'npm run verify:commercial-evidence-records',
   'npm run verify:stripe-test-checkout',
   'npm run verify:stripe-live-mrr',
   'npm run verify:production-calibration',
@@ -99,10 +102,17 @@ assert(
 ].forEach((snippet) => assert(files.playbook.includes(snippet), `Phase E playbook missing ${snippet}`));
 
 assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
+assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records verifier script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
 assert(/"verify:production-calibration": "node scripts\/verify-production-calibration-run\.mjs --write"/.test(files.packageJson), 'production calibration verifier script must be wired');
 assert(/validateLiveGateEvidence/.test(files.liveGateEvidenceVerifier), 'live-gate evidence verifier must call the shared validator');
+assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');
+assert(/documented_outcomes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover documented outcomes');
+assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted partner records');
+assert(/acceptedOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted outcome records');
+assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
+assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/create-checkout-session/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must call the checkout Edge Function');
 assert(/livemode=false/.test(files.stripeTestCheckoutVerifier), 'Stripe test checkout verifier must verify Stripe test mode');
 assert(/stripe_live_mrr_export/.test(files.stripeLiveMrrVerifier), 'Stripe live MRR verifier must declare the redacted evidence type');

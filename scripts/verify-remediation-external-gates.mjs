@@ -147,6 +147,8 @@ function main() {
   const presentEnvNames = loadPresentEnvNames();
   const packageJson = JSON.parse(read('package.json'));
   const packageScripts = packageJson.scripts || {};
+  const commercialEvidenceRecordsVerifier = readOptional('scripts/verify-commercial-evidence-records.mjs');
+  const commercialEvidenceRecordsTemplate = readOptional('docs/commercialization/commercial-evidence-records-template.json');
   const stripeRuntime = readOptional('src/lib/stripe.ts');
   const stripeTestCheckoutVerifier = readOptional('scripts/verify-stripe-test-checkout.mjs');
   const stripeLiveMrrVerifier = readOptional('scripts/verify-stripe-live-mrr.mjs');
@@ -209,6 +211,27 @@ function main() {
       'designPartnerOnboardingChecklist',
       'caseStudyCaptureTemplate',
       'Live MRR greater than zero',
+    ]);
+
+  const commercialEvidenceRecordsReady =
+    packageScripts['verify:commercial-evidence-records'] === 'node scripts/verify-commercial-evidence-records.mjs --write' &&
+    exists('scripts/verify-commercial-evidence-records.mjs') &&
+    exists('docs/commercialization/commercial-evidence-records-template.json') &&
+    containsAll(commercialEvidenceRecordsVerifier, [
+      'three_committed_partners',
+      'documented_outcomes',
+      'acceptedDesignPartnerCount',
+      'acceptedOutcomeCount',
+      'partnerGateSatisfied',
+      'outcomeGateSatisfied',
+      'commercial-evidence-records.local.json',
+    ]) &&
+    containsAll(commercialEvidenceRecordsTemplate, [
+      'designPartnerCommitments',
+      'documentedOutcomes',
+      'partnerIdHash',
+      'outcomeIdHash',
+      'doesNotProve',
     ]);
 
   const liveGateEvidenceIntakeReady =
@@ -426,18 +449,28 @@ function main() {
     externalGate(
       'three_committed_partners',
       'Three committed design partners',
-      'manual_external_evidence_required',
-      'Onboarding checklist exists, but named partner commitments are not stored in this repo.',
-      'At least three permissioned partner records with pilot scope, next step, and contact permission.',
-      { sourceBoundary: 'manual commercial evidence gate' }
+      commercialEvidenceRecordsReady ? 'blocked_missing_owner_evidence_records' : 'missing_local_verifier',
+      commercialEvidenceRecordsReady
+        ? 'Redacted commercial-evidence record verifier is ready, but no accepted owner-held partner commitment records are attached.'
+        : 'Commercial-evidence record verifier is missing or miswired.',
+      'At least three permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.',
+      {
+        sourceBoundary: 'owner redacted commercial-evidence records',
+        doesNotProve: ['Revenue', 'Successful outcomes', 'Market-wide demand'],
+      }
     ),
     externalGate(
       'documented_outcomes',
       'Permissioned documented outcomes',
-      'manual_external_evidence_required',
-      'Case-study capture template exists, but permissioned outcome records are not stored in this repo.',
-      'Permissioned case-study records with baseline workflow, artifact reviewed, outcome, quote approval, and does-not-prove text.',
-      { sourceBoundary: 'manual commercial evidence gate' }
+      commercialEvidenceRecordsReady ? 'blocked_missing_owner_evidence_records' : 'missing_local_verifier',
+      commercialEvidenceRecordsReady
+        ? 'Redacted commercial-evidence record verifier is ready, but no accepted owner-held documented outcome records are attached.'
+        : 'Commercial-evidence record verifier is missing or miswired.',
+      'At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.',
+      {
+        sourceBoundary: 'owner redacted commercial-evidence records',
+        doesNotProve: ['Guaranteed career outcomes', 'Causal impact', 'Generalizable demand'],
+      }
     ),
   ];
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T05:12:33.294Z",
+  "generatedAt": "2026-06-01T05:29:17.690Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -629,6 +629,10 @@
     {
       "name": "verify:commercial-deployment",
       "command": "node scripts/generate-commercial-supabase-deployment-packet.mjs"
+    },
+    {
+      "name": "verify:commercial-evidence-records",
+      "command": "node scripts/verify-commercial-evidence-records.mjs --write"
     },
     {
       "name": "verify:commercial-full",

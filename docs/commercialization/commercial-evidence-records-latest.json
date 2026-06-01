@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-06-01T05:29:23.512Z",
+  "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
+  "gateIds": [
+    "three_committed_partners",
+    "documented_outcomes"
+  ],
+  "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
+  "found": false,
+  "status": "no_local_evidence",
+  "confidence": "bounded_redacted_commercial_evidence_records",
+  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.",
+  "acceptedDesignPartnerCount": 0,
+  "acceptedOutcomeCount": 0,
+  "partnerGateSatisfied": false,
+  "outcomeGateSatisfied": false,
+  "evidenceHash": null,
+  "doesNotProve": [
+    "Revenue",
+    "Retention",
+    "Causal product impact",
+    "Market-wide demand",
+    "Guaranteed career outcomes"
+  ],
+  "manualInterventionIfMissing": [
+    "Collect at least three permissioned design-partner commitments with pilot scope, planning-only use confirmation, artifact reviewed, contact permission, and next step recorded.",
+    "Collect at least one permissioned documented outcome with baseline workflow, artifact reviewed, measured change, approved quote, quote approval, and explicit does-not-prove boundaries.",
+    "Store only redacted metadata in docs/commercialization/commercial-evidence-records.local.json or pass --evidence <path>; keep raw names, contacts, contracts, notes, and quotes owner-held.",
+    "Run npm run verify:commercial-evidence-records and then npm run verify:remediation-gates."
+  ],
+  "errors": []
+}

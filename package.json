@@ -15,6 +15,7 @@
     "verify:global-english-sources": "node scripts/verify-global-english-localization.mjs --with-source-fetch",
     "verify:remediation-gates": "node scripts/verify-remediation-external-gates.mjs",
     "verify:live-gate-evidence": "node scripts/verify-live-gate-evidence.mjs",
+    "verify:commercial-evidence-records": "node scripts/verify-commercial-evidence-records.mjs --write",
     "verify:stripe-test-checkout": "node scripts/verify-stripe-test-checkout.mjs --write",
     "verify:stripe-live-mrr": "node scripts/verify-stripe-live-mrr.mjs --write",
     "verify:production-calibration": "node scripts/verify-production-calibration-run.mjs --write",

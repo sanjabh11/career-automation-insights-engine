@@ -542,6 +542,31 @@ const checks = [
     ],
   },
   {
+    id: 'commercial-evidence-records-verifier',
+    file: 'scripts/verify-commercial-evidence-records.mjs',
+    expected: [
+      /three_committed_partners/,
+      /documented_outcomes/,
+      /acceptedDesignPartnerCount/,
+      /acceptedOutcomeCount/,
+      /partnerGateSatisfied/,
+      /outcomeGateSatisfied/,
+      /commercial-evidence-records\.local\.json/,
+    ],
+  },
+  {
+    id: 'commercial-evidence-records-template',
+    file: 'docs/commercialization/commercial-evidence-records-template.json',
+    expected: [
+      /2026-06-01\.apo-commercial-evidence-records\.v1/,
+      /designPartnerCommitments/,
+      /documentedOutcomes/,
+      /partnerIdHash/,
+      /outcomeIdHash/,
+      /doesNotProve/,
+    ],
+  },
+  {
     id: 'remediation-gates-redacted-evidence-intake',
     file: 'scripts/verify-remediation-external-gates.mjs',
     expected: [

@@ -19,6 +19,12 @@ Use `docs/commercialization/live-gate-evidence-template.json` only as a schema t
 
 The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret patterns and only upgrades a live/manual gate when the gate-specific redacted evidence item passes validation.
 
+## Commercial Evidence Records
+
+Use `docs/commercialization/commercial-evidence-records-template.json` only as a schema template. Put redacted founder-held partner and outcome records in `docs/commercialization/commercial-evidence-records.local.json` or pass another path with `--evidence`; the default local file is ignored by git. Run `npm run verify:commercial-evidence-records -- --require-partners`, `npm run verify:commercial-evidence-records -- --require-outcomes`, or `npm run verify:commercial-evidence-records -- --require-all` before attaching commercial evidence to the remediation ledger.
+
+The records file must contain hashes, segment labels, permission booleans, artifact reviewed labels, redaction level, and does-not-prove boundaries only. Do not store partner names, emails, phone numbers, contracts, raw notes, private quotes, or customer data in tracked files. A passing verifier proves only the presence of permissioned redacted records; it does not prove revenue, retention, causal impact, market-wide demand, or guaranteed career outcomes.
+
 ## Stripe Test Checkout Proof
 
 Run `npm run verify:stripe-test-checkout` only with owner-controlled test credentials. The command signs in a dedicated synthetic Supabase Auth user, calls the deployed `create-checkout-session` Edge Function, retrieves the resulting Checkout Session from Stripe, and requires Stripe to report `livemode=false`. It writes `docs/commercialization/stripe-test-checkout-proof-latest.json` with hashes and redacted metadata only.
