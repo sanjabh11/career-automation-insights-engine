@@ -2,7 +2,7 @@
 
 Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through Stripe test checkout verifier handoff
+Latest local remediation evidence reviewed: Phase E follow-up through production calibration verifier handoff
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -23,11 +23,12 @@ This audit checks the active remediation objective against current repo and GitH
 | Phase A route/proof-link crawl | Browser crawl of `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans` on local Vite port 5199 | Pass: all returned 200, body rendered, active `/docs/**` anchors returned 200, no forbidden claim text found |
 | Phase B public artifacts | `public/docs/model_cards/APO_MODEL_CARD.html`, `TASK_MODEL_CARD.html`, `public/docs/reports/apo-calibration-report.html`, reliability SVG, calibration JSON | Present |
 | Phase C embedding model | `npm run smoke:skill-adjacency` | Pass: `gemini-embedding-001`, 768 dimensions, non-empty adjacency |
-| Phase C browser smoke | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` from Phase E gate run | Pass: 6 tests |
+| Phase C browser smoke | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke -- --workers=1 --reporter=line` from Phase E follow-up gate run | Pass: 7 tests, including Phase C runtime, Phase D global-English, and proof-boundary copy checks |
 | Phase D global-English | `npm run verify:global-english` | Pass: 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK mappings, 20 Canada mappings, 20 Australia mappings |
 | Phase E commercial validation instrumentation | `npm run verify:commercial-validation` | Pass: analytics persistence, PostHog identified-only capture, activation events, commercial lead capture event, commercial evidence gates, hidden bootcamp CTA |
 | Impact/outcomes proof-boundary copy | `PLAYWRIGHT_CHANNEL=chrome npx playwright test tests/e2e/proof-boundary-copy.spec.ts --workers=1 --reporter=line`; `npm run verify:claim-boundaries` | Pass: `/impact` no longer renders hard-coded wage, skill-accuracy, decision-speed, or testimonial claims; `/outcomes` no longer renders static correlation/wage-growth claims |
 | Stripe test checkout verifier | `node scripts/verify-stripe-test-checkout.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, and requires owner-supplied test credentials plus `STRIPE_TEST_PRICE_ID` before creating a Checkout Session |
+| Production calibration verifier | `node scripts/verify-production-calibration-run.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, and requires owner-supplied Supabase target credentials plus an already deployed `calibrate-ece` function with approved live APO logs and expert labels before proving a calibration run |
 | TypeScript | `npx tsc --noEmit` from Phase E gate run | Pass |
 | Report evidence | `npm run verify:report-evidence` from Phase E gate run | Pass |
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |
@@ -41,7 +42,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Gate | Why completion is not proven | Needed evidence |
 | --- | --- | --- |
 | Real Stripe test-mode checkout | Shell has Stripe/Supabase test credentials and `STRIPE_TEST_PRICE_ID` unset; current Playwright checkout is a mocked route smoke, and `stripe-test-checkout-proof-latest.json` is `skipped_missing_env`, not a real Checkout Session | Owner-provided test secrets plus `npm run verify:stripe-test-checkout` output showing `create-checkout-session` created a Stripe test-mode Checkout Session without printing secrets |
-| Live calibration against production data | Migrations/functions are implemented locally, but no Supabase migration or Edge Function deployment was applied because destructive/deploy steps require approval | Approved migration/deploy, expert-label rows, APO logs, and calibration function run against target project |
+| Live calibration against production data | Migrations/functions and owner-run verifier are implemented locally, but no Supabase migration, Edge Function deployment, or live calibration invocation was applied because destructive/deploy/live steps require approval and owner credentials | Approved migration/deploy, expert-label rows, APO logs, and `npm run verify:production-calibration` output from the target project |
 | UK/CA/AU localized wage values | Phase D intentionally shows U.S.-basis disclosure rather than fabricated local wages | Source-dated ONS/Job Bank or StatCan/JSA or ABS adapters with tested joins and visible release metadata |
 | Live MRR > 0 | No live Stripe active subscription, payment transaction, or MRR export is attached | Stripe live-mode and database evidence showing `total_mrr > 0` |
 | >=3 committed design partners | Lead ops and onboarding capture are implemented, but no named partner commitments are present | At least three permissioned partner records with pilot scope, next step, and contact permission |

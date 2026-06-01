@@ -36,6 +36,19 @@ Required local or CI secret names:
 
 Optional variables: `CHECKOUT_TEST_ORIGIN`, `STRIPE_TEST_TIER`, and `STRIPE_TEST_BILLING_PERIOD`. A passing test-mode Checkout Session still does not prove live revenue, webhook fulfillment, report-credit mutation, MRR, or bootcamp demand.
 
+## Production Calibration Proof
+
+Run `npm run verify:production-calibration` only after the target Supabase project already has the approved calibration migrations, the deployed `calibrate-ece` Edge Function, function-level service-role secret, APO logs, and approved expert-assessment rows. The verifier invokes the deployed Edge Function with an anon key, validates that the response used `apo_overall_vs_expert_assessments`, requires ECE to be within `[0,1]`, and requires positive matched prediction pairs, expert rows, reliability bins, and a calibration run id. It writes `docs/commercialization/production-calibration-proof-latest.json` with hashes and redacted metadata only.
+
+Required local or CI secret names:
+
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL` or `VITE_SUPABASE_URL` | Target Supabase project URL |
+| `SUPABASE_ANON_KEY` or `VITE_SUPABASE_ANON_KEY` | Public key used to invoke the deployed calibration function |
+
+Optional variables: `CALIBRATION_DAYS`, `CALIBRATION_BIN_COUNT`, `CALIBRATION_SOURCE`, and `CALIBRATION_COHORT`. The deployed function itself must have `SUPABASE_SERVICE_ROLE_KEY` configured in Supabase function secrets; do not put service-role values in chat or tracked files. A passing production calibration run still does not prove scientific validity beyond the returned sample, future model performance, employment-decision validity, or partner/revenue traction.
+
 ## Activation And Retention Events
 
 Use PostHog funnels and Supabase `analytics_events` exports with the same event contract:

@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-01T04:49:47.700Z
+Generated: 2026-06-01T04:59:51.587Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -152,6 +152,7 @@ Policies:
 | `verify:live-gate-evidence` | `node scripts/verify-live-gate-evidence.mjs` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
+| `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
 | `verify:remediation-gates` | `node scripts/verify-remediation-external-gates.mjs` |
 | `verify:report-evidence` | `node scripts/verify-report-evidence.mjs` |
 | `verify:resume-parser-live` | `node scripts/verify-resume-parser-live.mjs --write` |

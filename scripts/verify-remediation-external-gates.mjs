@@ -149,6 +149,7 @@ function main() {
   const packageScripts = packageJson.scripts || {};
   const stripeRuntime = readOptional('src/lib/stripe.ts');
   const stripeTestCheckoutVerifier = readOptional('scripts/verify-stripe-test-checkout.mjs');
+  const productionCalibrationVerifier = readOptional('scripts/verify-production-calibration-run.mjs');
   const calibrationFunction = readOptional('supabase/functions/calibrate-ece/index.ts');
   const completionAudit = readOptional('docs/commercialization/remediation-completion-audit-2026-05-31.md');
   const globalEnglish = readOptional('src/lib/globalEnglishLocalization.ts');
@@ -246,10 +247,23 @@ function main() {
 
   const calibrationMissing = missingGroups(presentEnvNames, [
     { label: 'SUPABASE_URL or VITE_SUPABASE_URL', aliases: ['SUPABASE_URL', 'VITE_SUPABASE_URL'] },
-    { label: 'SUPABASE_SERVICE_ROLE_KEY', aliases: ['SUPABASE_SERVICE_ROLE_KEY'] },
+    {
+      label: 'SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY',
+      aliases: ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY'],
+    },
   ]);
   const calibrationLocalReady =
     publicDocsReady &&
+    packageScripts['verify:production-calibration'] === 'node scripts/verify-production-calibration-run.mjs --write' &&
+    exists('scripts/verify-production-calibration-run.mjs') &&
+    containsAll(productionCalibrationVerifier, [
+      'calibrate-ece',
+      'apo_overall_vs_expert_assessments',
+      'pairsCount',
+      'expertRowsCount',
+      'skipped_missing_env',
+      'does not apply migrations',
+    ]) &&
     containsAll(calibrationFunction, [
       'expert_assessments',
       'apo_overall_vs_expert_assessments',
@@ -353,12 +367,12 @@ function main() {
       'Production calibration run',
       statusForExternalGate(calibrationMissing, calibrationLocalReady),
       calibrationMissing.length
-        ? `Calibration code/artifacts are ready, but required secret/env names are absent: ${calibrationMissing.join(', ')}.`
-        : 'Required secret/env names are present; apply approved migration/deploy sequence and run calibration against live APO logs and expert labels.',
-      'Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project.',
+        ? `Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: ${calibrationMissing.join(', ')}.`
+        : 'Required secret/env names are present; run `npm run verify:production-calibration` only after the target project already has approved migrations, deployed `calibrate-ece`, function secrets, APO logs, and expert labels.',
+      'Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.',
       {
-        sourceBoundary: 'owner migration/deploy gate',
-        doesNotProve: ['Scientific validation before live labels exist'],
+        sourceBoundary: 'owner credential and deployment-precondition gate',
+        doesNotProve: ['Scientific validation before live labels exist', 'Migrations or deployments were applied by this verifier'],
       }
     ),
     externalGate(

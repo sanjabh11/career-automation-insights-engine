@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-01T04:50:22.469Z",
+  "generatedAt": "2026-06-01T04:59:52.388Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
-  "requireComplete": true,
+  "requireComplete": false,
   "gates": [
     {
       "id": "phase_a_truth_claims",
@@ -82,11 +82,12 @@
       "id": "production_calibration_run",
       "label": "Production calibration run",
       "status": "blocked_missing_owner_secret_or_live_evidence",
-      "evidence": "Calibration code/artifacts are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.",
-      "neededEvidence": "Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project.",
-      "sourceBoundary": "owner migration/deploy gate",
+      "evidence": "Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
+      "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+      "sourceBoundary": "owner credential and deployment-precondition gate",
       "doesNotProve": [
-        "Scientific validation before live labels exist"
+        "Scientific validation before live labels exist",
+        "Migrations or deployments were applied by this verifier"
       ]
     },
     {
@@ -132,7 +133,7 @@
   ],
   "remainingManualEvidence": [
     "Real Stripe test-mode checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.",
-    "Production calibration run: Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project.",
+    "Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
     "Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
     "Live MRR greater than zero: Stripe live-mode and database evidence showing `total_mrr > 0`.",
     "Three committed design partners: At least three permissioned partner records with pilot scope, next step, and contact permission.",

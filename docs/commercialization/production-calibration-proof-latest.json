@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-06-01T04:59:45.722Z",
+  "target": null,
+  "status": "skipped_missing_env",
+  "confidence": "bounded_production_calibration_run",
+  "caveat": "This verifier invokes the deployed calibrate-ece Supabase Edge Function and validates only the redacted response shape and counts. It does not apply migrations, deploy functions, inspect raw expert labels, print secrets, or prove scientific validity beyond the returned sample.",
+  "functionPreconditions": [
+    "The target Supabase project must already have the approved calibration migrations applied.",
+    "The deployed calibrate-ece function must have its own SUPABASE_SERVICE_ROLE_KEY configured in Supabase function secrets.",
+    "The target database must contain approved expert_assessments rows and APO logs with matching occupation codes."
+  ],
+  "doesNotProve": [
+    "Scientific validation beyond the measured sample",
+    "Future model performance",
+    "Employment-decision validity",
+    "Successful migration or deployment",
+    "Raw label provenance"
+  ],
+  "manualInterventionIfSkipped": [
+    "Confirm calibration migrations and the deployed calibrate-ece function are already approved for the target Supabase project.",
+    "Provide SUPABASE_URL or VITE_SUPABASE_URL and SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY for the target project.",
+    "Confirm the deployed function has SUPABASE_SERVICE_ROLE_KEY configured as a Supabase secret; do not put service-role values in chat or tracked files.",
+    "Run npm run verify:production-calibration. Review the redacted artifact and attach owner-held raw proof only through the live-gate evidence template."
+  ],
+  "request": {
+    "days": 90,
+    "binCount": 10,
+    "source": "all",
+    "cohort": null
+  },
+  "checks": [
+    {
+      "id": "production-calibration-env",
+      "label": "Production calibration target credentials are configured",
+      "passed": false,
+      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+    }
+  ],
+  "missingEnv": [
+    "SUPABASE_URL or VITE_SUPABASE_URL",
+    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+  ]
+}
