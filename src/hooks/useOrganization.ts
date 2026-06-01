@@ -23,6 +23,9 @@ export interface OrgMember {
     };
 }
 
+const getErrorMessage = (error: unknown, fallback: string) =>
+    error instanceof Error ? error.message : fallback;
+
 export function useOrganization() {
     const [organization, setOrganization] = useState<Organization | null>(null);
     const [members, setMembers] = useState<OrgMember[]>([]);
@@ -67,7 +70,7 @@ export function useOrganization() {
                 setOrganization(null);
                 setMembers([]);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching organization:', err);
         } finally {
             setLoading(false);
@@ -88,9 +91,9 @@ export function useOrganization() {
             toast.success('Organization created successfully!');
             fetchOrganization();
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error creating organization:', err);
-            toast.error(err.message || 'Failed to create organization');
+            toast.error(getErrorMessage(err, 'Failed to create organization'));
             throw err;
         }
     };

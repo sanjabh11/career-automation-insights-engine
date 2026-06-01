@@ -28,6 +28,9 @@ interface Subscription {
   updated_at: string;
 }
 
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
+
 export const useSubscription = () => {
   const { toast } = useToast();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -73,8 +76,8 @@ export const useSubscription = () => {
       if (!error) {
         await fetchUsageStats(user.id);
       }
-    } catch (error: any) {
-      console.warn('[useSubscription] Error in fetchSubscription:', error?.message || error);
+    } catch (error: unknown) {
+      console.warn('[useSubscription] Error in fetchSubscription:', getErrorMessage(error, 'Unknown subscription error'));
       setSubscription(null);
     } finally {
       setLoading(false);
@@ -130,8 +133,8 @@ export const useSubscription = () => {
         savedAnalysesCount: savedCount || 0,
         exportsThisMonth: exportCount || 0,
       });
-    } catch (error: any) {
-      console.warn('[useSubscription] Error fetching usage stats:', error?.message || error);
+    } catch (error: unknown) {
+      console.warn('[useSubscription] Error fetching usage stats:', getErrorMessage(error, 'Unknown usage stats error'));
     }
   };
 
