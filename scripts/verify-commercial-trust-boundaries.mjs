@@ -532,6 +532,14 @@ const checks = [
     ],
   },
   {
+    id: 'owner-held-evidence-gitignore',
+    file: '.gitignore',
+    expected: [
+      /docs\/commercialization\/live-gate-evidence\.local\.json/,
+      /docs\/commercialization\/commercial-evidence-records\.local\.json/,
+    ],
+  },
+  {
     id: 'stripe-live-mrr-verifier',
     file: 'scripts/verify-stripe-live-mrr.mjs',
     expected: [
