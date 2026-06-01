@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:33:49.743Z",
+  "generatedAt": "2026-06-01T10:44:32.478Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -697,6 +697,10 @@
     {
       "name": "verify:onet-task-ratings-live",
       "command": "node scripts/verify-onet-task-ratings-live.mjs --write"
+    },
+    {
+      "name": "verify:owner-evidence-fixtures",
+      "command": "node scripts/verify-owner-evidence-fixture-path.mjs"
     },
     {
       "name": "verify:production-calibration",

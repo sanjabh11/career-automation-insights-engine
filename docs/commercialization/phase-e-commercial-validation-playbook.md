@@ -33,6 +33,10 @@ The commercial evidence composer never prints or writes `partnerRef`, `outcomeRe
 
 When the commercial evidence composer writes a redacted records file, its JSON output includes `validateCommercialEvidence`, `finalReadOnlyLedger`, and `refreshTrackedLedger`. Use the read-only final ledger first; use the write refresh command only after both live-gate evidence and commercial records are present and you intend to update tracked closeout artifacts.
 
+## Redacted Evidence Path Smoke
+
+Run `npm run verify:owner-evidence-fixtures` when changing the live-gate evidence schema, commercial evidence schema, or remediation gate logic. The command creates temporary synthetic non-secret files outside the repository and proves that `verify:live-gate-evidence`, `verify:commercial-evidence-records`, and `verify:remediation-gates -- --require-complete` agree on the complete path. This is a compatibility smoke test only; it does not prove live checkout, production calibration, live MRR, partner commitments, or documented outcomes.
+
 ## Stripe Test Checkout Proof
 
 Run `npm run verify:stripe-test-checkout` only with owner-controlled test credentials. The command signs in a dedicated synthetic Supabase Auth user, calls the deployed `create-checkout-session` Edge Function, retrieves the resulting Checkout Session from Stripe, and requires Stripe to report `livemode=false`. It writes `docs/commercialization/stripe-test-checkout-proof-latest.json` with hashes and redacted metadata only.

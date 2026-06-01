@@ -49,6 +49,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-commercial-evidence-records.mjs', '--write'],
   },
   {
+    id: 'owner-evidence-fixtures',
+    label: 'Verify redacted owner-evidence fixture completion path',
+    command: ['node', 'scripts/verify-owner-evidence-fixture-path.mjs'],
+  },
+  {
     id: 'remediation-gates',
     label: 'Write APO remediation external gate ledger',
     command: ['node', 'scripts/verify-remediation-external-gates.mjs', '--write'],

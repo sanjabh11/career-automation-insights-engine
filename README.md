@@ -96,6 +96,7 @@ npm run verify:commercial
 | Runtime smoke | `.github/workflows/phase-c-runtime-smoke.yml`, `npm run smoke:skill-adjacency`, `npm run e2e:smoke` | Keep embedding, APO, crosswalk, checkout, report-export, and proof-boundary flows from drifting. |
 | Source/data maintenance | `npm run verify:data-provenance`, `npm run verify:sources` | Track source-labeled artifacts, checksums, and official-source refresh boundaries. |
 | Owner-held evidence | `npm run compose:live-gate-evidence`, `npm run compose:commercial-evidence-records` | Convert owner-run proof artifacts or partner/outcome intake into redacted, gitignored local evidence files. |
+| Evidence path fixture | `npm run verify:owner-evidence-fixtures` | Exercise the full redacted evidence validator and final remediation-gate path with temporary synthetic non-secret fixtures; this proves schema compatibility only, not live or commercial proof. |
 
 See `CONTRIBUTING.md` for the pull-request checklist and claim-boundary rules.
 

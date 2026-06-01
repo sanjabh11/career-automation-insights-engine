@@ -235,6 +235,15 @@ const artifacts = [
     caveat: 'Template documents local intake fields only; real partner refs, outcome refs, and hash salts must remain owner-held and untracked.',
   },
   {
+    id: 'owner-evidence-fixture-path-verifier',
+    label: 'Owner evidence fixture path verifier',
+    path: 'scripts/verify-owner-evidence-fixture-path.mjs',
+    type: 'commercial-verifier',
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    expectedSnippets: ['Synthetic non-secret metadata only', 'verify-live-gate-evidence.mjs', 'verify-commercial-evidence-records.mjs', 'verify-remediation-external-gates.mjs', 'goalCompleteWithSyntheticFixtures'],
+    caveat: 'Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.',
+  },
+  {
     id: 'commercial-live-auth-e2e-verifier',
     label: 'Authenticated live resume proof artifact e2e verifier',
     path: 'scripts/verify-commercial-live-auth-e2e.mjs',

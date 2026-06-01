@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-06-01T10:33:50.608Z
+Generated: 2026-06-01T10:44:35.066Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-05-25T09:09:13.546Z
 All referenced current-source checks passed: yes
@@ -35,6 +35,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-live-gate-evidence-composer` | Live-gate evidence composer | `scripts/compose-live-gate-evidence.mjs` | live-verifier | 317 | `100312bbc1bbe3bf...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-evidence-records-composer` | Commercial evidence records composer | `scripts/compose-commercial-evidence-records.mjs` | commercial-verifier | 274 | `9d5a97ae43953b10...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `commercial-evidence-intake-template` | Commercial evidence intake template | `docs/commercialization/commercial-evidence-intake-template.json` | commercial-template | 43 | `228e202f7648338a...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `owner-evidence-fixture-path-verifier` | Owner evidence fixture path verifier | `scripts/verify-owner-evidence-fixture-path.mjs` | commercial-verifier | 204 | `efb207e7171a7080...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `commercial-live-auth-e2e-verifier` | Authenticated live resume proof artifact e2e verifier | `scripts/verify-commercial-live-auth-e2e.mjs` | live-verifier | 358 | `9ecd6c43fda8af1d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
 | `resume-analyzer-proof-report-ui` | Resume analyzer downloadable proof report UI | `src/components/ResumeAnalyzer.tsx` | commercial-page | 1,218 | `76d4598f2c47d281...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `owasp-file-upload`, `supabase-edge-functions`, `wcag-22`, `llm-output` | pass |
 | `resume-proof-report-artifact-client` | Resume proof-report artifact client | `src/lib/resumeProofReportArtifacts.ts` | privacy-runtime | 152 | `2ff26b17a34b668d...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `eeoc-employment-selection-procedures`, `cfpb-employment-algorithmic-scores`, `llm-output` | pass |
@@ -49,7 +50,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 46 | `eb9042b5a7c1873c...` | `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 289 | `24a4796ffbf79ee7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `3a6d94e7b822c7d7...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 76 | `916dad7a5db29c34...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |
@@ -81,6 +82,7 @@ This file records hash-level evidence for local commercial data artifacts and so
 - `commercial-live-gate-evidence-composer`: Composes redacted metadata only after owner-run proof artifacts pass; it does not create Stripe sessions, query live systems, fabricate proof, or store raw customer/partner data.
 - `commercial-evidence-records-composer`: Composes salted hashes and redacted partner/outcome metadata from owner-held local intake; it does not store raw names, contacts, contracts, private notes, quotes, customer data, or the hash salt.
 - `commercial-evidence-intake-template`: Template documents local intake fields only; real partner refs, outcome refs, and hash salts must remain owner-held and untracked.
+- `owner-evidence-fixture-path-verifier`: Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.
 - `commercial-live-auth-e2e-verifier`: Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.
 - `resume-analyzer-proof-report-ui`: Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.
 - `resume-proof-report-artifact-client`: Client helper saves only redacted resume proof-report artifacts when Supabase is configured and the user is authenticated; it does not prove the target Supabase migration is applied or that external provider logs/backups are deleted.

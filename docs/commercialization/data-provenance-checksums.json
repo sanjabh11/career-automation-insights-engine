@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T10:33:50.608Z",
+  "generatedAt": "2026-06-01T10:44:35.066Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -746,6 +746,30 @@
       "passed": true
     },
     {
+      "id": "owner-evidence-fixture-path-verifier",
+      "label": "Owner evidence fixture path verifier",
+      "path": "scripts/verify-owner-evidence-fixture-path.mjs",
+      "type": "commercial-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "Synthetic non-secret metadata only",
+        "verify-live-gate-evidence.mjs",
+        "verify-commercial-evidence-records.mjs",
+        "verify-remediation-external-gates.mjs",
+        "goalCompleteWithSyntheticFixtures"
+      ],
+      "caveat": "Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.",
+      "bytes": 7840,
+      "rows": 204,
+      "sha256": "efb207e7171a70809b25ff51225e25a190471669478dbb654b311757dab4c38c",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "commercial-live-auth-e2e-verifier",
       "label": "Authenticated live resume proof artifact e2e verifier",
       "path": "scripts/verify-commercial-live-auth-e2e.mjs",
@@ -1246,7 +1270,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "3a6d94e7b822c7d7dd1c956547bf005104919ff5923d4bccb8ea80f27bab6e9e",
+      "sha256": "916dad7a5db29c34da904c6edc60535cc492298d18e8f05a3eefb01087fc3a5c",
       "failures": [],
       "passed": true
     },

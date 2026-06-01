@@ -21,6 +21,7 @@
     "compose:commercial-evidence-records": "node scripts/compose-commercial-evidence-records.mjs",
     "verify:commercial-evidence-records": "node scripts/verify-commercial-evidence-records.mjs",
     "verify:commercial-evidence-records:write": "node scripts/verify-commercial-evidence-records.mjs --write",
+    "verify:owner-evidence-fixtures": "node scripts/verify-owner-evidence-fixture-path.mjs",
     "verify:stripe-test-checkout": "node scripts/verify-stripe-test-checkout.mjs --write",
     "verify:stripe-live-mrr": "node scripts/verify-stripe-live-mrr.mjs --write",
     "verify:production-calibration": "node scripts/verify-production-calibration-run.mjs --write",
