@@ -2,54 +2,74 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  activationRetentionEventCatalog,
+  commercialValidationEvidenceGates,
+  retentionCohortDefinitions,
+} from "@/lib/commercialLaunchReadiness";
 
 export default function ImpactDashboard() {
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Impact Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Measured outcomes and growth metrics from real users.</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Impact Evidence Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
+          Activation, retention, and commercial-validation evidence boundaries as of 2026-05-31.
+          This route does not claim wage gains, placement outcomes, or live revenue.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-6"><div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Users Served</div>
-          <div className="text-3xl font-bold">2,847</div>
-          <Badge variant="secondary">+23% MoM</Badge>
-        </div></Card>
-        <Card className="p-6"><div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Avg Wage Increase</div>
-          <div className="text-3xl font-bold">32%</div>
-        </div></Card>
-        <Card className="p-6"><div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Skill Match Accuracy</div>
-          <div className="text-3xl font-bold">94%</div>
-        </div></Card>
-        <Card className="p-6"><div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Decision Speed-up</div>
-          <div className="text-3xl font-bold">60%</div>
-        </div></Card>
+        {commercialValidationEvidenceGates.map((gate) => (
+          <Card key={gate.gate} className="p-5 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="text-sm font-semibold leading-5">{gate.gate}</div>
+              <Badge variant={gate.status === "local_ready" ? "secondary" : "outline"}>
+                {gate.status.replace("_", " ")}
+              </Badge>
+            </div>
+            <p className="text-xs leading-5 text-muted-foreground">{gate.currentProof}</p>
+            <p className="text-xs leading-5 text-amber-700">{gate.doesNotProve}</p>
+          </Card>
+        ))}
       </div>
 
       <Card className="p-6 space-y-3">
-        <h3 className="font-semibold">Testimonials</h3>
-        <ul className="list-disc pl-6 text-sm text-muted-foreground space-y-1">
-          <li>“Transitioned from marketing to data analytics with 40% salary increase.”</li>
-          <li>“STEM pathways helped me land an AI research internship.”</li>
-          <li>“Reduced skill gaps by 35% across 5,000+ employees.”</li>
-        </ul>
+        <h3 className="font-semibold">Evidence Intake Needed</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          {retentionCohortDefinitions.map((cohort) => (
+            <div key={cohort.cohort} className="rounded-md border p-3">
+              <div className="text-sm font-medium">{cohort.cohort}</div>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">{cohort.successCriterion}</p>
+              <p className="mt-2 text-xs leading-5 text-amber-700">{cohort.remainingAction}</p>
+            </div>
+          ))}
+        </div>
       </Card>
 
       <Card className="p-6 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Funnel Analytics</h3>
+          <h3 className="font-semibold">Instrumented Event Catalog</h3>
           <div className="space-x-2">
-            <Button variant="outline" size="sm">Export CSV</Button>
-            <Button size="sm">Export PDF</Button>
+            <Button variant="outline" size="sm" asChild>
+              <a href="/proof-pack-gallery">Open Proof Pack</a>
+            </Button>
+            <Button size="sm" asChild>
+              <a href="/outcomes">View Telemetry</a>
+            </Button>
           </div>
         </div>
-        <div className="h-40 bg-muted/40 rounded-md flex items-center justify-center text-sm text-muted-foreground">
-          Chart Placeholder
+        <div className="grid gap-3 md:grid-cols-2">
+          {activationRetentionEventCatalog.map((event) => (
+            <div key={event.eventName} className="rounded-md border bg-muted/30 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-xs">{event.eventName}</span>
+                <Badge variant="outline">{event.funnelStage}</Badge>
+              </div>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">{event.currentProof}</p>
+              <p className="mt-2 text-xs leading-5 text-amber-700">{event.remainingAction}</p>
+            </div>
+          ))}
         </div>
       </Card>
     </div>

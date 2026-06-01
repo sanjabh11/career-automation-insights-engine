@@ -27,6 +27,9 @@ const forbiddenPatterns = [
   { id: 'scientific-validation-absolute', pattern: /scientifically validated/i },
   { id: 'commercial-confidence-overclaim', pattern: /95% bounded confidence|96% once|The technology is ready/i },
   { id: 'dead-wef-local-pdf', pattern: /\/(?:public\/)?docs\/WEF_Future_of_Jobs_Report_2025\.pdf/i },
+  { id: 'unsupported-real-user-outcomes', pattern: /Measured outcomes and growth metrics from real users|Avg Wage Increase|Skill Match Accuracy|Decision Speed-up/i },
+  { id: 'public-outcome-reporting-overclaim', pattern: /Export-ready for public reporting|30\/90-day outcomes and performance/i },
+  { id: 'static-correlation-overclaim', pattern: /Correlations computed over rolling 24-month windows|Learning Path Completion ↔ Wage Growth|APO ↔ Median Salary/i },
 ];
 
 function walk(dir, files = []) {

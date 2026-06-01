@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-01T04:31:44.013Z",
+  "generatedAt": "2026-06-01T04:42:06.605Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
-  "requireComplete": false,
+  "requireComplete": true,
   "gates": [
     {
       "id": "phase_a_truth_claims",

@@ -2,7 +2,7 @@
 
 Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through active hook-dependency lint cleanup
+Latest local remediation evidence reviewed: Phase E follow-up through impact/outcomes proof-boundary cleanup
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -26,6 +26,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Phase C browser smoke | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` from Phase E gate run | Pass: 6 tests |
 | Phase D global-English | `npm run verify:global-english` | Pass: 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK mappings, 20 Canada mappings, 20 Australia mappings |
 | Phase E commercial validation instrumentation | `npm run verify:commercial-validation` | Pass: analytics persistence, PostHog identified-only capture, activation events, commercial lead capture event, commercial evidence gates, hidden bootcamp CTA |
+| Impact/outcomes proof-boundary copy | `PLAYWRIGHT_CHANNEL=chrome npx playwright test tests/e2e/proof-boundary-copy.spec.ts --workers=1 --reporter=line`; `npm run verify:claim-boundaries` | Pass: `/impact` no longer renders hard-coded wage, skill-accuracy, decision-speed, or testimonial claims; `/outcomes` no longer renders static correlation/wage-growth claims |
 | TypeScript | `npx tsc --noEmit` from Phase E gate run | Pass |
 | Report evidence | `npm run verify:report-evidence` from Phase E gate run | Pass |
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |

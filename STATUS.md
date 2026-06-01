@@ -20,7 +20,7 @@ Last observed Phase E local baseline:
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
 | `npm run verify:commercial` | Pass | Passed, including the remediation gate ledger, build, and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
-| `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims or dead local WEF PDF path. |
+| `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims, unsupported outcome/correlation copy, or dead local WEF PDF path. |
 | `npm run smoke:skill-adjacency` | Pass | Confirmed `gemini-embedding-001`, 768-dimensional output, and non-empty adjacency smoke result. |
 | `npm run verify:global-english` | Pass | Confirmed 20 sample O*NET occupations mapped to ESCO bridge terms plus UK SOC, Canada NOC, and Australia ANZSCO codes, with non-US wage/outlook adapter-pending disclosure status. |
 | `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles. |
@@ -70,6 +70,7 @@ Ask before:
 - `data/econ_wef.csv` and `public/data/econ_wef.csv` point to the official WEF Future of Jobs 2025 source page rather than a missing local `/public/docs/**` PDF.
 - `src/pages/EconImporter.tsx` uses the official WEF source page as placeholder guidance and has no touched-file lint findings.
 - Rendered route crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans` return 200, render body content, and expose no `/docs/**` anchors.
+- `/impact` and `/outcomes` render as evidence-boundary and telemetry surfaces, not as hard-coded wage, placement, real-user, or correlation proof. `tests/e2e/proof-boundary-copy.spec.ts` checks those legacy overclaims do not render.
 
 ## Phase B Acceptance Evidence
 
