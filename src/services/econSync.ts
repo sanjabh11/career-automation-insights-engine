@@ -19,12 +19,16 @@ export type EconRow = {
   country?: string | null;
   evidence_note?: string | null;
   source_page?: string | null;
-  [k: string]: any;
+  [k: string]: unknown;
+};
+
+type RuntimeWindow = Window & {
+  __CAIE_ENV?: Record<string, string | undefined>;
 };
 
 function getEnv(key: string): string | undefined {
-  const win = typeof window !== 'undefined' ? (window as any) : {};
-  const env = win.__CAIE_ENV || {};
+  const win = typeof window !== 'undefined' ? (window as RuntimeWindow) : undefined;
+  const env = win?.__CAIE_ENV || {};
   // @ts-expect-error import.meta.env is provided by Vite in browser builds.
   return import.meta.env[key] || env[key];
 }
@@ -58,6 +62,5 @@ export async function postEconBatch(
     const txt = await res.text();
     return { ok: false, error: `HTTP ${res.status}: ${txt}` };
   }
-  const json = await res.json();
-  return json;
+  return await res.json() as { ok: boolean; totalUpserted?: number; error?: string };
 }
