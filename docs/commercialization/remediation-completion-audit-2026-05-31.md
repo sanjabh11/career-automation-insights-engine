@@ -2,7 +2,7 @@
 
 Status date: 2026-06-01
 Branch audited: `phase-e-commercial-validation`
-Latest local remediation evidence reviewed: Phase E follow-up through impact/outcomes proof-boundary cleanup
+Latest local remediation evidence reviewed: Phase E follow-up through Stripe test checkout verifier handoff
 
 This audit checks the active remediation objective against current repo and GitHub evidence. It does not mark the remediation goal complete because several acceptance gates require external live evidence that is not present in this workspace.
 
@@ -27,6 +27,7 @@ This audit checks the active remediation objective against current repo and GitH
 | Phase D global-English | `npm run verify:global-english` | Pass: 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK mappings, 20 Canada mappings, 20 Australia mappings |
 | Phase E commercial validation instrumentation | `npm run verify:commercial-validation` | Pass: analytics persistence, PostHog identified-only capture, activation events, commercial lead capture event, commercial evidence gates, hidden bootcamp CTA |
 | Impact/outcomes proof-boundary copy | `PLAYWRIGHT_CHANNEL=chrome npx playwright test tests/e2e/proof-boundary-copy.spec.ts --workers=1 --reporter=line`; `npm run verify:claim-boundaries` | Pass: `/impact` no longer renders hard-coded wage, skill-accuracy, decision-speed, or testimonial claims; `/outcomes` no longer renders static correlation/wage-growth claims |
+| Stripe test checkout verifier | `node scripts/verify-stripe-test-checkout.mjs --write --allow-missing-env`; `npm run verify:commercial-validation`; `npm run verify:remediation-gates` | Pass as repo-side harness: verifier is wired, writes redacted missing-env artifact, and requires owner-supplied test credentials plus `STRIPE_TEST_PRICE_ID` before creating a Checkout Session |
 | TypeScript | `npx tsc --noEmit` from Phase E gate run | Pass |
 | Report evidence | `npm run verify:report-evidence` from Phase E gate run | Pass |
 | Secret hygiene | `npm run verify:secrets` from Phase E gate run | Pass |
@@ -39,7 +40,7 @@ This audit checks the active remediation objective against current repo and GitH
 
 | Gate | Why completion is not proven | Needed evidence |
 | --- | --- | --- |
-| Real Stripe test-mode checkout | Shell has `VITE_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, Supabase URL, anon key, and service-role key unset; current Playwright checkout is a mocked route smoke, not a real Stripe Checkout Session | Owner-provided test secrets plus deployed or local `create-checkout-session` Edge Function run that creates a Stripe test-mode Checkout Session without printing secrets |
+| Real Stripe test-mode checkout | Shell has Stripe/Supabase test credentials and `STRIPE_TEST_PRICE_ID` unset; current Playwright checkout is a mocked route smoke, and `stripe-test-checkout-proof-latest.json` is `skipped_missing_env`, not a real Checkout Session | Owner-provided test secrets plus `npm run verify:stripe-test-checkout` output showing `create-checkout-session` created a Stripe test-mode Checkout Session without printing secrets |
 | Live calibration against production data | Migrations/functions are implemented locally, but no Supabase migration or Edge Function deployment was applied because destructive/deploy steps require approval | Approved migration/deploy, expert-label rows, APO logs, and calibration function run against target project |
 | UK/CA/AU localized wage values | Phase D intentionally shows U.S.-basis disclosure rather than fabricated local wages | Source-dated ONS/Job Bank or StatCan/JSA or ABS adapters with tested joins and visible release metadata |
 | Live MRR > 0 | No live Stripe active subscription, payment transaction, or MRR export is attached | Stripe live-mode and database evidence showing `total_mrr > 0` |

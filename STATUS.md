@@ -26,6 +26,7 @@ Last observed Phase E local baseline:
 | `npm run verify:global-english-sources` | Pass | Network-backed source check returned HTTP 2xx/3xx for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage and outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles. |
 | `npm run verify:commercial-validation` | Pass | Confirmed Phase E activation/retention instrumentation, design-partner checklist, case-study template, commercial evidence gates, and hidden bootcamp CTA boundary. |
 | `npm run verify:live-gate-evidence` | Pass | Confirmed the redacted evidence intake verifier is wired and no local evidence file is currently attached. |
+| `node scripts/verify-stripe-test-checkout.mjs --write --allow-missing-env` | Pass as skipped planning artifact | Wrote a redacted missing-env proof artifact and confirmed the owner-run Stripe test checkout verifier does not print secrets when credentials are absent. A passing checkout still requires owner-supplied test secrets and `STRIPE_TEST_PRICE_ID`. |
 | `npm run verify:remediation-gates` | Pass | Wrote the non-mutating external gate ledger. Current result is `goalComplete=false` because Stripe test-mode checkout, production calibration, authenticated live e2e, live MRR, partners, and outcomes still require owner/live evidence. |
 | `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` | Pass | 6 Playwright smoke tests passed: auth, APO run, Veterans crosswalk, Stripe test-mode checkout, white-label report export, and UK global-English disclosure. |
 
@@ -39,6 +40,7 @@ Last observed Phase E local baseline:
 - Stripe subscription price IDs exist for core tiers; bootcamp checkout is disabled until a real live Stripe price is supplied.
 - Phase E instrumentation prepares activation, retention, design-partner, case-study, and revenue gates. It does not prove live MRR, committed partners, or outcomes until external evidence is attached.
 - `docs/commercialization/live-gate-evidence-template.json` and `npm run verify:live-gate-evidence` define a redacted evidence intake path for owner-held live/manual proof. The default local evidence file is git-ignored and must not contain secrets, raw customer data, partner contact details, or private outcome notes.
+- `npm run verify:stripe-test-checkout` defines the owner-run Stripe test checkout proof path. It signs in a synthetic Supabase user, calls `create-checkout-session`, retrieves the Checkout Session from Stripe, and requires `livemode=false`; current local execution is skipped because owner secrets and `STRIPE_TEST_PRICE_ID` are absent.
 - `docs/commercialization/remediation-external-gates-latest.md` is the current non-mutating ledger for the remaining external gates. It records secret presence by variable name only, reads only redacted evidence metadata when present, and does not apply migrations, deploy functions, create Stripe sessions, or query live customer data.
 
 ## Remediation Phases
@@ -106,5 +108,6 @@ Ask before:
 - APO success emits `activation_apo_result_viewed`, coach sample generation emits `activation_proof_artifact_created`, and commercial lead capture emits `commercial_lead_captured` without including contact email or report HTML.
 - `commercialLaunchReadiness.ts`, `/proof-pack-gallery`, and `docs/commercialization/phase-e-commercial-validation-playbook.md` define activation/retention event contracts, retention cohort definitions, design-partner onboarding steps, case-study capture fields, and explicit commercial validation gates.
 - `docs/commercialization/live-gate-evidence-template.json`, `scripts/lib/liveGateEvidence.mjs`, and `npm run verify:live-gate-evidence` provide a redacted owner-evidence schema for the remaining live/manual gates. The current repo has no attached accepted live evidence file.
+- `scripts/verify-stripe-test-checkout.mjs`, `docs/commercialization/stripe-test-checkout-proof-latest.json`, and `npm run verify:stripe-test-checkout` provide a test-mode Checkout Session harness for the remaining Stripe proof gate. The current artifact is `skipped_missing_env`, not checkout proof.
 - `npm run verify:remediation-gates` now summarizes the entire A-E remediation boundary and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`.
 - Live MRR > $0, at least three committed design partners, and permissioned documented outcomes remain manual/external gates. Local source/test proof must not be described as commercial validation.

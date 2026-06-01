@@ -392,7 +392,7 @@ export const paymentFulfillmentStatusItems: PaymentFulfillmentStatusItem[] = [
   {
     item: "Authenticated subscription checkout",
     currentProof: "Frontend sends Supabase JWT and deployed create-checkout-session verifies caller identity.",
-    remainingAction: "Run a signed-in Stripe test checkout after secrets are confirmed.",
+    remainingAction: "Run npm run verify:stripe-test-checkout after owner supplies a Stripe test Price ID, test-mode Stripe key, Supabase URL/anon key, and synthetic user credentials.",
     status: "done",
     maturity: 4.1,
   },

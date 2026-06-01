@@ -148,6 +148,7 @@ function main() {
   const packageJson = JSON.parse(read('package.json'));
   const packageScripts = packageJson.scripts || {};
   const stripeRuntime = readOptional('src/lib/stripe.ts');
+  const stripeTestCheckoutVerifier = readOptional('scripts/verify-stripe-test-checkout.mjs');
   const calibrationFunction = readOptional('supabase/functions/calibrate-ece/index.ts');
   const completionAudit = readOptional('docs/commercialization/remediation-completion-audit-2026-05-31.md');
   const globalEnglish = readOptional('src/lib/globalEnglishLocalization.ts');
@@ -216,14 +217,30 @@ function main() {
 
   const stripeMissing = missingGroups(presentEnvNames, [
     { label: 'STRIPE_SECRET_KEY', aliases: ['STRIPE_SECRET_KEY'] },
+    { label: 'STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID', aliases: ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID'] },
     { label: 'SUPABASE_URL or VITE_SUPABASE_URL', aliases: ['SUPABASE_URL', 'VITE_SUPABASE_URL'] },
     {
       label: 'SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY',
       aliases: ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY'],
     },
-    { label: 'SUPABASE_SERVICE_ROLE_KEY', aliases: ['SUPABASE_SERVICE_ROLE_KEY'] },
+    {
+      label: 'LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL',
+      aliases: ['LIVE_SUPABASE_TEST_USER_EMAIL', 'STRIPE_TEST_USER_EMAIL'],
+    },
+    {
+      label: 'LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD',
+      aliases: ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD'],
+    },
   ]);
   const stripeLocalReady =
+    packageScripts['verify:stripe-test-checkout'] === 'node scripts/verify-stripe-test-checkout.mjs --write' &&
+    exists('scripts/verify-stripe-test-checkout.mjs') &&
+    containsAll(stripeTestCheckoutVerifier, [
+      'create-checkout-session',
+      'livemode=false',
+      'STRIPE_TEST_PRICE_ID',
+      'LIVE_SUPABASE_TEST_USER_EMAIL',
+    ]) &&
     exists('supabase/functions/create-checkout-session/index.ts') &&
     containsAll(stripeRuntime, ['checkoutStatus: \'hidden_pending_live_price\'', 'stripePriceId: undefined']);
 
@@ -323,9 +340,9 @@ function main() {
       'Real Stripe test-mode checkout',
       statusForExternalGate(stripeMissing, stripeLocalReady),
       stripeMissing.length
-        ? `Local checkout code is ready, but required secret/env names are absent: ${stripeMissing.join(', ')}.`
-        : 'Required secret/env names are present; run a dedicated owner-approved Stripe test-mode checkout proof without printing secrets.',
-      'Owner-provided Stripe/Supabase test credentials and a successful Checkout Session from `create-checkout-session`.',
+        ? `Local checkout code and owner-run verifier are ready, but required secret/env names are absent: ${stripeMissing.join(', ')}.`
+        : 'Required secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.',
+      'Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.',
       {
         sourceBoundary: 'owner credential gate',
         doesNotProve: ['Live revenue', 'MRR', 'payment fulfillment in live mode'],

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T04:40:49.927Z",
+  "generatedAt": "2026-06-01T04:49:47.700Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -701,6 +701,10 @@
     {
       "name": "verify:sources",
       "command": "node scripts/verify-source-manifest.mjs --write"
+    },
+    {
+      "name": "verify:stripe-test-checkout",
+      "command": "node scripts/verify-stripe-test-checkout.mjs --write"
     },
     {
       "name": "verify:supabase-function-governance",

@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-06-01T04:50:22.536Z",
+  "target": null,
+  "status": "skipped_missing_env",
+  "confidence": "bounded_stripe_test_checkout",
+  "caveat": "This verifier creates a Stripe test-mode Checkout Session through the deployed create-checkout-session Supabase Edge Function and retrieves the session from Stripe to confirm livemode=false. It does not complete payment, prove live revenue, prove webhook fulfillment, or prove MRR.",
+  "doesNotProve": [
+    "Live revenue",
+    "MRR",
+    "Successful payment method collection",
+    "Webhook fulfillment",
+    "Report-credit balance mutation",
+    "Bootcamp demand"
+  ],
+  "manualInterventionIfSkipped": [
+    "Create or choose a Stripe test-mode Price object and set STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID.",
+    "Provide a Stripe test-mode secret key via STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.",
+    "Provide a dedicated Supabase Auth synthetic test user via LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD.",
+    "Confirm the deployed create-checkout-session function has its own STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY secrets configured.",
+    "Run npm run verify:stripe-test-checkout. Do not paste secret values into chat or tracked files."
+  ],
+  "checks": [
+    {
+      "id": "stripe-test-checkout-env",
+      "label": "Stripe test checkout credentials are configured",
+      "passed": false,
+      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD, STRIPE_SECRET_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
+    }
+  ],
+  "missingEnv": [
+    "SUPABASE_URL or VITE_SUPABASE_URL",
+    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+    "LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL",
+    "LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
+  ]
+}

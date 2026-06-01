@@ -19,6 +19,23 @@ Use `docs/commercialization/live-gate-evidence-template.json` only as a schema t
 
 The evidence file must contain artifact hashes and summary fields only. Do not store Stripe secret keys, Supabase service-role keys, raw Checkout Session payloads, customer emails, auth tokens, partner contact details, or private outcome notes in the repository. The verifier rejects high-confidence secret patterns and only upgrades a live/manual gate when the gate-specific redacted evidence item passes validation.
 
+## Stripe Test Checkout Proof
+
+Run `npm run verify:stripe-test-checkout` only with owner-controlled test credentials. The command signs in a dedicated synthetic Supabase Auth user, calls the deployed `create-checkout-session` Edge Function, retrieves the resulting Checkout Session from Stripe, and requires Stripe to report `livemode=false`. It writes `docs/commercialization/stripe-test-checkout-proof-latest.json` with hashes and redacted metadata only.
+
+Required local or CI secret names:
+
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL` or `VITE_SUPABASE_URL` | Target Supabase project URL |
+| `SUPABASE_ANON_KEY` or `VITE_SUPABASE_ANON_KEY` | Public key used to sign in the synthetic user |
+| `LIVE_SUPABASE_TEST_USER_EMAIL` or `STRIPE_TEST_USER_EMAIL` | Dedicated synthetic test user email |
+| `LIVE_SUPABASE_TEST_USER_PASSWORD` or `STRIPE_TEST_USER_PASSWORD` | Dedicated synthetic test user password |
+| `STRIPE_SECRET_KEY` | Stripe test-mode secret or restricted key; live-mode keys are rejected |
+| `STRIPE_TEST_PRICE_ID` or `APO_STRIPE_TEST_PRICE_ID` | Stripe test-mode Price ID used for the Checkout Session |
+
+Optional variables: `CHECKOUT_TEST_ORIGIN`, `STRIPE_TEST_TIER`, and `STRIPE_TEST_BILLING_PERIOD`. A passing test-mode Checkout Session still does not prove live revenue, webhook fulfillment, report-credit mutation, MRR, or bootcamp demand.
+
 ## Activation And Retention Events
 
 Use PostHog funnels and Supabase `analytics_events` exports with the same event contract:

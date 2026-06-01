@@ -1,6 +1,6 @@
 # Remediation External Gates
 
-Generated: 2026-06-01T04:42:06.605Z
+Generated: 2026-06-01T04:50:22.469Z
 Branch: `phase-e-commercial-validation`
 Goal complete: no
 
@@ -14,7 +14,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 | Phase D global-English disclosure/mapping/adapter layer | satisfied_by_mapping_adapter_and_us_basis_disclosure | Global-English source registry, sample crosswalks, static verifier, source-fetch verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present. | If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display. |
 | Phase E activation/retention/commercial validation instrumentation | locally_proven_with_scope_limit | Commercial validation gates, activation/retention catalog, onboarding checklist, and case-study template are implemented. | Live MRR, committed partners, and permissioned outcomes remain external evidence. |
 | Redacted live-gate evidence intake verifier | locally_proven | A non-secret redacted evidence schema, template, and verifier are wired for the remaining live/manual gates. | Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`. |
-| Real Stripe test-mode checkout | blocked_missing_owner_secret_or_live_evidence | Local checkout code is ready, but required secret/env names are absent: STRIPE_SECRET_KEY, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY. | Owner-provided Stripe/Supabase test credentials and a successful Checkout Session from `create-checkout-session`. |
+| Real Stripe test-mode checkout | blocked_missing_owner_secret_or_live_evidence | Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_SECRET_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD. | Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact. |
 | Production calibration run | blocked_missing_owner_secret_or_live_evidence | Calibration code/artifacts are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY. | Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project. |
 | Authenticated live artifact e2e | blocked_missing_owner_secret_or_live_evidence | Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD. | Passing live authenticated synthetic user run for artifact save/delete and deletion receipts. |
 | Live MRR greater than zero | manual_external_evidence_required | No live Stripe subscription, payment transaction, or MRR export is stored in this repo. | Stripe live-mode and database evidence showing `total_mrr > 0`. |
@@ -23,7 +23,7 @@ This artifact is a non-mutating readiness ledger for the remaining APO Dashboard
 
 ## Remaining Manual Evidence
 
-- Real Stripe test-mode checkout: Owner-provided Stripe/Supabase test credentials and a successful Checkout Session from `create-checkout-session`.
+- Real Stripe test-mode checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.
 - Production calibration run: Approved Supabase migration/deploy, expert-label rows, APO logs, and `calibrate-ece` run output from the target project.
 - Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.
 - Live MRR greater than zero: Stripe live-mode and database evidence showing `total_mrr > 0`.
