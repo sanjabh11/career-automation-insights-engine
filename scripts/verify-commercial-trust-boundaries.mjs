@@ -462,6 +462,7 @@ const checks = [
       /"verify:remediation-gates": "node scripts\/verify-remediation-external-gates\.mjs"/,
       /"compose:live-gate-evidence": "node scripts\/compose-live-gate-evidence\.mjs"/,
       /"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/,
+      /"compose:commercial-evidence-records": "node scripts\/compose-commercial-evidence-records\.mjs"/,
       /"verify:data-provenance": "node scripts\/verify-commercial-data-provenance\.mjs --write"/,
       /"verify:onet-task-ratings": "node scripts\/verify-onet-task-ratings-ingest\.mjs"/,
       /"verify:onet-task-ratings-live": "node scripts\/verify-onet-task-ratings-live\.mjs --write"/,
@@ -552,7 +553,35 @@ const checks = [
     file: '.gitignore',
     expected: [
       /docs\/commercialization\/live-gate-evidence\.local\.json/,
+      /docs\/commercialization\/commercial-evidence-intake\.local\.json/,
       /docs\/commercialization\/commercial-evidence-records\.local\.json/,
+    ],
+  },
+  {
+    id: 'commercial-evidence-records-composer',
+    file: 'scripts/compose-commercial-evidence-records.mjs',
+    expected: [
+      /commercial-evidence-intake\.local\.json/,
+      /COMMERCIAL_EVIDENCE_HASH_SALT/,
+      /partnerRef/,
+      /outcomeRef/,
+      /validateCommercialEvidence/,
+      /DEFAULT_INPUT_PATH/,
+      /--require-all/,
+      /--allow-partial/,
+      /hashSalt/,
+    ],
+  },
+  {
+    id: 'commercial-evidence-intake-template',
+    file: 'docs/commercialization/commercial-evidence-intake-template.json',
+    expected: [
+      /2026-06-01\.apo-commercial-evidence-intake\.v1/,
+      /hashSalt/,
+      /partnerRef/,
+      /outcomeRef/,
+      /commercial-evidence-intake\.local\.json/,
+      /doesNotProve/,
     ],
   },
   {

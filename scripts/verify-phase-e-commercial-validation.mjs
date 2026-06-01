@@ -31,7 +31,9 @@ const files = {
   liveGateEvidenceVerifier: read('scripts/verify-live-gate-evidence.mjs'),
   liveGateEvidenceComposer: read('scripts/compose-live-gate-evidence.mjs'),
   liveGateEvidenceLibrary: read('scripts/lib/liveGateEvidence.mjs'),
+  commercialEvidenceRecordsComposer: read('scripts/compose-commercial-evidence-records.mjs'),
   commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
+  commercialEvidenceIntakeTemplate: read('docs/commercialization/commercial-evidence-intake-template.json'),
   commercialEvidenceRecordsTemplate: read('docs/commercialization/commercial-evidence-records-template.json'),
   stripeTestCheckoutVerifier: read('scripts/verify-stripe-test-checkout.mjs'),
   stripeLiveMrrVerifier: read('scripts/verify-stripe-live-mrr.mjs'),
@@ -107,6 +109,7 @@ assert(
 
 assert(/"verify:live-gate-evidence": "node scripts\/verify-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence verifier script must be wired');
 assert(/"compose:live-gate-evidence": "node scripts\/compose-live-gate-evidence\.mjs"/.test(files.packageJson), 'live-gate evidence composer script must be wired');
+assert(/"compose:commercial-evidence-records": "node scripts\/compose-commercial-evidence-records\.mjs"/.test(files.packageJson), 'commercial evidence records composer script must be wired');
 assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records verifier script must be wired');
 assert(/"verify:stripe-test-checkout": "node scripts\/verify-stripe-test-checkout\.mjs --write"/.test(files.packageJson), 'Stripe test checkout verifier script must be wired');
 assert(/"verify:stripe-live-mrr": "node scripts\/verify-stripe-live-mrr\.mjs --write"/.test(files.packageJson), 'Stripe live MRR verifier script must be wired');
@@ -119,6 +122,10 @@ assert(/production-calibration-proof-latest\.json/.test(files.liveGateEvidenceCo
 assert(/live-auth-e2e-proof-latest\.json/.test(files.liveGateEvidenceComposer), 'live-gate evidence composer must consume authenticated live e2e proof artifacts');
 assert(/future-dated/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject future-dated metadata');
 assert(/later than asOf/.test(files.liveGateEvidenceLibrary), 'live-gate evidence verifier must reject observedAt later than asOf');
+assert(/COMMERCIAL_EVIDENCE_HASH_SALT/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must support owner-held hash salt env');
+assert(/validateCommercialEvidence/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must validate composed records');
+assert(/partnerRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held partner refs');
+assert(/outcomeRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held outcome refs');
 assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');
 assert(/documented_outcomes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover documented outcomes');
 assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted partner records');
@@ -129,7 +136,10 @@ assert(/future-dated/.test(files.commercialEvidenceRecordsVerifier), 'commercial
 assert(/later than asOf/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject record dates later than asOf');
 assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include design partner commitments');
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
+assert(/2026-06-01\.apo-commercial-evidence-intake\.v1/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must declare the expected schema version');
+assert(/hashSalt/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include hash salt guidance');
 assert(/docs\/commercialization\/live-gate-evidence\.local\.json/.test(files.gitignore), 'owner-held live evidence file must be gitignored');
+assert(/docs\/commercialization\/commercial-evidence-intake\.local\.json/.test(files.gitignore), 'owner-held commercial intake file must be gitignored');
 assert(/docs\/commercialization\/commercial-evidence-records\.local\.json/.test(files.gitignore), 'owner-held commercial evidence records file must be gitignored');
 assert(/--live-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit live evidence path');
 assert(/--commercial-evidence/.test(files.remediationGatesVerifier), 'remediation gate verifier must accept explicit commercial evidence path');

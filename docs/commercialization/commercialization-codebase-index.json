@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T08:15:57.741Z",
+  "generatedAt": "2026-06-01T08:32:41.926Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -569,6 +569,10 @@
     {
       "name": "build:dev",
       "command": "vite build --mode development"
+    },
+    {
+      "name": "compose:commercial-evidence-records",
+      "command": "node scripts/compose-commercial-evidence-records.mjs"
     },
     {
       "name": "compose:live-gate-evidence",

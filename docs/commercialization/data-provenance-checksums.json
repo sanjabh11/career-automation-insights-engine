@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T08:16:07.513Z",
+  "generatedAt": "2026-06-01T08:32:43.734Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -695,6 +695,57 @@
       "passed": true
     },
     {
+      "id": "commercial-evidence-records-composer",
+      "label": "Commercial evidence records composer",
+      "path": "scripts/compose-commercial-evidence-records.mjs",
+      "type": "commercial-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "commercial-evidence-intake.local.json",
+        "COMMERCIAL_EVIDENCE_HASH_SALT",
+        "partnerRef",
+        "outcomeRef",
+        "validateCommercialEvidence",
+        "DEFAULT_INPUT_PATH",
+        "--require-all"
+      ],
+      "caveat": "Composes salted hashes and redacted partner/outcome metadata from owner-held local intake; it does not store raw names, contacts, contracts, private notes, quotes, customer data, or the hash salt.",
+      "bytes": 11945,
+      "rows": 263,
+      "sha256": "9d121e2518e464eeb37ad0783790df180ce8608dfacdb45f7cfec1a7e7d3ee20",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-evidence-intake-template",
+      "label": "Commercial evidence intake template",
+      "path": "docs/commercialization/commercial-evidence-intake-template.json",
+      "type": "commercial-template",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "2026-06-01.apo-commercial-evidence-intake.v1",
+        "hashSalt",
+        "partnerRef",
+        "outcomeRef",
+        "commercial-evidence-intake.local.json",
+        "doesNotProve"
+      ],
+      "caveat": "Template documents local intake fields only; real partner refs, outcome refs, and hash salts must remain owner-held and untracked.",
+      "bytes": 1592,
+      "rows": 43,
+      "sha256": "228e202f7648338aee71476579f9e9ed765a13425d273be2b67603a33cbf1c20",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "commercial-live-auth-e2e-verifier",
       "label": "Authenticated live resume proof artifact e2e verifier",
       "path": "scripts/verify-commercial-live-auth-e2e.mjs",
@@ -1186,7 +1237,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "892735352253b9a25517f40c7f99f3ecd735bf12001e96a6ee497bacbe7de91a",
+      "sha256": "639f183a26f0b5ca5defa55cc4e95649a4e9b6d2983a0994e72fe93b55a11af3",
       "failures": [],
       "passed": true
     },
