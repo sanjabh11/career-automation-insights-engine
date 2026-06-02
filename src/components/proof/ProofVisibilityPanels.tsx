@@ -260,6 +260,21 @@ export function RegionalDataBadge({
         <p className="text-xs">
           <strong>Source date:</strong> {GLOBAL_ENGLISH_SOURCE_DATE}
         </p>
+        {disclosure.localValue ? (
+          <>
+            <p className="text-xs">
+              <strong>Local wage:</strong> {disclosure.localValue.wage.label}.{" "}
+              {disclosure.localValue.wage.suppressionState.replace(/_/g, " ")}.
+            </p>
+            <p className="text-xs">
+              <strong>Local outlook:</strong> {disclosure.localValue.outlook.label}.{" "}
+              {disclosure.localValue.outlook.suppressionState.replace(/_/g, " ")}.
+            </p>
+            <p className="text-xs md:col-span-2">
+              <strong>Value boundary:</strong> {disclosure.localValue.displayBoundary}
+            </p>
+          </>
+        ) : null}
         {disclosure.adapter ? (
           <p className="text-xs md:col-span-2">
             <strong>Adapter:</strong> {REGIONAL_WAGE_OUTLOOK_ADAPTERS[disclosure.adapter.region].label}.{" "}

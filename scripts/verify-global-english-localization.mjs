@@ -25,6 +25,11 @@ const officialSourceLinks = [
     url: 'https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2',
   },
   {
+    id: 'ons-ashe-2025-provisional-table-2',
+    name: 'ONS ASHE 2025 provisional Table 2',
+    url: 'https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2/2025provisional',
+  },
+  {
     id: 'statcan-noc-2021',
     name: 'Statistics Canada NOC 2021',
     url: 'https://www.statcan.gc.ca/en/subjects/standard/noc/2021/indexV1',
@@ -35,9 +40,19 @@ const officialSourceLinks = [
     url: 'https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology',
   },
   {
+    id: 'jobbank-wage-open-data-2025',
+    name: 'Canada Job Bank 2025 wage open data',
+    url: 'https://open.canada.ca/data/dataset/adad580f-76b0-4502-bd05-20c125de9116',
+  },
+  {
     id: 'jobbank-outlooks-methodology',
     name: 'Canada Job Bank outlook methodology',
     url: 'https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology',
+  },
+  {
+    id: 'jobbank-outlook-open-data-2025-2027',
+    name: 'Canada Job Bank 2025-2027 outlook open data',
+    url: 'https://open.canada.ca/data/dataset/b0e112e9-cf53-4e79-8838-23cd98debe5b',
   },
   {
     id: 'abs-anzsco-2022',
@@ -53,6 +68,11 @@ const officialSourceLinks = [
     id: 'jsa-occupation-profiles',
     name: 'Jobs and Skills Australia occupation profiles',
     url: 'https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations',
+  },
+  {
+    id: 'jsa-occupation-profiles-february-2026',
+    name: 'Jobs and Skills Australia February 2026 occupation profiles',
+    url: 'https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles',
   },
 ];
 
@@ -89,24 +109,37 @@ const ukCount = count(/ukSoc2020: \{ code: '[^']+'/g);
 const caCount = count(/noc2021: \{ code: '[^']+'/g);
 const auCount = count(/anzsco2022: \{ code: '[^']+'/g);
 const adapterCount = count(/valueStatus: 'source_registered_adapter_pending',/g);
+const ukLocalValueCount = count(/medianAnnualGbp: \d+/g);
+const caLocalValueCount = count(/medianHourlyCad: \d+/g);
+const auLocalValueCount = count(/medianWeeklyAud: \d+/g);
 
 assert(source.includes("GLOBAL_ENGLISH_SOURCE_DATE = '2026-05-31'"), 'global-English source date must be explicit');
 assert(source.includes('https://esco.ec.europa.eu/en/about-esco/escopedia/escopedia/esco-api'), 'ESCO API source is required');
 assert(source.includes('https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2'), 'ONS ASHE source is required');
+assert(source.includes('https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation2digitsocashetable2/2025provisional'), 'ONS ASHE 2025 provisional source is required');
 assert(source.includes('https://www.statcan.gc.ca/en/subjects/standard/noc/2021/indexV1'), 'Statistics Canada NOC source is required');
 assert(source.includes('https://www.jobbank.gc.ca/trend-analysis/search-wages/wage-methodology'), 'Canada Job Bank wage methodology source is required');
+assert(source.includes('https://open.canada.ca/data/dataset/adad580f-76b0-4502-bd05-20c125de9116'), 'Canada Job Bank 2025 wage open data source is required');
 assert(source.includes('https://www.jobbank.gc.ca/trend-analysis/search-job-outlooks/outlooks-methodology'), 'Canada Job Bank outlook methodology source is required');
+assert(source.includes('https://open.canada.ca/data/dataset/b0e112e9-cf53-4e79-8838-23cd98debe5b'), 'Canada Job Bank 2025-2027 outlook open data source is required');
 assert(source.includes('https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations/2022'), 'ABS ANZSCO source is required');
 assert(source.includes('https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024'), 'ABS OSCA 2024 source is required');
 assert(source.includes('https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles/occupations'), 'JSA occupation profiles source is required');
+assert(source.includes('https://www.jobsandskills.gov.au/data/occupation-and-industry-profiles'), 'JSA February 2026 occupation profiles source is required');
 assert(socCount >= 20, `expected at least 20 sample O*NET occupations, found ${socCount}`);
 assert(escoCount >= 20, `expected at least 20 ESCO bridge rows, found ${escoCount}`);
 assert(ukCount >= 20, `expected at least 20 UK SOC sample mappings, found ${ukCount}`);
 assert(caCount >= 20, `expected at least 20 Canada NOC sample mappings, found ${caCount}`);
 assert(auCount >= 20, `expected at least 20 Australia ANZSCO sample mappings, found ${auCount}`);
 assert(adapterCount >= 3, `expected at least 3 regional wage/outlook adapters, found ${adapterCount}`);
+assert(ukLocalValueCount >= 6, `expected at least 6 UK ASHE two-digit local wage rows, found ${ukLocalValueCount}`);
+assert(caLocalValueCount >= 20, `expected at least 20 Canada Job Bank local wage rows, found ${caLocalValueCount}`);
+assert(auLocalValueCount >= 20, `expected at least 20 Australia JSA local wage rows, found ${auLocalValueCount}`);
 assert(source.includes('REGIONAL_WAGE_OUTLOOK_ADAPTERS'), 'regional wage/outlook adapter registry is required');
-assert(source.includes("wageStatus: adapter?.valueStatus ?? 'not_integrated_disclosure_required'"), 'non-US wage/outlook status must expose adapter pending state until localized values are joined');
+assert(source.includes('getRegionalLocalizedLaborMarketValue'), 'regional localized labor-market value resolver is required');
+assert(source.includes("wageStatus: localValue ? 'localized_value_available'"), 'non-US wage/outlook status must expose localized value availability when source rows are joined');
+assert(source.includes('published_parent_group_value'), 'regional local values must mark parent-group values rather than implying exact occupation-level values');
+assert(source.includes('geography_required'), 'Canada outlook must preserve the geography-required state rather than inferring a national outlook');
 assert(source.includes('suppressionBoundary'), 'regional adapters must preserve suppression and quality boundaries');
 assert(source.includes('releaseMetadataRequired'), 'regional adapters must require release metadata before local values display');
 assert(source.includes('OSCA transition notes'), 'Australia adapter must preserve the ANZSCO-to-OSCA transition boundary');
@@ -121,6 +154,7 @@ assert(analysis.includes('Adapter:'), 'OccupationAnalysis must show regional ada
 assert(analysis.includes('Join requirement:'), 'OccupationAnalysis must show regional adapter join requirements');
 assert(analysis.includes('Local values:'), 'OccupationAnalysis must show explicit local wage/outlook value availability');
 assert(analysis.includes('Local wage/outlook fallback:'), 'OccupationAnalysis must explain unavailable/suppressed local values');
+assert(analysis.includes('RegionalDataBadge'), 'OccupationAnalysis must render the regional data badge');
 
 const result = {
   ok: true,
@@ -131,7 +165,10 @@ const result = {
   caMappings: caCount,
   auMappings: auCount,
   wageOutlookAdapters: adapterCount,
-  wageOutlookStatus: 'non-US displayed as U.S.-basis with explicit unavailable/suppressed local fallback until source-dated joins pass validation',
+  ukAsheLocalValueGroups: ukLocalValueCount,
+  canadaJobBankLocalValueRows: caLocalValueCount,
+  australiaJsaLocalValueRows: auLocalValueCount,
+  wageOutlookStatus: 'non-US sample occupations resolve to source-dated local wage rows; Canada outlook stays geography-required; UK/AU parent-group boundaries stay explicit',
 };
 
 if (withSourceFetch) {
