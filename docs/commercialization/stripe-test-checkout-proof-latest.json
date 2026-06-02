@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T07:53:46.644Z",
+  "generatedAt": "2026-06-02T11:27:26.752Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
   "status": "failed_non_test_stripe_key",
   "confidence": "bounded_stripe_test_checkout",
@@ -14,7 +14,7 @@
   ],
   "manualInterventionIfSkipped": [
     "Create or choose a Stripe test-mode Price object and set STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID.",
-    "Provide a Stripe test-mode secret key via STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.",
+    "Provide a Stripe test-mode secret or restricted key via STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.",
     "Provide a dedicated Supabase Auth synthetic test user via LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD.",
     "Confirm the deployed create-checkout-session function has its own STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY secrets configured.",
     "Run npm run verify:stripe-test-checkout. Do not paste secret values into chat or tracked files."
@@ -24,7 +24,7 @@
       "id": "stripe-test-key-mode",
       "label": "Stripe key is test-mode only",
       "passed": false,
-      "message": "STRIPE_SECRET_KEY is live-mode; this verifier only accepts Stripe test-mode keys."
+      "message": "Stripe test checkout key is live-mode; this verifier only accepts STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY when it is test-mode."
     }
   ]
 }

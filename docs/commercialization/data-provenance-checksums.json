@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T07:20:36.242Z",
+  "generatedAt": "2026-06-02T11:38:36.047Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -788,9 +788,9 @@
         "--require-ready"
       ],
       "caveat": "Creates or inspects ignored local scaffolding for owner-held evidence collection; placeholders, unloaded env values, and local templates do not satisfy final proof gates.",
-      "bytes": 10852,
-      "rows": 289,
-      "sha256": "d9e6f4c3c4f8202bda219dbb9dd949e57cfb980d250690ae0fafc8af5a2cb36a",
+      "bytes": 12197,
+      "rows": 320,
+      "sha256": "8c6f6b5b07c563aa7bd51f7d33e8c87486b0fe6fa2bd902f673db9d996698eec",
       "failures": [],
       "passed": true
     },
@@ -1114,9 +1114,9 @@
         "do not certify legal compliance, WCAG conformance, or employment-selection validity"
       ],
       "caveat": "Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.",
-      "bytes": 17907,
-      "rows": 364,
-      "sha256": "277c33f59f2892efc467656a1f49ea8ea26cf5ee869303bd3ca8eefe4e868f89",
+      "bytes": 18077,
+      "rows": 367,
+      "sha256": "f5b915a20175173cc9839b186b7f8dcf12a55d2715e45ba8fd760b44a2412721",
       "failures": [],
       "passed": true
     },
@@ -1346,7 +1346,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 6105,
       "rows": 83,
-      "sha256": "3bceb85637e3d29b2763f66a590f1bf9c3df52457d68f4af4befc1a0d6184293",
+      "sha256": "ce84190f1d047079cb94d62de618ecc1bc73912994f6d9f0b894f3906e39b9fe",
       "failures": [],
       "passed": true
     },

@@ -84,8 +84,10 @@ function result(id, label, passed, message, evidence = {}) {
 
 function validateTestSecretKey(secretKey) {
   if (/^(sk|rk)_test_/.test(secretKey)) return null;
-  if (/^(sk|rk)_live_/.test(secretKey)) return 'STRIPE_SECRET_KEY is live-mode; this verifier only accepts Stripe test-mode keys.';
-  return 'STRIPE_SECRET_KEY must be a Stripe test-mode secret or restricted key.';
+  if (/^(sk|rk)_live_/.test(secretKey)) {
+    return 'Stripe test checkout key is live-mode; this verifier only accepts STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY when it is test-mode.';
+  }
+  return 'Stripe test checkout key must be a Stripe test-mode secret or restricted key.';
 }
 
 async function retrieveStripeCheckoutSession(secretKey, sessionId) {
@@ -114,7 +116,7 @@ async function main() {
   const anonKey = resolveEnv(localEnv, ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY']);
   const testEmail = resolveEnv(localEnv, ['LIVE_SUPABASE_TEST_USER_EMAIL', 'STRIPE_TEST_USER_EMAIL']);
   const testPassword = resolveEnv(localEnv, ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD']);
-  const stripeSecretKey = resolveEnv(localEnv, ['STRIPE_SECRET_KEY']);
+  const stripeSecretKey = resolveEnv(localEnv, ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY']);
   const priceId = resolveEnv(localEnv, ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID']);
   const origin = resolveEnv(localEnv, ['CHECKOUT_TEST_ORIGIN', 'APP_URL', 'VITE_APP_URL']) || DEFAULT_ORIGIN;
   const tier = resolveEnv(localEnv, ['STRIPE_TEST_TIER']) || 'defender';
@@ -125,7 +127,7 @@ async function main() {
     ['SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY', anonKey],
     ['LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL', testEmail],
     ['LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD', testPassword],
-    ['STRIPE_SECRET_KEY', stripeSecretKey],
+    ['STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY or STRIPE_SECRET_KEY', stripeSecretKey],
     ['STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID', priceId],
   ].filter(([, value]) => !value);
 
@@ -146,7 +148,7 @@ async function main() {
     ],
     manualInterventionIfSkipped: [
       'Create or choose a Stripe test-mode Price object and set STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID.',
-      'Provide a Stripe test-mode secret key via STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.',
+      'Provide a Stripe test-mode secret or restricted key via STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.',
       'Provide a dedicated Supabase Auth synthetic test user via LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD.',
       'Confirm the deployed create-checkout-session function has its own STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY secrets configured.',
       'Run npm run verify:stripe-test-checkout. Do not paste secret values into chat or tracked files.',

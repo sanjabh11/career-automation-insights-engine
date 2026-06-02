@@ -19,7 +19,7 @@ const liveProofGroups = [
       ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY'],
       ['LIVE_SUPABASE_TEST_USER_EMAIL', 'STRIPE_TEST_USER_EMAIL'],
       ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD'],
-      ['STRIPE_SECRET_KEY'],
+      ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'],
       ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID'],
     ],
   },
@@ -100,6 +100,13 @@ function isBlankOrPlaceholderValue(value) {
   );
 }
 
+function stripeKeyMode(value) {
+  if (!value) return 'missing';
+  if (/^(sk|rk)_test_/.test(String(value))) return 'test';
+  if (/^(sk|rk)_live_/.test(String(value))) return 'live';
+  return 'unknown';
+}
+
 function readEnvFileStatus(envPath) {
   const absolutePath = resolvePath(envPath);
   if (!fs.existsSync(absolutePath)) {
@@ -129,6 +136,7 @@ function groupStatus(group, envFileAssignments) {
   const presentGroups = [];
   const loadFromEnvFile = [];
   const blankOrPlaceholderEnvFile = [];
+  const invalidKeyModeGroups = [];
 
   for (const alternatives of group.requiredAnyOf) {
     const processMatch = alternatives.find((key) => !isBlankOrPlaceholderValue(process.env[key]));
@@ -154,13 +162,35 @@ function groupStatus(group, envFileAssignments) {
     missingGroups.push(alternatives);
   }
 
+  if (group.id === 'stripe_test_checkout') {
+    const stripeKeyAlternatives = ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'];
+    const processKey = stripeKeyAlternatives.find((key) => !isBlankOrPlaceholderValue(process.env[key]));
+    const fileKey = stripeKeyAlternatives.find((key) => {
+      return envFileAssignments.has(key) && !isBlankOrPlaceholderValue(envFileAssignments.get(key));
+    });
+    const resolvedKey = processKey || fileKey;
+    const resolvedValue = processKey ? process.env[processKey] : envFileAssignments.get(fileKey);
+    if (resolvedKey && stripeKeyMode(resolvedValue) !== 'test') {
+      invalidKeyModeGroups.push('STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY must be test-mode');
+    }
+  }
+
   return {
     id: group.id,
     command: group.command,
-    ready: missingGroups.length === 0 && blankOrPlaceholderEnvFile.length === 0 && loadFromEnvFile.length === 0,
-    envFileCompleteButNotLoaded: missingGroups.length === 0 && blankOrPlaceholderEnvFile.length === 0 && loadFromEnvFile.length > 0,
+    ready:
+      missingGroups.length === 0 &&
+      blankOrPlaceholderEnvFile.length === 0 &&
+      invalidKeyModeGroups.length === 0 &&
+      loadFromEnvFile.length === 0,
+    envFileCompleteButNotLoaded:
+      missingGroups.length === 0 &&
+      blankOrPlaceholderEnvFile.length === 0 &&
+      invalidKeyModeGroups.length === 0 &&
+      loadFromEnvFile.length > 0,
     missingGroups,
     blankOrPlaceholderEnvFile,
+    invalidKeyModeGroups,
     presentGroups,
     loadFromEnvFile,
   };
@@ -176,7 +206,7 @@ SUPABASE_URL=
 SUPABASE_ANON_KEY=
 LIVE_SUPABASE_TEST_USER_EMAIL=
 LIVE_SUPABASE_TEST_USER_PASSWORD=
-STRIPE_SECRET_KEY=
+STRIPE_TEST_SECRET_KEY=
 STRIPE_TEST_PRICE_ID=
 STRIPE_LIVE_SECRET_KEY=
 COMMERCIAL_EVIDENCE_HASH_SALT=
@@ -271,6 +301,9 @@ function main() {
         }
         if (item.blankOrPlaceholderEnvFile.length > 0) {
           needed.push(`fill ${item.blankOrPlaceholderEnvFile.join(', ')}`);
+        }
+        if (item.invalidKeyModeGroups.length > 0) {
+          needed.push(`replace ${item.invalidKeyModeGroups.join(', ')}`);
         }
         if (item.loadFromEnvFile.length > 0) {
           needed.push(`load ${item.loadFromEnvFile.join(', ')}`);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T07:20:37.819Z",
+  "generatedAt": "2026-06-02T11:38:39.127Z",
   "branch": "phase-e-commercial-validation",
   "goalComplete": false,
   "requireComplete": false,
@@ -68,8 +68,8 @@
     {
       "id": "real_stripe_test_checkout",
       "label": "Real Stripe test-mode checkout",
-      "status": "ready_for_owner_live_run",
-      "evidence": "Required secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.",
+      "status": "blocked_non_test_stripe_key",
+      "evidence": "Required secret/env names are present, but the resolved Stripe checkout key is not test-mode. Add `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`, or temporarily use a test-mode `STRIPE_SECRET_KEY` for this proof run.",
       "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.",
       "sourceBoundary": "owner credential gate",
       "doesNotProve": [

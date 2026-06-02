@@ -73,7 +73,7 @@ Required local or CI secret names:
 | `SUPABASE_ANON_KEY` or `VITE_SUPABASE_ANON_KEY` | Public key used to sign in the synthetic user |
 | `LIVE_SUPABASE_TEST_USER_EMAIL` or `STRIPE_TEST_USER_EMAIL` | Dedicated synthetic test user email |
 | `LIVE_SUPABASE_TEST_USER_PASSWORD` or `STRIPE_TEST_USER_PASSWORD` | Dedicated synthetic test user password |
-| `STRIPE_SECRET_KEY` | Stripe test-mode secret or restricted key; live-mode keys are rejected |
+| `STRIPE_TEST_SECRET_KEY`, `STRIPE_TEST_RESTRICTED_KEY`, or `STRIPE_SECRET_KEY` | Stripe test-mode secret or restricted key; live-mode keys are rejected. Prefer the test-specific names so live-MRR checks can keep a live key. |
 | `STRIPE_TEST_PRICE_ID` or `APO_STRIPE_TEST_PRICE_ID` | Stripe test-mode Price ID used for the Checkout Session |
 
 Optional variables: `CHECKOUT_TEST_ORIGIN`, `STRIPE_TEST_TIER`, and `STRIPE_TEST_BILLING_PERIOD`. A passing test-mode Checkout Session still does not prove live revenue, webhook fulfillment, report-credit mutation, MRR, or bootcamp demand.

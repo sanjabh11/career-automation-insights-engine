@@ -8,7 +8,7 @@ Use this runbook when Part I is repo-complete but blocked on owner-held evidence
 
 | Gate | Current blocker | Must be real | Repo command that proves it |
 | --- | --- | --- | --- |
-| Stripe test checkout | `STRIPE_SECRET_KEY` is live-mode, but the verifier only accepts `sk_test_` or `rk_test_` | A Stripe test-mode Checkout Session created through the deployed `create-checkout-session` function and retrieved from Stripe with `livemode=false` | `npm run verify:stripe-test-checkout` |
+| Stripe test checkout | Local checkout key is live-mode, but the verifier only accepts `sk_test_` or `rk_test_` | A Stripe test-mode Checkout Session created through the deployed `create-checkout-session` function and retrieved from Stripe with `livemode=false` | `npm run verify:stripe-test-checkout` |
 | Live MRR > 0 | Stripe live account currently returns zero active subscriptions or zero paid invoice evidence | At least one live active subscription with fixed recurring MRR and at least one live paid invoice with `amount_paid > 0` | `npm run verify:stripe-live-mrr` |
 | Partner/outcome evidence | Local intake still has placeholder refs or placeholder salt | Three permissioned partner commitments and one permissioned outcome record, composed into salted hashes only | `npm run compose:commercial-evidence-records -- --write --require-all` |
 | Final closeout | The three gates above fail closed | Passing live-gate evidence plus passing commercial evidence records | `npm run closeout:owner-evidence -- --write --refresh-tracked` |
@@ -66,18 +66,18 @@ Goal: create a real Stripe test-mode Checkout Session through the deployed Supab
 | `SUPABASE_ANON_KEY` or `VITE_SUPABASE_ANON_KEY` | Public anon key for the target project |
 | `LIVE_SUPABASE_TEST_USER_EMAIL` or `STRIPE_TEST_USER_EMAIL` | Dedicated synthetic Supabase Auth test user |
 | `LIVE_SUPABASE_TEST_USER_PASSWORD` or `STRIPE_TEST_USER_PASSWORD` | Password for the synthetic test user |
-| `STRIPE_SECRET_KEY` | Test-mode Stripe key only: `sk_test_...` or `rk_test_...` |
+| `STRIPE_TEST_SECRET_KEY`, `STRIPE_TEST_RESTRICTED_KEY`, or `STRIPE_SECRET_KEY` | Test-mode Stripe key only: `sk_test_...` or `rk_test_...`. Prefer the test-specific names so live-MRR checks can keep using a live key. |
 | `STRIPE_TEST_PRICE_ID` or `APO_STRIPE_TEST_PRICE_ID` | Test-mode Stripe Price ID from the same Stripe account |
 
 ### Steps
 
 1. In the Stripe Dashboard, switch to test mode and create or choose a recurring test Price for the APO plan. Store the Price ID in `.env.local` as `STRIPE_TEST_PRICE_ID`.
 
-2. Set the local verifier key to a Stripe test-mode secret or restricted key. The verifier will reject `sk_live_...` and `rk_live_...`.
+2. Set the local verifier key to a Stripe test-mode secret or restricted key. Prefer `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`. The verifier will reject `sk_live_...` and `rk_live_...`.
 
 ```bash
 # In .env.local, owner-held only:
-# STRIPE_SECRET_KEY=sk_test_...
+# STRIPE_TEST_SECRET_KEY=sk_test_...
 # STRIPE_TEST_PRICE_ID=price_...
 ```
 
@@ -114,7 +114,7 @@ npm run verify:stripe-test-checkout
 
 | Failure | Meaning | Fix |
 | --- | --- | --- |
-| `failed_non_test_stripe_key` | Local `STRIPE_SECRET_KEY` is live-mode or malformed | Use `sk_test_...` or `rk_test_...` for `STRIPE_SECRET_KEY` during this command |
+| `failed_non_test_stripe_key` | The resolved checkout key is live-mode or malformed | Add `STRIPE_TEST_SECRET_KEY=sk_test_...` or `STRIPE_TEST_RESTRICTED_KEY=rk_test_...`; only use `STRIPE_SECRET_KEY=sk_test_...` for a temporary proof shell |
 | `edge-checkout-session-failed` | Supabase function did not return a valid Checkout Session | Check synthetic user auth, function deployment, function secrets, and test Price ID |
 | Stripe says the Price does not exist | Test Price is from another account or another mode | Use a test-mode Price from the same Stripe account as the test key and function secret |
 | Retrieved session is live-mode | The deployed function probably used a live Stripe key | Reconfigure the deployed function for test-mode proof or run against staging |

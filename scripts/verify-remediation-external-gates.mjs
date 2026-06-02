@@ -47,12 +47,28 @@ function exists(relativePath) {
   return fs.existsSync(path.join(root, relativePath));
 }
 
-function parseEnvLine(line) {
+function stripOuterQuotes(value) {
+  const trimmed = String(value || '').trim();
+  if (trimmed.length >= 2) {
+    const first = trimmed[0];
+    const last = trimmed[trimmed.length - 1];
+    if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+      return trimmed.slice(1, -1);
+    }
+  }
+  return trimmed;
+}
+
+function parseEnvAssignment(line) {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) return null;
   const key = trimmed.slice(0, trimmed.indexOf('=')).trim();
   const value = trimmed.slice(trimmed.indexOf('=') + 1).trim();
-  return key && value ? key : null;
+  return key && value ? { key, value: stripOuterQuotes(value) } : null;
+}
+
+function parseEnvLine(line) {
+  return parseEnvAssignment(line)?.key || null;
 }
 
 function loadPresentEnvNames() {
@@ -75,6 +91,41 @@ function loadPresentEnvNames() {
   }
 
   return names;
+}
+
+function loadEnvAssignments() {
+  const assignments = new Map(
+    Object.entries(process.env).filter(([, value]) => typeof value === 'string' && value.trim())
+  );
+
+  for (const file of ENV_FILES) {
+    try {
+      const source = fs.readFileSync(path.join(root, file), 'utf8');
+      for (const line of source.split(/\r?\n/)) {
+        const parsed = parseEnvAssignment(line);
+        if (parsed && !assignments.has(parsed.key)) assignments.set(parsed.key, parsed.value);
+      }
+    } catch {
+      // Local env files are optional and secret values must never be printed.
+    }
+  }
+
+  return assignments;
+}
+
+function resolveEnvValue(assignments, aliases) {
+  for (const alias of aliases) {
+    const value = assignments.get(alias);
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function stripeKeyMode(value) {
+  if (!value) return 'missing';
+  if (/^(sk|rk)_test_/.test(value)) return 'test';
+  if (/^(sk|rk)_live_/.test(value)) return 'live';
+  return 'unknown';
 }
 
 function anyPresent(presentEnvNames, aliases) {
@@ -174,7 +225,8 @@ function main() {
   const shouldWrite = hasFlag('--write');
   const liveEvidencePath = readFlagValue('--live-evidence') || readFlagValue('--live-gate-evidence');
   const commercialEvidencePath = readFlagValue('--commercial-evidence') || readFlagValue('--commercial-records');
-  const presentEnvNames = loadPresentEnvNames();
+  const envAssignments = loadEnvAssignments();
+  const presentEnvNames = new Set(envAssignments.keys());
   const packageJson = JSON.parse(read('package.json'));
   const packageScripts = packageJson.scripts || {};
   const commercialEvidenceRecordsVerifier = readOptional('scripts/verify-commercial-evidence-records.mjs');
@@ -306,7 +358,10 @@ function main() {
     exists('docs/commercialization/live-gate-evidence-template.json');
 
   const stripeMissing = missingGroups(presentEnvNames, [
-    { label: 'STRIPE_SECRET_KEY', aliases: ['STRIPE_SECRET_KEY'] },
+    {
+      label: 'STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY or STRIPE_SECRET_KEY',
+      aliases: ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'],
+    },
     { label: 'STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID', aliases: ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID'] },
     { label: 'SUPABASE_URL or VITE_SUPABASE_URL', aliases: ['SUPABASE_URL', 'VITE_SUPABASE_URL'] },
     {
@@ -322,12 +377,17 @@ function main() {
       aliases: ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD'],
     },
   ]);
+  const stripeTestKeyMode = stripeKeyMode(
+    resolveEnvValue(envAssignments, ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'])
+  );
+  const stripeTestKeyModeReady = stripeTestKeyMode === 'test';
   const stripeLocalReady =
     packageScripts['verify:stripe-test-checkout'] === 'node scripts/verify-stripe-test-checkout.mjs --write' &&
     exists('scripts/verify-stripe-test-checkout.mjs') &&
     containsAll(stripeTestCheckoutVerifier, [
       'create-checkout-session',
       'livemode=false',
+      'STRIPE_TEST_SECRET_KEY',
       'STRIPE_TEST_PRICE_ID',
       'LIVE_SUPABASE_TEST_USER_EMAIL',
     ]) &&
@@ -460,10 +520,18 @@ function main() {
     externalGate(
       'real_stripe_test_checkout',
       'Real Stripe test-mode checkout',
-      statusForExternalGate(stripeMissing, stripeLocalReady),
+      !stripeLocalReady
+        ? 'repo_not_ready'
+        : stripeMissing.length
+          ? 'blocked_missing_owner_secret_or_live_evidence'
+          : stripeTestKeyModeReady
+            ? 'ready_for_owner_live_run'
+            : 'blocked_non_test_stripe_key',
       stripeMissing.length
         ? `Local checkout code and owner-run verifier are ready, but required secret/env names are absent: ${stripeMissing.join(', ')}.`
-        : 'Required secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.',
+        : stripeTestKeyModeReady
+          ? 'Required test-mode secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.'
+          : 'Required secret/env names are present, but the resolved Stripe checkout key is not test-mode. Add `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`, or temporarily use a test-mode `STRIPE_SECRET_KEY` for this proof run.',
       'Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.',
       {
         sourceBoundary: 'owner credential gate',
