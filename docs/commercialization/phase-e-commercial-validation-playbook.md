@@ -4,6 +4,8 @@ Status date: 2026-05-31
 
 Phase E does not complete commercial validation. It prepares the instrumentation, partner-review workflow, and proof gates required before any commercial confidence score is raised.
 
+For the current owner-side blockers, use [Part I Owner Evidence Blocker Runbook](./part-i-owner-evidence-blocker-runbook.md). It contains the exact Stripe test-mode, live-MRR, partner/outcome intake, and final closeout sequence to hand to Comet or run locally without weakening the fail-closed gates.
+
 ## Evidence Gates
 
 | Gate | Required evidence | Current status | Boundary |
