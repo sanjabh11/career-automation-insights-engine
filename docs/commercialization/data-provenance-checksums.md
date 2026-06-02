@@ -1,6 +1,6 @@
 # Data Provenance Checksums
 
-Generated: 2026-06-02T12:00:52.859Z
+Generated: 2026-06-02T13:01:20.509Z
 Source verification artifact: `docs/commercialization/source-verification-latest.json`
 Source verification generated: 2026-06-01T18:32:57.633Z
 All referenced current-source checks passed: yes
@@ -50,10 +50,10 @@ This file records hash-level evidence for local commercial data artifacts and so
 | `commercial-accessibility-audit-markdown` | Commercial accessibility audit Markdown packet | `docs/commercialization/commercial-accessibility-audit-latest.md` | verification-artifact | 53 | `f060381881ac2e46...` | `wcag-22`, `ada-ai-hiring-guidance`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-template` | Commercial proof-pack CI workflow template | `docs/commercialization/commercial-proof-pack.workflow.yml` | ci-workflow-template | 51 | `805490676ce2d6fe...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
 | `commercial-proof-pack-ci-workflow-installed` | Commercial proof-pack CI workflow installed | `.github/workflows/commercial-proof-pack.yml` | ci-workflow | 53 | `64636b8daf57ef02...` | `nist-ai-rmf`, `wcag-22`, `llm-output` | pass |
-| `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 46 | `eb9042b5a7c1873c...` | `llm-output` | pass |
+| `phase-c-runtime-smoke-ci-workflow-installed` | Phase C runtime smoke CI workflow installed | `.github/workflows/phase-c-runtime-smoke.yml` | ci-workflow | 46 | `ede597f88a9e5070...` | `llm-output` | pass |
 | `commercial-live-supabase-verifier` | Live Supabase commercial boundary verifier | `scripts/verify-commercial-live-supabase.mjs` | live-verifier | 406 | `c5abb98eadd2bb93...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `iso-42001`, `llm-output` | pass |
 | `commercial-supabase-deployment-packet` | Commercial Supabase deployment packet generator | `scripts/generate-commercial-supabase-deployment-packet.mjs` | deployment-verifier | 310 | `508262fe0e3309bb...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
-| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 83 | `1e96c657b2b7d48f...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
+| `commercial-supabase-deployment-runbook` | Commercial Supabase deployment runbook | `docs/commercialization/live-supabase-deployment-runbook.md` | deployment-runbook | 83 | `3f8aca72f1e655c8...` | `nist-ai-rmf`, `iso-42001`, `llm-output` | pass |
 | `onet-task-ratings-live-verifier` | Live O*NET Task Ratings deployed proof verifier | `scripts/verify-onet-task-ratings-live.mjs` | live-verifier | 333 | `80023f707ac4ad4e...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `onet-task-rating-metadata-migration` | O*NET Task Rating metadata migration | `supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql` | supabase-migration | 45 | `b719ea4ba88bed94...` | `onet`, `onet-task-statements`, `onet-task-ratings`, `onet-task-categories`, `onet-scales-reference` | pass |
 | `artifact-review-event-migration` | Artifact review event migration | `supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql` | supabase-migration | 87 | `f0179f9e596e98e0...` | `nist-ai-rmf`, `ada-ai-hiring-guidance`, `llm-output` | pass |

@@ -983,7 +983,7 @@ const checks = [
       /actions\/setup-node@v6/,
       /node-version: 20/,
       /npm run smoke:skill-adjacency/,
-      /npm run e2e:smoke/,
+      /npm run e2e:phase-c-smoke/,
     ],
   },
   {

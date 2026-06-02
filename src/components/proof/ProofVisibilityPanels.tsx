@@ -233,7 +233,12 @@ export function RegionalDataBadge({
 
   if (!disclosure.shouldShow) {
     return (
-      <div className="rounded-lg border bg-emerald-50 p-4 text-sm text-emerald-950" data-proof-visibility="regional-data-badge">
+      <div
+        aria-label="Regional labor-market disclosure"
+        className="rounded-lg border bg-emerald-50 p-4 text-sm text-emerald-950"
+        data-proof-visibility="regional-data-badge"
+        role="note"
+      >
         <div className="flex flex-wrap items-center gap-2">
           <Map className="h-4 w-4" />
           <strong>U.S. source basis</strong>
@@ -245,7 +250,12 @@ export function RegionalDataBadge({
   }
 
   return (
-    <div className="rounded-lg border bg-amber-50 p-4 text-sm text-amber-950" data-proof-visibility="regional-data-badge">
+    <div
+      aria-label="Regional labor-market disclosure"
+      className="rounded-lg border bg-amber-50 p-4 text-sm text-amber-950"
+      data-proof-visibility="regional-data-badge"
+      role="note"
+    >
       <div className="flex flex-wrap items-center gap-2">
         <Map className="h-4 w-4" />
         <strong>{disclosure.heading}</strong>
@@ -257,9 +267,15 @@ export function RegionalDataBadge({
       <div className="mt-3 grid gap-2 md:grid-cols-2">
         <p className="text-xs">
           <strong>Classification:</strong>{" "}
-          {disclosure.classification
-            ? `${disclosure.classification.code} · ${disclosure.classification.title}`
-            : "No reliable regional mapping found."}
+          {disclosure.classification ? (
+            <>
+              <span className="font-mono">{disclosure.classification.code}</span>{" "}
+              <span aria-hidden="true">·</span>{" "}
+              <span>{disclosure.classification.title}</span>
+            </>
+          ) : (
+            "No reliable regional mapping found."
+          )}
         </p>
         <p className="text-xs">
           <strong>Source date:</strong> {GLOBAL_ENGLISH_SOURCE_DATE}

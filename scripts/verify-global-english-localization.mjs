@@ -147,6 +147,7 @@ assert(source.includes("forwardClassificationField: 'osca2024'"), 'Australia ada
 assert(source.includes('REGIONAL_WAGE_OUTLOOK_FALLBACKS'), 'regional localized wage/outlook fallback registry is required');
 assert(source.includes('unavailable_source_join_pending'), 'non-US local values must expose unavailable fallback status');
 assert(source.includes('suppressed_or_quality_limited'), 'regional local values must expose suppression or quality-limited status');
+assert(source.includes('APO exposure estimates remain U.S. O*NET/BLS basis'), 'non-US disclosure must preserve the APO U.S. O*NET/BLS basis boundary even when local values are joined');
 assert(source.includes('getAustraliaOscaTransitionMapping'), 'Australia OSCA transition helper is required');
 assert(analysis.includes('Regional labor-market disclosure'), 'OccupationAnalysis must render a regional labor-market disclosure note');
 assert(analysis.includes('getRegionalLaborMarketDisclosure'), 'OccupationAnalysis must use the global-English disclosure helper');

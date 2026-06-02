@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T12:00:52.859Z",
+  "generatedAt": "2026-06-02T13:01:20.509Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -1257,12 +1257,12 @@
         "phase-d-global-english-localization",
         "phase-e-commercial-validation",
         "npm run smoke:skill-adjacency",
-        "npm run e2e:smoke"
+        "npm run e2e:phase-c-smoke"
       ],
       "caveat": "Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the A-E remediation branch chain; hosted green-run evidence must still be inspected after push.",
-      "bytes": 1340,
+      "bytes": 1348,
       "rows": 46,
-      "sha256": "eb9042b5a7c1873c2a7bd3347bd00ead67bf73f2cfc67fcad08d1418a602cee6",
+      "sha256": "ede597f88a9e5070e132528e4ed141a87b3c8ad4aa44b5f745f7f8d15bbd9c3e",
       "failures": [],
       "passed": true
     },
@@ -1346,7 +1346,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 6105,
       "rows": 83,
-      "sha256": "1e96c657b2b7d48fbd7882b82faee32ee5094cbba23f28472f250a3c74af5c04",
+      "sha256": "3f8aca72f1e655c82cb07ff314f7f0b4e7cc440c9990e30408a08a2fa3d7c1c5",
       "failures": [],
       "passed": true
     },

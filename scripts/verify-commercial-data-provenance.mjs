@@ -375,7 +375,7 @@ const artifacts = [
     path: '.github/workflows/phase-c-runtime-smoke.yml',
     type: 'ci-workflow',
     sourceIds: ['llm-output'],
-    expectedSnippets: ['name: Phase C Runtime Smoke', 'permissions:', 'contents: read', 'live-auth-e2e-closeout', 'phase-a-truth-claims-reconciliation', 'phase-b-validation-calibration', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run smoke:skill-adjacency', 'npm run e2e:smoke'],
+    expectedSnippets: ['name: Phase C Runtime Smoke', 'permissions:', 'contents: read', 'live-auth-e2e-closeout', 'phase-a-truth-claims-reconciliation', 'phase-b-validation-calibration', 'phase-c-runtime-verification-bugfixes', 'phase-d-global-english-localization', 'phase-e-commercial-validation', 'npm run smoke:skill-adjacency', 'npm run e2e:phase-c-smoke'],
     caveat: 'Installed GitHub Actions workflow runs embedding and Playwright runtime smoke gates on the A-E remediation branch chain; hosted green-run evidence must still be inspected after push.',
   },
   {

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-02T12:00:57.692Z",
+  "generatedAt": "2026-06-02T13:01:31.110Z",
   "branch": "phase-e-commercial-validation",
-  "sourceHeadAtGeneration": "27313b5",
+  "sourceHeadAtGeneration": "cca87cf",
   "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
   "goalComplete": false,
   "phaseDeliverables": [
@@ -153,7 +153,7 @@
     "Hosted CI proves this branch behavior, not target production data state.",
     "UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated."
   ],
-  "currentBranchFilesChangedCount": 250,
+  "currentBranchFilesChangedCount": 251,
   "currentBranchFilesChangedSample": [
     ".github/workflows/commercial-proof-pack.yml",
     ".github/workflows/phase-c-runtime-smoke.yml",

@@ -53,4 +53,4 @@ jobs:
         run: npm run smoke:skill-adjacency
 
       - name: Playwright Phase C smoke
-        run: npm run e2e:smoke
+        run: npm run e2e:phase-c-smoke

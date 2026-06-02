@@ -107,6 +107,13 @@ for (const surface of expectedProofSurfaces) {
 }
 
 assertOccurrenceAtLeast(proofComponentFile, 'data-proof-visibility="regional-data-badge"', 2, 'regional-data-badge states');
+assertOccurrenceAtLeast(proofComponentFile, 'role="note"', 2, 'regional labor-market disclosure note role');
+assertOccurrenceAtLeast(
+  proofComponentFile,
+  'aria-label="Regional labor-market disclosure"',
+  2,
+  'regional labor-market disclosure accessible name'
+);
 
 [
   'commercialValidationEvidenceGates',

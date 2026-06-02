@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-02T12:00:49.401Z
+Generated: 2026-06-02T13:01:17.216Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -132,6 +132,7 @@ Policies:
 | `build` | `vite build` |
 | `build:dev` | `vite build --mode development` |
 | `dev` | `vite` |
+| `e2e:phase-c-smoke` | `playwright test tests/e2e/phase-c-smoke.spec.ts` |
 | `e2e:smoke` | `playwright test` |
 | `index:commercial` | `node scripts/generate-commercialization-index.mjs` |
 | `lint` | `eslint .` |

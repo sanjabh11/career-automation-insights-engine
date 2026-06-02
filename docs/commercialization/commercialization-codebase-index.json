@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T12:00:49.401Z",
+  "generatedAt": "2026-06-02T13:01:17.216Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -585,6 +585,10 @@
     {
       "name": "dev",
       "command": "vite"
+    },
+    {
+      "name": "e2e:phase-c-smoke",
+      "command": "playwright test tests/e2e/phase-c-smoke.spec.ts"
     },
     {
       "name": "e2e:smoke",

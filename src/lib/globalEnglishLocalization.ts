@@ -800,7 +800,7 @@ export function getRegionalLaborMarketDisclosure(
     region,
     shouldShow: true,
     heading: `${localLabel} labor-market basis`,
-    message: `${mappingText} ${adapterText}${oscaText} Current local value status: ${localValueStatus.wageLabel}; ${localValueStatus.outlookLabel}. ${localValue ? localValue.displayBoundary : 'Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until source-dated local values pass adapter validation.'}`,
+    message: `${mappingText} ${adapterText}${oscaText} APO exposure estimates remain U.S. O*NET/BLS basis; regional rows provide classification, wage, or outlook context only. Current local value status: ${localValueStatus.wageLabel}; ${localValueStatus.outlookLabel}. ${localValue ? localValue.displayBoundary : 'Wage and outlook figures shown in this dashboard remain U.S. O*NET/BLS basis until source-dated local values pass adapter validation.'}`,
     classification,
     wageStatus: localValue ? 'localized_value_available' : adapter?.valueStatus ?? 'not_integrated_disclosure_required',
     adapter,
