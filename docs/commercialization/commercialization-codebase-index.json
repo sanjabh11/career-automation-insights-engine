@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T11:38:33.136Z",
+  "generatedAt": "2026-06-02T12:00:49.401Z",
   "branch": "phase-e-commercial-validation",
   "routes": [
     {
@@ -725,6 +725,10 @@
     {
       "name": "verify:production-calibration",
       "command": "node scripts/verify-production-calibration-run.mjs --write"
+    },
+    {
+      "name": "verify:proof-visibility-ui",
+      "command": "node scripts/verify-proof-visibility-ui.mjs"
     },
     {
       "name": "verify:remediation-completion-audit",

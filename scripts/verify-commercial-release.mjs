@@ -19,6 +19,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-report-evidence.mjs'],
   },
   {
+    id: 'proof-visibility-ui',
+    label: 'Verify proof visibility UI surfaces',
+    command: ['node', 'scripts/verify-proof-visibility-ui.mjs'],
+  },
+  {
     id: 'supabase-function-governance',
     label: 'Verify Supabase function governance and launch readiness',
     command: ['node', 'scripts/verify-supabase-function-governance.mjs'],
@@ -175,7 +180,7 @@ Options:
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
 Default gate:
-  index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
+  index, trust, report evidence, proof visibility UI, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
   data provenance, redacted live-gate evidence intake, commercial evidence records, owner-evidence prep status,
   owner-evidence fixture smoke,
   remediation gate ledger, remediation completion audit, scoped commercial lint, secret hygiene,

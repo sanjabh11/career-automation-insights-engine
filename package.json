@@ -33,6 +33,7 @@
     "verify:stripe-live-mrr": "node scripts/verify-stripe-live-mrr.mjs --write",
     "verify:production-calibration": "node scripts/verify-production-calibration-run.mjs --write",
     "verify:commercial-validation": "node scripts/verify-phase-e-commercial-validation.mjs",
+    "verify:proof-visibility-ui": "node scripts/verify-proof-visibility-ui.mjs",
     "index:commercial": "node scripts/generate-commercialization-index.mjs",
     "lint": "eslint .",
     "lint:commercial": "node scripts/lint-commercial-scope.mjs",
