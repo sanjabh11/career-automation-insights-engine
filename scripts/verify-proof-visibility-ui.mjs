@@ -153,6 +153,20 @@ assertOccurrenceAtLeast(
 ].forEach((snippet) => assertContains(proofComponentFile, snippet));
 
 [
+  'O*NET task ratings',
+  'BLS wage and employment context',
+  'ILO GenAI jobs 2025 exposure framing',
+  'WEF Future of Jobs 2025 macro signal',
+  'ESCO occupation and skill taxonomy',
+  'ONS ASHE UK wage context',
+  'Canada NOC and Job Bank wage/outlook context',
+  'Australia OSCA and JSA occupation profiles',
+  'outlook remains geography-required',
+  'OSCA 2024 transition boundary',
+  'parent-group and suppression boundaries',
+].forEach((snippet) => assertContains('src/lib/commercialLaunchReadiness.ts', snippet));
+
+[
   'failed_non_test_stripe_key',
   'production-calibration-proof-latest.json',
   'live-auth-e2e-proof-latest.json',
