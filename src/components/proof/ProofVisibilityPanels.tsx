@@ -205,11 +205,15 @@ export function CalibrationHealthWidget() {
         </div>
         <div className="rounded-lg border border-indigo-200 bg-white/70 p-4">
           <span className="text-xs font-semibold uppercase text-indigo-800">Live gate</span>
-          <p className="mt-2 text-sm">Run deployed calibration after approved expert labels and APO logs exist in Supabase.</p>
+          <p className="mt-2 text-sm">
+            Latest redacted run passed on 2026-06-02: 6 matched APO/expert pairs, 10 reliability bins, ECE 0.27855.
+          </p>
         </div>
         <div className="rounded-lg border border-indigo-200 bg-white/70 p-4">
           <span className="text-xs font-semibold uppercase text-indigo-800">Claim boundary</span>
-          <p className="mt-2 text-sm">Do not state production validation, ECE improvement, or model accuracy until live evidence passes.</p>
+          <p className="mt-2 text-sm">
+            This proves only a bounded live calibration run. Do not claim general accuracy, future performance, or employment-decision validity.
+          </p>
         </div>
       </CardContent>
     </Card>

@@ -7,6 +7,7 @@ const OUTPUT_PATH = 'docs/commercialization/production-calibration-proof-latest.
 const ENV_FILES = ['.env.local', '.env'];
 const DEFAULT_DAYS = 90;
 const DEFAULT_BIN_COUNT = 10;
+const DEFAULT_TIMEOUT_MS = 150000;
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -179,20 +180,29 @@ function validateCalibrationBody(body) {
   return checks;
 }
 
-async function invokeCalibrationFunction({ supabaseUrl, anonKey, days, binCount, source, cohort }) {
+async function invokeCalibrationFunction({ supabaseUrl, anonKey, days, binCount, source, cohort, timeoutMs }) {
   const body = { days, binCount };
   if (source) body.source = source;
   if (cohort) body.cohort = cohort;
 
-  const response = await fetch(`${supabaseUrl}/functions/v1/calibrate-ece`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
-    },
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(new Error(`calibrate-ece timed out after ${timeoutMs}ms`)), timeoutMs);
+
+  let response;
+  try {
+    response = await fetch(`${supabaseUrl}/functions/v1/calibrate-ece`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: anonKey,
+        Authorization: `Bearer ${anonKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -211,6 +221,7 @@ async function main() {
   const anonKey = resolveEnv(localEnv, ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY']);
   const days = parsePositiveInteger(resolveEnv(localEnv, ['CALIBRATION_DAYS', 'PRODUCTION_CALIBRATION_DAYS']), DEFAULT_DAYS, 'CALIBRATION_DAYS');
   const binCount = parsePositiveInteger(resolveEnv(localEnv, ['CALIBRATION_BIN_COUNT', 'PRODUCTION_CALIBRATION_BIN_COUNT']), DEFAULT_BIN_COUNT, 'CALIBRATION_BIN_COUNT');
+  const timeoutMs = parsePositiveInteger(resolveEnv(localEnv, ['PRODUCTION_CALIBRATION_TIMEOUT_MS', 'CALIBRATION_TIMEOUT_MS']), DEFAULT_TIMEOUT_MS, 'PRODUCTION_CALIBRATION_TIMEOUT_MS');
   const source = resolveEnv(localEnv, ['CALIBRATION_SOURCE', 'PRODUCTION_CALIBRATION_SOURCE']);
   const cohort = resolveEnv(localEnv, ['CALIBRATION_COHORT', 'PRODUCTION_CALIBRATION_COHORT']);
 
@@ -247,6 +258,7 @@ async function main() {
     request: {
       days,
       binCount,
+      timeoutMs,
       source: source || 'all',
       cohort: cohort || null,
     },
@@ -287,7 +299,7 @@ async function main() {
   ];
 
   try {
-    const calibrationBody = await invokeCalibrationFunction({ supabaseUrl, anonKey, days, binCount, source, cohort });
+    const calibrationBody = await invokeCalibrationFunction({ supabaseUrl, anonKey, days, binCount, source, cohort, timeoutMs });
     checks.push(...validateCalibrationBody(calibrationBody));
 
     const passed = checks.every((check) => check.passed);
