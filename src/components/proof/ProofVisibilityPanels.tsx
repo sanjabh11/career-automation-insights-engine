@@ -27,6 +27,7 @@ import {
   coachCommercializationWorkflow,
   commercialValidationEvidenceGates,
   designPartnerOnboardingChecklist,
+  ownerEvidenceCloseoutCommandItems,
   ownerEvidenceCloseoutStatusItems,
   ownerEvidenceCloseoutSummary,
   paymentFulfillmentStatusItems,
@@ -256,6 +257,12 @@ export function BlockedClaimsPanel() {
 export function OwnerEvidenceCloseoutPanel() {
   const blockedCount = ownerEvidenceCloseoutStatusItems.filter((item) => item.status === "blocked").length;
   const ownerActionCount = ownerEvidenceCloseoutStatusItems.filter((item) => item.status === "owner_action").length;
+  const [copiedCommandId, setCopiedCommandId] = useState<string | null>(null);
+
+  const copyOwnerCommand = async (commandId: string, command: string) => {
+    await navigator.clipboard.writeText(command);
+    setCopiedCommandId(commandId);
+  };
 
   return (
     <Card data-proof-visibility="owner-evidence-closeout-panel" className="border-amber-200 bg-amber-50/40">
@@ -316,6 +323,64 @@ export function OwnerEvidenceCloseoutPanel() {
               </p>
             </article>
           ))}
+        </div>
+
+        <div className="rounded-lg border border-amber-200 bg-white p-4" data-proof-visibility="owner-evidence-command-checklist">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Owner closeout command checklist</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Copy-safe commands for collecting redacted proof. Raw secrets, partner names, customer data, invoices,
+                contracts, quotes, and salts stay owner-held outside tracked files.
+              </p>
+            </div>
+            <Badge variant="outline">fail closed</Badge>
+          </div>
+          <div className="mt-4 grid gap-3">
+            {ownerEvidenceCloseoutCommandItems.map((item) => (
+              <article key={item.commandId} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.label}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.commandId}</p>
+                  </div>
+                  <Badge variant={item.status === "final_closeout" ? "default" : "outline"}>
+                    {item.status.replace(/_/g, " ")}
+                  </Badge>
+                </div>
+                <div className="mt-3 rounded-md border bg-muted/40 p-3">
+                  <code className="break-words text-xs">{item.command}</code>
+                </div>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground">Required owner inputs</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+                      {item.requiredOwnerInputs.map((input) => (
+                        <li key={input}>{input}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-2 text-xs text-muted-foreground">
+                    <p>
+                      <strong>Writes:</strong> {item.writes}
+                    </p>
+                    <p>
+                      <strong>Safety boundary:</strong> {item.safetyBoundary}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => copyOwnerCommand(item.commandId, item.command)}
+                >
+                  {copiedCommandId === item.commandId ? "Copied command" : "Copy command"}
+                </Button>
+              </article>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

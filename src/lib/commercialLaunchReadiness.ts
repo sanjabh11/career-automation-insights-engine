@@ -132,6 +132,16 @@ export interface OwnerEvidenceCloseoutStatusItem {
   doesNotProve: string;
 }
 
+export interface OwnerEvidenceCloseoutCommandItem {
+  commandId: string;
+  label: string;
+  status: "ready_after_owner_inputs" | "blocked_until_real_evidence" | "final_closeout";
+  command: string;
+  requiredOwnerInputs: string[];
+  writes: string;
+  safetyBoundary: string;
+}
+
 export interface OwnerEvidenceCloseoutSummary {
   asOf: string;
   goalComplete: boolean;
@@ -383,6 +393,83 @@ export const ownerEvidenceCloseoutStatusItems: OwnerEvidenceCloseoutStatusItem[]
       "Collect one permissioned outcome record with baseline workflow, artifact reviewed, measured change, approved quote, and explicit does-not-prove boundary.",
     sourceArtifact: "docs/commercialization/commercial-evidence-records-latest.json",
     doesNotProve: "Guaranteed career outcomes, causal product impact, wage gain, placement, or legal compliance.",
+  },
+];
+
+export const ownerEvidenceCloseoutCommandItems: OwnerEvidenceCloseoutCommandItem[] = [
+  {
+    commandId: "load-owner-env",
+    label: "Load owner-held local environment",
+    status: "ready_after_owner_inputs",
+    command: "set -a; source .env.local; set +a",
+    requiredOwnerInputs: [
+      "Owner-approved .env.local with Supabase anon URL/key, dedicated synthetic user credentials, and Stripe keys by mode.",
+      "No raw values should be pasted into chat, public docs, or tracked files.",
+    ],
+    writes: "No tracked files; loads shell variables only.",
+    safetyBoundary: "This prepares local proof commands only and does not validate evidence by itself.",
+  },
+  {
+    commandId: "stripe-test-checkout-proof",
+    label: "Collect Stripe test checkout proof",
+    status: "blocked_until_real_evidence",
+    command: "npm run verify:stripe-test-checkout",
+    requiredOwnerInputs: [
+      "Test-mode Stripe key through STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or test-mode STRIPE_SECRET_KEY.",
+      "STRIPE_TEST_PRICE_ID for an active test Price.",
+      "Dedicated Supabase synthetic user email/password.",
+    ],
+    writes: "docs/commercialization/stripe-test-checkout-proof-latest.json",
+    safetyBoundary: "Must require Stripe livemode=false; does not prove live revenue, payment collection, or webhook fulfillment.",
+  },
+  {
+    commandId: "stripe-live-mrr-proof",
+    label: "Collect live MRR proof",
+    status: "blocked_until_real_evidence",
+    command: "npm run verify:stripe-live-mrr",
+    requiredOwnerInputs: [
+      "Live-mode Stripe restricted or secret key with read access for subscriptions and invoices.",
+      "At least one active paid subscription or paid invoice; zero revenue must stay failed.",
+    ],
+    writes: "docs/commercialization/stripe-live-mrr-proof-latest.json",
+    safetyBoundary: "Read-only redacted Stripe metadata; does not create charges, prove retention, or prove product-market fit.",
+  },
+  {
+    commandId: "commercial-evidence-records",
+    label: "Compose partner and outcome evidence records",
+    status: "blocked_until_real_evidence",
+    command: `COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all`,
+    requiredOwnerInputs: [
+      "Three permissioned design-partner intake records with pilot scope, artifact reviewed, next step, and contact permission.",
+      "One permissioned outcome record with baseline workflow, measured change, approved quote status, and does-not-prove boundary.",
+      "Non-placeholder owner-held hash salt.",
+    ],
+    writes: "docs/commercialization/commercial-evidence-records.local.json",
+    safetyBoundary: "Hashes/redacts owner-held records; does not prove revenue, broad demand, causal outcome impact, or placement results.",
+  },
+  {
+    commandId: "live-gate-evidence",
+    label: "Compose live-gate evidence",
+    status: "ready_after_owner_inputs",
+    command: "npm run compose:live-gate-evidence -- --write --require-complete",
+    requiredOwnerInputs: [
+      "Accepted redacted proof artifacts for Stripe test checkout, production calibration, authenticated live artifact e2e, and live MRR.",
+    ],
+    writes: "docs/commercialization/live-gate-evidence.local.json",
+    safetyBoundary: "Fails closed until all live-gate artifacts pass; does not include raw secrets or customer identifiers.",
+  },
+  {
+    commandId: "final-owner-closeout",
+    label: "Run final owner-evidence closeout",
+    status: "final_closeout",
+    command: "npm run closeout:owner-evidence -- --write --refresh-tracked",
+    requiredOwnerInputs: [
+      "Complete live-gate evidence file.",
+      "Complete redacted commercial evidence records.",
+      "Review generated tracked ledgers before committing.",
+    ],
+    writes: "Tracked remediation and commercialization ledgers only after all gates pass.",
+    safetyBoundary: "This is the only command in the list that can move Part I to goalComplete=true; it must remain blocked while any live or commercial gate is missing.",
   },
 ];
 

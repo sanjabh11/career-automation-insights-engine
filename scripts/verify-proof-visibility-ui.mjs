@@ -60,6 +60,13 @@ const expectedProofSurfaces = [
     purpose: 'owner evidence closeout status panel',
   },
   {
+    component: 'OwnerEvidenceCloseoutPanel',
+    marker: 'data-proof-visibility="owner-evidence-command-checklist"',
+    routeFile: 'src/pages/ResponsibleAIPage.tsx',
+    route: '/trust-center',
+    purpose: 'owner evidence closeout command checklist',
+  },
+  {
     component: 'SourceFreshnessPanel',
     marker: 'data-proof-visibility="source-freshness-panel"',
     routeFile: 'src/pages/ValidationPage.tsx',
@@ -140,6 +147,9 @@ assertOccurrenceAtLeast(
   'commercialValidationEvidenceGates',
   'ownerEvidenceCloseoutStatusItems',
   'ownerEvidenceCloseoutSummary',
+  'ownerEvidenceCloseoutCommandItems',
+  'Owner closeout command checklist',
+  'Copy command',
   'goalComplete=false',
   'commercialLaunchGateItems',
   'SOURCE_MANIFEST_LAST_VERIFIED_AT',
@@ -188,6 +198,16 @@ assertOccurrenceAtLeast(
   '0 active subscriptions',
   '0 accepted unique design-partner hashes',
   '0 accepted outcome hashes',
+  'OwnerEvidenceCloseoutCommandItem',
+  'ownerEvidenceCloseoutCommandItems',
+  'load-owner-env',
+  'stripe-test-checkout-proof',
+  'stripe-live-mrr-proof',
+  'commercial-evidence-records',
+  'live-gate-evidence',
+  'final-owner-closeout',
+  'set -a; source .env.local; set +a',
+  'COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>"',
 ].forEach((snippet) => assertContains('src/lib/commercialLaunchReadiness.ts', snippet));
 
 [
