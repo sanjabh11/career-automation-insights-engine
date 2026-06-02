@@ -67,6 +67,13 @@ const expectedProofSurfaces = [
     purpose: 'source freshness panel',
   },
   {
+    component: 'RegionalLaborMarketSourceRowsPanel',
+    marker: 'data-proof-visibility="regional-source-rows-panel"',
+    routeFile: 'src/pages/ValidationPage.tsx',
+    route: '/validation',
+    purpose: 'regional labor-market source row status panel',
+  },
+  {
     component: 'CalibrationHealthWidget',
     marker: 'data-proof-visibility="calibration-health-widget"',
     routeFile: 'src/pages/ValidationPage.tsx',
@@ -138,6 +145,11 @@ assertOccurrenceAtLeast(
   'SOURCE_MANIFEST_LAST_VERIFIED_AT',
   'SOURCE_REFRESH_MANIFEST',
   'sourceFreshnessDashboardRows',
+  'REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES',
+  'Regional source rows',
+  'importedRowCount',
+  'sourceDate',
+  'suppressionStates',
   'blockedClaimVisibilityItems',
   'Blocked claims matrix',
   'matched APO/expert pairs',
@@ -177,6 +189,18 @@ assertOccurrenceAtLeast(
   '0 accepted unique design-partner hashes',
   '0 accepted outcome hashes',
 ].forEach((snippet) => assertContains('src/lib/commercialLaunchReadiness.ts', snippet));
+
+[
+  'REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES',
+  'ONS ASHE 2025 provisional Table 2',
+  'Canada Job Bank 2025 wage rows',
+  'JSA February 2026 occupation profiles',
+  '2025-12-19',
+  '2025-11-19 wages; 2025-12-15 outlooks',
+  '2026-04-02',
+  'published_parent_group_value',
+  'geography_required',
+].forEach((snippet) => assertContains('src/lib/globalEnglishLocalization.ts', snippet));
 
 [
   'O*NET task ratings',

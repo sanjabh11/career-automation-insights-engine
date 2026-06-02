@@ -123,6 +123,18 @@ export interface RegionalLocalizedLaborMarketValue {
   displayBoundary: string;
 }
 
+export interface RegionalLaborMarketSourceRowSummary {
+  region: Exclude<GlobalEnglishRegion, 'US'>;
+  sourceFamily: string;
+  importedRowCount: number;
+  sourcePeriod: string;
+  sourceDate: string;
+  sourceIds: string[];
+  suppressionStates: RegionalLocalValueSuppressionState[];
+  displayBoundary: string;
+  nextProofNeeded: string;
+}
+
 export const GLOBAL_ENGLISH_SOURCE_DATE = '2026-05-31';
 
 export const GLOBAL_ENGLISH_OFFICIAL_SOURCES: Record<string, OfficialSource> = {
@@ -548,6 +560,42 @@ const AUSTRALIA_JSA_PARENT_LOCAL_VALUES: Record<
   '2523': { anzscoParent: '2523', title: 'Dental Practitioners', employed: 25800, medianWeeklyAud: 3232, medianHourlyAud: 85, annualEmploymentGrowth: 2300 },
   '2515': { anzscoParent: '2515', title: 'Pharmacists', employed: 46300, medianWeeklyAud: 1956, medianHourlyAud: 52, annualEmploymentGrowth: 2900 },
 };
+
+export const REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES: RegionalLaborMarketSourceRowSummary[] = [
+  {
+    region: 'UK',
+    sourceFamily: 'ONS ASHE 2025 provisional Table 2',
+    importedRowCount: Object.keys(UK_ASHE_SOC_2_DIGIT_LOCAL_VALUES).length,
+    sourcePeriod: '2025 provisional',
+    sourceDate: '2025-12-19',
+    sourceIds: ['ons-ashe-2025-provisional-table-2'],
+    suppressionStates: ['published_parent_group_value', 'not_published_by_source'],
+    displayBoundary: 'UK pay is shown at SOC two-digit group level only; do not present it as a four-digit occupation-specific wage.',
+    nextProofNeeded: 'Attach full ASHE checksum, correction/suppression notes, and reviewed four-digit-to-two-digit aggregation evidence.',
+  },
+  {
+    region: 'CA',
+    sourceFamily: 'Canada Job Bank 2025 wage rows plus 2025-2027 outlook boundary',
+    importedRowCount: Object.keys(CANADA_JOB_BANK_NATIONAL_WAGE_VALUES).length,
+    sourcePeriod: '2023-2024 wages; 2025-2027 outlooks',
+    sourceDate: '2025-11-19 wages; 2025-12-15 outlooks',
+    sourceIds: ['jobbank-wage-open-data-2025', 'jobbank-outlook-open-data-2025-2027'],
+    suppressionStates: ['published', 'geography_required'],
+    displayBoundary: 'Canada wage values are national rows; outlook remains geography-required until province/economic-region is selected.',
+    nextProofNeeded: 'Attach Job Bank row checksum, geography selector, and undetermined/suppressed outlook handling.',
+  },
+  {
+    region: 'AU',
+    sourceFamily: 'JSA February 2026 occupation profiles with OSCA transition',
+    importedRowCount: Object.keys(AUSTRALIA_JSA_PARENT_LOCAL_VALUES).length,
+    sourcePeriod: 'February 2026 occupation profiles',
+    sourceDate: '2026-04-02',
+    sourceIds: ['jsa-occupation-profiles-february-2026', 'abs-osca-2024'],
+    suppressionStates: ['published_parent_group_value'],
+    displayBoundary: 'Australia values are ANZSCO 4-digit parent-group rows and carry the OSCA 2024 transition note.',
+    nextProofNeeded: 'Attach JSA profile checksum, OSCA migration review, and suppressed/N/A row handling before exact Australian occupation claims.',
+  },
+];
 
 export const REGIONAL_WAGE_OUTLOOK_FALLBACKS: Record<
   Exclude<GlobalEnglishRegion, 'US'>,

@@ -34,6 +34,7 @@ import {
 } from "@/lib/commercialLaunchReadiness";
 import {
   GLOBAL_ENGLISH_SOURCE_DATE,
+  REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES,
   REGIONAL_WAGE_OUTLOOK_ADAPTERS,
   getBrowserGlobalEnglishRegion,
   getOfficialSources,
@@ -354,6 +355,71 @@ export function SourceFreshnessPanel() {
               <strong>Next proof:</strong> {row.nextProofNeeded}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">Maturity {metric(row.maturity)}</p>
+          </article>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function RegionalLaborMarketSourceRowsPanel() {
+  const totalImportedRows = REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES.reduce(
+    (total, item) => total + item.importedRowCount,
+    0
+  );
+
+  return (
+    <Card data-proof-visibility="regional-source-rows-panel">
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Map className="h-5 w-5 text-emerald-600" />
+              Regional source rows
+            </CardTitle>
+            <CardDescription>
+              Source-dated UK, Canada, and Australia labor-market rows currently imported for disclosure/context.
+              These rows do not make APO exposure estimates non-U.S. estimates.
+            </CardDescription>
+          </div>
+          <Badge variant="outline">{totalImportedRows} imported rows</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3 lg:grid-cols-3">
+        {REGIONAL_LABOR_MARKET_SOURCE_ROW_SUMMARIES.map((item) => (
+          <article key={item.region} className="rounded-lg border bg-background p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold">{item.region} source rows</h3>
+              <Badge variant="outline">{item.importedRowCount} rows</Badge>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">{item.sourceFamily}</p>
+            <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+              <p>
+                <strong>Source period:</strong> {item.sourcePeriod}
+              </p>
+              <p>
+                <strong>Source date:</strong> {item.sourceDate}
+              </p>
+              <p>
+                <strong>Source IDs:</strong> {item.sourceIds.join(", ")}
+              </p>
+              <div>
+                <strong>Suppression states:</strong>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {item.suppressionStates.map((state) => (
+                    <Badge key={state} variant="secondary" className="text-[11px]">
+                      {state.replace(/_/g, " ")}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <p>
+                <strong>Display boundary:</strong> {item.displayBoundary}
+              </p>
+              <p>
+                <strong>Next proof:</strong> {item.nextProofNeeded}
+              </p>
+            </div>
           </article>
         ))}
       </CardContent>
