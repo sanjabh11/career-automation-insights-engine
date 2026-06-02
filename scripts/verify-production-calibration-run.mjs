@@ -96,6 +96,12 @@ function numberInRange(value, min, max) {
   return typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 }
 
+function roundedMetric(value) {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Number(value.toFixed(6))
+    : null;
+}
+
 function validateCalibrationBody(body) {
   const checks = [];
 
@@ -118,7 +124,7 @@ function validateCalibrationBody(body) {
       numberInRange(body?.ece, 0, 1)
         ? 'Expected calibration error is finite and within [0,1].'
         : 'Expected calibration error is missing or outside [0,1].',
-      { ece: numberInRange(body?.ece, 0, 1) ? body.ece : null }
+      { ece: numberInRange(body?.ece, 0, 1) ? roundedMetric(body.ece) : null }
     )
   );
 
@@ -290,9 +296,9 @@ async function main() {
       status: passed ? 'passed' : 'failed',
       checks,
       evidenceSummary: {
-        ece: numberInRange(calibrationBody?.ece, 0, 1) ? calibrationBody.ece : null,
-        mae: numberInRange(calibrationBody?.mae, 0, 1) ? calibrationBody.mae : null,
-        rmse: numberInRange(calibrationBody?.rmse, 0, 1) ? calibrationBody.rmse : null,
+        ece: numberInRange(calibrationBody?.ece, 0, 1) ? roundedMetric(calibrationBody.ece) : null,
+        mae: numberInRange(calibrationBody?.mae, 0, 1) ? roundedMetric(calibrationBody.mae) : null,
+        rmse: numberInRange(calibrationBody?.rmse, 0, 1) ? roundedMetric(calibrationBody.rmse) : null,
         expertAssessmentCount: Number.isInteger(calibrationBody?.expertRowsCount) ? calibrationBody.expertRowsCount : null,
         predictionPairCount: Number.isInteger(calibrationBody?.pairsCount) ? calibrationBody.pairsCount : null,
         binsCount: Number.isInteger(calibrationBody?.binsCount) ? calibrationBody.binsCount : null,

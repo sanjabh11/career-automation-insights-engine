@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T00:50:44.303Z",
+  "generatedAt": "2026-06-02T06:03:20.424Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
   "status": "passed",
   "confidence": "bounded_production_calibration_run",
@@ -46,21 +46,21 @@
       "label": "ECE is a normalized finite value",
       "passed": true,
       "message": "Expected calibration error is finite and within [0,1].",
-      "ece": 0.325
+      "ece": 0.27855
     },
     {
       "id": "calibration-sample-pairs",
       "label": "Calibration joined live APO predictions to expert assessments",
       "passed": true,
       "message": "The deployed function returned at least one matched prediction/expert pair.",
-      "predictionPairCount": 2
+      "predictionPairCount": 6
     },
     {
       "id": "calibration-expert-rows",
       "label": "Calibration found expert assessment rows",
       "passed": true,
       "message": "The deployed function returned at least one expert assessment row.",
-      "expertAssessmentCount": 2
+      "expertAssessmentCount": 6
     },
     {
       "id": "calibration-bins",
@@ -74,20 +74,20 @@
       "label": "Calibration run id is present",
       "passed": true,
       "message": "The deployed function returned a calibration run id.",
-      "runIdHash": "3b71bbc5f301f2da"
+      "runIdHash": "959da66e4db09bc7"
     }
   ],
   "evidenceSummary": {
-    "ece": 0.325,
-    "mae": 0.325,
-    "rmse": 0.3335416016031584,
-    "expertAssessmentCount": 2,
-    "predictionPairCount": 2,
+    "ece": 0.27855,
+    "mae": 0.27855,
+    "rmse": 0.310318,
+    "expertAssessmentCount": 6,
+    "predictionPairCount": 6,
     "binsCount": 10,
-    "unmatchedApoLogs": 0,
+    "unmatchedApoLogs": 2,
     "method": "apo_overall_vs_expert_assessments",
     "source": "all",
-    "runIdHash": "3b71bbc5f301f2da",
+    "runIdHash": "959da66e4db09bc7",
     "targetProjectHash": "62cddc6a42785074"
   }
 }
