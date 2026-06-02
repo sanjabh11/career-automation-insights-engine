@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
+  BlockedClaimsPanel,
   EvidenceGateDashboard,
   OwnerEvidenceCloseoutPanel,
   StripeProofStatusCard,
@@ -171,6 +172,7 @@ export default function ResponsibleAIPage() {
       </section>
 
       <EvidenceGateDashboard />
+      <BlockedClaimsPanel />
       <OwnerEvidenceCloseoutPanel />
       <StripeProofStatusCard />
 

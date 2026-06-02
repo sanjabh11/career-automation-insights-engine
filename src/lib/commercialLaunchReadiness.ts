@@ -141,6 +141,14 @@ export interface OwnerEvidenceCloseoutSummary {
   closeoutBoundary: string;
 }
 
+export interface BlockedClaimVisibilityItem {
+  claim: string;
+  currentStatus: "blocked" | "bounded" | "owner_attestation_required";
+  blockingEvidence: string;
+  requiredEvidence: string;
+  allowedCopy: string;
+}
+
 export interface DesignPartnerOnboardingStep {
   step: string;
   owner: "founder" | "partner" | "staff-review";
@@ -375,6 +383,89 @@ export const ownerEvidenceCloseoutStatusItems: OwnerEvidenceCloseoutStatusItem[]
       "Collect one permissioned outcome record with baseline workflow, artifact reviewed, measured change, approved quote, and explicit does-not-prove boundary.",
     sourceArtifact: "docs/commercialization/commercial-evidence-records-latest.json",
     doesNotProve: "Guaranteed career outcomes, causal product impact, wage gain, placement, or legal compliance.",
+  },
+];
+
+export const blockedClaimVisibilityItems: BlockedClaimVisibilityItem[] = [
+  {
+    claim: "Part I remediation complete",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "Final owner-evidence closeout still reports goalComplete=false and missing live/commercial evidence records.",
+    requiredEvidence:
+      "npm run closeout:owner-evidence -- --write --refresh-tracked accepts all live proof, partner, outcome, and remediation gates.",
+    allowedCopy:
+      "Repo-side implementation and CI proof-pack checks are substantially complete; final owner-held evidence gates remain open.",
+  },
+  {
+    claim: "Scientifically validated APO scores",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "Production calibration currently proves only a bounded 6-pair APO/expert run and public fixture/model-card artifacts.",
+    requiredEvidence:
+      "Approved expert-label collection plan, materially larger matched APO/log sample, reliability analysis, drift policy, and model-card update.",
+    allowedCopy:
+      "APO is a decision-support estimate with documented method, uncertainty, limitations, and bounded calibration evidence.",
+  },
+  {
+    claim: "Live revenue or MRR greater than zero",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "Latest redacted Stripe live MRR artifact found 0 active subscriptions, 0 paid invoices, and total_mrr > 0 was false.",
+    requiredEvidence:
+      "Owner-held live Stripe active subscription or paid invoice proof with redacted aggregate MRR > 0.",
+    allowedCopy:
+      "Payment flows and proof gates are implemented; live revenue remains unproven until Stripe evidence passes.",
+  },
+  {
+    claim: "Three committed design partners",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "Commercial evidence records currently show 0 accepted unique design-partner hashes.",
+    requiredEvidence:
+      "Three permissioned partner records with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+    allowedCopy:
+      "Design-partner intake and redaction workflow is implemented; committed partners are still owner-held evidence.",
+  },
+  {
+    claim: "Documented product outcomes",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "Commercial evidence records currently show 0 accepted outcome hashes.",
+    requiredEvidence:
+      "At least one permissioned outcome record with baseline workflow, artifact reviewed, measured change, approved quote, and does-not-prove boundary.",
+    allowedCopy:
+      "Outcome evidence capture is implemented; no case-study outcome should be claimed until owner-approved records pass.",
+  },
+  {
+    claim: "Localized UK/CA/AU exact wage or outlook forecasts",
+    currentStatus: "bounded",
+    blockingEvidence:
+      "Current UK and Australia values are parent-group context; Canada wages are national rows and outlook remains geography-required.",
+    requiredEvidence:
+      "Full source table checksums, geography/occupation joins, suppression states, and source-date review for each displayed local value.",
+    allowedCopy:
+      "UK/CA/AU regional context is source-dated and bounded; APO exposure estimates remain U.S. O*NET/BLS basis.",
+  },
+  {
+    claim: "WCAG conformance or institutional accessibility approval",
+    currentStatus: "owner_attestation_required",
+    blockingEvidence:
+      "Automated commercial smoke evidence exists, but manual WCAG-EM, screen-reader, contrast, target-size, text-spacing, focus, and form-error evidence is incomplete.",
+    requiredEvidence:
+      "Completed manual WCAG 2.2 worksheet, issue remediation notes, and reviewer attestation.",
+    allowedCopy:
+      "Automated accessibility smoke checks pass for commercial routes; full WCAG conformance remains unclaimed.",
+  },
+  {
+    claim: "Employment-decision validity",
+    currentStatus: "blocked",
+    blockingEvidence:
+      "The product is scoped for planning and review, not hiring, firing, promotion, compensation, retention, or eligibility decisions.",
+    requiredEvidence:
+      "Separate validated employment-selection program, legal review, adverse-impact analysis, governance controls, and customer-specific approval.",
+    allowedCopy:
+      "Use for planning-only automation-defense review with human oversight and explicit non-employment-decision boundaries.",
   },
 ];
 

@@ -46,6 +46,13 @@ const expectedProofSurfaces = [
     purpose: 'evidence gate dashboard',
   },
   {
+    component: 'BlockedClaimsPanel',
+    marker: 'data-proof-visibility="blocked-claims-panel"',
+    routeFile: 'src/pages/ResponsibleAIPage.tsx',
+    route: '/trust-center',
+    purpose: 'blocked claims matrix',
+  },
+  {
     component: 'OwnerEvidenceCloseoutPanel',
     marker: 'data-proof-visibility="owner-evidence-closeout-panel"',
     routeFile: 'src/pages/ResponsibleAIPage.tsx',
@@ -131,6 +138,8 @@ assertOccurrenceAtLeast(
   'SOURCE_MANIFEST_LAST_VERIFIED_AT',
   'SOURCE_REFRESH_MANIFEST',
   'sourceFreshnessDashboardRows',
+  'blockedClaimVisibilityItems',
+  'Blocked claims matrix',
   'matched APO/expert pairs',
   'ECE 0.27855',
   'REGIONAL_WAGE_OUTLOOK_ADAPTERS',
@@ -151,6 +160,23 @@ assertOccurrenceAtLeast(
   'Do not claim general accuracy',
   'live revenue and fulfillment claims remain gated',
 ].forEach((snippet) => assertContains(proofComponentFile, snippet));
+
+[
+  'Part I remediation complete',
+  'Scientifically validated APO scores',
+  'Live revenue or MRR greater than zero',
+  'Three committed design partners',
+  'Documented product outcomes',
+  'Localized UK/CA/AU exact wage or outlook forecasts',
+  'WCAG conformance or institutional accessibility approval',
+  'Employment-decision validity',
+  'allowedCopy',
+  'APO exposure estimates remain U.S. O*NET/BLS basis',
+  'goalComplete=false',
+  '0 active subscriptions',
+  '0 accepted unique design-partner hashes',
+  '0 accepted outcome hashes',
+].forEach((snippet) => assertContains('src/lib/commercialLaunchReadiness.ts', snippet));
 
 [
   'O*NET task ratings',

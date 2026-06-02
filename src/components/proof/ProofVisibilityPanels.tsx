@@ -22,6 +22,7 @@ import {
   commercialLaunchGateItems,
 } from "@/lib/commercialLaunchGate";
 import {
+  blockedClaimVisibilityItems,
   caseStudyCaptureTemplate,
   coachCommercializationWorkflow,
   commercialValidationEvidenceGates,
@@ -126,6 +127,25 @@ function proofBadge(status: ProofStatus) {
   );
 }
 
+function blockedClaimStatusBadge(status: "blocked" | "bounded" | "owner_attestation_required") {
+  const classes = {
+    blocked: "border-rose-200 bg-rose-50 text-rose-800",
+    bounded: "border-sky-200 bg-sky-50 text-sky-800",
+    owner_attestation_required: "border-amber-200 bg-amber-50 text-amber-800",
+  }[status];
+  const label = {
+    blocked: "Blocked",
+    bounded: "Bounded copy only",
+    owner_attestation_required: "Owner attestation required",
+  }[status];
+
+  return (
+    <Badge variant="outline" className={cn("border", classes)}>
+      {label}
+    </Badge>
+  );
+}
+
 function metric(value: number) {
   return `${value.toFixed(1).replace(/\.0$/, "")}/5`;
 }
@@ -179,6 +199,51 @@ export function EvidenceGateDashboard() {
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
               <strong>Does not prove:</strong> {row.boundary}
+            </p>
+          </article>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function BlockedClaimsPanel() {
+  const blockedCount = blockedClaimVisibilityItems.filter((item) => item.currentStatus === "blocked").length;
+
+  return (
+    <Card data-proof-visibility="blocked-claims-panel" className="border-rose-200 bg-rose-50/30">
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <AlertTriangle className="h-5 w-5 text-rose-700" />
+              Blocked claims matrix
+            </CardTitle>
+            <CardDescription>
+              Admin-facing guardrail for copy, demos, PRs, and partner conversations. Use the allowed copy until the
+              required evidence is attached.
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="border-rose-200 bg-white text-rose-800">
+            {blockedCount} blocked
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3 lg:grid-cols-2">
+        {blockedClaimVisibilityItems.map((item) => (
+          <article key={item.claim} className="rounded-lg border bg-background p-4">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <h3 className="text-sm font-semibold">{item.claim}</h3>
+              {blockedClaimStatusBadge(item.currentStatus)}
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              <strong>Why blocked:</strong> {item.blockingEvidence}
+            </p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              <strong>Required evidence:</strong> {item.requiredEvidence}
+            </p>
+            <p className="mt-3 rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
+              <strong>Allowed copy:</strong> {item.allowedCopy}
             </p>
           </article>
         ))}
