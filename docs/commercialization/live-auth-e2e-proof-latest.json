@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T05:57:28.983Z",
+  "generatedAt": "2026-06-02T07:53:46.567Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
   "status": "passed",
   "confidence": "bounded_authenticated_live_e2e",
@@ -27,21 +27,21 @@
       "message": "Signed in with password without printing credentials.",
       "userIdHash": "a70430c60efa9600",
       "emailHash": "33485ac4545fdc1c",
-      "authAttempts": 1
+      "authAttempts": 3
     },
     {
       "id": "resume-analysis-insert",
       "label": "Synthetic saved resume analysis can be created under RLS",
       "passed": true,
       "message": "Inserted a synthetic non-sensitive row owned by the signed-in test user.",
-      "analysisId": "31109d0e-de98-47bf-ae5b-ea4fb38a9e8d"
+      "analysisId": "b6d560a2-cbb6-427e-95f8-3c045d7f0cbd"
     },
     {
       "id": "redacted-artifact-create",
       "label": "Redacted resume proof artifact can be created through authenticated RPC",
       "passed": true,
       "message": "Created artifact preserves raw-text false, detail-row redaction true, and staff-review-required state.",
-      "artifactId": "76f30a8c-ab0d-48b0-bdc0-b7a0e60833c3",
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb",
       "reviewStatus": "staff_review_required",
       "rawResumeTextStored": false,
       "resumeDetailRowsRedacted": true
@@ -51,27 +51,27 @@
       "label": "Redacted proof artifact delete returns bounded receipt",
       "passed": true,
       "message": "Deleted artifact and received an app-level bounded deletion receipt.",
-      "receiptId": "ce75c3ea-83c1-472e-823f-85ee4e153905",
-      "artifactId": "76f30a8c-ab0d-48b0-bdc0-b7a0e60833c3",
+      "receiptId": "a28eafbc-228f-45e7-96f0-2e9ef10d6aa7",
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb",
       "deletionStatus": "deleted",
-      "receiptHashPrefix": "ad4e0d5662defbe3"
+      "receiptHashPrefix": "63f74cb20f568647"
     },
     {
       "id": "redacted-artifact-delete-readback",
       "label": "Deleted redacted proof artifact is no longer readable by owner",
       "passed": true,
       "message": "Artifact row is absent after delete receipt.",
-      "artifactId": "76f30a8c-ab0d-48b0-bdc0-b7a0e60833c3"
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb"
     },
     {
       "id": "resume-analysis-delete-receipt",
       "label": "Saved resume analysis delete returns bounded receipt",
       "passed": true,
       "message": "Deleted synthetic saved analysis and received an app-level bounded deletion receipt.",
-      "receiptId": "bd7e4bb5-12c7-4cc9-9630-a228e4332b3a",
-      "analysisId": "31109d0e-de98-47bf-ae5b-ea4fb38a9e8d",
+      "receiptId": "9d82fd49-609b-4d24-8485-f97f572facf3",
+      "analysisId": "b6d560a2-cbb6-427e-95f8-3c045d7f0cbd",
       "deletionStatus": "deleted",
-      "receiptHashPrefix": "3f8685905c2ffd76"
+      "receiptHashPrefix": "1b0cb3c25b5a30d4"
     }
   ]
 }
