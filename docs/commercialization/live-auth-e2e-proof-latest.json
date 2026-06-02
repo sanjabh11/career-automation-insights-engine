@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T16:33:37.872Z",
+  "generatedAt": "2026-06-02T00:51:39.722Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
   "status": "passed",
   "confidence": "bounded_authenticated_live_e2e",
@@ -34,14 +34,14 @@
       "label": "Synthetic saved resume analysis can be created under RLS",
       "passed": true,
       "message": "Inserted a synthetic non-sensitive row owned by the signed-in test user.",
-      "analysisId": "e1f6af8b-01ae-4109-850b-ac9bf1d72393"
+      "analysisId": "17ca0bb3-9be1-4be2-8672-103788883eab"
     },
     {
       "id": "redacted-artifact-create",
       "label": "Redacted resume proof artifact can be created through authenticated RPC",
       "passed": true,
       "message": "Created artifact preserves raw-text false, detail-row redaction true, and staff-review-required state.",
-      "artifactId": "589a4ee6-2520-4128-9e4e-df986c851145",
+      "artifactId": "a489a17b-a3dd-41e6-a580-06e255a55f7c",
       "reviewStatus": "staff_review_required",
       "rawResumeTextStored": false,
       "resumeDetailRowsRedacted": true
@@ -51,27 +51,27 @@
       "label": "Redacted proof artifact delete returns bounded receipt",
       "passed": true,
       "message": "Deleted artifact and received an app-level bounded deletion receipt.",
-      "receiptId": "a5c31b51-54ef-4208-b0f9-c1f5623b9f7e",
-      "artifactId": "589a4ee6-2520-4128-9e4e-df986c851145",
+      "receiptId": "64238608-8192-4a31-990e-47675b57f934",
+      "artifactId": "a489a17b-a3dd-41e6-a580-06e255a55f7c",
       "deletionStatus": "deleted",
-      "receiptHashPrefix": "fe2114d6543e09ee"
+      "receiptHashPrefix": "a55aeac2e36ddb43"
     },
     {
       "id": "redacted-artifact-delete-readback",
       "label": "Deleted redacted proof artifact is no longer readable by owner",
       "passed": true,
       "message": "Artifact row is absent after delete receipt.",
-      "artifactId": "589a4ee6-2520-4128-9e4e-df986c851145"
+      "artifactId": "a489a17b-a3dd-41e6-a580-06e255a55f7c"
     },
     {
       "id": "resume-analysis-delete-receipt",
       "label": "Saved resume analysis delete returns bounded receipt",
       "passed": true,
       "message": "Deleted synthetic saved analysis and received an app-level bounded deletion receipt.",
-      "receiptId": "56a8fe4d-f4ae-4aef-8920-adfa82300901",
-      "analysisId": "e1f6af8b-01ae-4109-850b-ac9bf1d72393",
+      "receiptId": "2b0f2c6c-4481-4e70-80da-52d822083287",
+      "analysisId": "17ca0bb3-9be1-4be2-8672-103788883eab",
       "deletionStatus": "deleted",
-      "receiptHashPrefix": "9f9241df252affe4"
+      "receiptHashPrefix": "98faf06b8c753dad"
     }
   ]
 }

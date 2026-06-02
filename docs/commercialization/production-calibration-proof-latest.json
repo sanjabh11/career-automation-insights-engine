@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T16:49:39.392Z",
+  "generatedAt": "2026-06-02T00:50:44.303Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
   "status": "passed",
   "confidence": "bounded_production_calibration_run",
@@ -74,7 +74,7 @@
       "label": "Calibration run id is present",
       "passed": true,
       "message": "The deployed function returned a calibration run id.",
-      "runIdHash": "6e9ba4d01f446f22"
+      "runIdHash": "3b71bbc5f301f2da"
     }
   ],
   "evidenceSummary": {
@@ -87,7 +87,7 @@
     "unmatchedApoLogs": 0,
     "method": "apo_overall_vs_expert_assessments",
     "source": "all",
-    "runIdHash": "6e9ba4d01f446f22",
+    "runIdHash": "3b71bbc5f301f2da",
     "targetProjectHash": "62cddc6a42785074"
   }
 }

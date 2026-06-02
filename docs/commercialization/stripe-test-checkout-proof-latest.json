@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-01T04:50:22.536Z",
-  "target": null,
-  "status": "skipped_missing_env",
+  "generatedAt": "2026-06-02T00:50:10.253Z",
+  "target": "https://kvunnankqgfokeufvsrv.supabase.co",
+  "status": "failed_non_test_stripe_key",
   "confidence": "bounded_stripe_test_checkout",
   "caveat": "This verifier creates a Stripe test-mode Checkout Session through the deployed create-checkout-session Supabase Edge Function and retrieves the session from Stripe to confirm livemode=false. It does not complete payment, prove live revenue, prove webhook fulfillment, or prove MRR.",
   "doesNotProve": [
@@ -21,18 +21,10 @@
   ],
   "checks": [
     {
-      "id": "stripe-test-checkout-env",
-      "label": "Stripe test checkout credentials are configured",
+      "id": "stripe-test-key-mode",
+      "label": "Stripe key is test-mode only",
       "passed": false,
-      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD, STRIPE_SECRET_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
+      "message": "STRIPE_SECRET_KEY is live-mode; this verifier only accepts Stripe test-mode keys."
     }
-  ],
-  "missingEnv": [
-    "SUPABASE_URL or VITE_SUPABASE_URL",
-    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
-    "LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL",
-    "LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD",
-    "STRIPE_SECRET_KEY",
-    "STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
   ]
 }

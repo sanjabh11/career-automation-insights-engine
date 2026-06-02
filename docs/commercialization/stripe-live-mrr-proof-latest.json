@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-01T05:12:08.444Z",
+  "generatedAt": "2026-06-02T00:52:56.658Z",
   "gateId": "live_mrr_gt_zero",
   "evidenceType": "stripe_live_mrr_export",
-  "status": "skipped_missing_env",
+  "status": "failed",
   "confidence": "bounded_stripe_live_mrr_readonly",
   "caveat": "This verifier reads Stripe live-mode active subscriptions and paid invoices, then records redacted metadata showing whether fixed recurring subscription MRR is greater than zero. It does not create charges, refund charges, change subscriptions, store customer identities, or prove retention, product-market fit, future revenue, or accounting-recognized revenue.",
   "docsAsOf": "2026-06-01",
@@ -31,13 +31,48 @@
   },
   "checks": [
     {
-      "id": "stripe-live-key-present",
-      "label": "Stripe live-mode key is configured",
+      "id": "stripe-live-key-mode",
+      "label": "Stripe key is live-mode only",
+      "passed": true,
+      "message": "A live-mode Stripe secret or restricted key was provided."
+    },
+    {
+      "id": "stripe-active-subscriptions-read",
+      "label": "Stripe active subscriptions were read in live mode",
       "passed": false,
-      "message": "Missing: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY"
+      "message": "No live-mode active subscriptions were returned.",
+      "activeSubscriptionCount": 0,
+      "truncated": false
+    },
+    {
+      "id": "stripe-live-mrr-positive",
+      "label": "Fixed recurring live MRR is greater than zero",
+      "passed": false,
+      "message": "No positive fixed recurring monthly revenue was derived from live active subscriptions.",
+      "positiveMrrCurrencyCount": 0,
+      "countedFixedRecurringItemCount": 0,
+      "omittedItemCount": 0
+    },
+    {
+      "id": "stripe-paid-invoice-evidence",
+      "label": "Stripe live paid invoice evidence exists",
+      "passed": false,
+      "message": "No live-mode paid invoice with amount_paid > 0 was found for active subscriptions.",
+      "paidInvoiceCount": 0,
+      "paidInvoiceHashSample": []
     }
   ],
-  "missingEnv": [
-    "STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY"
-  ]
+  "evidenceSummary": {
+    "liveMode": true,
+    "totalMrrGreaterThanZero": false,
+    "activeSubscriptionCount": 0,
+    "paidInvoiceCount": 0,
+    "currencyCount": 0,
+    "mrrByCurrencyHash": "4f53cda18c2baa0c",
+    "countedFixedRecurringItemCount": 0,
+    "countedSubscriptionCount": 0,
+    "countedSubscriptionHashSample": [],
+    "omittedItemCount": 0,
+    "truncated": false
+  }
 }

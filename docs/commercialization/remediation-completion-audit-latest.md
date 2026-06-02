@@ -1,8 +1,8 @@
 # Remediation Completion Audit
 
-Generated: 2026-06-01T18:47:20.966Z
+Generated: 2026-06-02T00:55:29.048Z
 Branch: `phase-e-commercial-validation`
-Source head at generation: `82f0a3f`
+Source head at generation: `e6b1b59`
 Goal complete: no
 
 This generated audit is the current phase-by-phase closeout ledger for the APO Dashboard remediation plan. It is evidence-bound: local implementation and verifier coverage are separated from owner-held live proof, payment proof, partner commitments, and outcome evidence.
