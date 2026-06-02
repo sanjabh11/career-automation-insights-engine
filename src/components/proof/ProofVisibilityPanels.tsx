@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -11,7 +12,12 @@ import {
   Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   commercialLaunchGateItems,
 } from "@/lib/commercialLaunchGate";
@@ -40,6 +46,39 @@ import {
 import { cn } from "@/lib/utils";
 
 type ProofStatus = "ready" | "blocked" | "manual" | "pending";
+
+const OWNER_EVIDENCE_INTAKE_BOUNDARY =
+  "Draft only. Raw partner names, contacts, contracts, notes, private quotes, customer data, and hash salts must remain owner-held outside the repository.";
+
+const DEFAULT_PARTNER_BOUNDARIES = "Revenue\nSuccessful outcomes\nMarket-wide demand";
+const DEFAULT_OUTCOME_BOUNDARIES = "Guaranteed career outcomes\nCausal impact\nGeneralizable demand";
+
+function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function parseBoundaries(value: string) {
+  return value
+    .split(/\r?\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function downloadJsonDraft(filename: string, value: unknown) {
+  const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: "application/json;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function compactJson(value: unknown) {
+  return JSON.stringify(value, null, 2);
+}
 
 function statusTone(status: ProofStatus) {
   switch (status) {
@@ -388,6 +427,51 @@ export function RegionalDataBadge({
 }
 
 export function PartnerEvidenceIntakePanel() {
+  const [partnerRef, setPartnerRef] = useState("");
+  const [segment, setSegment] = useState("career_coach");
+  const [committedAt, setCommittedAt] = useState(todayIsoDate);
+  const [artifactReviewed, setArtifactReviewed] = useState("sample_report");
+  const [redactionLevel, setRedactionLevel] = useState("public_segment_only");
+  const [partnerFlags, setPartnerFlags] = useState({
+    permissioned: false,
+    contactPermission: false,
+    pilotScopeAccepted: false,
+    planningOnlyUseConfirmed: false,
+    nextStepRecorded: false,
+  });
+  const [doesNotProve, setDoesNotProve] = useState(DEFAULT_PARTNER_BOUNDARIES);
+  const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
+
+  const partnerDraft = useMemo(() => ({
+    partnerRef,
+    segment,
+    committedAt,
+    permissioned: partnerFlags.permissioned,
+    contactPermission: partnerFlags.contactPermission,
+    pilotScopeAccepted: partnerFlags.pilotScopeAccepted,
+    planningOnlyUseConfirmed: partnerFlags.planningOnlyUseConfirmed,
+    artifactReviewed,
+    nextStepRecorded: partnerFlags.nextStepRecorded,
+    redactionLevel,
+    doesNotProve: parseBoundaries(doesNotProve),
+  }), [artifactReviewed, committedAt, doesNotProve, partnerFlags, partnerRef, redactionLevel, segment]);
+  const partnerDraftJson = useMemo(() => compactJson(partnerDraft), [partnerDraft]);
+  const readyForComposer = Object.values(partnerFlags).every(Boolean)
+    && partnerDraft.partnerRef.trim().length >= 3
+    && partnerDraft.segment.trim().length >= 3
+    && partnerDraft.artifactReviewed.trim().length >= 3
+    && partnerDraft.redactionLevel.trim().length >= 6
+    && partnerDraft.doesNotProve.length > 0;
+
+  const updatePartnerFlag = (key: keyof typeof partnerFlags, value: boolean) => {
+    setPartnerFlags((current) => ({ ...current, [key]: value }));
+  };
+
+  const copyPartnerDraft = async () => {
+    await navigator.clipboard.writeText(partnerDraftJson);
+    setCopyState("copied");
+  };
+
   return (
     <Card data-proof-visibility="partner-evidence-intake">
       <CardHeader>
@@ -399,26 +483,136 @@ export function PartnerEvidenceIntakePanel() {
           The UI now shows what must be captured before design-partner claims are allowed.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {designPartnerOnboardingChecklist.map((step) => (
-          <article key={step.step} className="rounded-lg border bg-background p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold">{step.step}</h3>
-              <Badge variant="outline">{step.owner.replace(/-/g, " ")}</Badge>
+      <CardContent className="space-y-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {designPartnerOnboardingChecklist.map((step) => (
+            <article key={step.step} className="rounded-lg border bg-background p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold">{step.step}</h3>
+                <Badge variant="outline">{step.owner.replace(/-/g, " ")}</Badge>
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">{step.artifact}</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <strong>Acceptance:</strong> {step.acceptanceEvidence}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{step.boundary}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="rounded-lg border bg-background p-4" data-owner-evidence-draft-builder="partner">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Design partner intake draft</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Generates one <code>designPartnerCommitments</code> entry for the gitignored local intake file.
+              </p>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">{step.artifact}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              <strong>Acceptance:</strong> {step.acceptanceEvidence}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">{step.boundary}</p>
-          </article>
-        ))}
+            {proofBadge(readyForComposer ? "ready" : "manual")}
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="partnerRef">Owner-held partner reference</Label>
+              <Input
+                id="partnerRef"
+                placeholder="owner-held stable alias; never paste names or emails"
+                value={partnerRef}
+                onChange={(event) => setPartnerRef(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="partnerSegment">Segment</Label>
+              <Input id="partnerSegment" value={segment} onChange={(event) => setSegment(event.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="partnerCommittedAt">Committed at</Label>
+              <Input id="partnerCommittedAt" type="date" value={committedAt} onChange={(event) => setCommittedAt(event.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="partnerArtifactReviewed">Artifact reviewed</Label>
+              <Input id="partnerArtifactReviewed" value={artifactReviewed} onChange={(event) => setArtifactReviewed(event.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="partnerRedactionLevel">Redaction level</Label>
+              <Input id="partnerRedactionLevel" value={redactionLevel} onChange={(event) => setRedactionLevel(event.target.value)} />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="partnerDoesNotProve">Does not prove boundaries</Label>
+              <Textarea id="partnerDoesNotProve" value={doesNotProve} onChange={(event) => setDoesNotProve(event.target.value)} />
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 md:grid-cols-2">
+            {Object.entries(partnerFlags).map(([key, value]) => (
+              <Label key={key} className="flex items-center gap-2 rounded-md border p-3 text-xs font-normal">
+                <Checkbox checked={value} onCheckedChange={(checked) => updatePartnerFlag(key as keyof typeof partnerFlags, checked === true)} />
+                <span>{key.replace(/([A-Z])/g, " $1").toLowerCase()} confirmed</span>
+              </Label>
+            ))}
+          </div>
+          <div className="mt-4 rounded-md border bg-muted/40 p-3">
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap text-xs">{partnerDraftJson}</pre>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={copyPartnerDraft}>
+              {copyState === "copied" ? "Copied draft" : "Copy partner draft"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => downloadJsonDraft("design-partner-intake-draft.json", partnerDraft)}>
+              Download draft JSON
+            </Button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{OWNER_EVIDENCE_INTAKE_BOUNDARY}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Paste this entry into <code>docs/commercialization/commercial-evidence-intake.local.json</code> under <code>designPartnerCommitments</code>, then run <code>COMMERCIAL_EVIDENCE_HASH_SALT="&lt;owner-held salt&gt;" npm run compose:commercial-evidence-records -- --write --require-all</code>.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
 export function OutcomeEvidenceReviewPanel() {
+  const [outcomeRef, setOutcomeRef] = useState("");
+  const [observedAt, setObservedAt] = useState(todayIsoDate);
+  const [artifactReviewed, setArtifactReviewed] = useState("sample_report");
+  const [redactionLevel, setRedactionLevel] = useState("public_quote_approved");
+  const [outcomeFlags, setOutcomeFlags] = useState({
+    permissioned: false,
+    baselineWorkflowCaptured: false,
+    measuredChangeCaptured: false,
+    approvedQuoteCaptured: false,
+    quoteApprovalCaptured: false,
+  });
+  const [doesNotProve, setDoesNotProve] = useState(DEFAULT_OUTCOME_BOUNDARIES);
+  const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
+
+  const outcomeDraft = useMemo(() => ({
+    outcomeRef,
+    observedAt,
+    permissioned: outcomeFlags.permissioned,
+    baselineWorkflowCaptured: outcomeFlags.baselineWorkflowCaptured,
+    artifactReviewed,
+    measuredChangeCaptured: outcomeFlags.measuredChangeCaptured,
+    approvedQuoteCaptured: outcomeFlags.approvedQuoteCaptured,
+    quoteApprovalCaptured: outcomeFlags.quoteApprovalCaptured,
+    redactionLevel,
+    doesNotProve: parseBoundaries(doesNotProve),
+  }), [artifactReviewed, doesNotProve, observedAt, outcomeFlags, outcomeRef, redactionLevel]);
+  const outcomeDraftJson = useMemo(() => compactJson(outcomeDraft), [outcomeDraft]);
+  const readyForComposer = Object.values(outcomeFlags).every(Boolean)
+    && outcomeDraft.outcomeRef.trim().length >= 3
+    && outcomeDraft.artifactReviewed.trim().length >= 3
+    && outcomeDraft.redactionLevel.trim().length >= 6
+    && outcomeDraft.doesNotProve.length > 0;
+
+  const updateOutcomeFlag = (key: keyof typeof outcomeFlags, value: boolean) => {
+    setOutcomeFlags((current) => ({ ...current, [key]: value }));
+  };
+
+  const copyOutcomeDraft = async () => {
+    await navigator.clipboard.writeText(outcomeDraftJson);
+    setCopyState("copied");
+  };
+
   return (
     <Card data-proof-visibility="outcome-evidence-review">
       <CardHeader>
@@ -430,17 +624,81 @@ export function OutcomeEvidenceReviewPanel() {
           Outcome copy stays blocked until every case-study field is permissioned and redacted.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-3 md:grid-cols-2">
-        {caseStudyCaptureTemplate.map((field) => (
-          <article key={field.field} className="rounded-lg border bg-background p-4">
-            <h3 className="text-sm font-semibold">{field.field.replace(/_/g, " ")}</h3>
-            <p className="mt-3 text-sm text-muted-foreground">{field.prompt}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              <strong>Required for:</strong> {field.requiredFor}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">{field.privacyBoundary}</p>
-          </article>
-        ))}
+      <CardContent className="space-y-4">
+        <div className="grid gap-3 md:grid-cols-2">
+          {caseStudyCaptureTemplate.map((field) => (
+            <article key={field.field} className="rounded-lg border bg-background p-4">
+              <h3 className="text-sm font-semibold">{field.field.replace(/_/g, " ")}</h3>
+              <p className="mt-3 text-sm text-muted-foreground">{field.prompt}</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <strong>Required for:</strong> {field.requiredFor}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{field.privacyBoundary}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="rounded-lg border bg-background p-4" data-owner-evidence-draft-builder="outcome">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Outcome evidence intake draft</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Generates one <code>documentedOutcomes</code> entry with consent and does-not-prove fields.
+              </p>
+            </div>
+            {proofBadge(readyForComposer ? "ready" : "manual")}
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="outcomeRef">Owner-held outcome reference</Label>
+              <Input
+                id="outcomeRef"
+                placeholder="owner-held stable alias; never paste names or contacts"
+                value={outcomeRef}
+                onChange={(event) => setOutcomeRef(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="outcomeObservedAt">Observed at</Label>
+              <Input id="outcomeObservedAt" type="date" value={observedAt} onChange={(event) => setObservedAt(event.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="outcomeArtifactReviewed">Artifact reviewed</Label>
+              <Input id="outcomeArtifactReviewed" value={artifactReviewed} onChange={(event) => setArtifactReviewed(event.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="outcomeRedactionLevel">Redaction level</Label>
+              <Input id="outcomeRedactionLevel" value={redactionLevel} onChange={(event) => setRedactionLevel(event.target.value)} />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="outcomeDoesNotProve">Does not prove boundaries</Label>
+              <Textarea id="outcomeDoesNotProve" value={doesNotProve} onChange={(event) => setDoesNotProve(event.target.value)} />
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 md:grid-cols-2">
+            {Object.entries(outcomeFlags).map(([key, value]) => (
+              <Label key={key} className="flex items-center gap-2 rounded-md border p-3 text-xs font-normal">
+                <Checkbox checked={value} onCheckedChange={(checked) => updateOutcomeFlag(key as keyof typeof outcomeFlags, checked === true)} />
+                <span>{key.replace(/([A-Z])/g, " $1").toLowerCase()} confirmed</span>
+              </Label>
+            ))}
+          </div>
+          <div className="mt-4 rounded-md border bg-muted/40 p-3">
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap text-xs">{outcomeDraftJson}</pre>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={copyOutcomeDraft}>
+              {copyState === "copied" ? "Copied draft" : "Copy outcome draft"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => downloadJsonDraft("outcome-evidence-intake-draft.json", outcomeDraft)}>
+              Download draft JSON
+            </Button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{OWNER_EVIDENCE_INTAKE_BOUNDARY}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Paste this entry into <code>docs/commercialization/commercial-evidence-intake.local.json</code> under <code>documentedOutcomes</code>. The composer hashes refs with the owner-held salt and rejects placeholders.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
