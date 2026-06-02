@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalibrationHealthWidget, SourceFreshnessPanel } from "@/components/proof/ProofVisibilityPanels";
 
 type CalibrationRun = {
   id: string;
@@ -169,6 +170,9 @@ export default function ValidationPage() {
           </Button>
         </div>
       </Card>
+
+      <CalibrationHealthWidget />
+      <SourceFreshnessPanel />
 
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-3">

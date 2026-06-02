@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EvidenceGateDashboard, StripeProofStatusCard } from "@/components/proof/ProofVisibilityPanels";
 import {
   commercialLaunchGateItems,
   functionSecurityReviewGroups,
@@ -164,6 +165,9 @@ export default function ResponsibleAIPage() {
           <p className="mt-1 text-xs text-muted-foreground">Each row has sources, caveats, and does-not-prove text.</p>
         </Card>
       </section>
+
+      <EvidenceGateDashboard />
+      <StripeProofStatusCard />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Card className="p-5" data-trust-employment-boundary="true">

@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Download, BarChart2, Activity, Users, Clock, TrendingUp, AlertCircle, ShieldCheck, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { OutcomeEvidenceReviewPanel } from "@/components/proof/ProofVisibilityPanels";
 
 type ApoLogRow = {
   latency_ms?: number | null;
@@ -183,6 +184,8 @@ export default function OutcomesPage() {
           </Button>
         </div>
       </div>
+
+      <OutcomeEvidenceReviewPanel />
 
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-2">

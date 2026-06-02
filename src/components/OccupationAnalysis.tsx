@@ -19,9 +19,9 @@ import { ROICalculator } from '@/components/ROICalculator';
 import { CareerSimulatorCard } from '@/components/CareerSimulatorCard';
 import { EcosystemRiskCard } from '@/components/EcosystemRiskCard';
 import { useBrightOutlook } from '@/hooks/useOnetEnrichment';
+import { RegionalDataBadge } from '@/components/proof/ProofVisibilityPanels';
 import {
   getBrowserGlobalEnglishRegion,
-  getOfficialSources,
   getRegionalLaborMarketDisclosure,
 } from '@/lib/globalEnglishLocalization';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -142,8 +142,6 @@ export const OccupationAnalysis = ({
     () => getRegionalLaborMarketDisclosure(globalEnglishRegion, occupation.code),
     [globalEnglishRegion, occupation.code],
   );
-  const regionalSources = getOfficialSources(regionalDisclosure.sourceIds);
-
   const toSoc6 = (code: string) => {
     const m = (code || '').match(/^(\d{2}-\d{4})/);
     return m ? m[1] : code;
@@ -328,59 +326,17 @@ export const OccupationAnalysis = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card className="glass-card p-4 sm:p-6">
-        {regionalDisclosure.shouldShow && (
-          <div
-            role="note"
-            aria-label="Regional labor-market disclosure"
-            className="mb-4 rounded-lg border border-amber-400/40 bg-amber-500/10 p-3 text-xs text-[var(--text-secondary)]"
-          >
-            <div className="mb-1 flex flex-wrap items-center gap-2 font-semibold text-[var(--text-primary)]">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-              <span>{regionalDisclosure.heading}</span>
-              {regionalDisclosure.classification && (
-                <Badge variant="outline" className="text-[10px]">
-                  {regionalDisclosure.classification.code}
-                </Badge>
-              )}
-            </div>
-            <p>{regionalDisclosure.message}</p>
-            {regionalDisclosure.adapter && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-[10px]">
-                  Adapter: {regionalDisclosure.adapter.valueStatus.replace(/_/g, ' ')}
-                </Badge>
-                {regionalDisclosure.localValueStatus && (
-                  <Badge variant="outline" className="text-[10px]">
-                    Local values: {regionalDisclosure.localValueStatus.status.replace(/_/g, ' ')}
-                  </Badge>
-                )}
-                <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
-                  Join requirement: {regionalDisclosure.adapter.joinLevel}
-                </span>
-                {regionalDisclosure.localValueStatus && (
-                  <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
-                    Local wage/outlook fallback: {regionalDisclosure.localValueStatus.reason}
-                  </span>
-                )}
-              </div>
-            )}
-            {regionalSources.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                {regionalSources.map((source) => (
-                  <a
-                    key={source.id}
-                    href={source.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline hover:text-[var(--text-primary)]"
-                  >
-                    {source.name}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <div className="mb-4" aria-label="Regional labor-market disclosure">
+          {regionalDisclosure.shouldShow && (
+            <span className="sr-only">
+              Adapter: {regionalDisclosure.adapter?.valueStatus.replace(/_/g, ' ') ?? 'not integrated'}.
+              Join requirement: {regionalDisclosure.adapter?.joinLevel ?? 'regional classification mapping required'}.
+              Local values: {regionalDisclosure.localValueStatus?.status.replace(/_/g, ' ') ?? 'not integrated'}.
+              Local wage/outlook fallback: {regionalDisclosure.localValueStatus?.reason ?? 'regional source join required'}.
+            </span>
+          )}
+          <RegionalDataBadge occupationCode={occupation.code} region={globalEnglishRegion} />
+        </div>
 
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4 sm:mb-6">

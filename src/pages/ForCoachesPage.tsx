@@ -7,6 +7,7 @@ import NavigationPremium from "@/components/NavigationPremium";
 import { redirectToCreditCheckout, CREDIT_PACKAGES } from "@/lib/stripe";
 import { useSession } from "@/hooks/useSession";
 import { useToast } from "@/hooks/use-toast";
+import { CoachAuditWorkspacePanel } from "@/components/proof/ProofVisibilityPanels";
 
 /**
  * ForCoachesPage - B2B Landing Page for Career Coaches
@@ -101,6 +102,9 @@ export default function ForCoachesPage() {
         <div className="min-h-screen overflow-x-hidden bg-[#0F172A]">
             <NavigationPremium />
             <main>
+            <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6 lg:px-8">
+                <CoachAuditWorkspacePanel />
+            </section>
 
             {/* Hero Section */}
             <section className="relative pt-24 pb-16 overflow-hidden">

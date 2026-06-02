@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useSession } from "@/hooks/useSession";
+import { PartnerEvidenceIntakePanel } from "@/components/proof/ProofVisibilityPanels";
 import {
   buildCommercialLeadCsv,
   buildCommercialOutreachCampaignCsv,
@@ -1070,6 +1071,8 @@ export default function CommercialLeadOpsPage() {
           <div className="mt-2 text-xs text-amber-800">Current user id: {userId}</div>
         </div>
       )}
+
+      <PartnerEvidenceIntakePanel />
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-10">
         <Card className="p-4">
