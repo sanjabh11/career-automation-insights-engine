@@ -142,10 +142,15 @@ async function signIn(page: Page) {
   await expect(page).toHaveURL(/\/$/);
 }
 
+async function selectLaborMarketRegion(page: Page, regionLabel: string) {
+  await page.getByRole('combobox', { name: /Labor-market region/i }).click();
+  await page.getByRole('option', { name: new RegExp(regionLabel, 'i') }).click();
+}
+
 test.describe('Phase D global-English disclosure', () => {
   test.use({ locale: 'en-GB' });
 
-  test('shows UK U.S.-basis disclosure for non-US labor-market context', async ({ page }) => {
+  test('switches UK, Canada, Australia, and US labor-market context without hiding APO basis', async ({ page }) => {
     await installMocks(page);
     await signIn(page);
 
@@ -153,9 +158,30 @@ test.describe('Phase D global-English disclosure', () => {
     await page.getByRole('button', { name: /^Search$/ }).click();
     await page.getByRole('button', { name: /Analyze automation for Software Developers/i }).click();
 
-    await expect(page.getByRole('note', { name: /Regional labor-market disclosure/i })).toBeVisible();
-    await expect(page.getByText('United Kingdom labor-market basis')).toBeVisible();
-    await expect(page.getByText(/U\.S\. O\*NET\/BLS basis/)).toBeVisible();
-    await expect(page.getByText('2134', { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('combobox', { name: /Labor-market region/i })).toBeVisible();
+    const regionalNote = page.getByRole('note', { name: /Regional labor-market disclosure/i });
+    await expect(regionalNote).toBeVisible();
+    await expect(regionalNote.getByText('United Kingdom labor-market basis')).toBeVisible();
+    await expect(regionalNote.getByText(/U\.S\. O\*NET\/BLS basis/)).toBeVisible();
+    await expect(regionalNote.getByText('2134', { exact: true }).first()).toBeVisible();
+    await expect(regionalNote.getByText(/Median annual gross pay GBP 51,148/).first()).toBeVisible();
+    await expect(regionalNote.getByText(/UK outlook not published by ASHE Table 2/).first()).toBeVisible();
+
+    await selectLaborMarketRegion(page, 'Canada');
+    await expect(regionalNote.getByText('Canada labor-market basis')).toBeVisible();
+    await expect(regionalNote.getByText('21232', { exact: true }).first()).toBeVisible();
+    await expect(regionalNote.getByText(/Median hourly wage CAD 48\.08/).first()).toBeVisible();
+    await expect(regionalNote.getByText(/Canada outlook requires province or economic-region selection/).first()).toBeVisible();
+
+    await selectLaborMarketRegion(page, 'Australia');
+    await expect(regionalNote.getByText('Australia labor-market basis')).toBeVisible();
+    await expect(regionalNote.getByText('2613', { exact: true }).first()).toBeVisible();
+    await expect(regionalNote.getByText(/Median weekly full-time earnings AUD 2,537/).first()).toBeVisible();
+    await expect(regionalNote.getByText(/Annual employment growth 13,700/).first()).toBeVisible();
+    await expect(regionalNote.getByText(/OSCA 2024/).first()).toBeVisible();
+
+    await selectLaborMarketRegion(page, 'United States');
+    await expect(regionalNote.getByText('U.S. source basis')).toBeVisible();
+    await expect(regionalNote.getByText(/U\.S\. SOC\/O\*NET\/BLS basis/)).toBeVisible();
   });
 });

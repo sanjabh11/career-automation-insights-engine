@@ -1,6 +1,6 @@
 # Live Supabase Deployment Runbook
 
-Generated: 2026-06-02T13:29:16.686Z
+Generated: 2026-06-02T14:13:05.354Z
 Target project ref: `kvunnankqgfokeufvsrv`
 Packet status: **pass**
 

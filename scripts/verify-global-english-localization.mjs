@@ -151,6 +151,10 @@ assert(source.includes('APO exposure estimates remain U.S. O*NET/BLS basis'), 'n
 assert(source.includes('getAustraliaOscaTransitionMapping'), 'Australia OSCA transition helper is required');
 assert(analysis.includes('Regional labor-market disclosure'), 'OccupationAnalysis must render a regional labor-market disclosure note');
 assert(analysis.includes('getRegionalLaborMarketDisclosure'), 'OccupationAnalysis must use the global-English disclosure helper');
+assert(analysis.includes('GLOBAL_ENGLISH_REGION_OPTIONS'), 'OccupationAnalysis must expose a region selector option list');
+assert(analysis.includes('selectedGlobalEnglishRegion'), 'OccupationAnalysis must track user-selected labor-market region');
+assert(analysis.includes('setSelectedGlobalEnglishRegion'), 'OccupationAnalysis must allow switching the labor-market region');
+assert(analysis.includes('Labor-market region'), 'OccupationAnalysis must label the regional selector for users and assistive tech');
 assert(analysis.includes('Adapter:'), 'OccupationAnalysis must show regional adapter status');
 assert(analysis.includes('Join requirement:'), 'OccupationAnalysis must show regional adapter join requirements');
 assert(analysis.includes('Local values:'), 'OccupationAnalysis must show explicit local wage/outlook value availability');

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, BarChart3, TrendingUp, TrendingDown, Clock, Target, AlertTriangle, Download } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line } from 'recharts';
 import { EnhancedAPOVisualization } from './EnhancedAPOVisualization';
@@ -23,6 +24,7 @@ import { RegionalDataBadge } from '@/components/proof/ProofVisibilityPanels';
 import {
   getBrowserGlobalEnglishRegion,
   getRegionalLaborMarketDisclosure,
+  type GlobalEnglishRegion,
 } from '@/lib/globalEnglishLocalization';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ExampleModal } from '@/components/help/ExampleModal';
@@ -124,6 +126,13 @@ interface OccupationAnalysisProps {
   isAlreadySelected: boolean;
 }
 
+const GLOBAL_ENGLISH_REGION_OPTIONS: Array<{ value: GlobalEnglishRegion; label: string; shortLabel: string }> = [
+  { value: 'US', label: 'United States', shortLabel: 'US basis' },
+  { value: 'UK', label: 'United Kingdom', shortLabel: 'UK ASHE' },
+  { value: 'CA', label: 'Canada', shortLabel: 'CA Job Bank' },
+  { value: 'AU', label: 'Australia', shortLabel: 'AU JSA/OSCA' },
+];
+
 export const OccupationAnalysis = ({
   occupation,
   overallAPO,
@@ -137,10 +146,12 @@ export const OccupationAnalysis = ({
   const [econProv, setEconProv] = React.useState<{ source?: string | null; source_url?: string | null; as_of_year?: number | null } | null>(null);
   const [showExplain, setShowExplain] = React.useState(false);
   const [showExample, setShowExample] = React.useState<false | 'apo' | 'portfolio'>(false);
-  const globalEnglishRegion = React.useMemo(() => getBrowserGlobalEnglishRegion(), []);
+  const [selectedGlobalEnglishRegion, setSelectedGlobalEnglishRegion] = React.useState<GlobalEnglishRegion>(() =>
+    getBrowserGlobalEnglishRegion()
+  );
   const regionalDisclosure = React.useMemo(
-    () => getRegionalLaborMarketDisclosure(globalEnglishRegion, occupation.code),
-    [globalEnglishRegion, occupation.code],
+    () => getRegionalLaborMarketDisclosure(selectedGlobalEnglishRegion, occupation.code),
+    [selectedGlobalEnglishRegion, occupation.code],
   );
   const toSoc6 = (code: string) => {
     const m = (code || '').match(/^(\d{2}-\d{4})/);
@@ -326,7 +337,30 @@ export const OccupationAnalysis = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card className="glass-card p-4 sm:p-6">
-        <div className="mb-4" aria-label="Regional labor-market disclosure">
+        <div className="mb-4 space-y-3" aria-label="Regional labor-market disclosure">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background/70 p-3">
+            <div>
+              <p className="text-xs font-semibold uppercase text-[var(--text-tertiary)]">Labor-market region</p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Switch between U.S. basis and source-dated UK, Canada, or Australia local context.
+              </p>
+            </div>
+            <Select
+              value={selectedGlobalEnglishRegion}
+              onValueChange={(value) => setSelectedGlobalEnglishRegion(value as GlobalEnglishRegion)}
+            >
+              <SelectTrigger aria-label="Labor-market region" className="w-[210px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {GLOBAL_ENGLISH_REGION_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label} · {option.shortLabel}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {regionalDisclosure.shouldShow && (
             <span className="sr-only">
               Adapter: {regionalDisclosure.adapter?.valueStatus.replace(/_/g, ' ') ?? 'not integrated'}.
@@ -335,7 +369,7 @@ export const OccupationAnalysis = ({
               Local wage/outlook fallback: {regionalDisclosure.localValueStatus?.reason ?? 'regional source join required'}.
             </span>
           )}
-          <RegionalDataBadge occupationCode={occupation.code} region={globalEnglishRegion} />
+          <RegionalDataBadge occupationCode={occupation.code} region={selectedGlobalEnglishRegion} />
         </div>
 
         {/* Header Section */}

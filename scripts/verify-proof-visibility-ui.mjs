@@ -135,6 +135,7 @@ assertOccurrenceAtLeast(
   'ECE 0.27855',
   'REGIONAL_WAGE_OUTLOOK_ADAPTERS',
   'GLOBAL_ENGLISH_SOURCE_DATE',
+  'Local source row:',
   'designPartnerOnboardingChecklist',
   'caseStudyCaptureTemplate',
   'coachCommercializationWorkflow',

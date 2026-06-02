@@ -353,6 +353,13 @@ export function RegionalDataBadge({
         </p>
         {disclosure.localValue ? (
           <>
+            <p className="text-xs md:col-span-2">
+              <strong>Local source row:</strong>{" "}
+              <span className="font-mono">{disclosure.localValue.classificationCode}</span>{" "}
+              <span aria-hidden="true">·</span>{" "}
+              <span>{disclosure.localValue.classificationTitle}</span>{" "}
+              <span>({disclosure.localValue.classificationLevel})</span>
+            </p>
             <p className="text-xs">
               <strong>Local wage:</strong> {disclosure.localValue.wage.label}.{" "}
               {disclosure.localValue.wage.suppressionState.replace(/_/g, " ")}.
