@@ -121,6 +121,26 @@ export interface CommercialValidationEvidenceGate {
   doesNotProve: string;
 }
 
+export interface OwnerEvidenceCloseoutStatusItem {
+  gateId: string;
+  label: string;
+  status: ReadinessStatus;
+  artifactState: "passed_artifact_not_attached" | "failed_artifact" | "missing_owner_record";
+  currentProof: string;
+  remainingAction: string;
+  sourceArtifact: string;
+  doesNotProve: string;
+}
+
+export interface OwnerEvidenceCloseoutSummary {
+  asOf: string;
+  goalComplete: boolean;
+  trackedLedger: string;
+  passedArtifactCount: number;
+  totalGateCount: number;
+  closeoutBoundary: string;
+}
+
 export interface DesignPartnerOnboardingStep {
   step: string;
   owner: "founder" | "partner" | "staff-review";
@@ -270,6 +290,91 @@ export const commercialValidationEvidenceGates: CommercialValidationEvidenceGate
     currentProof: "BOOTCAMP_PRICING.checkoutStatus is hidden_pending_live_price and stripePriceId is undefined.",
     status: "local_ready",
     doesNotProve: "Hidden CTA does not prove bootcamp demand or payment fulfillment.",
+  },
+];
+
+export const ownerEvidenceCloseoutSummary: OwnerEvidenceCloseoutSummary = {
+  asOf: "2026-06-02",
+  goalComplete: false,
+  trackedLedger: "docs/commercialization/remediation-completion-audit-latest.json",
+  passedArtifactCount: 2,
+  totalGateCount: 6,
+  closeoutBoundary:
+    "Tracked redacted artifacts are not the same as final closeout. Part I remains incomplete until npm run closeout:owner-evidence -- --write --refresh-tracked accepts every live and commercial gate.",
+};
+
+export const ownerEvidenceCloseoutStatusItems: OwnerEvidenceCloseoutStatusItem[] = [
+  {
+    gateId: "real_stripe_test_checkout",
+    label: "Stripe test checkout",
+    status: "blocked",
+    artifactState: "failed_artifact",
+    currentProof:
+      "Latest redacted artifact is failed_non_test_stripe_key: the resolved checkout key was live-mode, so test-mode checkout proof was rejected.",
+    remainingAction:
+      "Set a test-mode Stripe key through STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY plus STRIPE_TEST_PRICE_ID, then rerun npm run verify:stripe-test-checkout.",
+    sourceArtifact: "docs/commercialization/stripe-test-checkout-proof-latest.json",
+    doesNotProve: "Live revenue, MRR, webhook fulfillment, or successful payment method collection.",
+  },
+  {
+    gateId: "production_calibration_run",
+    label: "Production calibration",
+    status: "owner_action",
+    artifactState: "passed_artifact_not_attached",
+    currentProof:
+      "Redacted production calibration artifact passed against deployed calibrate-ece on 2026-06-02 with 6 matched APO/expert pairs, 10 bins, and ECE 0.27855.",
+    remainingAction:
+      "Attach only redacted owner-held evidence through the live-gate evidence template and rerun the final closeout bundle.",
+    sourceArtifact: "docs/commercialization/production-calibration-proof-latest.json",
+    doesNotProve: "Scientific validation beyond the measured sample, future performance, raw label provenance, or employment-decision validity.",
+  },
+  {
+    gateId: "authenticated_live_artifact_e2e",
+    label: "Authenticated live artifact e2e",
+    status: "owner_action",
+    artifactState: "passed_artifact_not_attached",
+    currentProof:
+      "Redacted live auth artifact passed for a synthetic user save/delete/deletion-receipt path on 2026-06-02.",
+    remainingAction:
+      "Attach the redacted proof metadata through the live-gate evidence template and rerun npm run closeout:owner-evidence -- --write --refresh-tracked.",
+    sourceArtifact: "docs/commercialization/live-auth-e2e-proof-latest.json",
+    doesNotProve: "Production PDF/DOCX extraction, malware scanning, provider-log deletion, backups deletion, or legal compliance.",
+  },
+  {
+    gateId: "live_mrr_gt_zero",
+    label: "Live MRR greater than zero",
+    status: "blocked",
+    artifactState: "failed_artifact",
+    currentProof:
+      "Latest redacted Stripe live MRR artifact read live mode successfully but found 0 active subscriptions, 0 paid invoices, and total_mrr > 0 was false.",
+    remainingAction:
+      "Attach owner-held live Stripe evidence only after an active paid subscription or paid invoice exists and npm run verify:stripe-live-mrr passes.",
+    sourceArtifact: "docs/commercialization/stripe-live-mrr-proof-latest.json",
+    doesNotProve: "Retention, product-market fit, future revenue, accounting-recognized revenue, or commercial outcomes.",
+  },
+  {
+    gateId: "three_committed_partners",
+    label: "Three committed design partners",
+    status: "owner_action",
+    artifactState: "missing_owner_record",
+    currentProof:
+      "Commercial evidence verifier is wired, but commercial-evidence-records-latest.json shows 0 accepted unique design-partner hashes.",
+    remainingAction:
+      "Collect three permissioned partner records with pilot scope, planning-only use, artifact reviewed, next step, and contact permission; compose with an owner-held salt.",
+    sourceArtifact: "docs/commercialization/commercial-evidence-records-latest.json",
+    doesNotProve: "Revenue, retention, market-wide demand, or a paid pilot.",
+  },
+  {
+    gateId: "documented_outcomes",
+    label: "Permissioned documented outcomes",
+    status: "owner_action",
+    artifactState: "missing_owner_record",
+    currentProof:
+      "Commercial evidence verifier is wired, but commercial-evidence-records-latest.json shows 0 accepted outcome hashes.",
+    remainingAction:
+      "Collect one permissioned outcome record with baseline workflow, artifact reviewed, measured change, approved quote, and explicit does-not-prove boundary.",
+    sourceArtifact: "docs/commercialization/commercial-evidence-records-latest.json",
+    doesNotProve: "Guaranteed career outcomes, causal product impact, wage gain, placement, or legal compliance.",
   },
 ];
 

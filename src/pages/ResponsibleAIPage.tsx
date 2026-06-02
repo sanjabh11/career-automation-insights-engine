@@ -11,7 +11,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { EvidenceGateDashboard, StripeProofStatusCard } from "@/components/proof/ProofVisibilityPanels";
+import {
+  EvidenceGateDashboard,
+  OwnerEvidenceCloseoutPanel,
+  StripeProofStatusCard,
+} from "@/components/proof/ProofVisibilityPanels";
 import {
   commercialLaunchGateItems,
   functionSecurityReviewGroups,
@@ -167,6 +171,7 @@ export default function ResponsibleAIPage() {
       </section>
 
       <EvidenceGateDashboard />
+      <OwnerEvidenceCloseoutPanel />
       <StripeProofStatusCard />
 
       <section className="grid gap-4 lg:grid-cols-2">

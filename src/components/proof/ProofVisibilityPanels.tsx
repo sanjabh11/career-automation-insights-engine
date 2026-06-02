@@ -20,6 +20,8 @@ import {
   coachCommercializationWorkflow,
   commercialValidationEvidenceGates,
   designPartnerOnboardingChecklist,
+  ownerEvidenceCloseoutStatusItems,
+  ownerEvidenceCloseoutSummary,
   paymentFulfillmentStatusItems,
   sourceFreshnessDashboardRows,
 } from "@/lib/commercialLaunchReadiness";
@@ -141,6 +143,75 @@ export function EvidenceGateDashboard() {
             </p>
           </article>
         ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function OwnerEvidenceCloseoutPanel() {
+  const blockedCount = ownerEvidenceCloseoutStatusItems.filter((item) => item.status === "blocked").length;
+  const ownerActionCount = ownerEvidenceCloseoutStatusItems.filter((item) => item.status === "owner_action").length;
+
+  return (
+    <Card data-proof-visibility="owner-evidence-closeout-panel" className="border-amber-200 bg-amber-50/40">
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <FileText className="h-5 w-5 text-amber-700" />
+              Owner evidence closeout
+            </CardTitle>
+            <CardDescription>
+              Part I goalComplete=false as of {ownerEvidenceCloseoutSummary.asOf}; redacted proof artifacts do not
+              complete the gate until final closeout accepts every owner-held record.
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="border-amber-300 bg-white text-amber-900">
+            {ownerEvidenceCloseoutSummary.passedArtifactCount}/{ownerEvidenceCloseoutSummary.totalGateCount} artifacts passed
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="rounded-lg border border-amber-200 bg-white p-4 text-sm text-amber-950">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="border-rose-200 bg-rose-50 text-rose-800">
+              goalComplete=false
+            </Badge>
+            <Badge variant="outline">{blockedCount} blocked</Badge>
+            <Badge variant="outline">{ownerActionCount} owner-held</Badge>
+          </div>
+          <p className="mt-3 text-muted-foreground">{ownerEvidenceCloseoutSummary.closeoutBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Tracked ledger:</strong> {ownerEvidenceCloseoutSummary.trackedLedger}
+          </p>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          {ownerEvidenceCloseoutStatusItems.map((item) => (
+            <article key={item.gateId} className="rounded-lg border bg-background p-4">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-semibold">{item.label}</h3>
+                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.gateId}</p>
+                </div>
+                {proofBadge(commercialGateStatus(item.status))}
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">{item.currentProof}</p>
+              <p className="mt-3 text-xs text-muted-foreground">
+                <strong>Artifact state:</strong> {item.artifactState.replace(/_/g, " ")}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <strong>Source artifact:</strong> {item.sourceArtifact}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <strong>Next:</strong> {item.remainingAction}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <strong>Does not prove:</strong> {item.doesNotProve}
+              </p>
+            </article>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

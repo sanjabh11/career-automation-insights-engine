@@ -46,6 +46,13 @@ const expectedProofSurfaces = [
     purpose: 'evidence gate dashboard',
   },
   {
+    component: 'OwnerEvidenceCloseoutPanel',
+    marker: 'data-proof-visibility="owner-evidence-closeout-panel"',
+    routeFile: 'src/pages/ResponsibleAIPage.tsx',
+    route: '/trust-center',
+    purpose: 'owner evidence closeout status panel',
+  },
+  {
     component: 'SourceFreshnessPanel',
     marker: 'data-proof-visibility="source-freshness-panel"',
     routeFile: 'src/pages/ValidationPage.tsx',
@@ -117,6 +124,9 @@ assertOccurrenceAtLeast(
 
 [
   'commercialValidationEvidenceGates',
+  'ownerEvidenceCloseoutStatusItems',
+  'ownerEvidenceCloseoutSummary',
+  'goalComplete=false',
   'commercialLaunchGateItems',
   'SOURCE_MANIFEST_LAST_VERIFIED_AT',
   'SOURCE_REFRESH_MANIFEST',
@@ -132,6 +142,15 @@ assertOccurrenceAtLeast(
   'Do not claim general accuracy',
   'live revenue and fulfillment claims remain gated',
 ].forEach((snippet) => assertContains(proofComponentFile, snippet));
+
+[
+  'failed_non_test_stripe_key',
+  'production-calibration-proof-latest.json',
+  'live-auth-e2e-proof-latest.json',
+  'stripe-live-mrr-proof-latest.json',
+  'commercial-evidence-records-latest.json',
+  'closeout:owner-evidence -- --write --refresh-tracked',
+].forEach((snippet) => assertContains('src/lib/commercialLaunchReadiness.ts', snippet));
 
 const routeChecks = [
   ['src/App.tsx', 'path="/validation"', '/validation route'],

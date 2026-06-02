@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T13:01:20.509Z",
+  "generatedAt": "2026-06-02T13:29:16.829Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -1114,9 +1114,9 @@
         "do not certify legal compliance, WCAG conformance, or employment-selection validity"
       ],
       "caveat": "Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.",
-      "bytes": 18077,
-      "rows": 367,
-      "sha256": "f5b915a20175173cc9839b186b7f8dcf12a55d2715e45ba8fd760b44a2412721",
+      "bytes": 18149,
+      "rows": 372,
+      "sha256": "a85a6ac3a5da82b49ce6b8cefcaddbe23fe6807a18c7e01e74e81571fb41279c",
       "failures": [],
       "passed": true
     },
@@ -1346,7 +1346,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 6105,
       "rows": 83,
-      "sha256": "3f8aca72f1e655c82cb07ff314f7f0b4e7cc440c9990e30408a08a2fa3d7c1c5",
+      "sha256": "96b7eaa02afc602b8b10187be0ad0e2b271ec38dd331e50112484407aa6c0c4d",
       "failures": [],
       "passed": true
     },
