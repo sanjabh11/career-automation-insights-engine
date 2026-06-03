@@ -119,12 +119,12 @@ export default function ResponsibleAIPage() {
           </div>
         </div>
 
-        <Card className="border-amber-200 bg-amber-50 p-5 text-amber-950">
+        <Card className="border-amber-400/70 bg-amber-500/10 p-5 text-foreground">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-1 h-5 w-5" />
+            <AlertTriangle className="mt-1 h-5 w-5 text-amber-300" />
             <div className="space-y-2">
               <h2 className="font-semibold">Launch boundary</h2>
-              <p className="text-sm leading-6">
+              <p className="text-sm leading-6 text-amber-100">
                 Ready for bounded demos and pilot review. Not ready for scaled paid or institutional delivery
                 until live payment proof, authenticated E2E, manual WCAG evidence, secret rotation, and buyer
                 acceptable-use signoff are complete.

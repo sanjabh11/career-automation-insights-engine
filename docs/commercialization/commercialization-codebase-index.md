@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-02T15:20:58.641Z
+Generated: 2026-06-03T08:52:22.996Z
 Branch: `phase-e-commercial-validation`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 

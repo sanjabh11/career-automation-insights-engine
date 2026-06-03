@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-02T15:21:01.139Z",
+  "generatedAt": "2026-06-03T08:52:30.739Z",
   "branch": "phase-e-commercial-validation",
-  "sourceHeadAtGeneration": "3d9c07e",
+  "sourceHeadAtGeneration": "8ca1976",
   "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
   "goalComplete": false,
   "phaseDeliverables": [
