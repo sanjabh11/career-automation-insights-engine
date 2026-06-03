@@ -19,6 +19,11 @@
 - [x] Phase C: Add Playwright smoke coverage for auth, APO run, Stripe test-mode checkout, and white-label export
 - [x] Phase C: Wire Phase C runtime smoke into CI
 - [x] Phase C: Run Phase C type, lint, proof, commercial, embedding, and E2E checks
+- [x] Phase D: Add source-dated global-English crosswalk/disclosure model
+- [x] Phase D: Cover 20 sample occupations for ESCO bridge, UK SOC, Canada NOC, and Australia ANZSCO
+- [x] Phase D: Add visible U.S.-basis wage/outlook disclosure for non-US English locales
+- [x] Phase D: Add UK locale Playwright smoke and global-English static verifier
+- [x] Phase D: Run Phase D type, lint, proof, commercial, global-English, and E2E checks
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -35,4 +40,9 @@
 - Phase C `npm run smoke:skill-adjacency` passed with `gemini-embedding-001`, 768 dimensions, and a non-empty adjacency result.
 - Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export.
 - Phase C `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,529 problems; Phase C touched files pass file-scoped ESLint.
-- `price_bootcamp` no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
+- The bootcamp placeholder Stripe price ID no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
+- Phase D `npm run verify:global-english-sources` provides the reproducible network-backed source-link check for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
+- Phase D `npm run verify:global-english` passed with 20 sample O*NET occupations, 20 ESCO bridge rows, 20 UK SOC mappings, 20 Canada NOC mappings, 20 Australia ANZSCO mappings, and source-registered UK/CA/AU wage/outlook adapter contracts.
+- Phase D `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests after adding UK global-English disclosure coverage.
+- Phase D `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,507 problems; Phase D touched files pass file-scoped ESLint.
+- Phase D deliberately does not claim localized UK/CA/AU wage values. The UI labels non-US views as U.S. O*NET/BLS basis and exposes adapter-pending join requirements until source-dated local wage/outlook adapters are imported and validated.

@@ -14,15 +14,73 @@ import APOExplanation from './APOExplanation';
 import { BrightOutlookBadge } from './BrightOutlookBadge';
 import PremiumReportSummary from './PremiumReportSummary';
 import PremiumCategoryGrid from './PremiumCategoryGrid';
-import { EmploymentOutlookCard } from './EmploymentOutlookCard';
 import { RelatedOccupationsPanel } from './RelatedOccupationsPanel';
 import { ROICalculator } from '@/components/ROICalculator';
 import { CareerSimulatorCard } from '@/components/CareerSimulatorCard';
 import { EcosystemRiskCard } from '@/components/EcosystemRiskCard';
 import { useBrightOutlook } from '@/hooks/useOnetEnrichment';
+import {
+  getBrowserGlobalEnglishRegion,
+  getOfficialSources,
+  getRegionalLaborMarketDisclosure,
+} from '@/lib/globalEnglishLocalization';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ExampleModal } from '@/components/help/ExampleModal';
 import { HelpTrigger } from '@/components/help/HelpTrigger';
+
+type AnalysisItem = {
+  category?: string;
+  description: string;
+  apo: number;
+  factors?: string[];
+  timeline?: string;
+};
+
+type CategoryKey = 'tasks' | 'knowledge' | 'skills' | 'abilities' | 'technologies';
+
+type AutomationEconomicsRow = {
+  task_category?: string | null;
+  industry_sector?: string | null;
+  implementation_cost_low?: number | null;
+  implementation_cost_high?: number | null;
+  roi_timeline_months?: number | null;
+  technology_maturity?: string | null;
+  wef_adoption_score?: number | null;
+  regulatory_friction?: string | null;
+  min_org_size?: number | null;
+  annual_labor_cost_threshold?: number | null;
+  source?: string | null;
+  source_url?: string | null;
+  as_of_year?: number | null;
+};
+
+type BlsEmploymentRow = {
+  year?: number | null;
+  employment_level?: number | null;
+};
+
+type RoiResult = {
+  roi_months?: number;
+  industry_sector?: string;
+  annual_wage?: number;
+  avg_cost?: number;
+};
+
+type SupabaseQueryBuilder<T> = PromiseLike<{ data: T | null }> & {
+  select(columns: string): SupabaseQueryBuilder<T>;
+  eq(column: string, value: unknown): SupabaseQueryBuilder<T>;
+  order(column: string, options?: { ascending?: boolean }): SupabaseQueryBuilder<T>;
+  limit(count: number): SupabaseQueryBuilder<T>;
+  maybeSingle(): Promise<{ data: T | null }>;
+  single(): Promise<{ data: T | null }>;
+};
+
+type SupabaseLooseClient = {
+  from<T>(table: string): SupabaseQueryBuilder<T>;
+  rpc<T>(fn: string, args?: Record<string, unknown>): {
+    single(): Promise<{ data: T | null }>;
+  };
+};
 
 interface EnhancedOccupationData {
   code: string;
@@ -31,18 +89,13 @@ interface EnhancedOccupationData {
   overallAPO: number;
   confidence: string;
   timeline: string;
-  tasks: Array<{ description: string; apo: number; factors?: string[]; timeline?: string }>;
-  knowledge: Array<{ description: string; apo: number; factors?: string[]; timeline?: string }>;
-  skills: Array<{ description: string; apo: number; factors?: string[]; timeline?: string }>;
-  abilities: Array<{ description: string; apo: number; factors?: string[]; timeline?: string }>;
-  technologies: Array<{ description: string; apo: number; factors?: string[]; timeline?: string }>;
-  categoryBreakdown: {
-    tasks: { apo: number; confidence: string };
-    knowledge: { apo: number; confidence: string };
-    skills: { apo: number; confidence: string };
-    abilities: { apo: number; confidence: string };
-    technologies: { apo: number; confidence: string };
-  };
+  tasks: AnalysisItem[];
+  knowledge: AnalysisItem[];
+  skills: AnalysisItem[];
+  abilities: AnalysisItem[];
+  technologies: AnalysisItem[];
+  items?: AnalysisItem[];
+  categoryBreakdown: Record<CategoryKey, { apo: number; confidence: string }>;
   insights: {
     primary_opportunities: string[];
     main_challenges: string[];
@@ -78,12 +131,18 @@ export const OccupationAnalysis = ({
   isAlreadySelected
 }: OccupationAnalysisProps) => {
   const { hasBrightOutlook, brightOutlookCategory } = useBrightOutlook(occupation.code);
-  const [econ, setEcon] = React.useState<any | null>(null);
+  const [econ, setEcon] = React.useState<AutomationEconomicsRow | null>(null);
   const [blsSeries, setBlsSeries] = React.useState<Array<{ x: number; y: number }>>([]);
-  const [roi, setRoi] = React.useState<{ roi_months?: number; industry_sector?: string; annual_wage?: number; avg_cost?: number } | null>(null);
+  const [roi, setRoi] = React.useState<RoiResult | null>(null);
   const [econProv, setEconProv] = React.useState<{ source?: string | null; source_url?: string | null; as_of_year?: number | null } | null>(null);
   const [showExplain, setShowExplain] = React.useState(false);
   const [showExample, setShowExample] = React.useState<false | 'apo' | 'portfolio'>(false);
+  const globalEnglishRegion = React.useMemo(() => getBrowserGlobalEnglishRegion(), []);
+  const regionalDisclosure = React.useMemo(
+    () => getRegionalLaborMarketDisclosure(globalEnglishRegion, occupation.code),
+    [globalEnglishRegion, occupation.code],
+  );
+  const regionalSources = getOfficialSources(regionalDisclosure.sourceIds);
 
   const toSoc6 = (code: string) => {
     const m = (code || '').match(/^(\d{2}-\d{4})/);
@@ -123,11 +182,13 @@ export const OccupationAnalysis = ({
     return occupation?.externalSignals?.industrySector ?? deriveSector(occupation?.code);
   }, [occupation?.externalSignals?.industrySector, occupation?.code]);
 
+  const db = React.useMemo(() => supabase as unknown as SupabaseLooseClient, []);
+
   React.useEffect(() => {
     if (!sector) { setEcon(null); return; }
     (async () => {
-      const { data } = await (supabase as any)
-        .from('automation_economics')
+      const { data } = await db
+        .from<AutomationEconomicsRow>('automation_economics')
         .select('task_category,industry_sector,implementation_cost_low,implementation_cost_high,roi_timeline_months,technology_maturity,wef_adoption_score,regulatory_friction,min_org_size,annual_labor_cost_threshold')
         .eq('industry_sector', sector)
         .order('wef_adoption_score', { ascending: false })
@@ -151,42 +212,42 @@ export const OccupationAnalysis = ({
         setEcon(data || null);
       }
     })();
-  }, [sector]);
+  }, [db, sector]);
 
   React.useEffect(() => {
     const soc6 = toSoc6(occupation.code);
     if (!soc6) { setBlsSeries([]); return; }
     (async () => {
-      const { data } = await (supabase as any)
-        .from('bls_employment_data')
+      const { data } = await db
+        .from<BlsEmploymentRow[]>('bls_employment_data')
         .select('year, employment_level')
         .eq('occupation_code_6', soc6)
         .order('year', { ascending: true });
       const series = (data || [])
-        .filter((r: any) => typeof r.employment_level === 'number' && typeof r.year === 'number')
-        .map((r: any) => ({ x: r.year, y: r.employment_level }));
+        .filter((r) => typeof r.employment_level === 'number' && typeof r.year === 'number')
+        .map((r) => ({ x: r.year as number, y: r.employment_level as number }));
       setBlsSeries(series);
     })();
-  }, [occupation?.code]);
+  }, [db, occupation?.code]);
 
   React.useEffect(() => {
     if (!occupation?.code) { setRoi(null); return; }
     (async () => {
-      const { data } = await (supabase as any).rpc('calculate_roi', { p_soc8: occupation.code }).single();
+      const { data } = await db.rpc<RoiResult>('calculate_roi', { p_soc8: occupation.code }).single();
       setRoi(data || null);
       if (data?.industry_sector) {
-        const { data: prov } = await (supabase as any)
-          .from('automation_economics')
+        const { data: prov } = await db
+          .from<AutomationEconomicsRow>('automation_economics')
           .select('source, source_url, as_of_year')
           .eq('industry_sector', data.industry_sector)
           .limit(1)
           .maybeSingle();
-        setEconProv((prov as any) || null);
+        setEconProv(prov || null);
       } else {
         setEconProv(null);
       }
     })();
-  }, [occupation?.code]);
+  }, [db, occupation?.code]);
 
   const getAPOColor = (apo: number) => {
     if (apo >= 70) return 'text-red-600 bg-red-50 border-red-200';
@@ -215,12 +276,12 @@ export const OccupationAnalysis = ({
   };
 
   // Helper to normalize data from V2 (items array) or V1 (separate arrays)
-  const getCategoryData = (categoryName: string, v1Array: any[]) => {
+  const getCategoryData = (categoryName: CategoryKey, v1Array: AnalysisItem[]) => {
     if (v1Array && v1Array.length > 0) return v1Array;
 
     // If V1 array is missing/empty, try to find items in the unified 'items' array (V2 format)
-    if ((occupation as any).items && Array.isArray((occupation as any).items)) {
-      return (occupation as any).items.filter((item: any) =>
+    if (occupation.items && Array.isArray(occupation.items)) {
+      return occupation.items.filter((item) =>
         item.category?.toLowerCase() === categoryName.toLowerCase()
       );
     }
@@ -267,6 +328,50 @@ export const OccupationAnalysis = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card className="glass-card p-4 sm:p-6">
+        {regionalDisclosure.shouldShow && (
+          <div
+            role="note"
+            aria-label="Regional labor-market disclosure"
+            className="mb-4 rounded-lg border border-amber-400/40 bg-amber-500/10 p-3 text-xs text-[var(--text-secondary)]"
+          >
+            <div className="mb-1 flex flex-wrap items-center gap-2 font-semibold text-[var(--text-primary)]">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+              <span>{regionalDisclosure.heading}</span>
+              {regionalDisclosure.classification && (
+                <Badge variant="outline" className="text-[10px]">
+                  {regionalDisclosure.classification.code}
+                </Badge>
+              )}
+            </div>
+            <p>{regionalDisclosure.message}</p>
+            {regionalDisclosure.adapter && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Badge variant="outline" className="text-[10px]">
+                  Adapter: {regionalDisclosure.adapter.valueStatus.replace(/_/g, ' ')}
+                </Badge>
+                <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
+                  Join requirement: {regionalDisclosure.adapter.joinLevel}
+                </span>
+              </div>
+            )}
+            {regionalSources.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                {regionalSources.map((source) => (
+                  <a
+                    key={source.id}
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:text-[var(--text-primary)]"
+                  >
+                    {source.name}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex-1">
@@ -389,13 +494,13 @@ export const OccupationAnalysis = ({
               <div className="mt-2 grid gap-2 rounded-md border p-2 sm:grid-cols-3">
                 <div className="text-xs">
                   <div className="font-medium">Evidence</div>
-                  {typeof (occupation as any)?.ci?.lower === 'number' && typeof (occupation as any)?.ci?.upper === 'number' && (
-                    <div>Uncertainty band: {(occupation as any).ci.lower}–{(occupation as any).ci.upper}{(occupation as any)?.ci?.iterations ? ` (n=${(occupation as any).ci.iterations})` : ''}</div>
+                  {typeof occupation.ci?.lower === 'number' && typeof occupation.ci?.upper === 'number' && (
+                    <div>Uncertainty band: {occupation.ci.lower}–{occupation.ci.upper}{occupation.ci.iterations ? ` (n=${occupation.ci.iterations})` : ''}</div>
                   )}
                 </div>
                 <div className="text-xs">
                   {typeof roi?.roi_months === 'number' && (
-                    <div>ROI: {roi?.roi_months} mo{roi?.annual_wage ? ` • wage ~$${Math.round((roi.annual_wage as number)).toLocaleString()}` : ''}{roi?.avg_cost ? ` • cost ~$${Math.round((roi.avg_cost as number)).toLocaleString()}` : ''}</div>
+                    <div>ROI: {roi.roi_months} mo{roi.annual_wage ? ` • wage ~$${Math.round(roi.annual_wage).toLocaleString()}` : ''}{roi.avg_cost ? ` • cost ~$${Math.round(roi.avg_cost).toLocaleString()}` : ''}</div>
                   )}
                   {roi?.industry_sector && (
                     <div>Sector: {roi.industry_sector}</div>
@@ -481,7 +586,7 @@ export const OccupationAnalysis = ({
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <PremiumReportSummary occupation={occupation as any} overallAPO={overallAPO} />
+            <PremiumReportSummary occupation={occupation} overallAPO={overallAPO} />
 
             {/* Factor Contributions (Explainability) */}
             <div>
@@ -698,8 +803,8 @@ export const OccupationAnalysis = ({
           </div>
         )}
       </Card>
-      <ExampleModal open={!!showExample} onClose={() => setShowExample(false)} exampleKey={(showExample || 'apo') as any} />
-      <APOExplanation open={showExplain} onOpenChange={setShowExplain} occupation={occupation as any} />
+      <ExampleModal open={!!showExample} onClose={() => setShowExample(false)} exampleKey={showExample || 'apo'} />
+      <APOExplanation open={showExplain} onOpenChange={setShowExplain} occupation={occupation} />
     </div>
   );
 };
