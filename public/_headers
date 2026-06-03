@@ -22,8 +22,9 @@
   # Strict Transport Security - force HTTPS
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   
-  # Cache Control for static assets
-  Cache-Control: public, max-age=31536000, immutable
+  # App-shell routes must revalidate so React Router fallback pages do not
+  # pin users to stale hashed JavaScript after a production deploy.
+  Cache-Control: public, max-age=0, must-revalidate
 
 /index.html
   # Don't cache HTML
