@@ -378,6 +378,15 @@ export default function SkillAdjacencyGraph({
 
             const skillIds = skills.map(skill => skill.element_id);
             setSelectedSkillIds(skillIds);
+
+            if (usedExampleFallback) {
+                buildCurrentSkillGraphData(skillIds, nextSkillType, skills);
+                setStatusMessage(
+                    `Live O*NET skill data did not respond for ${occupation.title}. Showing built-in example source skills only until Supabase skill data and embeddings are healthy.`
+                );
+                return;
+            }
+
             await calculateAdjacency(skillIds, nextSkillType, occupation, skills, usedExampleFallback);
         } catch (error) {
             console.error('Error fetching occupation skills:', error);
