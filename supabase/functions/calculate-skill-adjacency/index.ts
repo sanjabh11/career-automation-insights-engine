@@ -15,16 +15,24 @@ const SCHEMA_EMBEDDING_DIMENSIONS = 768;
 type SkillType = "knowledge" | "ability";
 
 type SkillRow = {
-  element_id: string;
-  element_name: string;
+  id?: string;
+  element_id?: string;
+  knowledge_id?: string | null;
+  ability_id?: string | null;
+  name?: string | null;
+  element_name?: string | null;
   description?: string | null;
   embedding?: unknown;
   embedding_model?: string | null;
 };
 
 type DirectAdjacentRow = {
-  element_id: string;
-  element_name: string;
+  id?: string;
+  element_id?: string;
+  knowledge_id?: string | null;
+  ability_id?: string | null;
+  name?: string | null;
+  element_name?: string | null;
   embedding?: unknown;
 };
 
@@ -59,6 +67,23 @@ type EmbeddingConfig = {
 
 function isSkillType(value: unknown): value is SkillType {
   return value === "knowledge" || value === "ability";
+}
+
+function getClassificationColumn(skillType: SkillType): "knowledge_id" | "ability_id" {
+  return skillType === "knowledge" ? "knowledge_id" : "ability_id";
+}
+
+function getSkillId(row: SkillRow | DirectAdjacentRow, skillType: SkillType): string {
+  return (
+    row.id ||
+    row.element_id ||
+    (skillType === "knowledge" ? row.knowledge_id || undefined : row.ability_id || undefined) ||
+    ""
+  );
+}
+
+function getSkillName(row: SkillRow | DirectAdjacentRow): string {
+  return row.name || row.element_name || "Unnamed skill";
 }
 
 function getEmbeddingConfig(): EmbeddingConfig {
@@ -169,6 +194,7 @@ function buildDirectAdjacency(
   sourceEmbedding: number[],
   rows: DirectAdjacentRow[],
   sourceSkillId: string,
+  skillType: SkillType,
   limit: number,
   dimensions: number,
 ): AdjacentSkill[] {
@@ -179,10 +205,12 @@ function buildDirectAdjacency(
 
       const similarity = cosineSimilarity(sourceEmbedding, adjacentEmbedding);
       if (similarity < 0.5) return null;
+      const adjacentId = getSkillId(row, skillType);
+      if (!adjacentId) return null;
 
       return {
-        adjacent_skill_id: row.element_id,
-        adjacent_skill_name: row.element_name,
+        adjacent_skill_id: adjacentId,
+        adjacent_skill_name: getSkillName(row),
         similarity_score: Number(similarity.toFixed(4)),
         estimated_learning_hours: Math.round((1 - similarity) * 200),
         salary_impact_usd: Math.round(similarity * 15000),
@@ -226,21 +254,47 @@ export async function handler(req: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const tableName = skillType === "knowledge" ? "onet_knowledge" : "onet_abilities";
+    const classificationColumn = getClassificationColumn(skillType);
     const results: SkillAdjacencyResult[] = [];
     let generatedEmbeddings = 0;
 
     for (const skillId of skillIds) {
-      const { data: skillData, error: skillError } = await supabase
+      let { data: skillData, error: skillError } = await supabase
         .from(tableName)
         .select("*")
-        .eq("element_id", skillId)
-        .single();
+        .eq("id", skillId)
+        .maybeSingle();
+
+      if (!skillData) {
+        const byClassification = await supabase
+          .from(tableName)
+          .select("*")
+          .eq(classificationColumn, skillId)
+          .maybeSingle();
+
+        skillData = byClassification.data;
+        skillError = byClassification.error;
+      }
+
+      if (!skillData) {
+        const byLegacyElementId = await supabase
+          .from(tableName)
+          .select("*")
+          .eq("element_id", skillId)
+          .maybeSingle();
+
+        skillData = byLegacyElementId.data;
+        skillError = byLegacyElementId.error;
+      }
 
       const skill = skillData as SkillRow | null;
       if (skillError || !skill) {
         console.error(`Skill ${skillId} not found`, skillError);
         continue;
       }
+
+      const resolvedSkillId = getSkillId(skill, skillType) || skillId;
+      const resolvedSkillName = getSkillName(skill);
 
       let sourceEmbedding = parseEmbedding(skill.embedding);
       const hasCurrentEmbedding =
@@ -249,38 +303,49 @@ export async function handler(req: Request) {
         isValidEmbedding(sourceEmbedding, embeddingConfig.dimensions);
 
       if (!hasCurrentEmbedding) {
-        const skillDescription = `${skill.element_name}: ${skill.description || ""}`;
+        const skillDescription = `${resolvedSkillName}: ${skill.description || ""}`;
         sourceEmbedding = await generateEmbedding(geminiApiKey, embeddingConfig, skillDescription);
         generatedEmbeddings += 1;
 
-        const { error: updateError } = await supabase
+        let updateResponse = await supabase
           .from(tableName)
           .update({
             embedding: serializeEmbedding(sourceEmbedding),
             embedding_generated_at: new Date().toISOString(),
             embedding_model: embeddingConfig.model,
           })
-          .eq("element_id", skillId);
+          .eq("id", resolvedSkillId);
 
-        if (updateError) {
-          console.error(`Error storing embedding for ${skillId}:`, updateError);
+        if (updateResponse.error) {
+          updateResponse = await supabase
+            .from(tableName)
+            .update({
+              embedding: serializeEmbedding(sourceEmbedding),
+              embedding_generated_at: new Date().toISOString(),
+              embedding_model: embeddingConfig.model,
+            })
+            .eq("element_id", resolvedSkillId);
+        }
+
+        if (updateResponse.error) {
+          console.error(`Error storing embedding for ${resolvedSkillId}:`, updateResponse.error);
         }
       }
 
       if (!isValidEmbedding(sourceEmbedding, embeddingConfig.dimensions)) {
         results.push({
-          skill_id: skillId,
-          skill_name: skill.element_name,
+          skill_id: resolvedSkillId,
+          skill_name: resolvedSkillName,
           skill_type: skillType,
           adjacent_skills: [],
-          error: `Source embedding unavailable or wrong dimensionality for ${skillId}`,
+          error: `Source embedding unavailable or wrong dimensionality for ${resolvedSkillId}`,
         });
         continue;
       }
 
       const { data: rpcAdjacent, error: adjacentError } = await supabase
         .rpc("find_adjacent_skills", {
-          p_skill_id: skillId,
+          p_skill_id: resolvedSkillId,
           p_skill_type: skillType,
           p_limit: limit,
           p_min_similarity: 0.5,
@@ -288,8 +353,8 @@ export async function handler(req: Request) {
 
       if (!adjacentError && Array.isArray(rpcAdjacent) && rpcAdjacent.length > 0) {
         results.push({
-          skill_id: skillId,
-          skill_name: skill.element_name,
+          skill_id: resolvedSkillId,
+          skill_name: resolvedSkillName,
           skill_type: skillType,
           adjacent_skills: rpcAdjacent as AdjacentSkill[],
         });
@@ -297,22 +362,35 @@ export async function handler(req: Request) {
       }
 
       if (adjacentError) {
-        console.error(`RPC adjacency lookup failed for ${skillId}; using direct vector fallback`, adjacentError);
+        console.error(`RPC adjacency lookup failed for ${resolvedSkillId}; using direct vector fallback`, adjacentError);
       }
 
-      const { data: directRows, error: directError } = await supabase
+      let { data: directRows, error: directError } = await supabase
         .from(tableName)
-        .select("element_id, element_name, embedding")
-        .neq("element_id", skillId)
+        .select(`id, ${classificationColumn}, name, embedding`)
+        .neq("id", resolvedSkillId)
         .eq("embedding_model", embeddingConfig.model)
         .not("embedding", "is", null)
         .limit(limit * 4);
 
+      if (directError) {
+        const legacyDirect = await supabase
+          .from(tableName)
+          .select("element_id, element_name, embedding")
+          .neq("element_id", resolvedSkillId)
+          .eq("embedding_model", embeddingConfig.model)
+          .not("embedding", "is", null)
+          .limit(limit * 4);
+
+        directRows = legacyDirect.data;
+        directError = legacyDirect.error;
+      }
+
       if (directError || !Array.isArray(directRows)) {
-        console.error(`Direct adjacency lookup failed for ${skillId}:`, directError);
+        console.error(`Direct adjacency lookup failed for ${resolvedSkillId}:`, directError);
         results.push({
-          skill_id: skillId,
-          skill_name: skill.element_name,
+          skill_id: resolvedSkillId,
+          skill_name: resolvedSkillName,
           skill_type: skillType,
           adjacent_skills: [],
           error: "Could not find adjacent skills",
@@ -321,13 +399,14 @@ export async function handler(req: Request) {
       }
 
       results.push({
-        skill_id: skillId,
-        skill_name: skill.element_name,
+        skill_id: resolvedSkillId,
+        skill_name: resolvedSkillName,
         skill_type: skillType,
         adjacent_skills: buildDirectAdjacency(
           sourceEmbedding,
           directRows as DirectAdjacentRow[],
-          skillId,
+          resolvedSkillId,
+          skillType,
           limit,
           embeddingConfig.dimensions,
         ),

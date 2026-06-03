@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Search, Zap, TrendingUp, Clock, Database, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { withTimeout } from '@/lib/asyncTimeout';
 
 type SkillType = 'knowledge' | 'ability';
 
@@ -43,6 +44,7 @@ interface OccupationSkill {
     element_id: string;
     element_name: string;
     data_value: number;
+    description?: string;
 }
 
 interface OccupationSearchResponse {
@@ -87,6 +89,75 @@ const EXAMPLE_OCCUPATIONS: OccupationOption[] = [
     { code: '53-3032.00', title: 'Heavy and Tractor-Trailer Truck Drivers' },
     { code: '17-2071.00', title: 'Electrical Engineers' },
 ];
+const SKILL_ADJACENCY_TIMEOUT_MS = 18_000;
+const SKILL_TABLE_TIMEOUT_MS = 10_000;
+
+const EXAMPLE_OCCUPATION_SKILLS: Record<string, Record<SkillType, OccupationSkill[]>> = {
+    '15-1252.00': {
+        knowledge: [
+            { element_id: 'example-sw-knowledge-computers', element_name: 'Computers and Electronics', data_value: 4.8 },
+            { element_id: 'example-sw-knowledge-engineering', element_name: 'Engineering and Technology', data_value: 4.2 },
+            { element_id: 'example-sw-knowledge-mathematics', element_name: 'Mathematics', data_value: 4.0 },
+            { element_id: 'example-sw-knowledge-design', element_name: 'Design', data_value: 3.8 },
+            { element_id: 'example-sw-knowledge-english', element_name: 'English Language', data_value: 3.5 },
+        ],
+        ability: [
+            { element_id: 'example-sw-ability-deductive', element_name: 'Deductive Reasoning', data_value: 4.4 },
+            { element_id: 'example-sw-ability-problem', element_name: 'Problem Sensitivity', data_value: 4.3 },
+            { element_id: 'example-sw-ability-inductive', element_name: 'Inductive Reasoning', data_value: 4.1 },
+            { element_id: 'example-sw-ability-written', element_name: 'Written Comprehension', data_value: 3.9 },
+            { element_id: 'example-sw-ability-oral', element_name: 'Oral Comprehension', data_value: 3.7 },
+        ],
+    },
+    '43-4051.00': {
+        knowledge: [
+            { element_id: 'example-csr-knowledge-customer', element_name: 'Customer and Personal Service', data_value: 4.7 },
+            { element_id: 'example-csr-knowledge-english', element_name: 'English Language', data_value: 4.0 },
+            { element_id: 'example-csr-knowledge-clerical', element_name: 'Clerical', data_value: 3.8 },
+            { element_id: 'example-csr-knowledge-computers', element_name: 'Computers and Electronics', data_value: 3.5 },
+            { element_id: 'example-csr-knowledge-admin', element_name: 'Administration and Management', data_value: 3.2 },
+        ],
+        ability: [
+            { element_id: 'example-csr-ability-oral', element_name: 'Oral Comprehension', data_value: 4.4 },
+            { element_id: 'example-csr-ability-expression', element_name: 'Oral Expression', data_value: 4.3 },
+            { element_id: 'example-csr-ability-speech', element_name: 'Speech Recognition', data_value: 4.0 },
+            { element_id: 'example-csr-ability-written', element_name: 'Written Comprehension', data_value: 3.7 },
+            { element_id: 'example-csr-ability-problem', element_name: 'Problem Sensitivity', data_value: 3.4 },
+        ],
+    },
+    '53-3032.00': {
+        knowledge: [
+            { element_id: 'example-driver-knowledge-transport', element_name: 'Transportation', data_value: 4.6 },
+            { element_id: 'example-driver-knowledge-safety', element_name: 'Public Safety and Security', data_value: 4.1 },
+            { element_id: 'example-driver-knowledge-customer', element_name: 'Customer and Personal Service', data_value: 3.5 },
+            { element_id: 'example-driver-knowledge-mechanical', element_name: 'Mechanical', data_value: 3.4 },
+            { element_id: 'example-driver-knowledge-english', element_name: 'English Language', data_value: 3.1 },
+        ],
+        ability: [
+            { element_id: 'example-driver-ability-control', element_name: 'Control Precision', data_value: 4.3 },
+            { element_id: 'example-driver-ability-spatial', element_name: 'Spatial Orientation', data_value: 4.2 },
+            { element_id: 'example-driver-ability-reaction', element_name: 'Reaction Time', data_value: 4.0 },
+            { element_id: 'example-driver-ability-vision', element_name: 'Far Vision', data_value: 3.9 },
+            { element_id: 'example-driver-ability-problem', element_name: 'Problem Sensitivity', data_value: 3.5 },
+        ],
+    },
+    '17-2071.00': {
+        knowledge: [
+            { element_id: 'example-ee-knowledge-engineering', element_name: 'Engineering and Technology', data_value: 4.8 },
+            { element_id: 'example-ee-knowledge-design', element_name: 'Design', data_value: 4.5 },
+            { element_id: 'example-ee-knowledge-math', element_name: 'Mathematics', data_value: 4.4 },
+            { element_id: 'example-ee-knowledge-computers', element_name: 'Computers and Electronics', data_value: 4.2 },
+            { element_id: 'example-ee-knowledge-physics', element_name: 'Physics', data_value: 3.9 },
+        ],
+        ability: [
+            { element_id: 'example-ee-ability-deductive', element_name: 'Deductive Reasoning', data_value: 4.5 },
+            { element_id: 'example-ee-ability-problem', element_name: 'Problem Sensitivity', data_value: 4.3 },
+            { element_id: 'example-ee-ability-math', element_name: 'Mathematical Reasoning', data_value: 4.2 },
+            { element_id: 'example-ee-ability-inductive', element_name: 'Inductive Reasoning', data_value: 4.1 },
+            { element_id: 'example-ee-ability-written', element_name: 'Written Comprehension', data_value: 3.8 },
+        ],
+    },
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -121,6 +192,33 @@ function normalizeOccupation(item: unknown): OccupationOption | null {
         title,
         description: asString(item.description) || asString(item.summary) || 'O*NET occupation profile',
     };
+}
+
+function normalizeOccupationSkillRow(row: unknown, skillType: SkillType): OccupationSkill | null {
+    if (!isRecord(row)) return null;
+
+    const stableId =
+        asString(row.id) ||
+        asString(row.element_id) ||
+        asString(skillType === 'knowledge' ? row.knowledge_id : row.ability_id);
+    const name = asString(row.name) || asString(row.element_name);
+    const value = asNumber(row.importance) ?? asNumber(row.data_value) ?? asNumber(row.level);
+
+    if (!stableId || !name || value === undefined) return null;
+
+    return {
+        element_id: stableId,
+        element_name: name,
+        data_value: value,
+        ...(asString(row.description) ? { description: asString(row.description) } : {}),
+    };
+}
+
+function getExampleOccupationSkills(
+    occupation: OccupationOption,
+    skillType: SkillType,
+): OccupationSkill[] {
+    return EXAMPLE_OCCUPATION_SKILLS[occupation.code]?.[skillType] ?? [];
 }
 
 function clampPercent(value?: number): number {
@@ -225,18 +323,50 @@ export default function SkillAdjacencyGraph({
 
         try {
             const tableName = nextSkillType === 'knowledge' ? 'onet_knowledge' : 'onet_abilities';
+            const classificationColumn = nextSkillType === 'knowledge' ? 'knowledge_id' : 'ability_id';
+            let usedExampleFallback = false;
+            let skills: OccupationSkill[] = [];
 
-            const { data, error } = await supabase
-                .from(tableName)
-                .select('element_id, element_name, data_value')
-                .eq('onetsoc_code', occupation.code)
-                .gte('data_value', 3.0)
-                .order('data_value', { ascending: false })
-                .limit(5);
+            try {
+                const liveResult = await withTimeout(
+                    supabase
+                        .from(tableName)
+                        .select(`id, ${classificationColumn}, name, description, importance, level`)
+                        .eq('occupation_code', occupation.code)
+                        .gte('importance', 3.0)
+                        .order('importance', { ascending: false })
+                        .limit(5),
+                    SKILL_TABLE_TIMEOUT_MS,
+                    'Live O*NET skill table query timed out.'
+                );
 
-            if (error) throw error;
+                const legacyResult = liveResult.error
+                    ? await withTimeout(
+                        supabase
+                            .from(tableName)
+                            .select('element_id, element_name, data_value')
+                            .eq('onetsoc_code', occupation.code)
+                            .gte('data_value', 3.0)
+                            .order('data_value', { ascending: false })
+                            .limit(5),
+                        SKILL_TABLE_TIMEOUT_MS,
+                        'Legacy O*NET skill table query timed out.'
+                    )
+                    : liveResult;
 
-            const skills = (data || []) as OccupationSkill[];
+                if (legacyResult.error) throw legacyResult.error;
+
+                skills = (legacyResult.data || []).flatMap((row) => {
+                    const normalized = normalizeOccupationSkillRow(row, nextSkillType);
+                    return normalized ? [normalized] : [];
+                });
+            } catch (error) {
+                const exampleSkills = getExampleOccupationSkills(occupation, nextSkillType);
+                if (exampleSkills.length === 0) throw error;
+                usedExampleFallback = true;
+                skills = exampleSkills;
+            }
+
             setCurrentSkills(skills);
 
             if (skills.length === 0) {
@@ -248,7 +378,7 @@ export default function SkillAdjacencyGraph({
 
             const skillIds = skills.map(skill => skill.element_id);
             setSelectedSkillIds(skillIds);
-            await calculateAdjacency(skillIds, nextSkillType, occupation);
+            await calculateAdjacency(skillIds, nextSkillType, occupation, skills, usedExampleFallback);
         } catch (error) {
             console.error('Error fetching occupation skills:', error);
             setGraphData({ nodes: [], links: [] });
@@ -266,7 +396,9 @@ export default function SkillAdjacencyGraph({
     const calculateAdjacency = async (
         skillIds: string[] = selectedSkillIds,
         nextSkillType: SkillType = activeSkillType,
-        occupation: OccupationOption | null = selectedOccupation
+        occupation: OccupationOption | null = selectedOccupation,
+        sourceSkills: OccupationSkill[] = currentSkills,
+        sourceIsExampleFallback = false
     ) => {
         if (skillIds.length === 0) {
             setStatusMessage('Select an occupation first so APO can use its strongest O*NET skills.');
@@ -277,28 +409,53 @@ export default function SkillAdjacencyGraph({
         setStatusMessage('Calculating adjacent skills from APO embeddings...');
 
         try {
-            const { data, error } = await supabase.functions.invoke('calculate-skill-adjacency', {
-                body: {
-                    skill_ids: skillIds,
-                    skill_type: nextSkillType,
-                    limit: 10
-                }
-            });
+            const { data, error } = await withTimeout(
+                supabase.functions.invoke('calculate-skill-adjacency', {
+                    body: {
+                        skill_ids: skillIds,
+                        skill_type: nextSkillType,
+                        limit: 10
+                    }
+                }),
+                SKILL_ADJACENCY_TIMEOUT_MS,
+                'Skill adjacency calculation timed out.'
+            );
 
             if (error) throw error;
 
             const payload = data as SkillAdjacencyResponse | null;
             if (payload?.success) {
-                buildGraphData(Array.isArray(payload.data) ? payload.data : [], nextSkillType);
+                const adjacencyItems = Array.isArray(payload.data) ? payload.data : [];
+                const adjacentCount = adjacencyItems.reduce(
+                    (count, item) => count + (Array.isArray(item.adjacent_skills) ? item.adjacent_skills.length : 0),
+                    0
+                );
+
+                if (adjacencyItems.length > 0 && adjacentCount > 0) {
+                    buildGraphData(adjacencyItems, nextSkillType);
+                } else {
+                    buildCurrentSkillGraphData(skillIds, nextSkillType, sourceSkills);
+                }
+
                 const label = occupation?.title || 'selected skills';
-                setStatusMessage(`Adjacency graph created for ${label}.`);
+                setStatusMessage(
+                    adjacentCount > 0
+                        ? `Adjacency graph created for ${label}.`
+                        : sourceIsExampleFallback
+                            ? `Live O*NET skill data did not respond for ${label}. Showing built-in example source skills only until Supabase skill data and embeddings are healthy.`
+                            : `Skill records loaded for ${label}. The adjacency service returned no adjacent vectors, so this graph shows source skills only until embeddings are refreshed.`
+                );
             } else {
                 throw new Error(payload?.error || 'Adjacency function returned no usable data');
             }
         } catch (error) {
             console.error('Error calculating adjacency:', error);
-            setGraphData({ nodes: [], links: [] });
-            setStatusMessage('Adjacency calculation failed. Check Supabase function keys and seeded skill data.');
+            buildCurrentSkillGraphData(skillIds, nextSkillType, sourceSkills);
+            setStatusMessage(
+                sourceIsExampleFallback
+                    ? 'Live O*NET skill data did not respond. Showing built-in example source skills only until the Supabase table/function path is healthy.'
+                    : 'Skill records loaded, but adjacency calculation failed. Showing source skills only until the Supabase function is healthy.'
+            );
             toast({
                 title: 'Adjacency Calculation Failed',
                 description: toErrorMessage(error, 'Failed to calculate skill adjacency'),
@@ -364,6 +521,27 @@ export default function SkillAdjacencyGraph({
         });
 
         setGraphData({ nodes, links });
+    };
+
+    const buildCurrentSkillGraphData = (
+        skillIds: string[],
+        nextSkillType: SkillType,
+        sourceSkills: OccupationSkill[] = currentSkills
+    ) => {
+        const skillsById = new Map(sourceSkills.map((skill) => [skill.element_id, skill]));
+        const nodes = skillIds.flatMap((skillId): SkillNode[] => {
+            const skill = skillsById.get(skillId);
+            return [
+                {
+                    id: skillId,
+                    name: skill?.element_name || skillId,
+                    type: nextSkillType,
+                    isCurrent: true,
+                },
+            ];
+        });
+
+        setGraphData({ nodes, links: [] });
     };
 
     const layout = useMemo(() => {

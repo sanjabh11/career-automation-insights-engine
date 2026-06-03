@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useCrosswalk, CrosswalkFrom, CrosswalkTo } from "@/hooks/useCrosswalk";
+import { isCrosswalkFallback } from "@/lib/crosswalkFallbacks";
 import { Loader2 } from "lucide-react";
 
 const FROM_OPTIONS: CrosswalkFrom[] = ["SOC", "MOC", "CIP", "RAPIDS", "ESCO", "DOT", "OOH"];
@@ -82,10 +83,10 @@ export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as cons
     <Card className="p-4 md:p-6 space-y-4">
       <div className="space-y-1">
         <h2 className="text-xl md:text-2xl font-semibold">Crosswalk Wizard</h2>
-        <p className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           Explore crosswalks between taxonomies (SOC, MOC, CIP, ESCO, RAPIDS, DOT). Uses the Supabase edge function
           <Badge variant="outline" className="ml-1">/crosswalk</Badge>
-        </p>
+        </div>
       </div>
 
       <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
@@ -147,7 +148,9 @@ export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as cons
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Results</h3>
-              <Badge variant="secondary">Cached/Live</Badge>
+              <Badge variant={isCrosswalkFallback(data) ? "outline" : "secondary"}>
+                {isCrosswalkFallback(data) ? "Local fallback" : "Cached/Live"}
+              </Badge>
             </div>
             <ResultView data={data} />
           </div>
@@ -160,12 +163,18 @@ export function CrosswalkWizard({ defaultFrom = "SOC", defaultTo = "ALL" as cons
 function ResultView({ data }: { data: unknown }) {
   // Attempt to find a sensible list to render; fallback to JSON
   const entries = useMemo(() => extractEntries(data), [data]);
+  const fallback = isCrosswalkFallback(data) ? data : null;
 
   if (!data) return null;
 
   if (entries) {
     return (
       <div className="space-y-2">
+        {fallback && (
+          <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+            {fallback.caveat}
+          </div>
+        )}
         <div className="flex items-center justify-end">
           <Button
             variant="outline"
@@ -211,7 +220,14 @@ function ResultView({ data }: { data: unknown }) {
   }
 
   return (
-    <pre className="text-xs p-3 bg-muted rounded-md overflow-auto">{JSON.stringify(data, null, 2)}</pre>
+    <div className="space-y-2">
+      {fallback && (
+        <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+          {fallback.caveat}
+        </div>
+      )}
+      <pre className="text-xs p-3 bg-muted rounded-md overflow-auto">{JSON.stringify(data, null, 2)}</pre>
+    </div>
   );
 }
 
