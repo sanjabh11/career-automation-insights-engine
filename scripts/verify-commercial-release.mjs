@@ -19,6 +19,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-report-evidence.mjs'],
   },
   {
+    id: 'supabase-function-governance',
+    label: 'Verify Supabase function governance and launch readiness',
+    command: ['node', 'scripts/verify-supabase-function-governance.mjs'],
+  },
+  {
     id: 'onet-task-ratings',
     label: 'Verify O*NET Task Ratings ingest boundary',
     command: ['node', 'scripts/verify-onet-task-ratings-ingest.mjs'],

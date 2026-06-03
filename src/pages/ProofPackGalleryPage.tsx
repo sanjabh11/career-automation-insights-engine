@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, CheckCircle2, Download, ExternalLink, FileText, GraduationCap, Mail, MapPin, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, CreditCard, Download, ExternalLink, FileText, GraduationCap, ListChecks, Mail, MapPin, RefreshCw, ShieldCheck, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import NavigationPremium from "@/components/NavigationPremium";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,28 @@ import {
   buildLocalLaborMarketSnapshotPacket,
   renderLocalLaborMarketSnapshotHtml,
 } from "@/lib/localLaborMarketSnapshot";
+import { commercialLaunchGateItems, functionSecurityReviewGroups } from "@/lib/commercialLaunchGate";
+import {
+  buildPilotValidationWorksheetCsv,
+  buyerLandingPageRoadmap,
+  commercialLaunchReadinessMilestones,
+  manualWcagEvidenceChecklist,
+  outreachSequenceTemplates,
+  paymentFulfillmentStatusItems,
+  PILOT_VALIDATION_WORKSHEET_FILENAME,
+  pilotFeedbackCaptureFields,
+  pilotValidationTargets,
+  pilotValidationWorksheetColumns,
+  sourceFreshnessDashboardRows,
+} from "@/lib/commercialLaunchReadiness";
+import {
+  classifiedPublicNoJwtFunctionCount,
+  functionGovernanceApprovalChecklist,
+  immediateFunctionRetirementCandidates,
+  legacyFunctionPortfolioGroups,
+  publicNoJwtFunctionReviewItems,
+  supabaseFunctionGovernanceSummary,
+} from "@/lib/supabaseFunctionGovernance";
 import { REVIEW_STATUS_LABELS, type ReportReviewStatus } from "@/lib/reportEvidenceCards";
 import { REPORT_SOURCE_REGISTRY, type SourceConfidence } from "@/lib/reportProvenance";
 
@@ -183,6 +205,137 @@ const researchSignals = [
   },
 ];
 
+const outreachFunctionalityAssessment = [
+  {
+    capability: "Coach-branded sample reports",
+    laymanValue: "A coach can create a professional sample report for a client conversation.",
+    outreachUse: "Best first outreach offer for coaches, resume writers, and counselors.",
+    currentProof: "/sample-report, consent capture, source-labeled sample HTML, Supabase lead/artifact save when configured.",
+    maturity: 4.3,
+    nextGap: "Add authenticated coach accounts, logo upload, paid report credits, and email follow-up automation.",
+    sourceIds: ["nace-career-readiness", "nist-ai-rmf", "wcag-22"],
+  },
+  {
+    capability: "Individual occupation proof packs",
+    laymanValue: "A user can see which parts of a job may be automated, assisted by AI, or still human-led.",
+    outreachUse: "Useful for SEO traffic, LinkedIn demos, and lead magnets by occupation.",
+    currentProof: "/automation-risk/:occupation renders proof-pack sections with caveats and evidence cards.",
+    maturity: 4.1,
+    nextGap: "Attach live source snapshots and stronger local labor-market rows before region-specific claims.",
+    sourceIds: ["onet", "bls-ai-mlr-2025", "anthropic-observed-exposure"],
+  },
+  {
+    capability: "Resume work-transition proof report",
+    laymanValue: "A job seeker can turn resume text into a bounded transition report with deletion and review boundaries.",
+    outreachUse: "Strong free tool for coaches and individuals, but must stay privacy-first.",
+    currentProof: "/tools/resume-analyzer, parser boundary, downloadable proof report, redacted artifact persistence for signed-in users.",
+    maturity: 4.0,
+    nextGap: "Run authenticated live e2e with a synthetic test user; add production PDF/DOC/DOCX parser and malware-scan policy.",
+    sourceIds: ["owasp-file-upload", "supabase-edge-functions", "ada-ai-hiring-guidance"],
+  },
+  {
+    capability: "Workforce CSV role audit",
+    laymanValue: "A workforce team can upload role titles and get a role-level exposure summary without ranking employees.",
+    outreachUse: "Best pilot for workforce boards, L&D teams, and small enterprise planning.",
+    currentProof: "/enterprise-dashboard, CSV parser, role rollup, unmapped review queue, executive HTML report.",
+    maturity: 4.0,
+    nextGap: "Add richer SOC matching, department recommendations, signed delivery, and live table checksum proof.",
+    sourceIds: ["dol-ai-literacy-framework", "bls-emp", "ada-ai-hiring-guidance"],
+  },
+  {
+    capability: "Career-center cohort proof pack",
+    laymanValue: "A counselor can discuss aggregate student or alumni transition themes without exposing individual records.",
+    outreachUse: "Good for workshops, alumni services, and career-center feedback pilots.",
+    currentProof: "/tools/counselor-reports exports aggregate-only cohort proof packs with privacy boundaries.",
+    maturity: 3.9,
+    nextGap: "Add roster consent, small-cell suppression enforcement, persistence, and institution-specific review notes.",
+    sourceIds: ["ferpa-student-privacy", "nace-first-destination", "nace-career-readiness"],
+  },
+  {
+    capability: "Source and caveat evidence cards",
+    laymanValue: "Every major claim can show where it came from, how confident it is, and what it does not prove.",
+    outreachUse: "The main differentiator against generic AI career advice.",
+    currentProof: "Shared evidence-card model, report provenance registry, source manifest, and commercial verifiers.",
+    maturity: 4.6,
+    nextGap: "Add scheduled refresh, live imported-table checksums, and provider-backed source snapshots per artifact.",
+    sourceIds: ["nist-ai-rmf", "lightcast", "workera-positioning"],
+  },
+  {
+    capability: "Institutional readiness packet",
+    laymanValue: "A buyer can review risk, accessibility, governance, and employment-decision boundaries before a pilot.",
+    outreachUse: "Helps serious institutions say yes to a bounded pilot without overclaiming compliance.",
+    currentProof: "Downloadable HTML/CSV readiness packet with AI RMF, WCAG, live proof blockers, and buyer risk rows.",
+    maturity: 4.2,
+    nextGap: "Complete manual WCAG evidence, signed buyer acceptable-use signoff, and legal review for employment-adjacent pilots.",
+    sourceIds: ["nist-ai-rmf", "wcag-22", "eeoc-employment-selection-procedures"],
+  },
+  {
+    capability: "Lead capture and lead ops",
+    laymanValue: "People requesting reports can become trackable leads instead of disappearing after a download.",
+    outreachUse: "Turns sample reports and SEO traffic into a sales pipeline.",
+    currentProof: "Supabase lead capture, consent text, offline redacted retry queue, staff lead ops, response metrics, CSV export, and unsubscribe-safe campaign CSV with tracked links.",
+    maturity: 4.2,
+    nextGap: "Add email-provider API sync, deployed-domain analytics, owner assignment, unsubscribe webhook sync-back, and A/B message results.",
+    sourceIds: ["nist-ai-rmf", "wcag-22", "llm-output"],
+  },
+  {
+    capability: "Local labor-market snapshot boundary",
+    laymanValue: "The app can show what local data would be needed before claiming local demand.",
+    outreachUse: "Useful for workforce boards and regional pilots where local context matters.",
+    currentProof: "Downloadable local-market snapshot pack with source vintage, geography, query, caveat, and reviewer fields.",
+    maturity: 3.6,
+    nextGap: "Connect live OEWS, LAUS, QCEW, ACS, CareerOneStop, and licensed posting adapters per buyer geography.",
+    sourceIds: ["bls-oews", "bls-laus", "bls-qcew", "careeronestop-api", "census-acs-api"],
+  },
+  {
+    capability: "Outreach CSV starter pack",
+    laymanValue: "The founder can export pilot segments, messages, offers, and success metrics for manual CRM use.",
+    outreachUse: "Fastest practical way to begin small controlled outreach.",
+    currentProof: "Proof-pack gallery exports a CRM CSV; lead ops exports a campaign CSV with send/suppression status, tracked proof-pack links, follow-up templates, source IDs, caveats, and does-not-prove boundaries.",
+    maturity: 4.1,
+    nextGap: "Add calendar booking, deployed-domain analytics, email-provider sync, and A/B message results.",
+    sourceIds: ["nace-career-readiness", "dol-ai-literacy-framework", "lightcast"],
+  },
+];
+
+const outreachCampaignPhases = [
+  {
+    phase: "1. Proof refresh",
+    focus: "Make sure claims match live proof.",
+    successPoint: "Commercial gate, live closeout gate, and source/caveat pages are green.",
+    maturity: 4.2,
+    remaining: "Live authenticated e2e and manual WCAG notes.",
+  },
+  {
+    phase: "2. Founder-led validation",
+    focus: "Ask coaches and counselors to review sample artifacts, not buy a large platform.",
+    successPoint: "10 reviews, 3 discovery calls, 1 paid pilot conversation.",
+    maturity: 4.0,
+    remaining: "Feedback form, deployed-domain analytics, and CRM owner assignment.",
+  },
+  {
+    phase: "3. Workforce pilot",
+    focus: "Run anonymized role-level CSV audits for planning teams.",
+    successPoint: "One 10-25 role CSV pilot with buyer review-owner identified.",
+    maturity: 3.7,
+    remaining: "SOC review service, signed packet delivery, and local labor-market evidence.",
+  },
+  {
+    phase: "4. Paid proof-pack offer",
+    focus: "Convert validated segments into bounded paid packages.",
+    successPoint: "Pricing page links to report credits or pilot packages with fulfillment state.",
+    maturity: 3.0,
+    remaining: "Stripe/report credit fulfillment and invoice-ready delivery.",
+  },
+  {
+    phase: "5. Scaled outreach",
+    focus: "Move from manual founder outreach to repeatable campaigns.",
+    successPoint: "CRM/email sequences, analytics, unsubscribe, and buyer-specific case-study artifacts.",
+    maturity: 2.8,
+    remaining: "Provider sync, conversion dashboards, unsubscribe webhook sync-back, and buyer-specific landing pages.",
+  },
+];
+
 const outreachEvidenceCards: OutreachEvidence[] = [
   {
     claim: "Bounded coach and career-center pilots are the right first buyer motion for reviewed proof packs.",
@@ -327,6 +480,18 @@ function downloadLocalMarketSnapshotCsv() {
   window.URL.revokeObjectURL(url);
 }
 
+function downloadPilotValidationWorksheetCsv() {
+  const blob = new Blob([`${buildPilotValidationWorksheetCsv()}\n`], { type: "text/csv;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = PILOT_VALIDATION_WORKSHEET_FILENAME;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
 export default function ProofPackGalleryPage() {
   const institutionalPacket = buildInstitutionalReadinessPacket();
   const topInstitutionalRisks = institutionalPacket.riskRows.slice(0, 4);
@@ -373,6 +538,76 @@ export default function ProofPackGalleryPage() {
                 </p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-launch-readiness-command-center="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Launch readiness command center</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                A milestone view of what is safe for founder-led outreach now and what must stay blocked before paid or institutional scale.
+              </p>
+            </div>
+            <Badge className="border-amber-400/30 bg-amber-400/10 text-amber-100">
+              Controlled outreach only
+            </Badge>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[1060px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Phase</th>
+                  <th className="py-3 pr-4 font-semibold">Focus</th>
+                  <th className="py-3 pr-4 font-semibold">Done</th>
+                  <th className="py-3 pr-4 font-semibold">Pending</th>
+                  <th className="py-3 pr-4 font-semibold">Rating</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining</th>
+                  <th className="py-3 pr-4 font-semibold">Move next</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commercialLaunchReadinessMilestones.map((milestone) => (
+                  <tr key={milestone.phase} className="border-b border-slate-800/80 align-top" data-launch-readiness-phase={milestone.phase}>
+                    <td className="py-4 pr-4 font-semibold text-white">{milestone.phase}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.focus}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.done}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{milestone.pending}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {milestone.rating.toFixed(1)}/5
+                      </span>
+                    </td>
+                    <td className="py-4 pr-4 text-slate-300">{milestone.remainingPercent}%</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{milestone.moveNext}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <CreditCard className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Payment proof</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Checkout and portal are live; webhook credit fulfillment still needs redeploy and Stripe replay.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <ListChecks className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Review boundary</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Client-ready reports require section review, caveats, and no employment-decision use.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <RefreshCw className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Source freshness</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">O*NET proof exists; local and licensed labor-market sources remain adapter-bound.</p>
+            </article>
+            <article className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+              <Users className="h-5 w-5 text-emerald-300" />
+              <h3 className="mt-3 font-semibold text-white">Pilot validation</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Manual founder-led outreach can begin with bounded sample artifacts and feedback capture.</p>
+            </article>
           </div>
         </section>
 
@@ -609,6 +844,446 @@ export default function ProofPackGalleryPage() {
                 <p className="mt-3 text-xs text-slate-500">Source ID: {signal.sourceId}</p>
               </a>
             ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-functionality-assessment="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Outreach functionality assessment</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Plain-language maturity view for what can be marketed now, what proof exists in the app, and what must be finished before scaled outreach.
+              </p>
+            </div>
+            <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">
+              1 = idea, 5 = market-ready
+            </Badge>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Functionality</th>
+                  <th className="py-3 pr-4 font-semibold">Layman value</th>
+                  <th className="py-3 pr-4 font-semibold">Outreach use</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                  <th className="py-3 pr-4 font-semibold">Next gap</th>
+                </tr>
+              </thead>
+              <tbody>
+                {outreachFunctionalityAssessment.map((row) => (
+                  <tr key={row.capability} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{row.capability}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.laymanValue}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.outreachUse}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{row.currentProof}</td>
+                    <td className="py-4 pr-4">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                          {row.maturity.toFixed(1)}/5
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-slate-500">{sourceLabels(row.sourceIds)}</p>
+                    </td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{row.nextGap}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-phase-plan="true">
+          <h2 className="text-2xl font-semibold text-white">Phase-wise outreach program</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            Start with reviewed proof artifacts and buyer feedback, then move into paid pilots only after live trust gates and campaign tracking are in place.
+          </p>
+          <div className="mt-6 grid gap-4 lg:grid-cols-5">
+            {outreachCampaignPhases.map((phase) => (
+              <article key={phase.phase} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{phase.phase}</div>
+                <h3 className="mt-3 font-semibold leading-6 text-white">{phase.focus}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{phase.successPoint}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {phase.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{phase.remaining}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-pilot-validation-tracker="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Pilot validation evidence tracker</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                A worksheet for converting founder-led reviews into bounded market evidence. It records usefulness,
+                trust objections, paid-pilot signals, and case-study permission without treating feedback as revenue proof.
+              </p>
+            </div>
+            <Button type="button" onClick={downloadPilotValidationWorksheetCsv} className="bg-emerald-500 text-slate-950 hover:bg-emerald-400">
+              <Download className="mr-2 h-4 w-4" />
+              Validation CSV
+            </Button>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[1060px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Buyer segment</th>
+                  <th className="py-3 pr-4 font-semibold">Target</th>
+                  <th className="py-3 pr-4 font-semibold">Qualifying evidence</th>
+                  <th className="py-3 pr-4 font-semibold">Success threshold</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining action</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pilotValidationTargets.map((target) => (
+                  <tr key={target.buyerSegment} className="border-b border-slate-800/80 align-top" data-pilot-validation-target={target.buyerSegment}>
+                    <td className="py-4 pr-4 font-semibold text-white">{target.buyerSegment}</td>
+                    <td className="py-4 pr-4 text-slate-300">{target.targetCount}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.qualifyingEvidence}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.successThreshold}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{target.currentProof}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{target.remainingAction}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {target.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-3 lg:grid-cols-3">
+            {pilotValidationWorksheetColumns.map((column) => (
+              <article key={column.column} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-pilot-validation-worksheet-column={column.column}>
+                <div className="text-xs uppercase tracking-wide text-slate-500">{column.column}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{column.purpose}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400"><span className="font-semibold text-slate-200">Required for:</span> {column.requiredFor}</p>
+                <p className="mt-2 text-xs leading-5 text-amber-100"><span className="font-semibold">Boundary:</span> {column.boundary}</p>
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
+            Does not prove market demand, revenue, legal compliance, employment outcomes, or buyer adoption until real
+            review rows, payment proof, and permissioned case-study evidence are attached.
+          </p>
+        </section>
+
+        <section className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-payment-fulfillment-status="true">
+            <div className="flex items-start gap-3">
+              <CreditCard className="mt-1 h-5 w-5 text-emerald-300" />
+              <div>
+                <h2 className="text-2xl font-semibold text-white">Payment fulfillment status</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Billing can be marketed only after the live webhook and report-credit path are replay-tested.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {paymentFulfillmentStatusItems.map((item) => (
+                <article key={item.item} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-payment-fulfillment-item={item.item}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-white">{item.item}</h3>
+                    <Badge variant="outline" className={item.status === "blocked" ? "border-red-400/40 text-red-200" : "border-slate-600 text-slate-300"}>
+                      {item.status.replace("_", " ")}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{item.currentProof}</p>
+                  <p className="mt-2 text-sm leading-6 text-amber-100">{item.remainingAction}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{item.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-outreach-sequence-builder="true">
+            <div className="flex items-start gap-3">
+              <Mail className="mt-1 h-5 w-5 text-emerald-300" />
+              <div>
+                <h2 className="text-2xl font-semibold text-white">Outreach sequence builder</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Manual sequences for the first controlled outreach wave, with source IDs and caveats preserved.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {outreachSequenceTemplates.map((template) => (
+                <article key={template.buyer} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-outreach-sequence-template={template.buyer}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-white">{template.buyer}</h3>
+                    <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{template.confidence} confidence</Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">First touch:</span> {template.firstTouch}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300"><span className="font-semibold text-slate-100">Follow-up:</span> {template.followUp}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400"><span className="font-semibold text-slate-200">Artifact:</span> {template.proofArtifact} · <span className="font-semibold text-slate-200">Sources:</span> {sourceLabels(template.sourceIds)}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{template.caveat}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-12 grid gap-6 xl:grid-cols-3">
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-source-freshness-dashboard="true">
+            <h2 className="text-2xl font-semibold text-white">Source freshness dashboard</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Current source status before any stronger market-intelligence or local-demand claim is made.
+            </p>
+            <div className="mt-5 space-y-3">
+              {sourceFreshnessDashboardRows.map((row) => (
+                <article key={row.sourceId} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-source-freshness-row={row.sourceId}>
+                  <h3 className="font-semibold text-white">{row.sourceFamily}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{row.currentState}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{row.nextProofNeeded}</p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">{row.sourceId}</Badge>
+                    <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-200">{row.maturity.toFixed(1)}/5</Badge>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-manual-wcag-evidence-workspace="true">
+            <h2 className="text-2xl font-semibold text-white">Manual WCAG evidence workspace</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Automated smoke tests are not full conformance proof; these manual notes are still required.
+            </p>
+            <div className="mt-5 space-y-3">
+              {manualWcagEvidenceChecklist.map((item) => (
+                <article key={item.checkpoint} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-manual-wcag-checkpoint={item.checkpoint}>
+                  <h3 className="font-semibold text-white">{item.checkpoint}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{item.currentProof}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-100">{item.requiredEvidence}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{item.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-900 p-5" data-pilot-feedback-capture="true">
+            <h2 className="text-2xl font-semibold text-white">Pilot feedback capture</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Feedback fields that turn review calls into market evidence instead of anecdotal reactions.
+            </p>
+            <div className="mt-5 space-y-3">
+              {pilotFeedbackCaptureFields.map((field) => (
+                <article key={field.field} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-pilot-feedback-field={field.field}>
+                  <h3 className="font-semibold text-white">{field.field}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{field.whyItMatters}</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{field.captureMethod}</p>
+                  <div className="mt-3 text-sm font-semibold text-emerald-200">{field.maturity.toFixed(1)}/5 maturity</div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-buyer-landing-roadmap="true">
+          <h2 className="text-2xl font-semibold text-white">Buyer-specific landing roadmap</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+            Landing pages should be split only after pilot evidence confirms the exact buyer language and conversion path.
+          </p>
+          <div className="mt-6 grid gap-4 lg:grid-cols-4">
+            {buyerLandingPageRoadmap.map((item) => (
+              <article key={item.buyer} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-buyer-landing-roadmap-item={item.buyer}>
+                <h3 className="font-semibold text-white">{item.buyer}</h3>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{item.currentRoute}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{item.missingUi}</p>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{item.nextAction}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {item.maturity.toFixed(1)}/5 maturity
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-commercial-launch-gate="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Commercial outreach launch gate</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Operational view of the remaining launch blockers: owner-held secrets, public function review, legacy function sprawl, outreach automation, licensed data, accessibility, and payment fulfillment.
+              </p>
+            </div>
+            <Badge className="border-amber-400/30 bg-amber-400/10 text-amber-100">
+              Secrets stay owner-action only
+            </Badge>
+          </div>
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Gap</th>
+                  <th className="py-3 pr-4 font-semibold">Control now in place</th>
+                  <th className="py-3 pr-4 font-semibold">Current proof</th>
+                  <th className="py-3 pr-4 font-semibold">Remaining action</th>
+                  <th className="py-3 pr-4 font-semibold">Priority</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commercialLaunchGateItems.map((item) => (
+                  <tr key={item.gap} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{item.gap}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.control}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.currentProof}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.remainingAction}</td>
+                    <td className="py-4 pr-4">
+                      <Badge variant="outline" className={item.priority === "high" ? "border-red-400/40 text-red-200" : "border-slate-600 text-slate-300"}>
+                        {item.priority}
+                      </Badge>
+                    </td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {item.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-4" data-function-security-review="true">
+            {functionSecurityReviewGroups.map((group) => (
+              <article key={group.group} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{group.group}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{group.currentControl}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-500">{group.functions.join(", ")}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {group.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{group.remainingRisk}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-lg border border-slate-800 bg-slate-900 p-5" data-supabase-function-governance="true">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Supabase function governance and retirement plan</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                Live project <span className="font-semibold text-slate-100">{supabaseFunctionGovernanceSummary.projectRef}</span> has {supabaseFunctionGovernanceSummary.activeFunctionCount} active functions and {supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT functions. This plan frees capacity without deleting production functions automatically.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge className="border-emerald-400/30 bg-emerald-400/10 text-emerald-100" data-public-function-classification-count="true">
+                {classifiedPublicNoJwtFunctionCount}/{supabaseFunctionGovernanceSummary.noJwtFunctionCount} public/no-JWT classified
+              </Badge>
+              <Badge className="border-red-400/30 bg-red-400/10 text-red-100">
+                Owner approval required before deletion
+              </Badge>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100" data-function-cap-blocker="true">
+            {supabaseFunctionGovernanceSummary.blocker}
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-[980px] w-full border-collapse text-left text-sm" data-function-retirement-candidates="true">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-400">
+                  <th className="py-3 pr-4 font-semibold">Immediate candidate</th>
+                  <th className="py-3 pr-4 font-semibold">Live JWT</th>
+                  <th className="py-3 pr-4 font-semibold">Launch impact</th>
+                  <th className="py-3 pr-4 font-semibold">Risk</th>
+                  <th className="py-3 pr-4 font-semibold">Next action</th>
+                  <th className="py-3 pr-4 font-semibold">Launch decision</th>
+                  <th className="py-3 pr-4 font-semibold">Maturity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {immediateFunctionRetirementCandidates.map((item) => (
+                  <tr key={item.slug} className="border-b border-slate-800/80 align-top">
+                    <td className="py-4 pr-4 font-semibold text-white">{item.slug}</td>
+                    <td className="py-4 pr-4 text-red-200">{item.liveVerifyJwt ? "yes" : "no"}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">{item.launchImpact}</td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.risk}</td>
+                    <td className="py-4 pr-4 leading-6 text-slate-300">
+                      <div>{item.nextStep}</div>
+                      <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-400" data-retirement-required-evidence="true">
+                        {item.requiredEvidence.map((evidence) => (
+                          <li key={evidence}>- {evidence}</li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="py-4 pr-4 leading-6 text-amber-100">{item.launchDecision}</td>
+                    <td className="py-4 pr-4">
+                      <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-semibold text-emerald-200">
+                        {item.maturity.toFixed(1)}/5
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {publicNoJwtFunctionReviewItems.map((item) => (
+              <article key={item.slug} className="rounded-md border border-slate-800 bg-slate-950/70 p-4" data-public-function-review={item.slug}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="border-red-400/40 text-red-200">no JWT</Badge>
+                  <Badge variant="outline" className="border-slate-600 text-slate-300">{item.action}</Badge>
+                </div>
+                <h3 className="mt-3 font-semibold text-white">{item.slug}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{item.launchImpact}</p>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{item.risk}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-400">{item.nextStep}</p>
+                <div className="mt-4 rounded-md border border-slate-800 bg-slate-900/70 p-3" data-public-function-required-evidence="true">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Required evidence</div>
+                  <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-300">
+                    {item.requiredEvidence.map((evidence) => (
+                      <li key={evidence}>- {evidence}</li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-emerald-100" data-public-function-launch-decision="true">
+                  <span className="font-semibold">Launch decision:</span> {item.launchDecision}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-4" data-legacy-function-portfolio="true">
+            {legacyFunctionPortfolioGroups.map((group) => (
+              <article key={group.group} className="rounded-md border border-slate-800 bg-slate-950/70 p-4">
+                <div className="text-xs uppercase tracking-wide text-slate-500">{group.group}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{group.commercialNeed}</p>
+                <p className="mt-3 text-xs leading-5 text-slate-500">{group.slugs.join(", ")}</p>
+                <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  {group.maturity.toFixed(1)}/5 maturity
+                </div>
+                <p className="mt-3 text-xs leading-5 text-amber-100">{group.recommendedAction}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-md border border-slate-800 bg-slate-950/70 p-4">
+            <h3 className="font-semibold text-white">Deletion approval checklist</h3>
+            <ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-300 md:grid-cols-2">
+              {functionGovernanceApprovalChecklist.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

@@ -15,6 +15,7 @@ const AUDIT_MD_OUTPUT = `${AUDIT_OUTPUT_DIR}/commercial-accessibility-audit-late
 
 const routes = [
   { path: '/privacy', label: 'privacy policy' },
+  { path: '/trust-center', label: 'commercial trust center' },
   { path: '/for-coaches', label: 'coach landing page' },
   { path: '/sample-report', label: 'coach sample report' },
   { path: '/tools/resume-analyzer', label: 'resume analyzer' },

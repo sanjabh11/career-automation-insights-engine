@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T09:05:37.545Z",
+  "generatedAt": "2026-05-27T07:01:00.794Z",
   "targetProjectRef": "kvunnankqgfokeufvsrv",
   "allPassed": true,
   "versionsAreSorted": true,
@@ -21,7 +21,7 @@
       "purpose": "Target-project service-role key required only for the O*NET Task Ratings ingest runner; never print it or store it in repo files."
     }
   ],
-  "combinedSqlSha256": "3aeaedfc7ecd50505c49fac62eeee7f3155e4046510267972d5baacdda899591",
+  "combinedSqlSha256": "c4a48127b7f012a537fdb5d4b98894ba07a2bc672fa737724ecca6842db5f967",
   "references": [
     {
       "label": "Supabase database migrations",
@@ -129,6 +129,46 @@
       "version": "20260524000500",
       "lineCount": 314,
       "sha256": "7ca18c1ef3788b23b270edffa1f8311f59a2aa9d7af198f48c17b84f4fa0adce",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Commercial outreach pipeline",
+      "file": "supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql",
+      "reason": "Staff-only CRM sequence metadata, follow-up scheduling, and outreach launch-gate state for proof-pack leads.",
+      "expectedSnippets": [
+        "update_commercial_lead_outreach_plan",
+        "outreach_pipeline",
+        "next_follow_up_at",
+        "sequence_step",
+        "commercial_launch_gate",
+        "GRANT EXECUTE ON FUNCTION public.update_commercial_lead_outreach_plan"
+      ],
+      "version": "20260525172048",
+      "lineCount": 136,
+      "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
+      "missingSnippets": [],
+      "unsafeMatches": [],
+      "status": "pass"
+    },
+    {
+      "phase": "Commercial outreach response metrics",
+      "file": "supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql",
+      "reason": "Staff-only reply, meeting, usefulness, objection, paid-signal, case-study, unsubscribe, and response-note metrics for founder-led proof-pack outreach.",
+      "expectedSnippets": [
+        "update_commercial_lead_response_metrics",
+        "outreach_response_metrics",
+        "reply_sentiment",
+        "meeting_booked_at",
+        "usefulness_score",
+        "paid_pilot_signal",
+        "unsubscribe_requested",
+        "GRANT EXECUTE ON FUNCTION public.update_commercial_lead_response_metrics"
+      ],
+      "version": "20260526000100",
+      "lineCount": 175,
+      "sha256": "c77b4715c0ad41f9e620e3e741653c8d52eb8e8dc484513ad1413cca08bc6ee3",
       "missingSnippets": [],
       "unsafeMatches": [],
       "status": "pass"

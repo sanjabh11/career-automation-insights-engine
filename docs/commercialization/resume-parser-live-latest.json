@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T09:05:19.520Z",
+  "generatedAt": "2026-05-25T17:30:46.379Z",
   "verifier": "verify-resume-parser-live",
   "mode": "live-edge-function-parser-boundary",
   "target": {
@@ -30,7 +30,7 @@
       "extractedTextSha256": "5f83f020b99707ab10222e8153dba17ea995d2328d2b5025d59c90a7ba016340",
       "receiptSummary": {
         "receiptIdPresent": true,
-        "generatedAt": "2026-05-25T09:05:20.029Z",
+        "generatedAt": "2026-05-25T17:30:47.335Z",
         "filenameHash": "4806cbfbd66ff17e3a83b7442767a23ce9b87e7b829d7f742bfc129e98fb57dc",
         "fileSha256": "c992205ddcf31009e4b62f74eeafb6dc57055ad40107b38791a464f293c9dfc8",
         "byteLength": 154,
@@ -76,7 +76,7 @@
       "message": "PDF upload produced the expected adapter-pending receipt without extraction.",
       "receiptSummary": {
         "receiptIdPresent": true,
-        "generatedAt": "2026-05-25T09:05:20.229Z",
+        "generatedAt": "2026-05-25T17:30:47.589Z",
         "filenameHash": "cd35f24b3005127900ef2ea1f63b02fbfbdfe5e44fced9a46d7fa89b7b2016d9",
         "fileSha256": "f2297cd87a1b240fa68b7f985159580c5a0a0a7851834299ecb2eb511bcf2209",
         "byteLength": 46,
@@ -122,7 +122,7 @@
       "message": "Unsupported file returned the expected rejection receipt.",
       "receiptSummary": {
         "receiptIdPresent": true,
-        "generatedAt": "2026-05-25T09:05:20.403Z",
+        "generatedAt": "2026-05-25T17:30:47.828Z",
         "filenameHash": "40d42bca5add33c599bed21bb05c9c4db524ffff4efd8904ada583abe3b0ac6a",
         "fileSha256": "2e383fddf78d1acc795830f56b4ec6464e408c418e67add6fa4c017afa618963",
         "byteLength": 8,

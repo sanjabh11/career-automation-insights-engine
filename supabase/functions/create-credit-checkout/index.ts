@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@13.10.0?target=deno';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,29 +22,35 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    const { priceId, userId, packageId, credits } = await req.json();
+    const { priceId, userId: requestedUserId, packageId, credits } = await req.json();
 
-    if (!priceId || !userId || !packageId || !credits) {
-      return new Response(
-        JSON.stringify({ error: 'priceId, userId, packageId, and credits are required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!priceId || !packageId || !credits) {
+      throw new Error('priceId, packageId, and credits are required');
     }
 
-    // Get user email from Supabase for Stripe customer creation
+    // Verify the caller from the Supabase JWT. Do not trust client-supplied user ids.
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-    let email = '';
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-      const userRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
-        headers: { 'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'apikey': SUPABASE_SERVICE_ROLE_KEY },
-      });
-      if (userRes.ok) {
-        const userData = await userRes.json();
-        email = userData.email || '';
-      }
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase service credentials not configured');
     }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const authHeader = req.headers.get('authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      throw new Error('Authorization header required');
+    }
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      throw new Error('Invalid authentication');
+    }
+    if (requestedUserId && requestedUserId !== user.id) {
+      throw new Error('Credit checkout user mismatch');
+    }
+
+    const userId = user.id;
+    const email = user.email || '';
 
     // Find or create Stripe customer
     let customerId: string;

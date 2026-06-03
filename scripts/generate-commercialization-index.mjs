@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
+import { execFile } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
 
 const OUTPUT_DIR = 'docs/commercialization';
 const JSON_OUTPUT = `${OUTPUT_DIR}/commercialization-codebase-index.json`;
 const MD_OUTPUT = `${OUTPUT_DIR}/commercialization-codebase-index.md`;
+const execFileAsync = promisify(execFile);
 
 const commercialRoutePaths = new Set([
   '/',
@@ -28,12 +31,16 @@ const featureMap = [
     routes: ['/proof-pack-gallery', '/sample-report', '/automation-risk/:occupation', '/enterprise-dashboard'],
     files: [
       'src/pages/ProofPackGalleryPage.tsx',
+      'src/lib/commercialLaunchGate.ts',
+      'src/lib/commercialLaunchReadiness.ts',
+      'src/lib/supabaseFunctionGovernance.ts',
       'src/lib/institutionalReadinessPacket.ts',
       'docs/commercialization/pilot-outreach-pack.md',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
+      'scripts/verify-supabase-function-governance.mjs',
     ],
-    proof: 'Public proof-pack gallery, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, and downloadable CRM-import outreach CSV.',
+    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, and pilot validation worksheet CSV.',
   },
   {
     feature: 'Institutional readiness and governance packet',
@@ -49,7 +56,7 @@ const featureMap = [
       'docs/commercialization/commercial-accessibility-audit-latest.md',
       'docs/commercialization/commercial-accessibility-audit-latest.json',
     ],
-    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, and a CSV risk register for buyer review.',
+    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review.',
   },
   {
     feature: 'Commercial proof-pack CI workflow',
@@ -61,11 +68,12 @@ const featureMap = [
       'docs/commercialization/live-supabase-deployment-runbook.md',
       'scripts/verify-commercial-release.mjs',
       'scripts/generate-commercial-supabase-deployment-packet.mjs',
+      'scripts/verify-commercial-live-auth-e2e.mjs',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-accessibility.mjs',
       'docs/commercialization/commercial-accessibility-audit-latest.md',
     ],
-    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, plus manual/scheduled source and production audit checks.',
+    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks.',
   },
   {
     feature: 'SEO report lead capture',
@@ -114,8 +122,27 @@ const featureMap = [
       'src/lib/commercialReportArtifacts.ts',
       'supabase/migrations/20260523000100_create_commercial_leads.sql',
       'supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql',
+      'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
+      'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
     ],
-    proof: 'Staff-gated lead list, status updates, notes, CSV export, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+    proof: 'Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links, provider suppression handoff CSV, A/B campaign variants, analytics event names, conversion goals, suppression reasons, variant-level response reporting, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation.',
+  },
+  {
+    feature: 'Commercial launch gate and payment fulfillment boundary',
+    buyer: 'Founder, pilot operations, paid proof-pack buyers',
+    routes: ['/proof-pack-gallery', '/pricing', '/for-coaches', '/operations/leads'],
+    files: [
+      'src/lib/commercialLaunchGate.ts',
+      'src/lib/commercialLaunchReadiness.ts',
+      'src/lib/supabaseFunctionGovernance.ts',
+      'src/lib/stripe.ts',
+      'supabase/functions/create-checkout-session/index.ts',
+      'supabase/functions/stripe-webhook/index.ts',
+      'scripts/verify-report-evidence.mjs',
+      'scripts/verify-commercial-trust-boundaries.mjs',
+      'scripts/verify-supabase-function-governance.mjs',
+    ],
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -164,7 +191,7 @@ const featureMap = [
   {
     feature: 'Privacy and responsible-use trust boundary',
     buyer: 'Individuals, coaches, institutional reviewers',
-    routes: ['/privacy', '/tools/resume-analyzer', '/responsible-ai'],
+    routes: ['/privacy', '/tools/resume-analyzer', '/responsible-ai', '/trust-center'],
     files: [
       'src/pages/PrivacyPage.tsx',
       'src/components/ResumeAnalyzer.tsx',
@@ -180,8 +207,9 @@ const featureMap = [
       'scripts/generate-commercial-supabase-deployment-packet.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-resume-parser-live.mjs',
+      'scripts/verify-commercial-live-auth-e2e.mjs',
     ],
-    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, live parse-resume receipt verifier, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
+    proof: 'Privacy notice, missing-Supabase fallback, bounded resume deletion receipt RPC/table, server-side resume parser boundary with upload validation and non-persistence receipt, live parse-resume receipt verifier, raw resume text redaction stub, resume analysis proof-pack metadata, parser boundary, source-labeled evidence cards, downloadable resume proof report, authenticated redacted resume proof artifact persistence, artifact deletion receipt, optional signed-in live synthetic e2e verifier for artifact save/delete and resume-analysis deletion receipts, buyer-facing commercial trust center with AI RMF/risk-register/live-blocker/payment-proof/function-governance sections, downloadable trust packet and risk CSV, copyable rewrite draft packet with caveats, deletion/employment-decision messaging, consent and local-queue guardrail verifier.',
   },
   {
     feature: 'Counselor report generator',
@@ -241,6 +269,18 @@ function extractSqlObjects(sqlSource) {
     grants: uniq(Array.from(sqlSource.matchAll(/GRANT EXECUTE ON FUNCTION public\.([a-z0-9_]+)/gi), (match) => match[1])),
     policies: uniq(Array.from(sqlSource.matchAll(/CREATE POLICY "([^"]+)"/g), (match) => match[1])),
   };
+}
+
+async function getCurrentBranch() {
+  const envBranch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || process.env.GIT_BRANCH;
+  if (envBranch) return envBranch;
+
+  try {
+    const { stdout } = await execFileAsync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+    return stdout.trim() || 'unknown';
+  } catch {
+    return 'unknown';
+  }
 }
 
 function formatTable(headers, rows) {
@@ -319,8 +359,8 @@ CI boundary:
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
-- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, and the live parser receipt verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while Edge Function deploy permission, paid PDF/DOCX parser adapters, malware scanning, authenticated e2e artifact checks, and formal e-signature/PDF storage remain Phase 5 hardening work.
-- Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, and CRM-import CSV, but deployed-domain analytics, email automation, and a live CRM sync remain pending before scaled outreach.
+- Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, the live parser receipt verifier, and the optional signed-in synthetic artifact/deletion e2e verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while paid PDF/DOCX parser adapters, malware scanning, completed authenticated e2e run evidence, and formal e-signature/PDF storage remain Phase 5 hardening work.
+- Phase 6 now has a public proof-pack gallery, local labor-market snapshot packet, CRM-import CSV, tracked outreach links, and A/B variant reporting, but deployed-domain analytics ingestion, email automation, unsubscribe webhook sync-back, and a live CRM sync remain pending before scaled outreach.
 - Supabase local DB lint needs a running local database on \`127.0.0.1:54322\`.
 - GitHub local tracking and the installed workflow are present, but direct remote branch, collaborator access, hosted push CI, and hosted manual source/audit evidence must be re-confirmed from a network-available shell after each workflow-affecting push.
 - ESCO, Lightcast, and live market search are adapter boundaries, not imported scoring sources.
@@ -339,6 +379,8 @@ async function main() {
     manifestSource,
     baseSqlSource,
     reviewSqlSource,
+    outreachSqlSource,
+    outreachResponseSqlSource,
     resumeDeletionSqlSource,
     resumeProofArtifactSqlSource,
   ] = await Promise.all([
@@ -347,11 +389,13 @@ async function main() {
     readFile('src/lib/sourceManifest.ts', 'utf8'),
     readFile('supabase/migrations/20260523000100_create_commercial_leads.sql', 'utf8'),
     readFile('supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql', 'utf8'),
+    readFile('supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql', 'utf8'),
+    readFile('supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql', 'utf8'),
     readFile('supabase/migrations/20260524000400_add_resume_deletion_receipts.sql', 'utf8'),
     readFile('supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql', 'utf8'),
   ]);
-  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
-  const branch = process.env.GIT_BRANCH || 'commercialization-proof-packs';
+  const sqlSource = `${baseSqlSource}\n${reviewSqlSource}\n${outreachSqlSource}\n${outreachResponseSqlSource}\n${resumeDeletionSqlSource}\n${resumeProofArtifactSqlSource}`;
+  const branch = await getCurrentBranch();
   const index = {
     generatedAt: new Date().toISOString(),
     branch,

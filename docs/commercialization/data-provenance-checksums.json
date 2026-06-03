@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-25T09:05:37.794Z",
+  "generatedAt": "2026-05-27T07:01:03.707Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-05-25T06:37:55.173Z",
+    "generatedAt": "2026-05-25T09:09:13.546Z",
     "allPassed": true,
     "requiredForPass": false
   },
@@ -415,6 +415,107 @@
       "passed": true
     },
     {
+      "id": "commercial-launch-gate-module",
+      "label": "Commercial outreach launch gate model",
+      "path": "src/lib/commercialLaunchGate.ts",
+      "type": "commercial-governance",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "supabase-edge-functions",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "commercialLaunchGateItems",
+        "functionSecurityReviewGroups",
+        "Auth live E2E secrets",
+        "Exposed token rotation",
+        "Public/no-JWT function review",
+        "Legacy function sprawl",
+        "Outreach automation",
+        "Payment fulfillment"
+      ],
+      "caveat": "Launch-gate model separates controls already implemented from owner-held secrets, manual function review, provider integration, and payment replay evidence still needed before scaled outreach.",
+      "bytes": 7096,
+      "rows": 122,
+      "sha256": "3bbd16c7f30b8966dd1d7fd7b7b34e0d1a07dabb4306746560c2fc57099be5d7",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-outreach-pipeline-migration",
+      "label": "Commercial lead outreach pipeline migration",
+      "path": "supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "update_commercial_lead_outreach_plan",
+        "outreach_pipeline",
+        "next_follow_up_at",
+        "sequence_step",
+        "commercial_launch_gate",
+        "Staff-only commercial outreach pipeline update"
+      ],
+      "caveat": "Staff-only CRM sequence metadata makes founder-led outreach trackable; it does not send emails, guarantee consent compliance, or replace a configured CRM/email provider.",
+      "bytes": 4343,
+      "rows": 127,
+      "sha256": "ebbb672d2ec56e54ef25b14f6368bdfeeec8a545ae634743b63d1613593ca2c9",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-outreach-response-metrics-migration",
+      "label": "Commercial lead outreach response metrics migration",
+      "path": "supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql",
+      "type": "supabase-migration",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "update_commercial_lead_response_metrics",
+        "outreach_response_metrics",
+        "reply_sentiment",
+        "meeting_booked_at",
+        "usefulness_score",
+        "paid_pilot_signal",
+        "unsubscribe_requested",
+        "Staff-only commercial outreach response metrics update"
+      ],
+      "caveat": "Response metrics support founder-led pilot learning; they do not prove market demand, predict sales, or replace consent-aware CRM/email tooling.",
+      "bytes": 4838,
+      "rows": 165,
+      "sha256": "c77b4715c0ad41f9e620e3e741653c8d52eb8e8dc484513ad1413cca08bc6ee3",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "commercial-checkout-auth-boundary",
+      "label": "Commercial checkout authentication boundary",
+      "path": "src/lib/stripe.ts",
+      "type": "payment-runtime",
+      "sourceIds": [
+        "supabase-edge-functions",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "session?.access_token",
+        "Sign in again before starting checkout",
+        "Sign in again before buying report credits",
+        "Authorization",
+        "create-checkout-session"
+      ],
+      "caveat": "Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.",
+      "bytes": 14317,
+      "rows": 427,
+      "sha256": "59ed47cc90ba8cf6bbb101a18d082221ac7935c29aa0d5b97709281194bd4692",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "resume-deletion-receipt-client",
       "label": "Resume analysis deletion receipt client",
       "path": "src/lib/resumeAnalysisPrivacy.ts",
@@ -566,6 +667,38 @@
       "passed": true
     },
     {
+      "id": "commercial-live-auth-e2e-verifier",
+      "label": "Authenticated live resume proof artifact e2e verifier",
+      "path": "scripts/verify-commercial-live-auth-e2e.mjs",
+      "type": "live-verifier",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "LIVE_SUPABASE_TEST_USER_EMAIL",
+        "LIVE_SUPABASE_TEST_USER_PASSWORD",
+        "signInWithPassword",
+        "resume_analyses",
+        "create_resume_proof_report_artifact",
+        "delete_resume_proof_report_artifact_with_receipt",
+        "delete_resume_analysis_with_receipt",
+        "data-resume-proof-report-redacted=\"true\"",
+        "Raw resume text stored: no",
+        "bounded_authenticated_live_e2e",
+        "allow-missing-env"
+      ],
+      "caveat": "Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.",
+      "bytes": 15342,
+      "rows": 358,
+      "sha256": "9ecd6c43fda8af1d689d11ee565e8331f56ac2cf11a0aea8dba5d9a9b8d582ce",
+      "failures": [],
+      "passed": true
+    },
+    {
       "id": "resume-analyzer-proof-report-ui",
       "label": "Resume analyzer downloadable proof report UI",
       "path": "src/components/ResumeAnalyzer.tsx",
@@ -697,6 +830,9 @@
         "CRM import pack",
         "buildOutreachCsv",
         "outreachEvidenceCards",
+        "data-commercial-launch-gate=\"true\"",
+        "functionSecurityReviewGroups",
+        "Secrets stay owner-action only",
         "source_ids",
         "does_not_prove",
         "NACE career readiness",
@@ -707,9 +843,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 35258,
-      "rows": 609,
-      "sha256": "a0bf4ad5d39df65e9a26c1eee9ff9b66fbab357ed021d0ebcd500b08932bbe35",
+      "bytes": 77168,
+      "rows": 1258,
+      "sha256": "900c3d05a074b14699029e64ec9984da64d9d08fdafd9ef006d2d21ae550cf86",
       "failures": [],
       "passed": true
     },
@@ -738,6 +874,13 @@
         "Employment Decision Boundary",
         "WCAG 2.2 Accessibility Gate",
         "Institutional Acceptance Gates",
+        "ManualWcagEvidenceRow",
+        "BuyerAcceptableUseSignoffRow",
+        "buildInstitutionalAcceptanceChecklistCsv",
+        "Manual WCAG Evidence Worksheet",
+        "Buyer Acceptable-Use Signoff Checklist",
+        "data-manual-wcag-evidence-worksheet=\"true\"",
+        "data-buyer-acceptable-use-signoff=\"true\"",
         "blocked_live_credentials",
         "buyer_policy_required",
         "Do not furnish individual reports to employers for employment purposes",
@@ -745,9 +888,56 @@
         "SUPABASE_DB_PASSWORD"
       ],
       "caveat": "Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.",
-      "bytes": 23947,
-      "rows": 433,
-      "sha256": "4cf15c4c2e02ce0abc83d6f0cccddcd16a23c3273c75bfe23e455fe2ee05288e",
+      "bytes": 35735,
+      "rows": 662,
+      "sha256": "ab4e664a6a8c412690f2b6a78790b45157c64534c4e01ce7cfa10419bab0f1e6",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "responsible-ai-trust-center",
+      "label": "Responsible AI trust center",
+      "path": "src/pages/ResponsibleAIPage.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "iso-42001",
+        "wcag-22",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "supabase-edge-functions",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "data-commercial-trust-center=\"true\"",
+        "Responsible AI and institutional trust boundaries",
+        "Commercial Trust Center",
+        "Planning use only",
+        "buildInstitutionalReadinessPacket",
+        "buildInstitutionalAcceptanceChecklistCsv",
+        "commercialLaunchReadinessMilestones",
+        "commercialLaunchGateItems",
+        "supabaseFunctionGovernanceSummary",
+        "data-trust-employment-boundary=\"true\"",
+        "data-trust-accessibility-boundary=\"true\"",
+        "data-trust-launch-readiness=\"true\"",
+        "data-trust-live-blockers=\"true\"",
+        "data-trust-payment-proof=\"true\"",
+        "data-trust-risk-register=\"true\"",
+        "data-trust-manual-wcag-worksheet=\"true\"",
+        "data-trust-buyer-signoff-checklist=\"true\"",
+        "data-trust-ai-rmf=\"true\"",
+        "data-trust-function-review=\"true\"",
+        "Download trust packet",
+        "Download risk CSV",
+        "Download acceptance checklist",
+        "do not certify legal compliance, WCAG conformance, or employment-selection validity"
+      ],
+      "caveat": "Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.",
+      "bytes": 17907,
+      "rows": 364,
+      "sha256": "277c33f59f2892efc467656a1f49ea8ea26cf5ee869303bd3ca8eefe4e868f89",
       "failures": [],
       "passed": true
     },
@@ -773,9 +963,9 @@
         "WAI-ARIA Authoring Practices"
       ],
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
-      "bytes": 17782,
-      "rows": 565,
-      "sha256": "513c1131d57569aec67f9e4d07000804009d6fbf7630482e0f465ed0dfbe9554",
+      "bytes": 19425,
+      "rows": 619,
+      "sha256": "87cb33bfce98324a2ebbca47a20430cdf22ef8c81272814479e81bd9e6f10018",
       "failures": [],
       "passed": true
     },
@@ -803,9 +993,9 @@
         "WCAG-EM"
       ],
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
-      "bytes": 6658,
-      "rows": 50,
-      "sha256": "659461d3250d73bc2f52955dbb98ca894eff2004b466f9f9f5e71afd86dd0454",
+      "bytes": 7053,
+      "rows": 53,
+      "sha256": "f594d2e8d8ffe92cc701aaf4c3a80dce7c9001b88100dc3d26b888ed0911bf3c",
       "failures": [],
       "passed": true
     },
@@ -875,14 +1065,15 @@
         "create_resume_proof_report_artifact",
         "delete_resume_proof_report_artifact_with_receipt",
         "log_commercial_report_artifact_event",
+        "update_commercial_lead_outreach_plan",
         "non-mutating-public-api-boundary",
         "missing-object-or-schema-cache",
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and does not apply migrations, seed staff users, or prove authenticated resume artifact save/delete e2e.",
-      "bytes": 12419,
-      "rows": 348,
-      "sha256": "ef29f2b9f45dc1ec45595e98dba23ff4c5224dc9668ef1f4347fb501b3603790",
+      "bytes": 14660,
+      "rows": 406,
+      "sha256": "c5abb98eadd2bb930012104ba394a2d9aec88fe7e861cb9c961c022a2f87cd29",
       "failures": [],
       "passed": true
     },
@@ -906,9 +1097,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 11781,
-      "rows": 261,
-      "sha256": "c428fd5ad9070a2e36750ae41de3fba78e3b20d7a16fbe5330250f1de59cf7ee",
+      "bytes": 12959,
+      "rows": 289,
+      "sha256": "24a4796ffbf79ee7ac6daa6d89d7f6fb1e88cddff365aa2f1bcd6ac6358af9df",
       "failures": [],
       "passed": true
     },
@@ -934,9 +1125,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 5128,
-      "rows": 74,
-      "sha256": "64881db10abd3df8eb9786cd694d0275159261d8ca9d39226e1a2bf61440bb27",
+      "bytes": 5462,
+      "rows": 76,
+      "sha256": "09bc785b65875c847c45f90b6781778560819f7b6f1be3c67a6aa577438199a1",
       "failures": [],
       "passed": true
     },
@@ -961,9 +1152,9 @@
         "allow-missing-env"
       ],
       "caveat": "Non-mutating deployed Supabase proof gate; requires a project URL and anon key and proves only schema/row presence, not migration application, ingest execution, or task-time precision.",
-      "bytes": 11154,
-      "rows": 318,
-      "sha256": "ca5f37ff41717d28bb2f1e6dcd6d8a8d21badcf82c0def15fcb813a6729452e8",
+      "bytes": 11952,
+      "rows": 333,
+      "sha256": "80023f707ac4ad4eda025a78e80d17a1476b4a3103b24567ecb3c86323ba69bd",
       "failures": [],
       "passed": true
     },

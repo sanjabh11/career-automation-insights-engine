@@ -40,6 +40,30 @@ export interface AiRmfControlRow {
   remainingGate: string;
 }
 
+export interface ManualWcagEvidenceRow {
+  id: string;
+  checkpoint: string;
+  currentAutomatedProof: string;
+  manualEvidenceNeeded: string;
+  reviewerRole: string;
+  status: InstitutionalReadinessStatus;
+  sourceIds: string[];
+  caveat: string;
+  doesNotProve: string;
+}
+
+export interface BuyerAcceptableUseSignoffRow {
+  id: string;
+  gate: string;
+  buyerQuestion: string;
+  requiredConfirmation: string;
+  owner: string;
+  status: InstitutionalReadinessStatus;
+  sourceIds: string[];
+  caveat: string;
+  doesNotProve: string;
+}
+
 export interface InstitutionalReadinessPacket {
   id: string;
   title: string;
@@ -48,6 +72,8 @@ export interface InstitutionalReadinessPacket {
   statusSummary: string;
   riskRows: InstitutionalRiskRow[];
   aiRmfControls: AiRmfControlRow[];
+  manualWcagEvidenceRows: ManualWcagEvidenceRow[];
+  buyerAcceptableUseSignoffRows: BuyerAcceptableUseSignoffRow[];
   accessibilityGate: string[];
   employmentDecisionBoundary: string[];
   institutionalAcceptanceGates: string[];
@@ -245,6 +271,111 @@ export function buildInstitutionalReadinessPacket(generatedAt: Date | string = n
     },
   ];
 
+  const manualWcagEvidenceRows: ManualWcagEvidenceRow[] = [
+    {
+      id: "keyboard-and-focus",
+      checkpoint: "Keyboard-only path and focus visibility",
+      currentAutomatedProof: "Commercial browser and accessibility smoke checks verify visible tab stops on scoped commercial routes.",
+      manualEvidenceNeeded: "Record full tab order, skip/focus behavior, dropdown/modal behavior, report-download controls, and any obscured-focus defects on mobile, tablet, and desktop.",
+      reviewerRole: "Accessibility reviewer or trained staff reviewer",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.accessibility,
+      caveat: "Automated tab-stop checks do not prove complete keyboard operability for every state.",
+      doesNotProve: "WCAG conformance, assistive-technology parity, or accommodation readiness.",
+    },
+    {
+      id: "screen-reader-name-role-value",
+      checkpoint: "Screen-reader name, role, value, and reading order",
+      currentAutomatedProof: "Route smoke verifies H1, main landmark, visible text, and accessible control names.",
+      manualEvidenceNeeded: "Capture VoiceOver or NVDA notes for proof-pack downloads, resume upload/parser receipts, lead forms, consent states, checkout entry points, and dense tables.",
+      reviewerRole: "Accessibility reviewer",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.accessibility,
+      caveat: "Static control-name checks do not prove screen-reader ordering or state announcements.",
+      doesNotProve: "Screen-reader parity across browser/AT combinations.",
+    },
+    {
+      id: "target-size-and-mobile",
+      checkpoint: "Target size, spacing, and mobile reflow",
+      currentAutomatedProof: "Responsive smoke covers mobile, tablet, and desktop route rendering without major overflow.",
+      manualEvidenceNeeded: "Measure dense buttons, table actions, icon controls, mobile exports, and report cards against target-size and spacing expectations.",
+      reviewerRole: "Accessibility reviewer or product reviewer",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.accessibility,
+      caveat: "Responsive rendering does not prove every target is easy to activate.",
+      doesNotProve: "WCAG target-size conformance or motor-accessibility adequacy.",
+    },
+    {
+      id: "forms-errors-and-auth",
+      checkpoint: "Forms, errors, consent, and accessible authentication",
+      currentAutomatedProof: "Commercial browser checks consent-disabled actions, lead persistence status, and downloadable artifact flows.",
+      manualEvidenceNeeded: "Record invalid-input states, retry/error messaging, consent revocation paths, login/password flows, timeout behavior, and recovery steps.",
+      reviewerRole: "Accessibility reviewer plus product owner",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.accessibility,
+      caveat: "Happy-path browser checks do not prove understandable recovery from every failure state.",
+      doesNotProve: "Accessible-authentication completeness or legal accommodation readiness.",
+    },
+  ];
+
+  const buyerAcceptableUseSignoffRows: BuyerAcceptableUseSignoffRow[] = [
+    {
+      id: "planning-only-use",
+      gate: "Planning-only use",
+      buyerQuestion: "Will the buyer use proof packs only for coaching, education advising, workforce planning, or L&D discussion?",
+      requiredConfirmation: "Buyer confirms reports will not be used for hiring, firing, promotion, compensation, layoff, screening, eligibility, or worker-ranking decisions.",
+      owner: "Buyer sponsor",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.employment,
+      caveat: "This confirmation narrows pilot use; it is not a legal opinion.",
+      doesNotProve: "Lawful employment-selection use or adverse-impact validation.",
+    },
+    {
+      id: "data-minimization",
+      gate: "Data minimization and consent",
+      buyerQuestion: "Will the pilot avoid unnecessary individual PII and preserve consent/retention terms for any uploaded resume or student/workforce data?",
+      requiredConfirmation: "Buyer confirms role-level, aggregate, or redacted data is preferred and any individual data has approved consent, retention, and deletion handling.",
+      owner: "Buyer privacy or program owner",
+      status: "buyer_policy_required",
+      sourceIds: ["nist-ai-rmf", "cfpb-employment-algorithmic-scores", "llm-output"],
+      caveat: "Product controls reduce data exposure but do not replace buyer privacy review.",
+      doesNotProve: "FERPA, FCRA, GDPR, state privacy, or employer-policy compliance.",
+    },
+    {
+      id: "human-review-owner",
+      gate: "Human review owner",
+      buyerQuestion: "Who is accountable for reviewing source caveats, local context, and client-ready recommendations before delivery?",
+      requiredConfirmation: "Buyer names a coach, counselor, workforce lead, or L&D reviewer who will approve pilot artifacts before client use.",
+      owner: "Buyer sponsor plus product reviewer",
+      status: "buyer_policy_required",
+      sourceIds: sourceIds.governance,
+      caveat: "Named review ownership improves governance but is not an independent audit.",
+      doesNotProve: "Professional certification, attorney review, or employment-selection validation.",
+    },
+    {
+      id: "local-evidence-boundary",
+      gate: "Local labor-market evidence boundary",
+      buyerQuestion: "Will the buyer avoid local-demand or licensed-market-intelligence claims unless geography, source vintage, query metadata, and reviewer notes are attached?",
+      requiredConfirmation: "Buyer confirms open-data and licensed-provider caveats remain visible in any pilot artifact.",
+      owner: "Buyer sponsor plus data reviewer",
+      status: "future_adapter_required",
+      sourceIds: sourceIds.market,
+      caveat: "Open-source proof packs can guide discovery but do not equal licensed posting intelligence.",
+      doesNotProve: "Lightcast-level intelligence, live posting demand, or provider-quality validation.",
+    },
+    {
+      id: "live-proof-attachment",
+      gate: "Live proof attachment",
+      buyerQuestion: "Will delivery wait until live Supabase proof, payment proof when billing is involved, and known launch blockers are attached?",
+      requiredConfirmation: "Buyer/internal owner confirms the latest CI, live-readiness, and unresolved-blocker evidence is attached to the delivery packet.",
+      owner: "Product owner",
+      status: "blocked_live_credentials",
+      sourceIds: ["nist-ai-rmf", "supabase-edge-functions", "llm-output"],
+      caveat: "Local and hosted CI do not prove all target-project live state.",
+      doesNotProve: "Production migration state, payment fulfillment, or test-user authenticated e2e until live gates pass.",
+    },
+  ];
+
   const evidenceCards = [
     createEvidenceCard({
       id: "institutional-readiness-not-employment-selection",
@@ -279,6 +410,17 @@ export function buildInstitutionalReadinessPacket(generatedAt: Date | string = n
       reviewStatus: "staff_review_required",
       action: "Run the credentialed deployment packet and both live proof gates.",
     }),
+    createEvidenceCard({
+      id: "institutional-readiness-acceptable-use-signoff",
+      claim: "Controlled institutional pilots need a buyer acceptable-use checklist before client delivery.",
+      sourceIds: [...sourceIds.governance, ...sourceIds.employment],
+      confidence: "high",
+      generatedAt: generatedAtIso,
+      caveat: "The checklist is a governance artifact, not legal advice or a compliance certification.",
+      doesNotProve: "Buyer legal approval, validated employment-selection use, or accessibility conformance.",
+      reviewStatus: "staff_review_required",
+      action: "Attach the completed acceptance checklist to every institutional pilot packet.",
+    }),
   ];
 
   return {
@@ -286,12 +428,14 @@ export function buildInstitutionalReadinessPacket(generatedAt: Date | string = n
     title: "Institutional Readiness Packet",
     generatedAt: generatedAtIso,
     intendedUse: "Buyer-facing trust packet for coaches, career centers, workforce boards, and L&D pilots.",
-    statusSummary: "Ready for bounded demos and pilot review; not ready for institutional delivery until live Supabase proof, generated accessibility audit packet plus completed manual WCAG notes, and buyer acceptable-use signoff are attached.",
+    statusSummary: "Ready for bounded demos and pilot review; not ready for institutional delivery until live Supabase proof, generated accessibility audit packet plus completed manual WCAG notes, buyer acceptable-use signoff, and unresolved issue list are attached.",
     riskRows,
     aiRmfControls,
+    manualWcagEvidenceRows,
+    buyerAcceptableUseSignoffRows,
     accessibilityGate: [
       "Automated commercial a11y smoke passes before demos and writes commercial-accessibility-audit-latest.md/json.",
-      "Manual WCAG 2.2 checklist rows are still required for focus-not-obscured, target size, redundant entry, accessible authentication, contrast, labels, error states, and screen-reader reading order.",
+      "Manual WCAG 2.2 worksheet rows are included in this packet and still require human evidence for focus-not-obscured, target size, redundant entry, accessible authentication, contrast, labels, error states, and screen-reader reading order.",
       "Do not claim WCAG conformance until manual evidence and remediation notes are complete.",
     ],
     employmentDecisionBoundary: [
@@ -304,8 +448,8 @@ export function buildInstitutionalReadinessPacket(generatedAt: Date | string = n
       "npm run verify:commercial-live-supabase passes against the target project.",
       "npm run verify:onet-task-ratings-live passes after O*NET 30.3 task rating ingest and exported checksums.",
       "Staff-auth review/final-approval and signed-in redacted resume artifact save/delete e2e proof are attached.",
-      "commercial-accessibility-audit-latest.md plus completed manual WCAG 2.2 audit notes and unresolved issue list are attached.",
-      "Buyer acceptable-use, data-retention, consent, and non-employment-decision policy are signed off.",
+      "commercial-accessibility-audit-latest.md plus completed manual WCAG 2.2 worksheet notes and unresolved issue list are attached.",
+      "Buyer acceptable-use, data-retention, consent, local-evidence, and non-employment-decision policy checklist is signed off.",
     ],
     evidenceCards,
   };
@@ -344,6 +488,47 @@ export function buildInstitutionalReadinessCsv(packet = buildInstitutionalReadin
   ]);
 
   return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+export function buildInstitutionalAcceptanceChecklistCsv(packet = buildInstitutionalReadinessPacket()): string {
+  const header = [
+    "checklist_type",
+    "item_id",
+    "title",
+    "current_or_required_proof",
+    "reviewer_or_owner",
+    "status",
+    "source_ids",
+    "sources",
+    "caveat",
+    "does_not_prove",
+  ];
+  const manualRows = packet.manualWcagEvidenceRows.map((row) => [
+    "manual_wcag_evidence",
+    row.id,
+    row.checkpoint,
+    `${row.currentAutomatedProof} Manual evidence needed: ${row.manualEvidenceNeeded}`,
+    row.reviewerRole,
+    INSTITUTIONAL_READINESS_STATUS_LABELS[row.status],
+    row.sourceIds.join(";"),
+    sourceLabels(row.sourceIds),
+    row.caveat,
+    row.doesNotProve,
+  ]);
+  const signoffRows = packet.buyerAcceptableUseSignoffRows.map((row) => [
+    "buyer_acceptable_use_signoff",
+    row.id,
+    row.gate,
+    `${row.buyerQuestion} Required confirmation: ${row.requiredConfirmation}`,
+    row.owner,
+    INSTITUTIONAL_READINESS_STATUS_LABELS[row.status],
+    row.sourceIds.join(";"),
+    sourceLabels(row.sourceIds),
+    row.caveat,
+    row.doesNotProve,
+  ]);
+
+  return [header, ...manualRows, ...signoffRows].map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
 export function renderInstitutionalReadinessPacketHtml(packet = buildInstitutionalReadinessPacket()): string {
@@ -440,6 +625,58 @@ export function renderInstitutionalReadinessPacketHtml(packet = buildInstitution
     <ul class="gate-list">
       ${packet.accessibilityGate.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
     </ul>
+  </section>
+
+  <section data-manual-wcag-evidence-worksheet="true">
+    <h2>Manual WCAG Evidence Worksheet</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Checkpoint</th>
+          <th>Automated Proof</th>
+          <th>Manual Evidence Needed</th>
+          <th>Reviewer / Status</th>
+          <th>Boundary</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${packet.manualWcagEvidenceRows.map((row) => `
+          <tr data-manual-wcag-evidence-row="${escapeHtml(row.id)}">
+            <td><strong>${escapeHtml(row.checkpoint)}</strong><br/><span class="small">Sources: ${escapeHtml(sourceLabels(row.sourceIds))}</span></td>
+            <td>${escapeHtml(row.currentAutomatedProof)}</td>
+            <td>${escapeHtml(row.manualEvidenceNeeded)}</td>
+            <td>${escapeHtml(row.reviewerRole)}<br/><span class="small">${escapeHtml(INSTITUTIONAL_READINESS_STATUS_LABELS[row.status])}</span></td>
+            <td><span class="small">Caveat: ${escapeHtml(row.caveat)}</span><br/><span class="small">Does not prove: ${escapeHtml(row.doesNotProve)}</span></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  </section>
+
+  <section data-buyer-acceptable-use-signoff="true">
+    <h2>Buyer Acceptable-Use Signoff Checklist</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Gate</th>
+          <th>Buyer Question</th>
+          <th>Required Confirmation</th>
+          <th>Owner / Status</th>
+          <th>Boundary</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${packet.buyerAcceptableUseSignoffRows.map((row) => `
+          <tr data-buyer-acceptable-use-signoff-row="${escapeHtml(row.id)}">
+            <td><strong>${escapeHtml(row.gate)}</strong><br/><span class="small">Sources: ${escapeHtml(sourceLabels(row.sourceIds))}</span></td>
+            <td>${escapeHtml(row.buyerQuestion)}</td>
+            <td>${escapeHtml(row.requiredConfirmation)}</td>
+            <td>${escapeHtml(row.owner)}<br/><span class="small">${escapeHtml(INSTITUTIONAL_READINESS_STATUS_LABELS[row.status])}</span></td>
+            <td><span class="small">Caveat: ${escapeHtml(row.caveat)}</span><br/><span class="small">Does not prove: ${escapeHtml(row.doesNotProve)}</span></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
   </section>
 
   <section class="boundary" data-institutional-acceptance-gates="true">

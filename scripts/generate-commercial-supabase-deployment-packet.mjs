@@ -71,6 +71,34 @@ const migrations = [
       'GRANT SELECT ON public.resume_proof_report_artifacts TO authenticated',
     ],
   },
+  {
+    phase: 'Commercial outreach pipeline',
+    file: 'supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql',
+    reason: 'Staff-only CRM sequence metadata, follow-up scheduling, and outreach launch-gate state for proof-pack leads.',
+    expectedSnippets: [
+      'update_commercial_lead_outreach_plan',
+      'outreach_pipeline',
+      'next_follow_up_at',
+      'sequence_step',
+      'commercial_launch_gate',
+      'GRANT EXECUTE ON FUNCTION public.update_commercial_lead_outreach_plan',
+    ],
+  },
+  {
+    phase: 'Commercial outreach response metrics',
+    file: 'supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql',
+    reason: 'Staff-only reply, meeting, usefulness, objection, paid-signal, case-study, unsubscribe, and response-note metrics for founder-led proof-pack outreach.',
+    expectedSnippets: [
+      'update_commercial_lead_response_metrics',
+      'outreach_response_metrics',
+      'reply_sentiment',
+      'meeting_booked_at',
+      'usefulness_score',
+      'paid_pilot_signal',
+      'unsubscribe_requested',
+      'GRANT EXECUTE ON FUNCTION public.update_commercial_lead_response_metrics',
+    ],
+  },
 ];
 
 const unsafePatterns = [

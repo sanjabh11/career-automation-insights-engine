@@ -19,6 +19,14 @@ on:
         options:
           - "true"
           - "false"
+      run_authenticated_e2e:
+        description: Run signed-in synthetic resume artifact/deletion e2e
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 permissions:
   contents: read
@@ -37,6 +45,8 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      LIVE_SUPABASE_TEST_USER_EMAIL: ${{ secrets.LIVE_SUPABASE_TEST_USER_EMAIL }}
+      LIVE_SUPABASE_TEST_USER_PASSWORD: ${{ secrets.LIVE_SUPABASE_TEST_USER_PASSWORD }}
       LIVE_SUPABASE_TIMEOUT_MS: "180000"
 
     steps:
@@ -75,6 +85,14 @@ jobs:
             echo "::error::SUPABASE_SERVICE_ROLE_KEY is required for O*NET Task Ratings ingest"
             missing=1
           fi
+          if [ "${{ inputs.run_authenticated_e2e }}" = "true" ]; then
+            for name in LIVE_SUPABASE_TEST_USER_EMAIL LIVE_SUPABASE_TEST_USER_PASSWORD; do
+              if [ -z "${!name}" ]; then
+                echo "::error::$name is required for authenticated live e2e"
+                missing=1
+              fi
+            done
+          fi
           if [ "$SUPABASE_PROJECT_REF" != "kvunnankqgfokeufvsrv" ]; then
             echo "::error::SUPABASE_PROJECT_REF must be kvunnankqgfokeufvsrv for this closeout workflow"
             missing=1
@@ -103,6 +121,10 @@ jobs:
       - name: Verify live resume parser
         run: npm run verify:resume-parser-live
 
+      - name: Verify authenticated live resume artifact e2e
+        if: inputs.run_authenticated_e2e == 'true'
+        run: npm run verify:commercial-live-auth-e2e
+
       - name: Upload live proof artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -113,3 +135,4 @@ jobs:
             docs/commercialization/onet-task-ratings-live-proof-latest.json
             docs/commercialization/resume-parser-live-latest.json
             docs/commercialization/resume-parser-live-latest.md
+            docs/commercialization/live-auth-e2e-proof-latest.json

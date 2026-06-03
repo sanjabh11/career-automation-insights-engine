@@ -147,6 +147,8 @@ function App() {
                 <Route path="/validation-center" element={<Navigate to="/validation/center" replace />} />
                 <Route path="/quality" element={<QualityPage />} />
                 <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
+                <Route path="/trust-center" element={<ResponsibleAIPage />} />
+                <Route path="/trust" element={<Navigate to="/trust-center" replace />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/proof-pack-gallery" element={<ProofPackGalleryPage />} />
                 <Route path="/pilot-outreach" element={<Navigate to="/proof-pack-gallery" replace />} />

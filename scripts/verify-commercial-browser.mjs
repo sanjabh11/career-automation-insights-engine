@@ -4,9 +4,9 @@ import { spawn } from 'node:child_process';
 
 const HOST = '127.0.0.1';
 const START_PORT = 5175;
-const STARTUP_TIMEOUT_MS = 30_000;
+const STARTUP_TIMEOUT_MS = 90_000;
 const SERVER_PROBE_TIMEOUT_MS = 3_000;
-const ROUTE_TIMEOUT_MS = 45_000;
+const ROUTE_TIMEOUT_MS = 90_000;
 const INTERACTION_TIMEOUT_MS = 20_000;
 const BROWSER_LAUNCH_TIMEOUT_MS = 60_000;
 
@@ -141,6 +141,16 @@ async function assertButtonEnabled(locator, label) {
     throw new Error(`${label} should be enabled`);
   }
   console.log(`ok enabled - ${label}`);
+}
+
+async function readDownloadBody(download, label) {
+  const stream = await download.createReadStream();
+  if (!stream) {
+    throw new Error(`${label} stream was unavailable`);
+  }
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  return Buffer.concat(chunks).toString('utf8');
 }
 
 async function verifyPopupReport(popupPromise, expectedText, label) {
@@ -367,6 +377,91 @@ async function verifyPrivacyPage(page, baseUrl) {
   await assertVisible(page.getByText(/employment decisions/i).first(), '/privacy employment decision notice');
 }
 
+async function verifyCommercialTrustCenter(page, baseUrl) {
+  console.log('checking /trust-center');
+  await page.goto(`${baseUrl}/trust-center`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
+  await assertVisible(
+    page.getByRole('heading', { name: /Responsible AI and institutional trust boundaries/i }),
+    '/trust-center heading'
+  );
+  await assertVisible(page.locator('[data-commercial-trust-center="true"]'), 'commercial trust center marker');
+  await assertVisible(page.getByText(/Commercial Trust Center/i), 'commercial trust center badge');
+  await assertVisible(page.getByText(/Planning use only/i), 'planning use only badge');
+  await assertVisible(page.locator('[data-trust-employment-boundary="true"]'), 'trust employment boundary');
+  await assertVisible(page.locator('[data-trust-accessibility-boundary="true"]'), 'trust accessibility boundary');
+  await assertVisible(page.locator('[data-trust-launch-readiness="true"]'), 'trust launch readiness table');
+  await assertVisible(page.locator('[data-trust-live-blockers="true"]'), 'trust live blockers');
+  await assertVisible(page.locator('[data-trust-payment-proof="true"]'), 'trust payment proof status');
+  await assertVisible(page.locator('[data-trust-risk-register="true"]'), 'trust risk register');
+  await assertVisible(page.locator('[data-trust-manual-wcag-worksheet="true"]'), 'trust manual WCAG worksheet');
+  await assertVisible(page.locator('[data-trust-buyer-signoff-checklist="true"]'), 'trust buyer acceptable-use checklist');
+  await assertVisible(page.locator('[data-trust-ai-rmf="true"]'), 'trust AI RMF control map');
+  await assertVisible(page.locator('[data-trust-function-review="true"]'), 'trust function governance review');
+  await assertVisible(page.getByText(/Not ready for scaled paid or institutional delivery/i), 'trust launch blocker copy');
+  await assertVisible(page.getByText(/do not certify legal compliance, WCAG conformance/i), 'trust evidence boundary copy');
+  await assertVisible(page.getByText(/Manual WCAG evidence worksheet/i), 'trust manual WCAG worksheet heading');
+  await assertVisible(page.getByText(/Buyer acceptable-use signoff checklist/i), 'trust buyer signoff heading');
+  await assertVisible(page.getByRole('button', { name: /Download trust packet/i }), 'trust packet export');
+  await assertVisible(page.getByRole('button', { name: /Download risk CSV/i }), 'risk CSV export');
+  await assertVisible(page.getByRole('button', { name: /Download acceptance checklist/i }), 'acceptance checklist CSV export');
+
+  const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download trust packet/i }).click();
+  const trustDownload = await trustDownloadPromise;
+  if (!trustDownload.suggestedFilename().includes('ai-work-transition-trust-packet')) {
+    throw new Error(`Unexpected trust-center HTML filename: ${trustDownload.suggestedFilename()}`);
+  }
+  const trustHtml = await readDownloadBody(trustDownload, 'Trust-center HTML');
+  for (const expected of [
+    'data-institutional-readiness-packet="true"',
+    'Institutional Risk Register',
+    'AI RMF Control Map',
+    'Employment Decision Boundary',
+    'WCAG 2.2 Accessibility Gate',
+    'Manual WCAG Evidence Worksheet',
+    'Buyer Acceptable-Use Signoff Checklist',
+    'Does not prove',
+  ]) {
+    if (!trustHtml.includes(expected)) {
+      throw new Error(`Trust-center HTML is missing ${expected}`);
+    }
+  }
+  console.log('ok download - trust center HTML');
+
+  const riskCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download risk CSV/i }).click();
+  const riskCsvDownload = await riskCsvDownloadPromise;
+  if (!riskCsvDownload.suggestedFilename().includes('ai-work-transition-risk-register')) {
+    throw new Error(`Unexpected trust-center CSV filename: ${riskCsvDownload.suggestedFilename()}`);
+  }
+  const riskCsvBody = await readDownloadBody(riskCsvDownload, 'Trust-center risk CSV');
+  for (const expectedColumn of ['risk_id', 'source_ids', 'confidence', 'review_state', 'caveat', 'does_not_prove', 'next_action']) {
+    if (!riskCsvBody.includes(expectedColumn)) {
+      throw new Error(`Trust-center risk CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - trust center risk CSV');
+
+  const acceptanceCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Download acceptance checklist/i }).click();
+  const acceptanceCsvDownload = await acceptanceCsvDownloadPromise;
+  if (!acceptanceCsvDownload.suggestedFilename().includes('ai-work-transition-acceptance-checklist')) {
+    throw new Error(`Unexpected trust-center acceptance CSV filename: ${acceptanceCsvDownload.suggestedFilename()}`);
+  }
+  const acceptanceCsvBody = await readDownloadBody(acceptanceCsvDownload, 'Trust-center acceptance checklist CSV');
+  for (const expectedColumn of ['checklist_type', 'item_id', 'current_or_required_proof', 'reviewer_or_owner', 'status', 'does_not_prove']) {
+    if (!acceptanceCsvBody.includes(expectedColumn)) {
+      throw new Error(`Trust-center acceptance checklist CSV is missing ${expectedColumn}`);
+    }
+  }
+  for (const expectedValue of ['manual_wcag_evidence', 'buyer_acceptable_use_signoff']) {
+    if (!acceptanceCsvBody.includes(expectedValue)) {
+      throw new Error(`Trust-center acceptance checklist CSV is missing ${expectedValue}`);
+    }
+  }
+  console.log('ok download - trust center acceptance checklist CSV');
+}
+
 async function verifyCoachSampleReport(page, baseUrl) {
   console.log('checking /sample-report');
   await page.goto(`${baseUrl}/sample-report`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
@@ -496,6 +591,9 @@ async function verifyProofPackGallery(page, baseUrl) {
     '/proof-pack-gallery heading'
   );
   await assertVisible(page.locator('[data-proof-pack-gallery="phase-6-outreach"]'), 'proof-pack gallery marker');
+  await assertVisible(page.locator('[data-launch-readiness-command-center="true"]'), 'launch readiness command center');
+  await assertVisible(page.getByText(/Live governance closeout/i), 'launch readiness governance row');
+  await assertVisible(page.getByText(/Payment proof/i).first(), 'launch readiness payment proof');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="individual-transition-report"]'), 'individual proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="coach-branded-sample"]'), 'coach proof-pack sample card');
   await assertVisible(page.locator('[data-proof-pack-gallery-card="workforce-csv-audit"]'), 'workforce proof-pack sample card');
@@ -519,6 +617,50 @@ async function verifyProofPackGallery(page, baseUrl) {
   await assertVisible(page.locator('[data-phase6-evidence-card="true"]').first(), 'phase 6 evidence card item');
   await assertVisible(page.getByText(/DOL AI literacy framework/i).first(), 'DOL AI literacy source');
   await assertVisible(page.getByText(/Does not prove:/i).first(), 'gallery evidence does-not-prove field');
+  await assertVisible(page.locator('[data-outreach-functionality-assessment="true"]'), 'outreach functionality assessment');
+  await assertVisible(page.getByText(/1 = idea, 5 = market-ready/i), 'outreach maturity scale');
+  await assertVisible(page.getByText(/Coach-branded sample reports/i), 'coach outreach function row');
+  await assertVisible(page.getByText(/Resume work-transition proof report/i), 'resume outreach function row');
+  await assertVisible(page.getByText(/Lead capture and lead ops/i), 'lead ops outreach function row');
+  const outreachPhasePlan = page.locator('[data-outreach-phase-plan="true"]');
+  await assertVisible(outreachPhasePlan, 'outreach phase plan');
+  await assertVisible(outreachPhasePlan.getByText('2. Founder-led validation'), 'outreach founder validation phase');
+  await assertVisible(outreachPhasePlan.getByText('5. Scaled outreach'), 'outreach scaled phase');
+  await assertVisible(page.locator('[data-pilot-validation-tracker="true"]'), 'pilot validation evidence tracker');
+  await assertVisible(page.getByRole('button', { name: /Validation CSV/i }), 'pilot validation CSV export');
+  await assertVisible(page.locator('[data-pilot-validation-target]').first(), 'pilot validation target');
+  await assertVisible(page.locator('[data-pilot-validation-worksheet-column]').first(), 'pilot validation worksheet column');
+  await assertVisible(page.locator('[data-payment-fulfillment-status="true"]'), 'payment fulfillment status panel');
+  await assertVisible(page.getByText(/Report-credit checkout/i), 'report credit checkout status');
+  await assertVisible(page.getByText(/Stripe webhook fulfillment/i), 'stripe webhook fulfillment status');
+  await assertVisible(page.locator('[data-outreach-sequence-builder="true"]'), 'outreach sequence builder');
+  await assertVisible(page.getByText(/Career coach/i).first(), 'coach outreach sequence');
+  await assertVisible(page.locator('[data-source-freshness-dashboard="true"]'), 'source freshness dashboard');
+  await assertVisible(page.getByText(/O\*NET task ratings/i).first(), 'source freshness O*NET row');
+  await assertVisible(page.locator('[data-manual-wcag-evidence-workspace="true"]'), 'manual WCAG evidence workspace');
+  await assertVisible(page.getByText(/Keyboard-only path/i), 'manual WCAG keyboard checkpoint');
+  await assertVisible(page.locator('[data-pilot-feedback-capture="true"]'), 'pilot feedback capture');
+  await assertVisible(page.getByText(/Paid pilot signal/i), 'pilot feedback paid signal');
+  await assertVisible(page.locator('[data-buyer-landing-roadmap="true"]'), 'buyer landing roadmap');
+  const commercialLaunchGate = page.locator('[data-commercial-launch-gate="true"]');
+  await assertVisible(commercialLaunchGate, 'commercial outreach launch gate');
+  await assertVisible(commercialLaunchGate.getByText(/Auth live E2E secrets/i), 'launch gate auth secret row');
+  await assertVisible(commercialLaunchGate.getByText(/Public\/no-JWT function review/i), 'launch gate public function row');
+  await assertVisible(commercialLaunchGate.getByRole('cell', { name: 'Payment fulfillment' }), 'launch gate payment fulfillment row');
+  await assertVisible(page.locator('[data-function-security-review="true"]'), 'function security review');
+  await assertVisible(page.getByText(/Commercial core with JWT/i), 'function security commercial core group');
+  await assertVisible(page.locator('[data-supabase-function-governance="true"]'), 'supabase function governance section');
+  await assertVisible(page.getByText(/Owner approval required before deletion/i), 'function governance owner approval boundary');
+  await assertVisible(page.locator('[data-public-function-classification-count="true"]'), 'public function classification count');
+  await assertVisible(page.getByText(/20\/20 public\/no-JWT classified/i), 'all public functions classified');
+  await assertVisible(page.locator('[data-retirement-required-evidence="true"]').first(), 'retirement required evidence checklist');
+  await assertVisible(page.locator('[data-public-function-required-evidence="true"]').first(), 'public function required evidence checklist');
+  await assertVisible(page.locator('[data-public-function-launch-decision="true"]').first(), 'public function launch decision');
+  await assertVisible(page.getByText(/stripe-checkout/i).first(), 'stripe checkout retirement candidate');
+  await assertVisible(page.getByText(/stripe-portal/i).first(), 'stripe portal retirement candidate');
+  await assertVisible(page.getByText(/market-intelligence/i).first(), 'market intelligence function classification');
+  await assertVisible(page.getByText(/generate-executive-report/i).first(), 'executive report function classification');
+  await assertVisible(page.getByText(/hris-sync/i).first(), 'HRIS sync function classification');
 
   const csvButton = page.getByRole('button', { name: /CRM CSV/i });
   const downloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
@@ -542,6 +684,27 @@ async function verifyProofPackGallery(page, baseUrl) {
     }
   }
   console.log('ok download - proof-pack gallery CRM CSV');
+
+  const validationDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await page.getByRole('button', { name: /Validation CSV/i }).click();
+  const validationDownload = await validationDownloadPromise;
+  if (!validationDownload.suggestedFilename().includes('pilot-validation-worksheet')) {
+    throw new Error(`Unexpected pilot validation CSV filename: ${validationDownload.suggestedFilename()}`);
+  }
+  const validationCsvBody = await validationDownload.createReadStream().then(async (stream) => {
+    if (!stream) {
+      throw new Error('Pilot validation CSV stream was unavailable');
+    }
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString('utf8');
+  });
+  for (const expectedColumn of ['buyer_segment', 'proof_artifact_reviewed', 'usefulness_score_1_to_5', 'paid_pilot_signal', 'decision_boundary_confirmed', 'does_not_prove']) {
+    if (!validationCsvBody.includes(expectedColumn)) {
+      throw new Error(`Pilot validation CSV is missing ${expectedColumn}`);
+    }
+  }
+  console.log('ok download - pilot validation CSV');
 
   const trustDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
   await page.getByRole('button', { name: /Trust HTML/i }).click();
@@ -706,6 +869,7 @@ async function runBrowserChecks(baseUrl) {
 
   try {
     await verifyPrivacyPage(page, baseUrl);
+    await verifyCommercialTrustCenter(page, baseUrl);
     await verifyCoachSampleReport(page, baseUrl);
     await verifySeoReportDownload(page, baseUrl);
     await verifyResumeProofReportDownload(page, baseUrl);

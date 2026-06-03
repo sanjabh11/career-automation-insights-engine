@@ -19,6 +19,8 @@ export const commercialLintFiles = [
   'src/pages/PrivacyPage.tsx',
   'src/pages/ProofPackGalleryPage.tsx',
   'src/lib/commercialLeadOps.ts',
+  'src/lib/commercialLaunchGate.ts',
+  'src/lib/commercialLaunchReadiness.ts',
   'src/lib/commercialLeads.ts',
   'src/lib/commercialReportArtifacts.ts',
   'src/lib/commercialWorkforceAudits.ts',
@@ -31,6 +33,7 @@ export const commercialLintFiles = [
   'src/lib/resumeProofReportArtifacts.ts',
   'src/lib/socSuggestions.ts',
   'src/lib/sourceManifest.ts',
+  'src/lib/stripe.ts',
   'src/lib/workTransitionProofPack.ts',
   'src/lib/workforceExecutiveReport.ts',
   'scripts/generate-commercialization-index.mjs',
@@ -47,6 +50,7 @@ export const commercialLintFiles = [
   'scripts/verify-resume-parser-live.mjs',
   'scripts/verify-report-evidence.mjs',
   'scripts/verify-source-manifest.mjs',
+  'scripts/verify-supabase-function-governance.mjs',
 ];
 
 function run(command, args) {

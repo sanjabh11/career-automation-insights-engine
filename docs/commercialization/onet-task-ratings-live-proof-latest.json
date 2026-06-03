@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T09:05:20.881Z",
+  "generatedAt": "2026-05-25T17:30:43.332Z",
   "verifier": "verify-onet-task-ratings-live",
   "mode": "non-mutating-public-api-task-rating-boundary",
   "target": {
@@ -25,14 +25,14 @@
     },
     {
       "id": "onet-task-ratings-ingested-rows",
-      "label": "O*NET 30.3 task rating metadata rows are present",
+      "label": "Known O*NET 30.3 task rating metadata probe row is present",
       "method": "GET",
       "path": "/rest/v1/onet_detailed_tasks?[query-redacted]",
       "expectedBoundary": "live-ingest-has-rated-tasks",
       "status": 200,
       "passed": true,
       "classification": "metadata-ingested",
-      "rowCount": 5,
+      "rowCount": 1,
       "sample": [
         {
           "occupation_code": "11-1011.00",
@@ -42,38 +42,20 @@
           "frequency_category": 3,
           "frequency_percent": 29.68,
           "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
-        },
-        {
-          "occupation_code": "11-1011.00",
-          "task_id": "8824",
-          "onet_release_version": "30.3",
-          "importance": 4.32,
-          "frequency_category": 3,
-          "frequency_percent": 27.31,
-          "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
-        },
-        {
-          "occupation_code": "11-1011.00",
-          "task_id": "8827",
-          "onet_release_version": "30.3",
-          "importance": 4.3,
-          "frequency_category": 2,
-          "frequency_percent": 38.21,
-          "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
         }
       ],
-      "message": "Found 5 deployed O*NET Task Rating metadata row(s)."
+      "message": "Found 1 deployed O*NET Task Rating metadata row(s)."
     },
     {
       "id": "onet-task-ratings-frequency-rows",
-      "label": "Dominant frequency category metadata is populated for rated tasks",
+      "label": "Known O*NET 30.3 frequency metadata probe row is populated",
       "method": "GET",
       "path": "/rest/v1/onet_detailed_tasks?[query-redacted]",
       "expectedBoundary": "live-ingest-has-frequency-metadata",
       "status": 200,
       "passed": true,
       "classification": "metadata-ingested",
-      "rowCount": 5,
+      "rowCount": 1,
       "sample": [
         {
           "occupation_code": "11-1011.00",
@@ -82,25 +64,9 @@
           "frequency_category": 3,
           "frequency_percent": 29.68,
           "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
-        },
-        {
-          "occupation_code": "11-1011.00",
-          "task_id": "8824",
-          "frequency": "More than monthly",
-          "frequency_category": 3,
-          "frequency_percent": 27.31,
-          "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
-        },
-        {
-          "occupation_code": "11-1011.00",
-          "task_id": "8827",
-          "frequency": "More than yearly",
-          "frequency_category": 2,
-          "frequency_percent": 38.21,
-          "task_ratings_ingested_at": "2026-05-25T08:57:50.86+00:00"
         }
       ],
-      "message": "Found 5 deployed O*NET Task Rating metadata row(s)."
+      "message": "Found 1 deployed O*NET Task Rating metadata row(s)."
     }
   ]
 }

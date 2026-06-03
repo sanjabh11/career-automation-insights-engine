@@ -1,6 +1,6 @@
 # Resume Parser Live Proof
 
-Generated: 2026-05-25T09:05:19.520Z
+Generated: 2026-05-25T17:30:46.379Z
 Verifier: `verify-resume-parser-live`
 Mode: `live-edge-function-parser-boundary`
 Target: `kvunnankqgfokeufvsrv.supabase.co`
