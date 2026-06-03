@@ -55,22 +55,22 @@ export const EnhancedAPOVisualization = ({
   }));
 
   const getRiskLevel = (apo: number) => {
-    if (apo >= 70) return { level: 'High Risk', color: 'text-red-600' };
-    if (apo >= 50) return { level: 'Medium-High Risk', color: 'text-orange-600' };
-    if (apo >= 30) return { level: 'Medium Risk', color: 'text-yellow-600' };
-    return { level: 'Low Risk', color: 'text-green-600' };
+    if (apo >= 70) return { level: 'High exposure estimate', color: 'text-red-600' };
+    if (apo >= 50) return { level: 'Medium-high exposure estimate', color: 'text-orange-600' };
+    if (apo >= 30) return { level: 'Medium exposure estimate', color: 'text-yellow-600' };
+    return { level: 'Low exposure estimate', color: 'text-green-600' };
   };
 
   const riskAssessment = getRiskLevel(overallAPO);
 
   return (
     <div className="space-y-6">
-      {/* Overall APO Score with Enhanced Display */}
+      {/* Overall APO estimate with enhanced display */}
       <div className="bg-gradient-to-r from-[var(--accent-primary)]/10 to-[var(--accent-amber)]/10 p-6 rounded-lg border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-2xl font-bold text-[var(--text-primary)]">Enhanced APO Score</h3>
-            <p className="text-[var(--text-secondary)]">Advanced AI-calculated automation potential</p>
+            <h3 className="text-2xl font-bold text-[var(--text-primary)]">APO Decision-Support Estimate</h3>
+            <p className="text-[var(--text-secondary)]">Automation-exposure signal for planning, not a job-loss prediction</p>
           </div>
           <div className="text-right">
             <div className="text-4xl font-bold text-[var(--accent-primary)]">{overallAPO.toFixed(1)}%</div>

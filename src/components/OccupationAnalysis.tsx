@@ -303,9 +303,21 @@ export const OccupationAnalysis = ({
                   {Math.round(overallAPO)}%
                 </div>
                 <div className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mt-2">
-                  APO Score
+                  Decision-support estimate
                 </div>
               </div>
+            </div>
+            <div className="max-w-xs rounded-lg border border-amber-400/40 bg-amber-500/10 p-3 text-xs text-[var(--text-secondary)]">
+              <div className="mb-1 flex items-center gap-2 font-semibold text-[var(--text-primary)]">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                Uncertainty disclosure
+              </div>
+              <p>
+                This percentage estimates automation exposure for planning. It is not a job-loss probability, employment decision, or salary prediction.
+              </p>
+              <a href="/docs/model_cards/APO_MODEL_CARD.html" className="mt-2 inline-block underline hover:text-[var(--text-primary)]">
+                Read model card
+              </a>
             </div>
             <div className="flex items-center space-x-4">
               {occupation.timeline && (
@@ -378,7 +390,7 @@ export const OccupationAnalysis = ({
                 <div className="text-xs">
                   <div className="font-medium">Evidence</div>
                   {typeof (occupation as any)?.ci?.lower === 'number' && typeof (occupation as any)?.ci?.upper === 'number' && (
-                    <div>CI: {(occupation as any).ci.lower}–{(occupation as any).ci.upper}{(occupation as any)?.ci?.iterations ? ` (n=${(occupation as any).ci.iterations})` : ''}</div>
+                    <div>Uncertainty band: {(occupation as any).ci.lower}–{(occupation as any).ci.upper}{(occupation as any)?.ci?.iterations ? ` (n=${(occupation as any).ci.iterations})` : ''}</div>
                   )}
                 </div>
                 <div className="text-xs">
@@ -435,7 +447,8 @@ export const OccupationAnalysis = ({
 
             {/* Methods & Evidence strip */}
             <div className="text-[11px] text-[var(--text-tertiary)] mt-2">
-              Methods & Evidence: <a href="/validation/methods" className="underline hover:text-[var(--text-secondary)]">Read current methodology status</a>
+              Methods & Evidence: <a href="/validation/methods" className="underline hover:text-[var(--text-secondary)]">Read methodology</a>
+              {' '}· <a href="/docs/reports/apo-calibration-report.html" className="underline hover:text-[var(--text-secondary)]">Calibration artifact</a>
             </div>
 
             <div className="flex flex-wrap gap-2">

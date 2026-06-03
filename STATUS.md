@@ -10,23 +10,23 @@ The APO Dashboard is an active decision-support product, not an externally calib
 
 ## Verification Baseline
 
-Last observed Phase A baseline:
+Last observed Phase B local baseline:
 
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx tsc --noEmit` | Pass | TypeScript completed with no reported errors. |
-| `npm run lint` | Fail | Latest JSON run reported 1,441 inherited errors and 93 warnings; touched active files have no findings. |
+| `npm run lint` | Fail | Inherited repo-wide lint debt remains; Phase B observed 1,534 problems, and Phase A follow-up touched active files passed focused ESLint. |
 | `npm run verify:report-evidence` | Pass | Report evidence verification passed. |
 | `npm run verify:secrets` | Pass | Secret hygiene verification passed. |
 | `npm run verify:commercial-trust` | Pass | Commercial trust-boundary verifier passed. |
 | `npm run verify:claim-boundaries` | Pass | Active Markdown/source/data scan found no unsupported absolute claims or dead local WEF PDF path. |
-| `npm run verify:commercial` | Pass | Passed, but regenerates timestamped commercialization evidence docs. Review generated diffs before committing. |
+| `npm run verify:commercial` | Pass | Passed, including build and commercial route smoke. It regenerates timestamped commercialization evidence docs; review generated diffs before committing. |
 
 ## Active Proof Boundaries
 
 - APO outputs are automation-exposure estimates for coaching and planning. They are not job-loss predictions, employment decisions, salary guarantees, or scientific certification.
-- Public `/docs/**` proof artifacts are intentionally not served during Phase A. Archived PDFs were placeholder-scale and contained unsupported conclusions.
-- The validation UI can display calibration runs, but Phase B must compute and publish calibration against sourced expert assessments.
+- Public Phase B validation artifacts are served from `/docs/**`: APO model card, task model card, calibration report, and reliability plot.
+- The Phase B public calibration artifact is a source-backed fixture calculation for transparent documentation. Live database calibration still requires owner approval to apply migrations and run the Supabase Edge Function against production APO logs and approved expert labels.
 - Current wage and occupation data is U.S. O*NET/BLS-centered unless a specific UI surface states otherwise.
 - Stripe subscription price IDs exist for core tiers; bootcamp checkout remains blocked until the placeholder price is replaced or the CTA is hidden.
 
@@ -34,8 +34,8 @@ Last observed Phase A baseline:
 
 | Phase | Objective | Status |
 | --- | --- | --- |
-| A | Truth and claims reconciliation | Complete locally; ready for Phase A PR |
-| B | APO validation, calibration, model cards, and uncertainty disclosure | Pending |
+| A | Truth and claims reconciliation | PR open |
+| B | APO validation, calibration, model cards, and uncertainty disclosure | Complete locally; ready for Phase B PR |
 | C | Runtime verification, embedding fix, crosswalk proof, E2E smoke | Pending |
 | D | Global-English crosswalks and UK/CA/AU wage/outlook localization or disclosure | Pending |
 | E | Commercial validation, activation/retention instrumentation, partners, and MRR proof | Pending |
@@ -59,3 +59,11 @@ Ask before:
 - `data/econ_wef.csv` and `public/data/econ_wef.csv` point to the official WEF Future of Jobs 2025 source page rather than a missing local `/public/docs/**` PDF.
 - `src/pages/EconImporter.tsx` uses the official WEF source page as placeholder guidance and has no touched-file lint findings.
 - Rendered route crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans` return 200, render body content, and expose no `/docs/**` anchors.
+
+## Phase B Acceptance Evidence
+
+- `calibrate-ece` compares APO `overall_apo` predictions against matched `expert_assessments` rows and writes ECE, MAE, and RMSE validation metrics when pairs exist.
+- Placeholder expert-assessment seed examples are replaced with sourced external calibration anchors, with a follow-up migration to remove previously applied placeholder rows.
+- `/validation` and `/validation/methods` link to served Phase B artifacts: calibration report, reliability plot, APO model card, and task model card.
+- APO result surfaces now label the score as a decision-support exposure estimate and disclose uncertainty, source scope, and calibration limitations.
+- Route and artifact crawl confirmed `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans`, `/docs/reports/apo-calibration-report.html`, `/docs/reports/apo-reliability-curve.svg`, `/docs/model_cards/APO_MODEL_CARD.html`, and `/docs/model_cards/TASK_MODEL_CARD.html` return 200 with no forbidden claim text.

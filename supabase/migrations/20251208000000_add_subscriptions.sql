@@ -34,7 +34,7 @@ INSERT INTO public.subscription_plans (
   sort_order
 ) VALUES
   ('free', 'Free', 'Get started with basic automation insights', 0.00, 0.00, 
-    '["Basic automation risk score", "Limited AI coach access (5 messages/month)", "One-time assessment", "3 saved analyses"]'::jsonb,
+    '["Basic automation exposure estimate", "Limited AI coach access (5 messages/month)", "One-time assessment", "3 saved analyses"]'::jsonb,
     '{"apo_analyses_per_month": 3, "ai_coach_messages_per_month": 5, "saved_analyses_max": 3, "roadmaps_per_month": 0}'::jsonb,
     1),
   ('pro', 'Pro', 'Full access to personalized career insights', 29.00, 290.00,

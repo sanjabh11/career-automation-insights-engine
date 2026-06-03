@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Task Model Card</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: #f8fafc; color: #0f172a; }
+    main { max-width: 960px; margin: 0 auto; padding: 40px 20px 64px; }
+    h1 { font-size: 32px; line-height: 1.15; margin: 0 0 12px; }
+    h2 { font-size: 21px; margin-top: 32px; }
+    p, li { line-height: 1.65; }
+    .meta { color: #475569; font-size: 14px; }
+    .callout { border: 1px solid #f59e0b; background: #fffbeb; border-radius: 8px; padding: 14px 16px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .metric { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .metric strong { display: block; font-size: 28px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #f1f5f9; }
+    a { color: #2563eb; }
+    code { background: #e2e8f0; padding: 2px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+
+    <h1>Task Model Card</h1>
+    <p class="meta">Generated 2026-05-31. Format follows the model-card transparency pattern and NIST AI RMF evaluation discipline.</p>
+    <h2>Model Details</h2>
+    <table>
+      <tbody>
+        <tr><th>System component</th><td>Task categorization estimate</td></tr>
+        <tr><th>Purpose</th><td>Classify occupation tasks into automate, augment, and human-led categories for explanatory coaching workflows.</td></tr>
+        <tr><th>Owner</th><td>Career Automation Insights Engine repository maintainers.</td></tr>
+        <tr><th>Primary inputs</th><td>O*NET occupation/task descriptors, app scoring configuration, Gemini-generated task analysis, and public labor-market context where available.</td></tr>
+        <tr><th>Primary output</th><td>Decision-support automation-exposure estimate and explanatory categories.</td></tr>
+      </tbody>
+    </table>
+    <h2>Intended Use</h2>
+    <p>Use for career-coaching, workforce-planning discussion, and prioritizing human review. Do not use as a job-loss prediction, employment decision, salary guarantee, or automated eligibility/ranking system.</p>
+    <h2>Performance and Calibration</h2>
+    <p>The Phase B starter calibration artifact reports ECE 0.235, MAE 23.5 percentage points, and RMSE 26.5 percentage points on 7 source-backed fixture rows. These figures validate the calibration pipeline and disclose mismatch against external anchors; they do not certify production accuracy.</p>
+    <h2>Limitations</h2>
+    <ul>
+      <li>Current public calibration uses a small source-backed fixture; live expert-label collection remains a manual gate.</li>
+      <li>O*NET/BLS are U.S.-centered; UK/CA/AU localization is a later phase.</li>
+      <li>LLM behavior and labor-market conditions can drift; results require periodic recalibration and human review.</li>
+      <li>Task-level outputs are sensitive to prompt wording, occupation coverage, and source freshness.</li>
+    </ul>
+    <h2>Risk Management References</h2>
+    <ul>
+      <li><a href="https://research.google/pubs/pub48120/">Model Cards for Model Reporting</a></li>
+      <li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI Risk Management Framework</a></li>
+      <li><a href="https://openai.com/index/gpts-are-gpts/">OpenAI occupational exposure paper</a></li>
+      <li><a href="https://www.ilo.org/publications/generative-ai-and-jobs-2025-update">ILO Generative AI and Jobs 2025 update</a></li>
+    </ul>
+
+  </main>
+</body>
+</html>

@@ -5,7 +5,7 @@ create table if not exists public.calibration_runs (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now() not null,
   cohort text, -- free|basic|premium|enterprise|null
-  method text default 'overall_apo_vs_deterministic',
+  method text default 'apo_overall_vs_expert_assessments',
   bin_count int default 10,
   notes text
 );

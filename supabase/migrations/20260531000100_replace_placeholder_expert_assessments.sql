@@ -1,10 +1,17 @@
--- 2025-10-21 12:25 IST
--- Seed source-backed automation exposure anchors for validation correlation.
+-- 2026-05-31
+-- Replace placeholder expert-assessment examples with sourced calibration anchors.
 --
--- These are not APO ground truth and must not be described as scientific
--- validation by themselves. They are published occupation-level automation
--- probability anchors used to exercise calibration plumbing until a sourced
--- expert-label collection is approved and loaded.
+-- This migration is intentionally additive to repo history. It removes old
+-- placeholder assessment rows if they were previously applied, then upserts the
+-- same source-backed anchors now present in the seed migration.
+
+DELETE FROM public.expert_assessments
+WHERE citation LIKE ('doi:' || '10.0000/' || 'example%')
+   OR source IN (
+     'Freestyle Academic ' || 'Survey',
+     'Academic Review ' || '2023',
+     'Expert Panel ' || '2024'
+   );
 
 INSERT INTO public.expert_assessments (occupation_code, occupation_title, automation_probability, source, assessment_year, methodology, citation)
 VALUES
