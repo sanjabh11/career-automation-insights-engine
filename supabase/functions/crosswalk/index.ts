@@ -41,6 +41,7 @@ serve(async (req: Request): Promise<Response> => {
     let from: string | null = null;
     let code: string | null = null;
     let to: string | null = null;
+    let branch: string | null = null;
 
     // Support both GET and POST
     if (req.method === "GET") {
@@ -48,11 +49,13 @@ serve(async (req: Request): Promise<Response> => {
       from = url.searchParams.get("from");
       code = url.searchParams.get("code");
       to = url.searchParams.get("to");
+      branch = url.searchParams.get("branch");
     } else if (req.method === "POST") {
       const body = await req.json();
       from = body.from;
       code = body.code;
       to = body.to;
+      branch = body.branch;
     } else {
       return new Response("Method Not Allowed", { 
         status: 405,
@@ -77,7 +80,13 @@ serve(async (req: Request): Promise<Response> => {
       code = (code as string).replace(/\.00$/, "");
     }
     
-    if (fromUpper === "OOH") {
+    if (fromUpper === "MOC") {
+      // Current O*NET v2 military crosswalk endpoint:
+      // /online/crosswalks/military?keyword=[title or code]&branch=[optional]
+      const qs = new URLSearchParams({ keyword: code });
+      if (branch) qs.set("branch", branch);
+      onetUrl = `https://api-v2.onetcenter.org/online/crosswalks/military?${qs.toString()}`;
+    } else if (fromUpper === "OOH") {
       // Use dedicated OOH crosswalk endpoint
       // Reference: https://services.onetcenter.org/reference/online/crosswalk/ooh
       const qs = new URLSearchParams({ keyword: code });
