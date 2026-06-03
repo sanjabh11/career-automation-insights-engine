@@ -76,6 +76,9 @@ type RelatedOccupationRow = {
 type JsonRecord = Record<string, unknown>;
 
 const CATEGORY_KEYS: CategoryKey[] = ["tasks", "knowledge", "skills", "abilities", "technologies"];
+const OCCUPATION_TIMEOUT_MS = 12_000;
+const SUPPORTING_QUERY_TIMEOUT_MS = 10_000;
+const SESSION_TIMEOUT_MS = 5_000;
 const APO_TIMEOUT_MS = 25_000;
 
 const isRecord = (value: unknown): value is JsonRecord =>
@@ -210,13 +213,17 @@ export default function OccupationDetailPage() {
   const { data: occupation, isLoading: loadingOcc, error: occError } = useQuery({
     queryKey: ["occupation", code],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("onet_occupation_enrichment")
-        .select(
-          "occupation_code, occupation_title, bright_outlook, bright_outlook_category, job_zone, is_stem, median_wage_annual, wage_range_low, wage_range_high, outlook_category"
-        )
-        .eq("occupation_code", code)
-        .maybeSingle();
+      const { data, error } = await withTimeout(
+        supabase
+          .from("onet_occupation_enrichment")
+          .select(
+            "occupation_code, occupation_title, bright_outlook, bright_outlook_category, job_zone, is_stem, median_wage_annual, wage_range_low, wage_range_high, outlook_category"
+          )
+          .eq("occupation_code", code)
+          .maybeSingle(),
+        OCCUPATION_TIMEOUT_MS,
+        "Occupation details lookup timed out."
+      );
       if (error) throw error;
       return data;
     },
@@ -238,7 +245,17 @@ export default function OccupationDetailPage() {
       setAiLoading(true);
       setAiError(null);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        let session: { access_token?: string } | null = null;
+        try {
+          const sessionResponse = await withTimeout(
+            supabase.auth.getSession(),
+            SESSION_TIMEOUT_MS,
+            "Supabase session lookup timed out."
+          );
+          session = sessionResponse.data.session;
+        } catch {
+          session = null;
+        }
         const headers: Record<string, string> = { 'x-api-key': apoFunctionApiKey };
         if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
         const { data, error } = await withTimeout(
@@ -269,11 +286,15 @@ export default function OccupationDetailPage() {
     queryKey: ["job-zone", occupation?.job_zone],
     queryFn: async () => {
       if (!occupation?.job_zone) return null;
-      const { data, error } = await supabase
-        .from("onet_job_zones")
-        .select("zone_number, zone_name, education, experience, training")
-        .eq("zone_number", occupation.job_zone)
-        .maybeSingle();
+      const { data, error } = await withTimeout(
+        supabase
+          .from("onet_job_zones")
+          .select("zone_number, zone_name, education, experience, training")
+          .eq("zone_number", occupation.job_zone)
+          .maybeSingle(),
+        SUPPORTING_QUERY_TIMEOUT_MS,
+        "Job-zone details lookup timed out."
+      );
       if (error) throw error;
       return data;
     },
@@ -283,12 +304,16 @@ export default function OccupationDetailPage() {
   const { data: technologies } = useQuery({
     queryKey: ["technologies", code],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("onet_occupation_technologies")
-        .select("technology_name, category, demand_score")
-        .eq("occupation_code", code as string)
-        .order("demand_score", { ascending: false })
-        .limit(20);
+      const { data, error } = await withTimeout(
+        supabase
+          .from("onet_occupation_technologies")
+          .select("technology_name, category, demand_score")
+          .eq("occupation_code", code as string)
+          .order("demand_score", { ascending: false })
+          .limit(20),
+        SUPPORTING_QUERY_TIMEOUT_MS,
+        "Technology lookup timed out."
+      );
       if (error) return [] as TechnologyRow[]; // degrade gracefully if RLS blocks
       return (data || []) as TechnologyRow[];
     },
@@ -298,12 +323,16 @@ export default function OccupationDetailPage() {
   const { data: related } = useQuery({
     queryKey: ["related-occupations", code],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("onet_related_occupations")
-        .select("related_occupation_code, related_occupation_title, similarity_score")
-        .eq("source_occupation_code", code as string)
-        .order("similarity_score", { ascending: false })
-        .limit(10);
+      const { data, error } = await withTimeout(
+        supabase
+          .from("onet_related_occupations")
+          .select("related_occupation_code, related_occupation_title, similarity_score")
+          .eq("source_occupation_code", code as string)
+          .order("similarity_score", { ascending: false })
+          .limit(10),
+        SUPPORTING_QUERY_TIMEOUT_MS,
+        "Related occupations lookup timed out."
+      );
       if (error) return [] as RelatedOccupationRow[];
       return (data || []) as RelatedOccupationRow[];
     },
@@ -321,6 +350,10 @@ export default function OccupationDetailPage() {
   }
 
   if (occError || !occupation) {
+    const occupationErrorMessage = isTimeoutError(occError)
+      ? "Occupation details did not respond within 12 seconds. The data service may be unavailable; try again after Supabase project health is restored."
+      : "We couldn't find details for the requested occupation code.";
+
     return (
       <div className="container mx-auto p-4 md:p-8">
         <Card className="p-6">
@@ -333,7 +366,7 @@ export default function OccupationDetailPage() {
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
-            We couldn't find details for the requested occupation code.
+            {occupationErrorMessage}
           </p>
         </Card>
       </div>
