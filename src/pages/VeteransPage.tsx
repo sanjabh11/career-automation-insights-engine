@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCrosswalk } from "@/hooks/useCrosswalk";
+import { isCrosswalkFallback } from "@/lib/crosswalkFallbacks";
 import { Loader2, Shield, ArrowRight, BookOpen, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOnetEnrichment } from "@/hooks/useOnetEnrichment";
@@ -92,6 +93,10 @@ export default function VeteransPage() {
       title: occ.title || occ.name,
     })).filter((occ): occ is { code: string; title: string } => Boolean(occ.code && occ.title));
   }, [crosswalkQuery.data]);
+
+  const fallbackCaveat = isCrosswalkFallback(crosswalkQuery.data)
+    ? crosswalkQuery.data.caveat
+    : null;
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">
@@ -217,6 +222,12 @@ export default function VeteransPage() {
                     </div>
                   </div>
                 </Card>
+
+                {fallbackCaveat && (
+                  <Card className="p-4 border-yellow-300 bg-yellow-50">
+                    <p className="text-sm text-yellow-900">{fallbackCaveat}</p>
+                  </Card>
+                )}
 
                 <Card className="p-6">
                   <h3 className="font-bold text-lg mb-4">

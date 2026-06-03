@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, ArrowLeft, Sparkles } from "lucide-react";
 import { formatWage } from "@/types/onet-enrichment";
 import { OccupationAnalysis } from "@/components/OccupationAnalysis";
+import { isTimeoutError, withTimeout } from "@/lib/asyncTimeout";
 
 type CategoryKey = "tasks" | "knowledge" | "skills" | "abilities" | "technologies";
 
@@ -74,6 +76,7 @@ type RelatedOccupationRow = {
 type JsonRecord = Record<string, unknown>;
 
 const CATEGORY_KEYS: CategoryKey[] = ["tasks", "knowledge", "skills", "abilities", "technologies"];
+const APO_TIMEOUT_MS = 25_000;
 
 const isRecord = (value: unknown): value is JsonRecord =>
   value !== null && typeof value === "object" && !Array.isArray(value);
@@ -238,16 +241,24 @@ export default function OccupationDetailPage() {
         const { data: { session } } = await supabase.auth.getSession();
         const headers: Record<string, string> = { 'x-api-key': apoFunctionApiKey };
         if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
-        const { data, error } = await supabase.functions.invoke('calculate-apo', {
-          body: { occupation: { code: occupationSummary.occupation_code, title: occupationSummary.occupation_title } },
-          headers,
-        });
+        const { data, error } = await withTimeout(
+          supabase.functions.invoke('calculate-apo', {
+            body: { occupation: { code: occupationSummary.occupation_code, title: occupationSummary.occupation_title } },
+            headers,
+          }),
+          APO_TIMEOUT_MS,
+          "APO calculation timed out."
+        );
         if (error) throw new Error(error.message || "APO calculation failed");
         const normalized = normalizeAiData(data, occupationSummary);
         if (!normalized) throw new Error("APO response missing expected analysis data");
         setAiData(normalized);
       } catch (e: unknown) {
-        setAiError(e instanceof Error ? e.message : "Failed to load AI analysis");
+        setAiError(
+          isTimeoutError(e)
+            ? "APO decision-support estimate is temporarily unavailable because calculate-apo did not respond within 25 seconds. The occupation facts below remain available."
+            : e instanceof Error ? e.message : "Failed to load AI analysis"
+        );
       } finally {
         setAiLoading(false);
       }
@@ -368,7 +379,9 @@ export default function OccupationDetailPage() {
             <div className="flex items-center text-muted-foreground text-sm"><Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading AI analysis…</div>
           )}
           {aiError && (
-            <div className="text-xs text-red-600">{aiError}</div>
+            <Alert variant="destructive">
+              <AlertDescription>{aiError}</AlertDescription>
+            </Alert>
           )}
           {aiData && (
             <div className="mt-4">

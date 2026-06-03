@@ -8,6 +8,9 @@ import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useAuthMode } from "@/contexts/useWhopApp";
+import { withTimeout } from "@/lib/asyncTimeout";
+
+const AUTH_TIMEOUT_MS = 20_000;
 
 function mapAuthError(raw: string): string {
   const lower = raw.toLowerCase();
@@ -16,6 +19,9 @@ function mapAuthError(raw: string): string {
   if (lower.includes("user already registered")) return "An account with this email already exists. Try signing in instead.";
   if (lower.includes("password") && lower.includes("short")) return "Password must be at least 6 characters.";
   if (lower.includes("rate limit") || lower.includes("too many")) return "Too many attempts. Please wait a moment and try again.";
+  if (lower.includes("timed out") || lower.includes("timeout") || lower.includes("aborted")) {
+    return "Authentication service timed out. Supabase Auth did not respond, so please try again after the project is healthy.";
+  }
   if (lower.includes("network") || lower.includes("fetch")) return "Network error. Please check your connection and try again.";
   return "Something went wrong. Please try again.";
 }
@@ -76,19 +82,27 @@ const Auth = () => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       if (isSignup) {
-        const { error } = await supabase.auth.signUp({
-          email: form.email,
-          password: form.password,
-          options: { emailRedirectTo: redirectUrl }
-        });
+        const { error } = await withTimeout(
+          supabase.auth.signUp({
+            email: form.email,
+            password: form.password,
+            options: { emailRedirectTo: redirectUrl }
+          }),
+          AUTH_TIMEOUT_MS,
+          "Authentication service timed out during signup."
+        );
         if (error) throw error;
         setPending(false);
         setError("Signup successful! Please check your email for confirmation.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: form.email,
-          password: form.password,
-        });
+        const { error } = await withTimeout(
+          supabase.auth.signInWithPassword({
+            email: form.email,
+            password: form.password,
+          }),
+          AUTH_TIMEOUT_MS,
+          "Authentication service timed out during sign in."
+        );
         if (error) throw error;
         // Full reload to update state everywhere
         window.location.href = "/";
