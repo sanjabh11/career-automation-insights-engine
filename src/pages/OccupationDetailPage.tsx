@@ -228,6 +228,7 @@ export default function OccupationDetailPage() {
       return data;
     },
     enabled: !!code,
+    retry: false,
   });
 
   const occupationSummary = React.useMemo<OccupationSummary | null>(() => {
@@ -299,6 +300,7 @@ export default function OccupationDetailPage() {
       return data;
     },
     enabled: !!occupation?.job_zone,
+    retry: false,
   });
 
   const { data: technologies } = useQuery({
@@ -318,6 +320,7 @@ export default function OccupationDetailPage() {
       return (data || []) as TechnologyRow[];
     },
     enabled: !!code,
+    retry: false,
   });
 
   const { data: related } = useQuery({
@@ -337,6 +340,7 @@ export default function OccupationDetailPage() {
       return (data || []) as RelatedOccupationRow[];
     },
     enabled: !!code,
+    retry: false,
   });
 
   if (loadingOcc) {
