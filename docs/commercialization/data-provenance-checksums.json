@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T07:01:03.707Z",
+  "generatedAt": "2026-05-31T17:27:54.599Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -24,9 +24,9 @@
         "evidence_note"
       ],
       "caveat": "Local WEF-derived economics seed used for directional macro context; not a complete live labor-market feed.",
-      "bytes": 726394,
+      "bytes": 762934,
       "rows": 1740,
-      "sha256": "cedb403873db06371e59d1a203c096d1f0c7dd1cfea00663bd8c6d7df8ad3e4d",
+      "sha256": "acc975874eb3c965e70daf5636281afca938fa1204489c1caa38bc04dac6460c",
       "failures": [],
       "passed": true
     },
@@ -596,9 +596,9 @@
         "model-provider logs, browser files, exports, and backups are outside this receipt"
       ],
       "caveat": "Edge-function proof metadata documents raw-text redaction, parser receipt linkage, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.",
-      "bytes": 15366,
+      "bytes": 15384,
       "rows": 292,
-      "sha256": "f84531f2f44c1df3004992effe1d68d3e4cf7f6866ccc11e8554c34e3655cb68",
+      "sha256": "1414ebd82f09f074828e7d4bc3490de3c57d2da26c63493aca659f921230f334",
       "failures": [],
       "passed": true
     },
@@ -732,9 +732,9 @@
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
       "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 68400,
+      "bytes": 68407,
       "rows": 1218,
-      "sha256": "b8e9a07e45c9d2200832750412abcbd5b651e82078b8f2318af0fbdcbdbfe392",
+      "sha256": "76d4598f2c47d281c6b97f208ad863f9ff70a1f71897debf90224d091866ac13",
       "failures": [],
       "passed": true
     },
@@ -1127,7 +1127,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 5462,
       "rows": 76,
-      "sha256": "09bc785b65875c847c45f90b6781778560819f7b6f1be3c67a6aa577438199a1",
+      "sha256": "40112fe8277a2e5655e0902059642db34a7292ccb44e38be107bff493b2b934e",
       "failures": [],
       "passed": true
     },

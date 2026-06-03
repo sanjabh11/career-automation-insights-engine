@@ -236,7 +236,7 @@ export function OnboardingWizard() {
                           <Shield className="h-5 w-5 text-[var(--accent-primary)] mt-0.5" />
                           <div>
                             <div className="text-sm font-medium text-white">Evidence-Based Analysis</div>
-                            <div className="text-xs text-slate-400 mt-1">Our scores are validated against O*NET data and research methodologies</div>
+                            <div className="text-xs text-slate-400 mt-1">Current estimates use O*NET data and published exposure research; calibration artifacts are in progress.</div>
                           </div>
                         </div>
                       </div>

@@ -1,18 +1,20 @@
 # Task Plan
 
 ## Active Work
-- [x] Audit the live heatmap backfill workflow against the intended operational path
-- [x] Confirm the current root causes across queue exports and runner implementation
-- [x] Restore robust CSV-driven backfill runners for enrichment and APO
-- [x] Align runnable documentation with the checked-in runner behavior and queue exports
-- [x] Run targeted verification on the updated scripts and summarize exact next execution order
+- [x] Phase A: Remove unsupported `/docs/**` proof links from user-facing pages
+- [x] Phase A: Rewrite README as an evidence-scoped project ledger
+- [x] Phase A: Add canonical `STATUS.md`
+- [x] Phase A: Archive stale status, summary, completion, and deployment-status docs under `docs/archive/`
+- [x] Phase A: Archive active stale research/strategy docs with unsupported commercial, readiness, security-score, and confidence claims
+- [x] Phase A: Add active-claim boundary verifier and remove dead local WEF PDF path from seed data
+- [x] Phase A: Run typecheck, lint, evidence, secret, trust, commercial, and route-link checks
 
 ## Review
-- Confirmed `scripts/backfill-enrichment.sh` and `scripts/backfill-apo.sh` had drifted back to brittle `awk` parsing.
-- Confirmed the Python runner files were missing from `scripts/`, so the documented robust path was not actually present in the repo.
-- Confirmed `scripts/enrichment_queue.csv` is a batch-summary export (`APO BATCHES`), not a row-level queue export suitable for the enrichment runner.
-- Verified `supabase/data/imports/13_BUILD_HEATMAP_BACKFILL_QUEUES.sql` still exposes the authoritative row-level queue result sets needed for export.
-- Restored `scripts/backfill_enrichment.py` and `scripts/backfill_apo.py`, and converted the shell scripts into thin Python wrappers.
-- Aligned `scripts/README_BACKFILL.md` and `docs/delivery/PBI-0009/BATCH_BACKFILL_PLAN.md` with the checked-in runner flow and explicit queue-export guidance.
-- Updated SQL batch labels to clearly mark summary result sets as not intended for runner input.
-- Verified shell syntax, Python syntax, and wrapper behavior; the runner now rejects the checked-in summary CSV with the expected error.
+- Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
+- Existing dirty files before Phase A edits: generated commercialization docs under `docs/commercialization/`.
+- Phase A must not copy archived placeholder PDFs into `public/docs`; real artifacts are deferred to Phase B.
+- Phase A follow-up archives active stale research/strategy docs with unsupported numeric readiness/security scores, projected revenue, uniqueness claims, and high-confidence commercialization language under `docs/archive/phase-a-status-sprawl-20260531/`.
+- Phase A follow-up replaces the missing local WEF PDF seed URL with the official WEF source page and adds `npm run verify:claim-boundaries`.
+- `npm run lint` still fails on pre-existing repo-wide lint debt: latest JSON run reports 1,441 errors and 93 warnings outside touched active files.
+- Rendered route crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans`: each route returned 200, had body content, and exposed no `/docs/**` anchors or forbidden claims.
+- `npm run verify:commercial` passed and regenerated the commercial evidence files; this follow-up includes refreshed provenance artifacts because the WEF seed URL/checksum changed.

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertTriangle, Target, BarChart3 } from "lucide-react";
+import { AlertTriangle, Target, BarChart3, FileText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
@@ -95,30 +95,13 @@ export default function ValidationPage() {
 
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-3">
-          <BarChart3 className="h-5 w-5 text-indigo-600" />
-          <h3 className="font-semibold">Model Cards & Dataset Sheets</h3>
-          <Badge variant="secondary">transparency</Badge>
+          <FileText className="h-5 w-5 text-indigo-600" />
+          <h3 className="font-semibold">Transparency Artifacts Status</h3>
+          <Badge variant="secondary">Phase B pending</Badge>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/validation/VALIDATION_PROTOCOL.md" target="_blank" rel="noreferrer">📋 Validation Protocol</a>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/validation/ACADEMIC_CORRELATION_REPORT.md" target="_blank" rel="noreferrer">🎓 Academic Correlation Report</a>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/model_cards/APO_MODEL_CARD.pdf" target="_blank" rel="noreferrer">APO Model Card (PDF)</a>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/model_cards/TASK_MODEL_CARD.pdf" target="_blank" rel="noreferrer">Task Model Card (PDF)</a>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/data_sheets/ONET_ENRICHMENT_SHEET.pdf" target="_blank" rel="noreferrer">O*NET Enrichment Sheet (PDF)</a>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/data_sheets/TELEMETRY_SHEET.pdf" target="_blank" rel="noreferrer">Telemetry Sheet (PDF)</a>
-          </Button>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Public model cards, dataset sheets, validation protocol, and academic-correlation artifacts are not served yet. They will be published only after Phase B computes calibration against sourced expert assessments and documents limitations.
+        </p>
       </Card>
 
       <Card className="p-6">
@@ -138,9 +121,7 @@ export default function ValidationPage() {
               <SelectItem value="enterprise">Enterprise</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/methods/CALIBRATION_METHODS.pdf" target="_blank" rel="noreferrer">Calibration Methods (PDF)</a>
-          </Button>
+          <Badge variant="outline">Calibration artifact pending Phase B</Badge>
         </div>
         <div className="mb-3">
           <Button

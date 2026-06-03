@@ -49,10 +49,10 @@ serve(async (req) => {
     <h2 style="font-size: 18px; margin: 0 0 16px 0;">Here's what you can do right now:</h2>
 
     <div style="padding: 12px 16px; background: #f0fdf4; border-radius: 8px; margin-bottom: 12px;">
-      <strong style="color: #166534;">1. Check Your Automation Risk</strong>
-      <p style="color: #4b5563; font-size: 14px; margin: 4px 0 0 0;">
-        Search any of 1,016 occupations and get an AI-powered risk score backed by O*NET data.
-      </p>
+	      <strong style="color: #166534;">1. Review Your Automation Exposure</strong>
+	      <p style="color: #4b5563; font-size: 14px; margin: 4px 0 0 0;">
+	        Search O*NET occupations and get a decision-support estimate with source and limitation boundaries.
+	      </p>
     </div>
 
     <div style="padding: 12px 16px; background: #eff6ff; border-radius: 8px; margin-bottom: 12px;">

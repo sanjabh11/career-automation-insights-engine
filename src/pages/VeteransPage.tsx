@@ -220,9 +220,7 @@ export default function VeteransPage() {
                     >
                       Download CSV
                     </Button>
-                    <Button variant="outline" asChild>
-                      <a href="/docs/resources/VETERANS_TRANSITION_SUMMARY.pdf" target="_blank" rel="noreferrer">Download PDF</a>
-                    </Button>
+                    <Badge variant="outline">PDF summary pending sourced artifact</Badge>
                   </div>
                   <div className="space-y-3">
                     {civilianOccupations.map((occ, index) => (

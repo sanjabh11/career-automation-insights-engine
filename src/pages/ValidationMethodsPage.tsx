@@ -68,20 +68,12 @@ export default function ValidationMethodsPage() {
           <h3 className="font-semibold">Deliverables</h3>
         </div>
         <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-          <li>6-page report (PDF) summarizing methods, results, calibration plots, costs/latency variance.</li>
-          <li>CSV of per-occupation metrics for reproducibility.</li>
-          <li>Changelog documenting prompt and weight changes.</li>
+          <li>Calibration report, reliability plot, and model cards are planned Phase B artifacts.</li>
+          <li>No downloadable validation report is served until calibration is computed against sourced expert assessments.</li>
+          <li>Prompt and weight changes will be documented with artifact version dates when published.</li>
         </ul>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
-            <a href="/docs/reports/ABLATIONS_REPORT.pdf" target="_blank" rel="noreferrer">Download Methods & Ablations (PDF)</a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="/docs/methods/CALIBRATION_METHODS.pdf" target="_blank" rel="noreferrer">Calibration Methods (PDF)</a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="/docs/examples/baselines_sample.csv" target="_blank" rel="noreferrer">Sample Baselines CSV</a>
-          </Button>
+        <div className="mt-4 text-sm text-muted-foreground rounded-md border p-3">
+          Methodology artifact downloads are intentionally unavailable in Phase A. See the live reliability panel and the canonical status page for current proof boundaries.
         </div>
       </Card>
     </div>

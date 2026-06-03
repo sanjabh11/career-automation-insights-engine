@@ -74,7 +74,7 @@ export default function GapAnalysis() {
       {
         category: "Data Management",
         feature: "Export CSV/PDF",
-        score: 4.8,
+        score: 4.0,
         evidence: "`exportToCSV` and `exportToPDF` utilities present.",
         gaps: ["Hook to visible buttons across dashboards."],
         action: "Place export buttons in headers.",
@@ -224,5 +224,4 @@ export default function GapAnalysis() {
     </div>
   );
 }
-
 

@@ -153,9 +153,7 @@ export default function OutcomesPage() {
           Correlations are computed on detrended, normalized series with bootstrapped 95% confidence intervals across lag windows (3/6/12 months). Non-causality and stationarity caveats apply.
         </p>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <a href="/docs/methods/SIGNALS_METHODS.pdf" target="_blank" rel="noreferrer">Methods (PDF)</a>
-          </Button>
+          <Badge variant="outline">Methods artifact pending Phase B</Badge>
           <Button variant="outline" size="sm" asChild>
             <a href="/validation/methods">View Validation Methods →</a>
           </Button>

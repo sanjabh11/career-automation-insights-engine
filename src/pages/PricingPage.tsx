@@ -294,7 +294,7 @@ const PricingPage = () => {
                 <div>
                   <h4 className="font-semibold mb-2">AI + O*NET Data</h4>
                   <p className="text-sm text-muted-foreground">
-                    Enterprise-grade intelligence that no competitor offers at this price
+                    O*NET-grounded decision-support reports with visible source and review boundaries
                   </p>
                 </div>
               </div>
@@ -338,7 +338,7 @@ const PricingPage = () => {
                 <div>
                   <h4 className="font-semibold mb-2">HRIS Integration</h4>
                   <p className="text-sm text-muted-foreground">
-                    Connect with Workday, BambooHR, SAP, and more
+                    CSV-first workflow today; HRIS adapters require scoped implementation review
                   </p>
                 </div>
                 <div>

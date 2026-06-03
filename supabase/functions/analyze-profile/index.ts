@@ -140,8 +140,8 @@ Education: ${profile.educationLevel || "Not specified"}
 Technical Skills: ${profile.technicalSkills?.join(", ") || "None listed"}
 Soft Skills: ${profile.softSkills?.join(", ") || "None listed"}
 
-Provide a comprehensive automation risk assessment including:
-1. Automation risk score (0-100, where 100 is highest risk)
+Provide a comprehensive automation exposure assessment including:
+1. Automation exposure estimate (0-100, where 100 is highest exposure)
 2. Risk category (Low, Medium, High, Very High)
 3. Specific tasks most at risk
 4. Tasks least at risk

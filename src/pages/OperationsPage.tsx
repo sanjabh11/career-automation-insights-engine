@@ -185,8 +185,8 @@ export default function OperationsPage() {
             <AlertTriangle className="h-4 w-4" /> Significant drift detected. Investigate model/config changes and input distributions.
           </div>
         )}
-        <div className="mt-3">
-          <a className="text-sm underline" href="/docs/operations/DRIFT_RUNBOOK.pdf" target="_blank" rel="noreferrer">View Drift Runbook (PDF)</a>
+        <div className="mt-3 text-sm text-muted-foreground rounded-md border p-3">
+          Drift runbook artifact pending. Until Phase B publishes dated documentation, treat this panel as operational telemetry only.
         </div>
       </Card>
 

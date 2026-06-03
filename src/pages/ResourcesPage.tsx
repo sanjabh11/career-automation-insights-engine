@@ -1,8 +1,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download, BookOpen, FileText, GraduationCap, FlaskConical } from "lucide-react";
+import { BookOpen, FileText, GraduationCap, FlaskConical } from "lucide-react";
 
 export default function ResourcesPage() {
   return (
@@ -20,11 +19,7 @@ export default function ResourcesPage() {
             <Badge variant="secondary">PDF</Badge>
           </div>
           <p className="text-sm text-muted-foreground mb-3">Top Bright Outlook/STEM occupations, skills ladders, APO task labels, and learning pathways.</p>
-          <Button variant="outline" className="gap-2" asChild>
-            <a href="/docs/resources/EDUCATOR_PACK.pdf" download>
-              <Download className="h-4 w-4" /> Download
-            </a>
-          </Button>
+          <p className="text-sm text-muted-foreground rounded-md border p-3">Download pending. This pack will be published after Phase B adds dated methodology and calibration artifacts.</p>
         </Card>
 
         <Card className="p-6">
@@ -34,11 +29,7 @@ export default function ResourcesPage() {
             <Badge variant="secondary">PDF</Badge>
           </div>
           <p className="text-sm text-muted-foreground mb-3">API endpoints, schemas, and example queries for researchers; governance and privacy notes included.</p>
-          <Button variant="outline" className="gap-2" asChild>
-            <a href="/docs/resources/RESEARCH_API_GUIDE.pdf" download>
-              <Download className="h-4 w-4" /> Download
-            </a>
-          </Button>
+          <p className="text-sm text-muted-foreground rounded-md border p-3">Download pending. Public API documentation will be linked when the validation boundary is complete.</p>
         </Card>
 
         <Card className="p-6">
@@ -46,20 +37,9 @@ export default function ResourcesPage() {
             <BookOpen className="h-5 w-5 text-[var(--accent-primary)]" />
             <h3 className="font-semibold">Model Cards & Data Sheets</h3>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" asChild>
-              <a href="/docs/model_cards/APO_MODEL_CARD.pdf" target="_blank" rel="noreferrer">APO Model Card</a>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href="/docs/model_cards/TASK_MODEL_CARD.pdf" target="_blank" rel="noreferrer">Task Model Card</a>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href="/docs/data_sheets/ONET_ENRICHMENT_SHEET.pdf" target="_blank" rel="noreferrer">O*NET Enrichment</a>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href="/docs/data_sheets/TELEMETRY_SHEET.pdf" target="_blank" rel="noreferrer">Telemetry</a>
-            </Button>
-          </div>
+          <p className="text-sm text-muted-foreground rounded-md border p-3">
+            Model cards and data sheets are in progress. They will identify intended use, known limitations, source vintages, and calibration evidence before any files are served.
+          </p>
         </Card>
 
         <Card className="p-6">
@@ -68,12 +48,8 @@ export default function ResourcesPage() {
             <h3 className="font-semibold">Ablations Report</h3>
             <Badge variant="secondary">PDF</Badge>
           </div>
-          <p className="text-sm text-muted-foreground mb-3">Baseline comparisons and sensitivity analyses across ≥200 occupations. (Placeholder; upload final report)</p>
-          <Button variant="outline" className="gap-2" asChild>
-            <a href="/docs/reports/ABLATIONS_REPORT.pdf" target="_blank" rel="noreferrer">
-              <Download className="h-4 w-4" /> View Report
-            </a>
-          </Button>
+          <p className="text-sm text-muted-foreground mb-3">Baseline comparisons and sensitivity analyses across representative occupations.</p>
+          <p className="text-sm text-muted-foreground rounded-md border p-3">Report pending. Current code has the validation UI scaffold, not a served ablations result.</p>
         </Card>
       </div>
     </div>

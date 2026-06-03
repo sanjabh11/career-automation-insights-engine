@@ -263,7 +263,7 @@ function getResumeProofReportHtml(
   <p class="small">Generated ${escapeHtml(new Date(generatedAt).toLocaleString())}. This is a coaching artifact, not an employment decision tool.</p>
 
   <section class="meta">
-    <p><strong>Automation risk score:</strong> ${escapeHtml(result.automation_risk_score)} / 100</p>
+    <p><strong>Automation exposure estimate:</strong> ${escapeHtml(result.automation_risk_score)} / 100</p>
     <p><strong>Model confidence:</strong> ${escapeHtml(Math.round(result.confidence_score * 100))}%</p>
     <p><strong>Review state:</strong> ${escapeHtml(formatReviewStatus(proofPack?.reviewStatus))}</p>
     <p><strong>Sources:</strong> ${escapeHtml(sourceIds.join(', '))}</p>

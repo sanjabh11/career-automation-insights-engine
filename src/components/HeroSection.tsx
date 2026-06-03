@@ -119,7 +119,7 @@ export function HeroSection() {
 
           {/* Subheadline */}
           <motion.p variants={itemVariants} className="text-center text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-6 leading-relaxed">
-            Know your automation risk score. Build the skills AI can't replicate. Plan your next career move with data from 1,016+ O*NET occupations.
+            Explore a decision-support estimate for AI task exposure, skill adjacency, and career transition planning using a U.S. O*NET-based data backbone.
           </motion.p>
 
           {/* Data Proof — Real Stats */}
@@ -130,13 +130,16 @@ export function HeroSection() {
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-[var(--accent-amber)]" style={{ fontFamily: 'var(--font-mono)' }}>57%</div>
-              <div className="text-xs sm:text-sm text-slate-400">Work Hours Automatable<sup className="text-[10px]">McKinsey&nbsp;2025</sup></div>
+              <div className="text-xs sm:text-sm text-slate-400">Task exposure varies by role<sup className="text-[10px]">ILO/OpenAI</sup></div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-[var(--accent-info)]" style={{ fontFamily: 'var(--font-mono)' }}>78M</div>
-              <div className="text-xs sm:text-sm text-slate-400">Net New Jobs by 2030<sup className="text-[10px]">WEF&nbsp;2025</sup></div>
+              <div className="text-xs sm:text-sm text-slate-400">WEF net labor-market estimate<sup className="text-[10px]">2025</sup></div>
             </div>
           </motion.div>
+          <motion.p variants={itemVariants} className="text-center text-xs text-slate-500 max-w-3xl mx-auto mb-6">
+            As of May 31, 2026: estimates are informational, not predictions of job loss or employment decisions. Non-U.S. wage/outlook localization is in progress.
+          </motion.p>
 
           {/* Search Bar */}
           <motion.div variants={itemVariants} className="max-w-2xl mx-auto mb-6">

@@ -30,7 +30,7 @@ function buildResumeAnalysisProofPack(generatedAt: string, filename: string, ana
         evidenceCards: [
             {
                 id: 'resume-risk-score-boundary',
-                claim: 'Resume automation risk score is an LLM-assisted coaching signal about phrasing and skill framing.',
+                claim: 'Resume automation exposure estimate is an LLM-assisted coaching signal about phrasing and skill framing.',
                 sourceIds: ['llm-output', 'nist-ai-rmf', 'ada-ai-hiring-guidance'],
                 confidence: 'medium',
                 generatedAt,
@@ -167,7 +167,7 @@ Hard boundaries:
 Analyze this resume and identify:
 1. Automation-prone phrases (keywords that indicate routine, repetitive, or easily automated work)
 2. Strategic rewrites for each problematic phrase (emphasize strategic thinking, creativity, human judgment)
-3. Overall automation risk score (0-100, where 100 = highest risk)
+3. Overall automation exposure estimate (0-100, where 100 = highest exposure)
 4. Detected skills (both technical and soft skills)
 5. Recommended skills to add (to reduce automation risk)
 

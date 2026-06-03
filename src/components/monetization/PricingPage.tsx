@@ -29,7 +29,7 @@ const pricingTiers: PricingTier[] = [
     priceMonthly: 0,
     priceYearly: 0,
     features: [
-      'Basic automation risk score',
+      'Basic automation exposure estimate',
       '3 APO analyses per month',
       'Limited AI coach (5 messages/month)',
       'One-time career assessment',
