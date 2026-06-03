@@ -3,18 +3,42 @@ import type { ReportCallback } from 'web-vitals';
 import { supabase } from '@/integrations/supabase/client';
 
 type WebVitalsModule = typeof import('web-vitals');
+type WebVitalsReporter = (onReport: ReportCallback) => void;
+type WebVitalsCompatModule = WebVitalsModule &
+  Partial<Record<'getCLS' | 'getFID' | 'getFCP' | 'getLCP' | 'getTTFB', WebVitalsReporter>>;
+
+type WebVitalsInsertPayload = {
+  user_id: string | null;
+  name: string;
+  value: number;
+  delta: number;
+  idempotency_key: string;
+  navigation_type: PerformanceNavigationTiming['type'] | undefined;
+  url: string;
+  user_agent: string;
+};
+
+type WebVitalsInsertBuilder = {
+  insert(payload: WebVitalsInsertPayload): Promise<{ error: { message?: string } | null }>;
+};
+
+type WebVitalsSupabaseClient = {
+  from(table: 'web_vitals'): WebVitalsInsertBuilder;
+};
+
+const webVitalsSupabase = supabase as unknown as WebVitalsSupabaseClient;
 
 export function reportWebVitals(onPerfEntry?: ReportCallback) {
   if (onPerfEntry && typeof onPerfEntry === 'function') {
     import('web-vitals')
       .then((mod: WebVitalsModule) => {
-        const anyMod = mod as Record<string, any>;
+        const compat = mod as WebVitalsCompatModule;
         // web-vitals v5: use onINP (replaces deprecated onFID)
-        const onCLS = anyMod.onCLS ?? anyMod.getCLS;
-        const onINP = anyMod.onINP ?? anyMod.onFID ?? anyMod.getFID; // v5 uses INP instead of FID
-        const onFCP = anyMod.onFCP ?? anyMod.getFCP;
-        const onLCP = anyMod.onLCP ?? anyMod.getLCP;
-        const onTTFB = anyMod.onTTFB ?? anyMod.getTTFB;
+        const onCLS = compat.onCLS ?? compat.getCLS;
+        const onINP = compat.onINP ?? compat.onFID ?? compat.getFID; // v5 uses INP instead of FID
+        const onFCP = compat.onFCP ?? compat.getFCP;
+        const onLCP = compat.onLCP ?? compat.getLCP;
+        const onTTFB = compat.onTTFB ?? compat.getTTFB;
 
         // Call available metrics (INP may be undefined in older versions)
         if (onCLS) onCLS(onPerfEntry);
@@ -35,7 +59,7 @@ export const persistWebVitals: ReportCallback = async (metric) => {
     const session = await supabase.auth.getSession();
     const userId = session.data.session?.user?.id ?? null;
     const navigationType = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
-    const { error } = await (supabase as any).from('web_vitals').insert({
+    const { error } = await webVitalsSupabase.from('web_vitals').insert({
       user_id: userId,
       name: metric.name,
       value: Number(metric.value.toFixed(3)),

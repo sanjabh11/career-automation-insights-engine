@@ -13,6 +13,18 @@ const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
+interface NetlifyProxyEvent {
+  httpMethod: string;
+  body?: string | null;
+  queryStringParameters?: Record<string, string | undefined> | null;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
 function getAuthHeader() {
   const user = process.env.ONET_USERNAME;
   const pass = process.env.ONET_PASSWORD;
@@ -21,7 +33,7 @@ function getAuthHeader() {
   return `Basic ${basic}`;
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: NetlifyProxyEvent) => {
   const start = Date.now();
   const method = event.httpMethod;
   try {
@@ -30,7 +42,9 @@ export const handler = async (event: any) => {
       hasUser: !!process.env.ONET_USERNAME,
       hasPass: !!process.env.ONET_PASSWORD,
     });
-  } catch {}
+  } catch {
+    // Debug logging must never block the proxy response.
+  }
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
@@ -40,8 +54,12 @@ export const handler = async (event: any) => {
     const qp = event.queryStringParameters?.path;
     if (qp) onetPath = qp;
     else if (event.httpMethod === "POST" && event.body) {
-      const body = JSON.parse(event.body || "{}");
-      onetPath = body.onetPath || body.path || "";
+      const body: unknown = JSON.parse(event.body || "{}");
+      onetPath = isRecord(body) && typeof body.onetPath === "string"
+        ? body.onetPath
+        : isRecord(body) && typeof body.path === "string"
+          ? body.path
+          : "";
     }
 
     if (!onetPath || typeof onetPath !== "string") {
@@ -56,11 +74,15 @@ export const handler = async (event: any) => {
     const beforeDecode = onetPath;
     try {
       onetPath = decodeURIComponent(onetPath);
-    } catch {}
+    } catch {
+      // If decoding fails, continue with the original path string.
+    }
     if (onetPath.startsWith("/")) onetPath = onetPath.slice(1);
     try {
       console.log("[onet-proxy] path", { beforeDecode, afterDecode: onetPath });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     // Ensure JSON response from O*NET when possible
     if (!/[?&]fmt=/.test(onetPath)) {
@@ -72,7 +94,9 @@ export const handler = async (event: any) => {
 
     try {
       console.log("[onet-proxy] outbound", { target, node: process.version });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     const resp = await fetch(target, {
       headers: {
@@ -91,7 +115,9 @@ export const handler = async (event: any) => {
         bytes: text.length,
         ms: Date.now() - start,
       });
-    } catch {}
+    } catch {
+      // Debug logging must never block the proxy response.
+    }
 
     if (!resp.ok) {
       return {
@@ -115,11 +141,11 @@ export const handler = async (event: any) => {
       headers: { ...corsHeaders, "Content-Type": ct || "text/plain" },
       body: text,
     };
-  } catch (err: any) {
+  } catch (error: unknown) {
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({ error: err?.message || String(err) }),
+      body: JSON.stringify({ error: getErrorMessage(error) }),
     };
   }
 };

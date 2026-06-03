@@ -20,6 +20,64 @@ export interface Roadmap {
     milestones?: Milestone[];
 }
 
+type MilestoneStatus = Milestone['status'];
+
+interface GeneratedMilestone {
+    title: string;
+    description: string;
+}
+
+interface GeneratedPhase {
+    title: string;
+    milestones: GeneratedMilestone[];
+}
+
+interface GeneratedRoadmap {
+    phases: GeneratedPhase[];
+}
+
+interface GenerateRoadmapResponse {
+    roadmap?: unknown;
+}
+
+interface MilestoneInsert {
+    roadmap_id: string;
+    title: string;
+    description: string;
+    order_index: number;
+    status: MilestoneStatus;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+    typeof value === 'string' && value.trim() ? value.trim() : undefined;
+
+const getErrorMessage = (error: unknown, fallback: string): string =>
+    error instanceof Error ? error.message : fallback;
+
+const normalizeGeneratedRoadmap = (value: unknown): GeneratedRoadmap | null => {
+    if (!isRecord(value) || !Array.isArray(value.phases)) return null;
+
+    const phases = value.phases.flatMap((phase, phaseIndex) => {
+        if (!isRecord(phase) || !Array.isArray(phase.milestones)) return [];
+
+        const phaseTitle = asString(phase.title) || `Phase ${phaseIndex + 1}`;
+        const milestones = phase.milestones.flatMap((milestone, milestoneIndex) => {
+            if (!isRecord(milestone)) return [];
+
+            const title = asString(milestone.title) || `Milestone ${milestoneIndex + 1}`;
+            const description = asString(milestone.description) || 'Milestone details pending review.';
+            return [{ title, description }];
+        });
+
+        return [{ title: phaseTitle, milestones }];
+    });
+
+    return { phases };
+};
+
 export function useRoadmaps() {
     const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
     const [loading, setLoading] = useState(true);
@@ -49,7 +107,7 @@ export function useRoadmaps() {
             }));
 
             setRoadmaps(sortedData || []);
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error fetching roadmaps:', err);
             toast.error('Failed to load roadmaps');
         } finally {
@@ -87,7 +145,12 @@ export function useRoadmaps() {
                 throw new Error('Invalid AI response format');
             }
 
-            const { roadmap: aiRoadmap } = roadmapData;
+            const payload = roadmapData as GenerateRoadmapResponse | null;
+            const aiRoadmap = normalizeGeneratedRoadmap(payload?.roadmap);
+            if (!aiRoadmap) {
+                console.error('Invalid AI roadmap payload:', roadmapData);
+                throw new Error('Invalid AI roadmap format');
+            }
             console.log('Parsed AI Roadmap:', aiRoadmap);
 
             // 2. Create Roadmap in DB
@@ -110,24 +173,20 @@ export function useRoadmaps() {
 
             // 3. Create Milestones in DB
             console.log('Preparing milestones for insertion...');
-            let allMilestones: any[] = [];
+            const allMilestones: MilestoneInsert[] = [];
             let orderIndex = 0;
 
-            if (aiRoadmap.phases && Array.isArray(aiRoadmap.phases)) {
-                aiRoadmap.phases.forEach((phase: any) => {
-                    if (phase.milestones && Array.isArray(phase.milestones)) {
-                        phase.milestones.forEach((m: any) => {
-                            allMilestones.push({
-                                roadmap_id: roadmap.id,
-                                title: m.title,
-                                description: `[${phase.title}] ${m.description}`,
-                                order_index: orderIndex++,
-                                status: 'pending'
-                            });
-                        });
-                    }
+            aiRoadmap.phases.forEach((phase) => {
+                phase.milestones.forEach((milestone) => {
+                    allMilestones.push({
+                        roadmap_id: roadmap.id,
+                        title: milestone.title,
+                        description: `[${phase.title}] ${milestone.description}`,
+                        order_index: orderIndex++,
+                        status: 'pending'
+                    });
                 });
-            }
+            });
 
             console.log(`Inserting ${allMilestones.length} milestones...`);
             const { error: milestonesError } = await supabase
@@ -145,9 +204,9 @@ export function useRoadmaps() {
             console.log('Refreshing roadmaps list...');
             await fetchRoadmaps();
             return roadmap.id;
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error generating roadmap (CATCH BLOCK):', err);
-            toast.error(err.message || 'Failed to generate roadmap');
+            toast.error(getErrorMessage(err, 'Failed to generate roadmap'));
             throw err;
         } finally {
             setGenerating(false);
@@ -175,7 +234,7 @@ export function useRoadmaps() {
             if (status === 'completed') {
                 toast.success('Milestone completed!');
             }
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error updating milestone:', err);
             toast.error('Failed to update milestone');
         }

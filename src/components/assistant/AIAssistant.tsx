@@ -8,6 +8,13 @@ import { getDeviceId } from "@/utils/device";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string; timestamp: number };
 
+interface AiCareerCoachResponse {
+  response?: string;
+}
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
+
 export function AIAssistant() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
@@ -31,13 +38,13 @@ export function AIAssistant() {
         conversationHistory: messages.map(({ role, content }) => ({ role, content })),
         userProfile: user ? { id: user.id, occupationCode: undefined, careerGoals: undefined } : undefined,
       };
-      const { data, error } = await supabase.functions.invoke("ai-career-coach", { body });
+      const { data, error } = await supabase.functions.invoke<AiCareerCoachResponse>("ai-career-coach", { body });
       if (error) throw error;
-      const assistantText: string = (data as any)?.response || "";
+      const assistantText = data?.response ?? "";
       const assistantEntry: ChatMessage = { role: "assistant", content: assistantText, timestamp: Date.now() };
       setMessages((prev) => [...prev, assistantEntry]);
-    } catch (e: any) {
-      const errEntry: ChatMessage = { role: "assistant", content: e?.message || "Assistant unavailable.", timestamp: Date.now() };
+    } catch (error: unknown) {
+      const errEntry: ChatMessage = { role: "assistant", content: getErrorMessage(error, "Assistant unavailable."), timestamp: Date.now() };
       setMessages((prev) => [...prev, errEntry]);
     } finally {
       setLoading(false);

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Save } from 'lucide-react';
-import { useCareerPlanningStorage } from '@/hooks/useCareerPlanningStorage';
+import { type SkillGap, useCareerPlanningStorage } from '@/hooks/useCareerPlanningStorage';
 
 // 34 Employability (soft) skills (grouped) — static list, can be refined per O*NET guidance
 const SOFT_SKILLS: { id: string; name: string; group: string; description: string }[] = [
@@ -67,7 +67,9 @@ export default function SoftSkillBuilderPanel() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setRatings(JSON.parse(raw));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, []);
 
   const groups = useMemo(() => {
@@ -93,20 +95,28 @@ export default function SoftSkillBuilderPanel() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
     // Optional: derive simple gap insights and persist to planning storage
     try {
-      const gaps = Object.entries(ratings)
+      const gaps: SkillGap[] = Object.entries(ratings)
         .filter(([, v]) => (v.rating < 60 && v.weight >= 60))
         .map(([skillId, v]) => ({
+          id: `soft-${skillId}`,
           skillId,
           skillName: SOFT_SKILLS.find(s => s.id === skillId)?.name || skillId,
+          currentLevel: v.rating,
+          targetLevel: 60,
+          gap: Math.max(0, 60 - v.rating),
           gapSize: Math.round((60 - v.rating) / 10) || 1,
           priority: v.weight >= 80 ? 'high' : v.weight >= 60 ? 'medium' : 'low',
+          recommendations: [
+            `Practice ${SOFT_SKILLS.find(s => s.id === skillId)?.name || skillId} in a work-relevant scenario this week.`,
+          ],
         }));
       // save only if any
       if (gaps.length) {
-        // @ts-ignore saveSkillGaps signature accepts array from useCareerPlanningStorage
-        saveSkillGaps(gaps as any);
+        saveSkillGaps(gaps);
       }
-    } catch {}
+    } catch {
+      // Skill-gap persistence is best-effort; the local ratings save above is authoritative.
+    }
     setSaving(false);
   };
 

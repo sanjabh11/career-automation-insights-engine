@@ -40,12 +40,12 @@ export function useOnet<T = unknown>(
     return text as unknown as T;
   };
 
-  return useQuery<T>({
+  return useQuery<T, Error, T, readonly unknown[]>({
     queryKey: ["onet", path],
     queryFn: fetcher,
     staleTime: 1000 * 60 * 5, // 5 min
     gcTime: 1000 * 60 * 30,
     retry: 2,
-    ...(options as any),
+    ...options,
   });
 }

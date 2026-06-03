@@ -6,12 +6,40 @@ import { ShieldCheck, Activity, Keyboard, GaugeCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+type WebVitalRow = {
+  name: string | null;
+  value: number | string | null;
+  created_at: string | null;
+};
+
+type QueryResponse<T> = {
+  data: T | null;
+  error: { message?: string } | null;
+};
+
+type WebVitalsQueryBuilder<T> = {
+  select(columns: string): WebVitalsQueryBuilder<T>;
+  gte(column: string, value: unknown): WebVitalsQueryBuilder<T>;
+  order(column: string, options?: { ascending?: boolean }): WebVitalsQueryBuilder<T>;
+  limit(count: number): WebVitalsQueryBuilder<T>;
+  then<TResult1 = QueryResponse<T[]>, TResult2 = never>(
+    onfulfilled?: ((value: QueryResponse<T[]>) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+  ): PromiseLike<TResult1 | TResult2>;
+};
+
+type WebVitalsSupabaseClient = {
+  from(table: "web_vitals"): WebVitalsQueryBuilder<WebVitalRow>;
+};
+
+const webVitalsSupabase = supabase as unknown as WebVitalsSupabaseClient;
+
 export default function QualityPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<WebVitalRow[]>({
     queryKey: ["quality-webvitals"],
     queryFn: async () => {
       const d14 = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-      const { data } = await (supabase as any)
+      const { data } = await webVitalsSupabase
         .from("web_vitals")
         .select("name, value, created_at")
         .gte("created_at", d14)
@@ -22,8 +50,8 @@ export default function QualityPage() {
     staleTime: 60_000,
   });
 
-  const lcp = (data || []).filter((v: any) => (v.name || "").toUpperCase().includes("LCP"));
-  const avgLcp = lcp.length ? Math.round(lcp.reduce((a: number, b: any) => a + Number(b.value || 0), 0) / lcp.length) : 0;
+  const lcp = (data || []).filter((v) => (v.name || "").toUpperCase().includes("LCP"));
+  const avgLcp = lcp.length ? Math.round(lcp.reduce((a, b) => a + Number(b.value || 0), 0) / lcp.length) : 0;
 
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-6">

@@ -6,15 +6,33 @@ export interface Occupation {
   description?: string;
 }
 
-export const normalizeOccupation = (input: any): Occupation => {
+const asRecord = (input: unknown): Record<string, unknown> => {
+  return input && typeof input === 'object' && !Array.isArray(input)
+    ? input as Record<string, unknown>
+    : {};
+};
+
+const firstString = (...values: unknown[]): string | undefined => {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+  return undefined;
+};
+
+export const normalizeOccupation = (input: unknown): Occupation => {
+  const record = asRecord(input);
   return {
-    code: input?.code || input?.occupation_code || '',
-    title: input?.title || input?.occupation_title || '',
+    code: firstString(record.code, record.occupation_code) || '',
+    title: firstString(record.title, record.occupation_title) || '',
     description:
-      input?.description ||
-      input?.summary ||
-      input?.occupation_description ||
-      input?.short_description ||
+      firstString(
+        record.description,
+        record.summary,
+        record.occupation_description,
+        record.short_description
+      ) ||
       undefined,
   };
 };
@@ -47,7 +65,7 @@ export interface LearningPathMilestone {
   title: string;
   skills: string[];
   duration_weeks?: number;
-  resources?: any[];
+  resources?: unknown[];
   cost_estimate?: number;
   priority?: string;
 }

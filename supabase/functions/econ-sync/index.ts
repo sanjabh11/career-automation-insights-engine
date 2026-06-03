@@ -8,6 +8,31 @@ const baseCorsHeaders: Record<string, string> = {
 
 const LOCAL_DEV_PREFIXES = ['http://localhost:', 'http://127.0.0.1:', 'https://localhost:', 'https://127.0.0.1:'];
 
+type EconInputRow = Record<string, unknown>;
+
+type EconUpsertRow = {
+  task_category: string | null;
+  industry_sector: string | null;
+  implementation_cost_low: number | null;
+  implementation_cost_high: number | null;
+  roi_timeline_months: number | null;
+  technology_maturity: string | null;
+  wef_adoption_score: number | null;
+  regulatory_friction: string | null;
+  min_org_size: number | null;
+  annual_labor_cost_threshold: number | null;
+  source: string | null;
+  source_url: string | null;
+  as_of_year: number | null;
+  adoption_current_pct: number | null;
+  adoption_expected_pct: number | null;
+  payback_months: number | null;
+  region: string;
+  country: string;
+  evidence_note: string | null;
+  source_page: string | null;
+};
+
 function isOriginPermitted(origin: string): boolean {
   const normalize = (s: string) => s.replace(/\/$/, '').toLowerCase();
   const raw = (Deno.env.get('ECON_ALLOWED_ORIGINS') || '*')
@@ -59,12 +84,12 @@ async function handler(req: Request) {
     if (mode !== 'upsert_batch') {
       return new Response(JSON.stringify({ error: 'Unsupported mode' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
-    const rows = Array.isArray(body?.rows) ? body.rows as Array<Record<string, any>> : null;
+    const rows = Array.isArray(body?.rows) ? body.rows as EconInputRow[] : null;
     if (!rows || !rows.length) {
       return new Response(JSON.stringify({ error: 'rows[] required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const deduped = new Map<string, Record<string, any>>();
+    const deduped = new Map<string, EconInputRow>();
     for (const r of rows) {
       const hasAdoption = r?.adoption_current_pct != null || r?.adoption_expected_pct != null;
       const hasPayback = r?.payback_months != null && String(r?.payback_months).trim() !== '';
@@ -81,9 +106,9 @@ async function handler(req: Request) {
       deduped.set(key, r);
     }
 
-    const mapped = Array.from(deduped.values()).map((r) => ({
-      task_category: r.task_category ?? null,
-      industry_sector: r.industry_sector ?? null,
+    const mapped: EconUpsertRow[] = Array.from(deduped.values()).map((r) => ({
+      task_category: toStr(r.task_category),
+      industry_sector: toStr(r.industry_sector),
       implementation_cost_low: toNum(r.implementation_cost_low),
       implementation_cost_high: toNum(r.implementation_cost_high),
       roi_timeline_months: toInt(r.roi_timeline_months),
@@ -115,17 +140,17 @@ async function handler(req: Request) {
   }
 }
 
-function toStr(v: any): string | null {
+function toStr(v: unknown): string | null {
   if (v === undefined || v === null) return null;
   const s = String(v).trim();
   return s.length ? s : null;
 }
-function toNum(v: any): number | null {
+function toNum(v: unknown): number | null {
   if (v === undefined || v === null || v === '') return null;
-  const n = Number(String(v).replace(/[^0-9.\-]/g, ''));
+  const n = Number(String(v).replace(/[^0-9.-]/g, ''));
   return Number.isFinite(n) ? n : null;
 }
-function toInt(v: any): number | null {
+function toInt(v: unknown): number | null {
   const n = toNum(v);
   return n === null ? null : Math.trunc(n);
 }

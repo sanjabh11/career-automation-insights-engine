@@ -3,25 +3,12 @@
  * Global state management for upgrade prompts and conversion flows
  */
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { UpgradePrompt } from '@/components/UpgradePrompt';
-
-interface UpgradePromptState {
-  isOpen: boolean;
-  feature: 'apoChecks' | 'aiChat' | 'savedAnalyses' | 'exports' | 'apiAccess';
-  currentUsage?: number;
-  limitReached?: boolean;
-}
-
-interface UpgradePromptContextType {
-  showUpgradePrompt: (
-    feature: UpgradePromptState['feature'],
-    options?: { currentUsage?: number; limitReached?: boolean }
-  ) => void;
-  hideUpgradePrompt: () => void;
-}
-
-const UpgradePromptContext = createContext<UpgradePromptContextType | undefined>(undefined);
+import {
+  UpgradePromptContext,
+  type UpgradePromptState,
+} from '@/contexts/upgradePromptContextValue';
 
 export const UpgradePromptProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [promptState, setPromptState] = useState<UpgradePromptState>({
@@ -62,12 +49,4 @@ export const UpgradePromptProvider: React.FC<{ children: React.ReactNode }> = ({
       />
     </UpgradePromptContext.Provider>
   );
-};
-
-export const useUpgradePrompt = (): UpgradePromptContextType => {
-  const context = useContext(UpgradePromptContext);
-  if (!context) {
-    throw new Error('useUpgradePrompt must be used within UpgradePromptProvider');
-  }
-  return context;
 };

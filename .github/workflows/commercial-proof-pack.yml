@@ -4,10 +4,22 @@ on:
   pull_request:
     branches:
       - main
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   push:
     branches:
       - commercialization-proof-packs
       - main
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   workflow_dispatch:
   schedule:
     - cron: "17 8 * * 1"
@@ -43,6 +55,9 @@ jobs:
 
       - name: Verify commercial proof pack
         run: npm run verify:commercial -- --with-a11y --with-journey
+
+      - name: Verify Part II release gates
+        run: npm run verify:part-ii
 
       - name: Verify official sources and production audit
         if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'

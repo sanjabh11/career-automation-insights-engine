@@ -85,7 +85,7 @@ export function useUserProfile() {
   return {
     profile,
     isLoading,
-    updateProfile: (updates: any) => updateProfileMutation.mutate(updates),
+    updateProfile: (updates: Partial<Pick<UserProfile, 'full_name' | 'avatar_url'>>) => updateProfileMutation.mutate(updates),
     isUpdating: updateProfileMutation.isPending,
     user,
   };

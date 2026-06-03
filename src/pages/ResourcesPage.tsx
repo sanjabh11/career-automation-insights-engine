@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, FileText, GraduationCap, FlaskConical } from "lucide-react";
+import { SourceFreshnessPanel } from "@/components/proof/ProofVisibilityPanels";
 
 export default function ResourcesPage() {
   return (
@@ -10,6 +11,8 @@ export default function ResourcesPage() {
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Resources</h1>
         <p className="text-sm text-muted-foreground">Educator and researcher packs, with data sheets and model documentation.</p>
       </div>
+
+      <SourceFreshnessPanel />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-6">

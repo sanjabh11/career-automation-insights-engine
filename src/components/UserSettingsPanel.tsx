@@ -12,9 +12,10 @@ export function UserSettingsPanel() {
   const { settings, updateSettings, isLoading } = useUserSettings();
   const { preferences, updatePreferences, isUpdating: isNotificationUpdating, isLoading: loadingPreferences } = useNotificationPreferences();
 
-  const handleSettingChange = async (key: keyof UserSettings, value: any) => {
+  const handleSettingChange = async <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
     try {
-      await updateSettings({ [key]: value });
+      const nextSettings: Partial<UserSettings> = { [key]: value };
+      await updateSettings(nextSettings);
       toast.success("Settings updated successfully!");
     } catch (error) {
       toast.error("Failed to update settings");

@@ -1,6 +1,6 @@
 # Live Supabase Deployment Runbook
 
-Generated: 2026-05-31T17:27:53.512Z
+Generated: 2026-06-03T08:52:25.123Z
 Target project ref: `kvunnankqgfokeufvsrv`
 Packet status: **pass**
 
@@ -17,6 +17,7 @@ Purpose: apply the commercial proof-pack schema changes in the linked Supabase p
 | `20260524000500` | Phase 5 redacted resume proof artifacts | `supabase/migrations/20260524000500_add_resume_proof_report_artifacts.sql` | `7ca18c1ef3788b23...` | pass |
 | `20260525172048` | Commercial outreach pipeline | `supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql` | `ebbb672d2ec56e54...` | pass |
 | `20260526000100` | Commercial outreach response metrics | `supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql` | `c77b4715c0ad41f9...` | pass |
+| `20260601120000` | Part II revealed-transition flywheel | `supabase/migrations/20260601120000_create_revealed_transition_flywheel.sql` | `27d89f5ab9cce338...` | pass |
 
 ## Required Environment
 
@@ -49,6 +50,11 @@ Force PostgREST schema cache reload if new objects are still hidden by schema-ca
 NOTIFY pgrst, 'reload schema';
 ```
 
+Deploy record-outcome only after the revealed-transition migration is applied:
+```bash
+supabase functions deploy record-outcome --project-ref kvunnankqgfokeufvsrv
+```
+
 Verify commercial live Supabase boundaries after deployment:
 ```bash
 npm run verify:commercial-live-supabase
@@ -75,6 +81,7 @@ npm run verify:onet-task-ratings-live
 - Prefer Supabase CLI db push so supabase_migrations.schema_migrations records applied versions.
 - Do not print service-role keys, database passwords, JWTs, or raw resume text in logs or proof artifacts.
 - Treat live verifier success as object/RPC boundary proof, not as legal compliance or employment-decision validation.
+- Deploy `record-outcome` only after the Part II migration exists remotely; the function writes optional revealed-transition rows when users submit consented transition telemetry.
 - Treat live parser verifier success as synthetic receipt proof only; malware scanning, production PDF/DOC/DOCX parsing, provider logs, and backups remain separate controls.
 - Treat O*NET Task Ratings live proof as schema/row evidence only; exported table checksums are still required before task-time claims.
 
@@ -82,6 +89,7 @@ npm run verify:onet-task-ratings-live
 
 - Migration list shows the commercial proof-pack migrations applied to the linked project.
 - `npm run verify:commercial-live-supabase` passes against the linked project.
+- `record-outcome` is deployed after the `revealed_transition_events` and `partner_artifact_reviews` objects exist remotely.
 - `npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.
 - `npm run verify:onet-task-ratings-live` passes only after Task Ratings migration and ingest produce live O*NET 30.3 rows.
 - Resume proof artifact live calls remain authenticated and redaction-gated.

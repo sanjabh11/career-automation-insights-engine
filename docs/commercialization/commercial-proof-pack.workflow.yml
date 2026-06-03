@@ -4,10 +4,22 @@ on:
   pull_request:
     branches:
       - main
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   push:
     branches:
       - commercialization-proof-packs
       - main
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   workflow_dispatch:
   schedule:
     - cron: "17 8 * * 1"

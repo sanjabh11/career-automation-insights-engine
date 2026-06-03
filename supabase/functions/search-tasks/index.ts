@@ -13,6 +13,38 @@ const requestSchema = z.object({
   offset: z.number().min(0).optional().default(0),
 });
 
+interface OccupationEnrichment {
+  occupation_title?: string | null;
+  bright_outlook?: boolean | null;
+  job_zone?: number | string | null;
+}
+
+interface TaskSearchRow {
+  occupation_code: string;
+  task_id: string;
+  task_description: string;
+  importance: number | null;
+  frequency: number | string | null;
+  automation_category: string | null;
+  onet_occupation_enrichment?: OccupationEnrichment | null;
+}
+
+interface OccupationTaskSummary {
+  task_id: string;
+  task_description: string;
+  importance: number | null;
+  frequency: number | string | null;
+  automation_category: string | null;
+}
+
+interface OccupationTaskGroup {
+  occupation_code: string;
+  occupation_title: string;
+  bright_outlook: boolean;
+  job_zone: number | string | null | undefined;
+  tasks: OccupationTaskSummary[];
+}
+
 /**
  * Task-Based Search
  * 
@@ -35,7 +67,7 @@ export async function handler(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Full-text search on task descriptions
-    let tasks: any[] | null = null;
+    let tasks: TaskSearchRow[] | null = null;
     let count: number | null = null;
     {
       const { data, error, count: c } = await supabase
@@ -49,7 +81,7 @@ export async function handler(req: Request) {
         .range(offset, offset + limit - 1);
 
       if (!error) {
-        tasks = data as any[];
+        tasks = (data ?? []) as TaskSearchRow[];
         count = c ?? null;
       } else {
         const { data: data2, error: error2, count: c2 } = await supabase
@@ -59,13 +91,13 @@ export async function handler(req: Request) {
           .order("importance", { ascending: false, nullsLast: true })
           .range(offset, offset + limit - 1);
         if (error2) throw error2;
-        tasks = data2 as any[];
+        tasks = (data2 ?? []) as TaskSearchRow[];
         count = c2 ?? null;
       }
     }
 
     // Group tasks by occupation
-    const tasksByOccupation = (tasks || []).reduce((acc: any, task: any) => {
+    const tasksByOccupation = (tasks || []).reduce<Record<string, OccupationTaskGroup>>((acc, task) => {
       const code = task.occupation_code;
       if (!acc[code]) {
         acc[code] = {

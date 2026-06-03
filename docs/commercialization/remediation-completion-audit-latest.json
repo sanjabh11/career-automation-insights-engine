@@ -1,0 +1,200 @@
+{
+  "generatedAt": "2026-06-03T08:52:30.739Z",
+  "branch": "phase-e-commercial-validation",
+  "sourceHeadAtGeneration": "8ca1976",
+  "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
+  "goalComplete": false,
+  "phaseDeliverables": [
+    {
+      "phase": "A",
+      "gateId": "phase_a_truth_claims",
+      "pr": "https://github.com/sanjabh11/career-automation-insights-engine/pull/5",
+      "prSummary": "Removed unsupported proof links, rewrote claim boundaries, and made README/STATUS canonical.",
+      "filesChanged": [
+        "README.md",
+        "STATUS.md",
+        "src/pages/ValidationPage.tsx",
+        "src/pages/ResourcesPage.tsx",
+        "docs/archive/"
+      ],
+      "commandsRun": [
+        "npm run verify:claim-boundaries",
+        "route crawl: /validation,/validation/methods,/resources,/quality,/outcomes,/veterans"
+      ],
+      "acceptanceEvidence": "No active dead `/docs/**` proof links; unsupported absolute claims removed; stale status sprawl archived.",
+      "confidenceDelta": "Credibility risk reduced from unsupported proof/claim surfaces to dated, scoped, source-bound framing.",
+      "status": "locally_proven"
+    },
+    {
+      "phase": "B",
+      "gateId": "phase_b_calibration_artifacts",
+      "pr": "https://github.com/sanjabh11/career-automation-insights-engine/pull/6",
+      "prSummary": "Added public APO/task model cards, calibration report, reliability plot, and uncertainty disclosure.",
+      "filesChanged": [
+        "public/docs/model_cards/",
+        "public/docs/reports/",
+        "supabase/functions/calibrate-ece/index.ts",
+        "src/components/OccupationAnalysis.tsx"
+      ],
+      "commandsRun": [
+        "npm run generate:phase-b-validation",
+        "npm run verify:commercial-validation"
+      ],
+      "acceptanceEvidence": "Public model-card/calibration artifacts exist; production calibration remains explicitly scoped to future live expert-label evidence.",
+      "confidenceDelta": "Validation transparency improved; scientific/production accuracy remains intentionally unclaimed.",
+      "status": "locally_proven_with_scope_limit"
+    },
+    {
+      "phase": "C",
+      "gateId": "phase_c_embedding_runtime",
+      "pr": "https://github.com/sanjabh11/career-automation-insights-engine/pull/7",
+      "prSummary": "Fixed Gemini embedding model path, Veterans crosswalk behavior, and runtime smoke coverage.",
+      "filesChanged": [
+        "supabase/functions/calculate-skill-adjacency/index.ts",
+        "scripts/verify-skill-adjacency-embedding.mjs",
+        "tests/e2e/",
+        ".github/workflows/phase-c-runtime-smoke.yml"
+      ],
+      "commandsRun": [
+        "npm run smoke:skill-adjacency",
+        "npm run e2e:smoke"
+      ],
+      "acceptanceEvidence": "Skill adjacency verifier covers `gemini-embedding-001`, 768-dimensional vectors, and non-empty adjacency; hosted runtime smoke checks are green.",
+      "confidenceDelta": "Runtime confidence improved from code inspection to automated local and hosted smoke evidence.",
+      "status": "locally_proven"
+    },
+    {
+      "phase": "D",
+      "gateId": "phase_d_global_english",
+      "pr": "https://github.com/sanjabh11/career-automation-insights-engine/pull/8",
+      "prSummary": "Added ESCO/UK/CA/AU mapping layer and visible U.S.-basis disclosure for non-US users.",
+      "filesChanged": [
+        "src/lib/globalEnglishLocalization.ts",
+        "src/components/OccupationAnalysis.tsx",
+        "tests/e2e/global-english.spec.ts"
+      ],
+      "commandsRun": [
+        "npm run verify:global-english",
+        "npm run verify:global-english-sources"
+      ],
+      "acceptanceEvidence": "20 sample occupations resolve per UK/CA/AU/ESCO coverage; wage/outlook localization is disclosed as adapter-pending.",
+      "confidenceDelta": "Global-English scope moved from absent to mapped/disclosed, while avoiding fabricated local wage claims.",
+      "status": "satisfied_by_mapping_adapter_and_us_basis_disclosure"
+    },
+    {
+      "phase": "E",
+      "gateId": "phase_e_instrumentation",
+      "pr": "https://github.com/sanjabh11/career-automation-insights-engine/pull/9",
+      "prSummary": "Added activation/retention instrumentation, design-partner/outcome evidence gates, repo presentation checks, and owner-evidence fixture smoke.",
+      "filesChanged": [
+        "src/lib/commercialLaunchReadiness.ts",
+        "src/hooks/useAnalyticsEvents.ts",
+        "scripts/verify-commercial-release.mjs",
+        "scripts/verify-remediation-external-gates.mjs",
+        "scripts/verify-owner-evidence-fixture-path.mjs",
+        "scripts/verify-remediation-completion-audit.mjs",
+        "docs/commercialization/phase-e-commercial-validation-playbook.md",
+        "docs/commercialization/remediation-external-gates-latest.md",
+        "docs/commercialization/remediation-completion-audit-latest.md"
+      ],
+      "commandsRun": [
+        "npm run verify:commercial-validation",
+        "npm run verify:owner-evidence-fixtures",
+        "npm run verify:commercial",
+        "gh pr checks 9 --watch --interval 10"
+      ],
+      "acceptanceEvidence": "Instrumentation, commercial evidence schemas, fail-closed owner gates, and hosted commercial/runtime checks are present; live MRR/partners/outcomes are still external.",
+      "confidenceDelta": "Commercial readiness improved from planned evidence collection to enforced local gates and redacted proof intake, but commercial validation remains unearned.",
+      "status": "locally_proven_with_scope_limit"
+    }
+  ],
+  "remainingExternalGates": [
+    {
+      "id": "real_stripe_test_checkout",
+      "label": "Real Stripe test-mode checkout",
+      "status": "blocked_non_test_stripe_key",
+      "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact."
+    },
+    {
+      "id": "production_calibration_run",
+      "label": "Production calibration run",
+      "status": "ready_for_owner_live_run",
+      "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact."
+    },
+    {
+      "id": "authenticated_live_artifact_e2e",
+      "label": "Authenticated live artifact e2e",
+      "status": "ready_for_owner_live_run",
+      "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts."
+    },
+    {
+      "id": "live_mrr_gt_zero",
+      "label": "Live MRR greater than zero",
+      "status": "ready_for_owner_live_run",
+      "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence."
+    },
+    {
+      "id": "three_committed_partners",
+      "label": "Three committed design partners",
+      "status": "blocked_missing_owner_evidence_records",
+      "neededEvidence": "At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission."
+    },
+    {
+      "id": "documented_outcomes",
+      "label": "Permissioned documented outcomes",
+      "status": "blocked_missing_owner_evidence_records",
+      "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text."
+    }
+  ],
+  "decision": "Keep the active goal open. Local A-E implementation evidence is present, but owner-held live/commercial evidence is still required before full completion can be claimed.",
+  "nonProofBoundaries": [
+    "Synthetic fixtures prove schema compatibility only.",
+    "Local verifier success does not prove live Stripe checkout, live MRR, production calibration, or partner/outcome authenticity.",
+    "Hosted CI proves this branch behavior, not target production data state.",
+    "UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated."
+  ],
+  "currentBranchFilesChangedCount": 252,
+  "currentBranchFilesChangedSample": [
+    ".github/workflows/commercial-proof-pack.yml",
+    ".github/workflows/phase-c-runtime-smoke.yml",
+    ".gitignore",
+    ".phase-loop/master-plan.md",
+    ".phase-loop/phase-ledger.jsonl",
+    ".phase-loop/ratchets.json",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "README.md",
+    "STATUS.md",
+    "docs/commercialization/commercial-accessibility-audit-latest.json",
+    "docs/commercialization/commercial-accessibility-audit-latest.md",
+    "docs/commercialization/commercial-evidence-intake-template.json",
+    "docs/commercialization/commercial-evidence-records-latest.json",
+    "docs/commercialization/commercial-evidence-records-template.json",
+    "docs/commercialization/commercial-proof-pack.workflow.yml",
+    "docs/commercialization/commercialization-codebase-index.json",
+    "docs/commercialization/commercialization-codebase-index.md",
+    "docs/commercialization/data-provenance-checksums.json",
+    "docs/commercialization/data-provenance-checksums.md",
+    "docs/commercialization/github-repo-presentation-latest.json",
+    "docs/commercialization/github-repo-presentation-latest.md",
+    "docs/commercialization/live-auth-e2e-proof-latest.json",
+    "docs/commercialization/live-gate-evidence-template.json",
+    "docs/commercialization/live-supabase-deployment-packet.json",
+    "docs/commercialization/live-supabase-deployment-runbook.md",
+    "docs/commercialization/part-i-owner-evidence-blocker-runbook.md",
+    "docs/commercialization/phase-e-commercial-validation-playbook.md",
+    "docs/commercialization/production-calibration-proof-latest.json",
+    "docs/commercialization/remediation-completion-audit-2026-05-31.md",
+    "docs/commercialization/remediation-completion-audit-latest.json",
+    "docs/commercialization/remediation-completion-audit-latest.md",
+    "docs/commercialization/remediation-external-gates-latest.json",
+    "docs/commercialization/remediation-external-gates-latest.md",
+    "docs/commercialization/source-refresh-manifest.md",
+    "docs/commercialization/source-verification-latest.json",
+    "docs/commercialization/stripe-live-mrr-proof-latest.json",
+    "docs/commercialization/stripe-test-checkout-proof-latest.json",
+    "eslint.config.js",
+    "index.html"
+  ],
+  "errors": []
+}

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UserProfilePanel } from "./UserProfilePanel";
 import { UserSettingsPanel } from "./UserSettingsPanel";
-import { SavedAnalysesPanel } from "./SavedAnalysesPanel";
+import { SavedAnalysesPanel, type SavedAnalysisItem } from "./SavedAnalysesPanel";
 import { SearchHistoryPanel } from "./SearchHistoryPanel";
 import { SystemAdminPanel } from "./SystemAdminPanel";
 import { UsageDashboard } from "./UsageDashboard";
@@ -24,9 +24,10 @@ import {
   Target,
   BarChart3
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface EnhancedUserDashboardProps {
-  onLoadAnalysis?: (analysis: any) => void;
+  onLoadAnalysis?: (analysis: SavedAnalysisItem) => void;
   onSearchSelect?: (searchTerm: string) => void;
 }
 
@@ -64,7 +65,7 @@ function WelcomeBanner() {
 function QuickStatsCard({ title, value, icon: Icon, trend, color, index }: {
   title: string;
   value: string | number;
-  icon: any;
+  icon: LucideIcon;
   trend?: string;
   color: string;
   index?: number;
@@ -244,7 +245,9 @@ function usePersonalizedDefaultTab(fallback: string) {
       const usage: Record<string, number> = raw ? JSON.parse(raw) : {};
       usage[tab] = (usage[tab] || 0) + 1;
       localStorage.setItem(TAB_USAGE_KEY, JSON.stringify(usage));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, []);
 
   return { defaultTab, trackTab };

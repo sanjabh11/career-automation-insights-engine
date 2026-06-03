@@ -37,4 +37,8 @@ supabase/.temp/
 
 # Documentation and artifacts (exclude from git)
 # docs/ - TEMPORARILY ENABLED FOR UPDATES
+docs/commercialization/live-gate-evidence.local.json
+docs/commercialization/commercial-evidence-intake.local.json
+docs/commercialization/commercial-evidence-records.local.json
 .gemini/
+.codegraph/

@@ -28,7 +28,12 @@ const requestSchema = z.object({
     .optional(),
 });
 
-
+type CareerCoachModelResponse = {
+  response?: string;
+  followUpQuestions?: string[];
+  actionItems?: string[];
+  insights?: string[];
+};
 
 export async function handler(req: Request) {
   const gemini = new GeminiClient();
@@ -70,7 +75,7 @@ export async function handler(req: Request) {
     });
 
     // Parse structured response
-    let parsedResponse: any;
+    let parsedResponse: CareerCoachModelResponse;
     try {
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {

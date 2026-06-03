@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, BarChart3, TrendingUp, TrendingDown, Clock, Target, AlertTriangle, Download } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line } from 'recharts';
 import { EnhancedAPOVisualization } from './EnhancedAPOVisualization';
@@ -19,10 +20,11 @@ import { ROICalculator } from '@/components/ROICalculator';
 import { CareerSimulatorCard } from '@/components/CareerSimulatorCard';
 import { EcosystemRiskCard } from '@/components/EcosystemRiskCard';
 import { useBrightOutlook } from '@/hooks/useOnetEnrichment';
+import { RegionalDataBadge } from '@/components/proof/ProofVisibilityPanels';
 import {
   getBrowserGlobalEnglishRegion,
-  getOfficialSources,
   getRegionalLaborMarketDisclosure,
+  type GlobalEnglishRegion,
 } from '@/lib/globalEnglishLocalization';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ExampleModal } from '@/components/help/ExampleModal';
@@ -82,7 +84,7 @@ type SupabaseLooseClient = {
   };
 };
 
-interface EnhancedOccupationData {
+export interface EnhancedOccupationData {
   code: string;
   title: string;
   description: string;
@@ -124,6 +126,13 @@ interface OccupationAnalysisProps {
   isAlreadySelected: boolean;
 }
 
+const GLOBAL_ENGLISH_REGION_OPTIONS: Array<{ value: GlobalEnglishRegion; label: string; shortLabel: string }> = [
+  { value: 'US', label: 'United States', shortLabel: 'US basis' },
+  { value: 'UK', label: 'United Kingdom', shortLabel: 'UK ASHE' },
+  { value: 'CA', label: 'Canada', shortLabel: 'CA Job Bank' },
+  { value: 'AU', label: 'Australia', shortLabel: 'AU JSA/OSCA' },
+];
+
 export const OccupationAnalysis = ({
   occupation,
   overallAPO,
@@ -137,13 +146,13 @@ export const OccupationAnalysis = ({
   const [econProv, setEconProv] = React.useState<{ source?: string | null; source_url?: string | null; as_of_year?: number | null } | null>(null);
   const [showExplain, setShowExplain] = React.useState(false);
   const [showExample, setShowExample] = React.useState<false | 'apo' | 'portfolio'>(false);
-  const globalEnglishRegion = React.useMemo(() => getBrowserGlobalEnglishRegion(), []);
-  const regionalDisclosure = React.useMemo(
-    () => getRegionalLaborMarketDisclosure(globalEnglishRegion, occupation.code),
-    [globalEnglishRegion, occupation.code],
+  const [selectedGlobalEnglishRegion, setSelectedGlobalEnglishRegion] = React.useState<GlobalEnglishRegion>(() =>
+    getBrowserGlobalEnglishRegion()
   );
-  const regionalSources = getOfficialSources(regionalDisclosure.sourceIds);
-
+  const regionalDisclosure = React.useMemo(
+    () => getRegionalLaborMarketDisclosure(selectedGlobalEnglishRegion, occupation.code),
+    [selectedGlobalEnglishRegion, occupation.code],
+  );
   const toSoc6 = (code: string) => {
     const m = (code || '').match(/^(\d{2}-\d{4})/);
     return m ? m[1] : code;
@@ -328,49 +337,40 @@ export const OccupationAnalysis = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card className="glass-card p-4 sm:p-6">
-        {regionalDisclosure.shouldShow && (
-          <div
-            role="note"
-            aria-label="Regional labor-market disclosure"
-            className="mb-4 rounded-lg border border-amber-400/40 bg-amber-500/10 p-3 text-xs text-[var(--text-secondary)]"
-          >
-            <div className="mb-1 flex flex-wrap items-center gap-2 font-semibold text-[var(--text-primary)]">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-              <span>{regionalDisclosure.heading}</span>
-              {regionalDisclosure.classification && (
-                <Badge variant="outline" className="text-[10px]">
-                  {regionalDisclosure.classification.code}
-                </Badge>
-              )}
+        <div className="mb-4 space-y-3" aria-label="Regional labor-market disclosure">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background/70 p-3">
+            <div>
+              <p className="text-xs font-semibold uppercase text-[var(--text-tertiary)]">Labor-market region</p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Switch between U.S. basis and source-dated UK, Canada, or Australia local context.
+              </p>
             </div>
-            <p>{regionalDisclosure.message}</p>
-            {regionalDisclosure.adapter && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-[10px]">
-                  Adapter: {regionalDisclosure.adapter.valueStatus.replace(/_/g, ' ')}
-                </Badge>
-                <span className="basis-full text-[11px] leading-snug text-[var(--text-secondary)]">
-                  Join requirement: {regionalDisclosure.adapter.joinLevel}
-                </span>
-              </div>
-            )}
-            {regionalSources.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                {regionalSources.map((source) => (
-                  <a
-                    key={source.id}
-                    href={source.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline hover:text-[var(--text-primary)]"
-                  >
-                    {source.name}
-                  </a>
+            <Select
+              value={selectedGlobalEnglishRegion}
+              onValueChange={(value) => setSelectedGlobalEnglishRegion(value as GlobalEnglishRegion)}
+            >
+              <SelectTrigger aria-label="Labor-market region" className="w-[210px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {GLOBAL_ENGLISH_REGION_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label} · {option.shortLabel}
+                  </SelectItem>
                 ))}
-              </div>
-            )}
+              </SelectContent>
+            </Select>
           </div>
-        )}
+          {regionalDisclosure.shouldShow && (
+            <span className="sr-only">
+              Adapter: {regionalDisclosure.adapter?.valueStatus.replace(/_/g, ' ') ?? 'not integrated'}.
+              Join requirement: {regionalDisclosure.adapter?.joinLevel ?? 'regional classification mapping required'}.
+              Local values: {regionalDisclosure.localValueStatus?.status.replace(/_/g, ' ') ?? 'not integrated'}.
+              Local wage/outlook fallback: {regionalDisclosure.localValueStatus?.reason ?? 'regional source join required'}.
+            </span>
+          )}
+          <RegionalDataBadge occupationCode={occupation.code} region={selectedGlobalEnglishRegion} />
+        </div>
 
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4 sm:mb-6">

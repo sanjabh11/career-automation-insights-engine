@@ -3,7 +3,7 @@ import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 const originalFetch = globalThis.fetch;
 Deno.env.set("SERPAPI_KEY", "fake");
 
-globalThis.fetch = async (input: Request | string): Promise<Response> => {
+globalThis.fetch = async (input: Parameters<typeof fetch>[0]): Promise<Response> => {
   if (typeof input === "string" && input.includes("serpapi.com")) {
     return new Response(
       JSON.stringify({
@@ -14,7 +14,7 @@ globalThis.fetch = async (input: Request | string): Promise<Response> => {
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
   }
-  return originalFetch(input as any);
+  return originalFetch(input);
 };
 
 const { handler } = await import("../functions/free-courses/index.ts");

@@ -27,7 +27,7 @@ export interface SourceManifestSnapshotEntry {
   confidence: SourceConfidence;
 }
 
-export const SOURCE_MANIFEST_LAST_VERIFIED_AT = '2026-05-24';
+export const SOURCE_MANIFEST_LAST_VERIFIED_AT = '2026-06-01';
 
 export const SOURCE_REFRESH_MANIFEST: SourceManifestEntry[] = [
   {
@@ -211,6 +211,36 @@ export const SOURCE_REFRESH_MANIFEST: SourceManifestEntry[] = [
     url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/',
   },
   {
+    id: 'ilo-genai-jobs-2025',
+    label: 'Generative AI and jobs: A 2025 update',
+    provider: 'International Labour Organization and NASK',
+    currentVersion: '2025 research brief update',
+    releaseDate: 'Published May 2025',
+    lastVerifiedAt: SOURCE_MANIFEST_LAST_VERIFIED_AT,
+    integrationStatus: 'active',
+    confidence: 'medium',
+    refreshCadence: 'Review when ILO publishes GenAI occupation-exposure index updates.',
+    usedFor: 'Task-exposure framing, occupation-exposure caveats, and the transformation-not-replacement boundary.',
+    caveat: 'The ILO study estimates potential exposure and transformation pressure; it is not a prediction that individual jobs disappear.',
+    claimBoundary: 'Use for task-exposure and transformation framing only; do not convert exposure categories into job-loss probabilities.',
+    url: 'https://www.ilo.org/publications/generative-ai-and-jobs-2025-update',
+  },
+  {
+    id: 'openai-eloundou-gpts-are-gpts',
+    label: 'GPTs are GPTs: labor market impact potential of LLMs',
+    provider: 'OpenAI, OpenResearch, and University of Pennsylvania authors',
+    currentVersion: 'Science publication / arXiv paper',
+    releaseDate: 'Original arXiv 2023; journal publication 2024',
+    lastVerifiedAt: SOURCE_MANIFEST_LAST_VERIFIED_AT,
+    integrationStatus: 'active',
+    confidence: 'medium',
+    refreshCadence: 'Review before changing exposure-language or task-productivity framing.',
+    usedFor: 'LLM exposure definition, task-level productivity-exposure language, and worker-level non-prediction caveats.',
+    caveat: 'The paper measures exposure potential under assumptions; it does not validate APO scores or forecast employment outcomes.',
+    claimBoundary: 'Use to explain exposure methodology; do not claim the app reproduces the paper or predicts displacement.',
+    url: 'https://arxiv.org/abs/2303.10130',
+  },
+  {
     id: 'oecd-skills-outlook-2025',
     label: 'OECD Skills Outlook 2025',
     provider: 'Organisation for Economic Co-operation and Development',
@@ -314,6 +344,21 @@ export const SOURCE_REFRESH_MANIFEST: SourceManifestEntry[] = [
     caveat: 'Claude usage is not representative of all AI use, all workers, or all countries, and the source describes observed usage rather than complete automation feasibility.',
     claimBoundary: 'Use as an external AI-use benchmark and caveat layer; do not treat it as the app scoring source until imported task-level datasets are versioned and validated.',
     url: 'https://www.anthropic.com/research/the-anthropic-economic-index',
+  },
+  {
+    id: 'anthropic-economic-index-2026',
+    label: 'Anthropic Economic Index January 2026',
+    provider: 'Anthropic',
+    currentVersion: 'January 2026 Economic Primitives report',
+    releaseDate: 'Published January 2026',
+    lastVerifiedAt: SOURCE_MANIFEST_LAST_VERIFIED_AT,
+    integrationStatus: 'active',
+    confidence: 'medium',
+    refreshCadence: 'Review each Economic Index release and before changing automation versus augmentation claims.',
+    usedFor: 'Automation versus augmentation framing, observed Claude usage patterns, and country/task-use caveats.',
+    caveat: 'Claude usage patterns are observed product usage and are not representative of all AI use, all regions, or labor-market outcomes.',
+    claimBoundary: 'Use as observed AI-use context only; do not treat it as direct proof of occupation safety, displacement, or APO accuracy.',
+    url: 'https://www.anthropic.com/research/anthropic-economic-index-january-2026-report',
   },
   {
     id: 'anthropic-observed-exposure',
@@ -494,6 +539,21 @@ export const SOURCE_REFRESH_MANIFEST: SourceManifestEntry[] = [
     caveat: 'Requires mapping to local SOC/O*NET rows before it can power scored U.S. reports.',
     claimBoundary: 'Adapter boundary only until the ESCO import, crosswalk, and validation checks exist in this repo.',
     url: 'https://esco.ec.europa.eu/en/use-esco/use-esco-services-api',
+  },
+  {
+    id: 'abs-osca-2024',
+    label: 'Occupation Standard Classification for Australia 2024',
+    provider: 'Australian Bureau of Statistics',
+    currentVersion: 'OSCA 2024',
+    releaseDate: 'Released December 2024; replacement status reviewed June 2026',
+    lastVerifiedAt: SOURCE_MANIFEST_LAST_VERIFIED_AT,
+    integrationStatus: 'adapter-ready',
+    confidence: 'high',
+    refreshCadence: 'Review when ABS publishes OSCA updates and when JSA migrates occupation profiles from ANZSCO.',
+    usedFor: 'Forward Australian occupation-classification boundary and ANZSCO-to-OSCA transition notes.',
+    caveat: 'OSCA replaces ANZSCO in Australia, but many public labor-market tables may still publish ANZSCO-aligned values during transition.',
+    claimBoundary: 'Use OSCA as the forward Australian classification boundary; do not display local Australian values unless the source table, classification basis, and suppression notes match.',
+    url: 'https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024',
   },
   {
     id: 'lightcast',

@@ -24,6 +24,15 @@
 - [x] Phase D: Add visible U.S.-basis wage/outlook disclosure for non-US English locales
 - [x] Phase D: Add UK locale Playwright smoke and global-English static verifier
 - [x] Phase D: Run Phase D type, lint, proof, commercial, global-English, and E2E checks
+- [x] Phase E: Re-enable analytics persistence against the real `analytics_events` schema
+- [x] Phase E: Add APO activation, proof-artifact activation, and commercial lead capture events
+- [x] Phase E: Add activation/retention event contract, retention cohorts, and commercial validation gates
+- [x] Phase E: Prepare design-partner onboarding checklist and case-study capture template
+- [x] Phase E: Verify bootcamp CTA remains hidden until a real Stripe price exists
+- [x] Cross-phase: Add non-mutating external gate ledger for the remaining live/manual acceptance evidence
+- [x] Cross-phase: Add redacted live-gate evidence intake verifier for owner-held credential-gated proof metadata
+- [x] Cross-phase: Narrow repo lint away from inactive backups/archives and clear mechanical non-`any` lint errors
+- [x] Cross-phase: Wire Phase C runtime smoke and commercial proof-pack CI to the Phase C/D/E branch chain
 
 ## Review
 - Baseline branch: `live-auth-e2e-closeout` at `7ab9821`.
@@ -31,14 +40,14 @@
 - Phase A must not copy archived placeholder PDFs into `public/docs`; real artifacts are deferred to Phase B.
 - Phase A follow-up archives active stale research/strategy docs with unsupported numeric readiness/security scores, projected revenue, uniqueness claims, and high-confidence commercialization language under `docs/archive/phase-a-status-sprawl-20260531/`.
 - Phase A follow-up replaces the missing local WEF PDF seed URL with the official WEF source page and adds `npm run verify:claim-boundaries`.
-- `npm run lint` still fails on pre-existing repo-wide lint debt: latest JSON run reports 1,441 errors and 93 warnings outside touched active files.
+- `npm run lint` now passes with 0 errors and 0 warnings after excluding inactive backups/archives, clearing the active explicit-`any` backlog, stabilizing active hook dependencies, and splitting provider/page/UI Fast Refresh export boundaries.
 - Rendered route crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, and `/veterans`: each route returned 200, had body content, and exposed no `/docs/**` anchors or forbidden claims.
 - `npm run verify:commercial` passed and regenerated the commercial evidence files; the Phase A follow-up includes refreshed provenance artifacts because the WEF seed URL/checksum changed.
 - Phase B artifact evidence is intentionally scoped: public docs prove transparent documentation and source-backed fixture calibration, while live expert-label calibration still requires owner-approved Supabase migration/application and function execution.
 - Phase B route and artifact crawl passed for `/validation`, `/validation/methods`, `/resources`, `/quality`, `/outcomes`, `/veterans`, `/docs/reports/apo-calibration-report.html`, `/docs/reports/apo-reliability-curve.svg`, `/docs/model_cards/APO_MODEL_CARD.html`, and `/docs/model_cards/TASK_MODEL_CARD.html`.
 - Phase B `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,534 problems; `supabase/functions/calibrate-ece/index.ts` passes file-scoped ESLint.
 - Phase C `npm run smoke:skill-adjacency` passed with `gemini-embedding-001`, 768 dimensions, and a non-empty adjacency result.
-- Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export.
+- Phase C `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 5 browser tests covering auth, APO run, Veterans crosswalk, Stripe test-mode checkout, and white-label report export. The CI workflow now covers Phase C/D/E branch-chain pull requests and pushes.
 - Phase C `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,529 problems; Phase C touched files pass file-scoped ESLint.
 - The bootcamp placeholder Stripe price ID no longer appears in runtime code; bootcamp checkout remains disabled until a real Stripe price is supplied.
 - Phase D `npm run verify:global-english-sources` provides the reproducible network-backed source-link check for ESCO API, ONS ASHE Table 2, Statistics Canada NOC 2021, Canada Job Bank wage methodology, Canada Job Bank outlook methodology, ABS ANZSCO 2022, and Jobs and Skills Australia occupation profiles.
@@ -46,3 +55,14 @@
 - Phase D `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests after adding UK global-English disclosure coverage.
 - Phase D `npm run lint` remains red on inherited repo-wide lint debt but improved to 1,507 problems; Phase D touched files pass file-scoped ESLint.
 - Phase D deliberately does not claim localized UK/CA/AU wage values. The UI labels non-US views as U.S. O*NET/BLS basis and exposes adapter-pending join requirements until source-dated local wage/outlook adapters are imported and validated.
+- Phase E `npm run verify:commercial-validation` passed and confirms activation/retention instrumentation, design-partner onboarding, case-study capture, live MRR/partner/outcome gates, and hidden bootcamp CTA boundary.
+- Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including remediation-gate ledger, build, and commercial route smoke.
+- Phase E `npm run lint` now passes with 0 errors and 0 warnings after inactive backups/archives, mechanical non-`any` errors, the active explicit-`any` backlog, active hook-dependency warnings, and provider/page/UI Fast Refresh export warnings were cleared across frontend components/hooks/pages/services plus Supabase Edge Function, shared library, and test boundaries.
+- Follow-up proof-boundary cleanup replaced hard-coded `/impact` outcome metrics/testimonials and static `/outcomes` correlation claims with evidence-gate and telemetry-boundary copy. `tests/e2e/proof-boundary-copy.spec.ts` verifies those legacy overclaims do not render.
+- Follow-up Stripe handoff cleanup added `npm run verify:stripe-test-checkout`, which signs in a synthetic Supabase user, calls `create-checkout-session`, retrieves the Stripe Checkout Session, and requires `livemode=false` when owner test credentials are present. Current local run is `skipped_missing_env`.
+- Follow-up live-MRR handoff cleanup added `npm run verify:stripe-live-mrr`, which reads Stripe live active subscriptions and paid invoices, rejects test-mode keys, and writes redacted proof metadata when owner live Stripe credentials are present. Current local run is `skipped_missing_env`.
+- Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. Current local run is `skipped_missing_env`.
+- Follow-up commercial evidence cleanup added `npm run verify:commercial-evidence-records`, which validates redacted founder-held design-partner commitments and permissioned documented outcomes without storing names, contacts, contracts, notes, quotes, or customer data. The remediation gate ledger now consumes those records and can mark the partner/outcome gates as externally proven when accepted unique partner/outcome hashes satisfy the gate. The verifier rejects future-dated evidence metadata and record dates later than `asOf`. Current local run is `no_local_evidence`.
+- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because credential-gated live proof and commercial partner/outcome evidence are still missing.
+- `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof, and the verifier now rejects private-contact patterns, future-dated evidence metadata, and item dates later than `asOf`.
+- Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.

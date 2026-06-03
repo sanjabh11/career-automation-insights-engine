@@ -18,6 +18,7 @@ export function initPostHog(): void {
 
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
+    defaults: '2026-01-30',
     person_profiles: 'identified_only',
     capture_pageview: true,
     capture_pageleave: true,
@@ -68,6 +69,14 @@ export const analytics = {
     trackEvent('upgrade_prompt_shown', { feature }),
   freeLimitHit: (feature: string) =>
     trackEvent('free_limit_hit', { feature }),
+  activationApoResult: (occupation: string, latencyMs?: number) =>
+    trackEvent('activation_apo_result_viewed', { occupation, latency_ms: latencyMs }),
+  activationProofArtifact: (artifactType: string, buyerSegment: string) =>
+    trackEvent('activation_proof_artifact_created', { artifact_type: artifactType, buyer_segment: buyerSegment }),
+  retentionReturnVisit: (surface: string) =>
+    trackEvent('retention_return_visit', { surface }),
+  commercialLeadCaptured: (source: string, buyerSegment: string, persisted: boolean) =>
+    trackEvent('commercial_lead_captured', { source, buyer_segment: buyerSegment, persisted }),
 };
 
 export { posthog };

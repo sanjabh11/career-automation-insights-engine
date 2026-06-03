@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from '@/hooks/useSession';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,19 +43,16 @@ interface UsageData {
 
 export function SubscriptionManager() {
   const { session } = useSession();
+  const userId = session?.user?.id;
   const [loading, setLoading] = useState(true);
   const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [usage, setUsage] = useState<UsageData[]>([]);
   const [billingPortalLoading, setBillingPortalLoading] = useState(false);
 
-  useEffect(() => {
-    if (session?.user) {
-      loadSubscriptionData();
-    }
-  }, [session]);
+  const loadSubscriptionData = useCallback(async () => {
+    if (!userId) return;
 
-  const loadSubscriptionData = async () => {
     try {
       setLoading(true);
 
@@ -63,7 +60,7 @@ export function SubscriptionManager() {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('current_plan_id, subscription_plans(*)')
-        .eq('id', session?.user?.id)
+        .eq('id', userId)
         .single();
 
       if (profileError) throw profileError;
@@ -76,7 +73,7 @@ export function SubscriptionManager() {
       const { data: subData, error: subError } = await supabase
         .from('user_subscriptions')
         .select('*')
-        .eq('user_id', session?.user?.id)
+        .eq('user_id', userId)
         .eq('status', 'active')
         .single();
 
@@ -86,7 +83,7 @@ export function SubscriptionManager() {
 
       // Get current usage
       const { data: usageData, error: usageError } = await supabase
-        .rpc('get_current_usage', { p_user_id: session?.user?.id });
+        .rpc('get_current_usage', { p_user_id: userId });
 
       if (!usageError && usageData) {
         setUsage(usageData as UsageData[]);
@@ -97,7 +94,13 @@ export function SubscriptionManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      loadSubscriptionData();
+    }
+  }, [userId, loadSubscriptionData]);
 
   const handleManageBilling = async () => {
     try {

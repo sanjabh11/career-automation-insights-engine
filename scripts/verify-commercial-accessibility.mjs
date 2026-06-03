@@ -243,6 +243,9 @@ async function writeAuditArtifacts(audit) {
 }
 
 async function evaluateCommercialAccessibility(page, route, viewportName) {
+  await page.waitForSelector('main, [role="main"]', { state: 'visible', timeout: 15_000 });
+  await page.waitForSelector('h1', { state: 'visible', timeout: 15_000 });
+
   const result = await page.evaluate(() => {
     const isVisible = (element) => {
       const style = window.getComputedStyle(element);

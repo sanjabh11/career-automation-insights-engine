@@ -99,6 +99,21 @@ const migrations = [
       'GRANT EXECUTE ON FUNCTION public.update_commercial_lead_response_metrics',
     ],
   },
+  {
+    phase: 'Part II revealed-transition flywheel',
+    file: 'supabase/migrations/20260601120000_create_revealed_transition_flywheel.sql',
+    reason: 'Consent-aware transition telemetry, partner artifact reviews, and does-not-prove boundaries for the Part II outcome flywheel.',
+    expectedSnippets: [
+      'revealed_transition_events',
+      'partner_artifact_reviews',
+      'consent_to_research',
+      'consent_to_contact',
+      'selected_transition_option',
+      'does_not_prove_acknowledged',
+      'Planning telemetry only; does not prove placement, wage gain, retention, or causal impact.',
+      'Partner review metadata only; does not prove commercial validation, revenue, or outcome impact.',
+    ],
+  },
 ];
 
 const unsafePatterns = [
@@ -270,6 +285,10 @@ async function main() {
         command: "NOTIFY pgrst, 'reload schema';",
       },
       {
+        label: 'Deploy record-outcome only after the revealed-transition migration is applied',
+        command: 'supabase functions deploy record-outcome --project-ref kvunnankqgfokeufvsrv',
+      },
+      {
         label: 'Verify commercial live Supabase boundaries after deployment',
         command: 'npm run verify:commercial-live-supabase',
       },
@@ -291,12 +310,14 @@ async function main() {
       'Prefer Supabase CLI db push so supabase_migrations.schema_migrations records applied versions.',
       'Do not print service-role keys, database passwords, JWTs, or raw resume text in logs or proof artifacts.',
       'Treat live verifier success as object/RPC boundary proof, not as legal compliance or employment-decision validation.',
+      'Deploy `record-outcome` only after the Part II migration exists remotely; the function writes optional revealed-transition rows when users submit consented transition telemetry.',
       'Treat live parser verifier success as synthetic receipt proof only; malware scanning, production PDF/DOC/DOCX parsing, provider logs, and backups remain separate controls.',
       'Treat O*NET Task Ratings live proof as schema/row evidence only; exported table checksums are still required before task-time claims.',
     ],
     acceptanceCriteria: [
       'Migration list shows the commercial proof-pack migrations applied to the linked project.',
       '`npm run verify:commercial-live-supabase` passes against the linked project.',
+      '`record-outcome` is deployed after the `revealed_transition_events` and `partner_artifact_reviews` objects exist remotely.',
       '`npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.',
       '`npm run verify:onet-task-ratings-live` passes only after Task Ratings migration and ingest produce live O*NET 30.3 rows.',
       'Resume proof artifact live calls remain authenticated and redaction-gated.',

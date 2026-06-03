@@ -41,6 +41,11 @@ type HeatmapResponse = {
   source?: string;
 };
 
+type TreemapTooltipProps = {
+  active?: boolean;
+  payload?: Array<{ payload?: HeatmapCell }>;
+};
+
 const REGIONS = ["US"];
 const GROUP_OPTIONS: { value: GroupBy; label: string }[] = [
   { value: "career_cluster", label: "Career Cluster" },
@@ -64,7 +69,7 @@ function getCellColor(value: number) {
   return "#14b8a6";
 }
 
-function TreemapTooltip({ active, payload }: any) {
+function TreemapTooltip({ active, payload }: TreemapTooltipProps) {
   if (!active || !payload?.length) return null;
 
   const item = payload[0]?.payload as HeatmapCell | undefined;
@@ -94,7 +99,7 @@ export default function MarketMapPage() {
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("market-heatmap", {
         body: { region, groupBy, limit: groupBy === "occupation" ? 120 : 250 },
-      } as any);
+      });
       if (error) throw error;
       return data as HeatmapResponse;
     },

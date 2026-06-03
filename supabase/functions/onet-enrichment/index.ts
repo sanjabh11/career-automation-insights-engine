@@ -18,6 +18,9 @@ const requestSchema = z.object({
   forceRefresh: z.boolean().optional().default(false),
 });
 
+type JsonRecord = Record<string, unknown>;
+type OnetSupabaseClient = ReturnType<typeof createClient>;
+
 interface EnrichmentData {
   occupationCode: string;
   occupationTitle: string;
@@ -45,6 +48,58 @@ interface EnrichmentData {
   }>;
 }
 
+interface EmploymentOutlookData {
+  employmentCurrent?: number;
+  employmentProjected?: number;
+  employmentChangePercent?: number;
+  jobOpeningsAnnual?: number;
+  growthRate?: string;
+}
+
+interface WageData {
+  medianWageAnnual?: number;
+  medianWageHourly?: number;
+}
+
+interface JobZoneData {
+  jobZone?: number;
+  jobZoneDescription?: string;
+  educationLevel?: string;
+  experienceRequired?: string;
+}
+
+interface RelatedOccupation {
+  code: string;
+  title: string;
+  similarityScore?: number;
+}
+
+interface CareerClusterData {
+  careerCluster?: string;
+  careerClusterId?: string;
+}
+
+const isRecord = (value: unknown): value is JsonRecord =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim() ? value.trim() : undefined;
+
+const asNumber = (value: unknown): number | undefined => {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    const normalized = value.replace(/[$,%]/g, "").replace(/,/g, "").trim();
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+};
+
+const asRecordArray = (value: unknown): JsonRecord[] => {
+  if (Array.isArray(value)) return value.filter(isRecord);
+  return isRecord(value) ? [value] : [];
+};
+
 /**
  * Get Basic Auth header for O*NET API
  */
@@ -59,7 +114,7 @@ function getAuthHeader(): string {
 /**
  * Fetch data from O*NET API with error handling
  */
-async function fetchOnetData(path: string): Promise<any> {
+async function fetchOnetData(path: string): Promise<JsonRecord | null> {
   const url = `${ONET_BASE_URL}/${path}`;
   console.log(`Fetching O*NET data: ${url}`);
 
@@ -78,7 +133,8 @@ async function fetchOnetData(path: string): Promise<any> {
       return null;
     }
 
-    return await response.json();
+    const payload = await response.json();
+    return isRecord(payload) ? payload : null;
   } catch (error) {
     console.error(`Failed to fetch ${path}:`, error);
     return null;
@@ -91,20 +147,22 @@ async function fetchOnetData(path: string): Promise<any> {
 async function getBrightOutlookData(code: string): Promise<{ bright: boolean; category?: string }> {
   const data = await fetchOnetData(`mnm/careers/${code}/bright_outlook`);
   
-  if (!data || !data.bright_outlook) {
+  const bo = isRecord(data?.bright_outlook) ? data.bright_outlook : null;
+  if (!bo) {
     return { bright: false };
   }
 
-  const bo = data.bright_outlook;
   let category: string | undefined;
   
-  if (bo.category) {
-    category = bo.category;
-  } else if (bo.description) {
+  const categoryValue = asString(bo.category);
+  const description = asString(bo.description);
+  if (categoryValue) {
+    category = categoryValue;
+  } else if (description) {
     // Parse description for category
-    if (bo.description.includes("rapid growth")) category = "Rapid Growth";
-    else if (bo.description.includes("numerous openings")) category = "Numerous Openings";
-    else if (bo.description.includes("new and emerging")) category = "New & Emerging";
+    if (description.includes("rapid growth")) category = "Rapid Growth";
+    else if (description.includes("numerous openings")) category = "Numerous Openings";
+    else if (description.includes("new and emerging")) category = "New & Emerging";
   }
 
   return {
@@ -116,101 +174,101 @@ async function getBrightOutlookData(code: string): Promise<{ bright: boolean; ca
 /**
  * Extract Employment Outlook data
  */
-async function getEmploymentOutlookData(code: string): Promise<any> {
+async function getEmploymentOutlookData(code: string): Promise<EmploymentOutlookData> {
   const data = await fetchOnetData(`mnm/careers/${code}/outlook`);
   
-  if (!data || !data.outlook) {
+  const outlook = isRecord(data?.outlook) ? data.outlook : null;
+  if (!outlook) {
     return {};
   }
 
-  const outlook = data.outlook;
   return {
-    employmentCurrent: outlook.employment_current || outlook.current_employment,
-    employmentProjected: outlook.employment_projected || outlook.projected_employment,
-    employmentChangePercent: outlook.percent_change || outlook.employment_change_percent,
-    jobOpeningsAnnual: outlook.annual_openings || outlook.job_openings,
-    growthRate: outlook.growth || outlook.growth_rate || outlook.outlook_category,
+    employmentCurrent: asNumber(outlook.employment_current) ?? asNumber(outlook.current_employment),
+    employmentProjected: asNumber(outlook.employment_projected) ?? asNumber(outlook.projected_employment),
+    employmentChangePercent: asNumber(outlook.percent_change) ?? asNumber(outlook.employment_change_percent),
+    jobOpeningsAnnual: asNumber(outlook.annual_openings) ?? asNumber(outlook.job_openings),
+    growthRate: asString(outlook.growth) ?? asString(outlook.growth_rate) ?? asString(outlook.outlook_category),
   };
 }
 
 /**
  * Extract Wage data
  */
-async function getWageData(code: string): Promise<any> {
+async function getWageData(code: string): Promise<WageData> {
   const data = await fetchOnetData(`mnm/careers/${code}/wages`);
   
-  if (!data || !data.wages) {
+  const wages = isRecord(data?.wages) ? data.wages : null;
+  if (!wages) {
     return {};
   }
 
-  const wages = data.wages;
   return {
-    medianWageAnnual: wages.annual_median || wages.median_annual,
-    medianWageHourly: wages.hourly_median || wages.median_hourly,
+    medianWageAnnual: asNumber(wages.annual_median) ?? asNumber(wages.median_annual),
+    medianWageHourly: asNumber(wages.hourly_median) ?? asNumber(wages.median_hourly),
   };
 }
 
 /**
  * Extract Job Zone and Education data
  */
-async function getJobZoneData(code: string): Promise<any> {
+async function getJobZoneData(code: string): Promise<JobZoneData> {
   const data = await fetchOnetData(`online/occupations/${code}/summary/job_zone`);
   
-  if (!data || !data.job_zone) {
+  const jz = isRecord(data?.job_zone) ? data.job_zone : null;
+  if (!jz) {
     return {};
   }
 
-  const jz = data.job_zone;
   return {
-    jobZone: parseInt(jz.job_zone || jz.zone) || undefined,
-    jobZoneDescription: jz.name || jz.description,
-    educationLevel: jz.education,
-    experienceRequired: jz.experience,
+    jobZone: asNumber(jz.job_zone) ?? asNumber(jz.zone),
+    jobZoneDescription: asString(jz.name) ?? asString(jz.description),
+    educationLevel: asString(jz.education),
+    experienceRequired: asString(jz.experience),
   };
 }
 
 /**
  * Extract Related Occupations
  */
-async function getRelatedOccupations(code: string): Promise<Array<{ code: string; title: string; similarityScore?: number }>> {
+async function getRelatedOccupations(code: string): Promise<RelatedOccupation[]> {
   const data = await fetchOnetData(`online/occupations/${code}/related_occupations`);
   
-  if (!data || !data.related_occupation) {
-    return [];
-  }
+  const related = asRecordArray(data?.related_occupation);
 
-  const related = Array.isArray(data.related_occupation) 
-    ? data.related_occupation 
-    : [data.related_occupation];
+  return related.slice(0, 10).flatMap((occ, index) => {
+    const occupationCode = asString(occ.code) ?? asString(occ.onetsoc_code);
+    const title = asString(occ.title) ?? asString(occ.name);
+    if (!occupationCode || !title) return [];
 
-  return related.slice(0, 10).map((occ: any, index: number) => ({
-    code: occ.code || occ.onetsoc_code,
-    title: occ.title || occ.name,
-    similarityScore: occ.similarity ? parseFloat(occ.similarity) : (1.0 - index * 0.05),
-  }));
+    return [{
+      code: occupationCode,
+      title,
+      similarityScore: asNumber(occ.similarity) ?? (1.0 - index * 0.05),
+    }];
+  });
 }
 
 /**
  * Get Career Cluster from occupation details
  */
-async function getCareerClusterData(code: string): Promise<any> {
+async function getCareerClusterData(code: string): Promise<CareerClusterData> {
   const data = await fetchOnetData(`online/occupations/${code}/career_cluster`);
   
-  if (!data || !data.career_cluster) {
+  const cc = isRecord(data?.career_cluster) ? data.career_cluster : null;
+  if (!cc) {
     return {};
   }
 
-  const cc = data.career_cluster;
   return {
-    careerCluster: cc.title || cc.name,
-    careerClusterId: cc.code || cc.id,
+    careerCluster: asString(cc.title) ?? asString(cc.name),
+    careerClusterId: asString(cc.code) ?? asString(cc.id),
   };
 }
 
 /**
  * Check if occupation is STEM using official O*NET membership
  */
-async function checkStem(occupationCode: string, supabase: any): Promise<boolean> {
+async function checkStem(occupationCode: string, supabase: OnetSupabaseClient): Promise<boolean> {
   const { data } = await supabase
     .from("onet_stem_membership")
     .select("occupation_code")
@@ -274,7 +332,8 @@ export async function handler(req: Request) {
 
     // Get basic occupation info first
     const basicData = await fetchOnetData(`online/occupations/${occupationCode}`);
-    const title = basicData?.title || basicData?.occupation?.title || "Unknown";
+    const occupation = isRecord(basicData?.occupation) ? basicData.occupation : null;
+    const title = asString(basicData?.title) ?? asString(occupation?.title) ?? "Unknown";
 
     // Fetch all enrichment data in parallel
     const [brightOutlook, employment, wages, jobZone, related, careerCluster] = await Promise.all([

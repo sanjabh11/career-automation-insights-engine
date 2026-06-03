@@ -3,7 +3,7 @@
  * Manages user subscription state, feature access, and usage tracking
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -28,6 +28,9 @@ interface Subscription {
   updated_at: string;
 }
 
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
+
 export const useSubscription = () => {
   const { toast } = useToast();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -39,50 +42,8 @@ export const useSubscription = () => {
     exportsThisMonth: 0,
   });
 
-  // Fetch current subscription
-  const fetchSubscription = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      // Get active subscription
-      const { data, error } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      // Gracefully handle quota exceeded (402) or other errors
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.warn('[useSubscription] fetch failed (quota may be exceeded):', error.message);
-        // Default to free tier when quota exceeded
-        setSubscription(null);
-        setLoading(false);
-        return;
-      }
-
-      setSubscription(data);
-
-      // Fetch usage stats (skip if quota exceeded)
-      if (!error) {
-        await fetchUsageStats(user.id);
-      }
-    } catch (error: any) {
-      console.warn('[useSubscription] Error in fetchSubscription:', error?.message || error);
-      setSubscription(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch usage statistics
-  const fetchUsageStats = async (userId: string) => {
+  const fetchUsageStats = useCallback(async (userId: string) => {
     try {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -130,10 +91,52 @@ export const useSubscription = () => {
         savedAnalysesCount: savedCount || 0,
         exportsThisMonth: exportCount || 0,
       });
-    } catch (error: any) {
-      console.warn('[useSubscription] Error fetching usage stats:', error?.message || error);
+    } catch (error: unknown) {
+      console.warn('[useSubscription] Error fetching usage stats:', getErrorMessage(error, 'Unknown usage stats error'));
     }
-  };
+  }, []);
+
+  // Fetch current subscription
+  const fetchSubscription = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      // Get active subscription
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // Gracefully handle quota exceeded (402) or other errors
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.warn('[useSubscription] fetch failed (quota may be exceeded):', error.message);
+        // Default to free tier when quota exceeded
+        setSubscription(null);
+        setLoading(false);
+        return;
+      }
+
+      setSubscription(data);
+
+      // Fetch usage stats (skip if quota exceeded)
+      if (!error) {
+        await fetchUsageStats(user.id);
+      }
+    } catch (error: unknown) {
+      console.warn('[useSubscription] Error in fetchSubscription:', getErrorMessage(error, 'Unknown subscription error'));
+      setSubscription(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchUsageStats]);
 
   useEffect(() => {
     fetchSubscription();
@@ -160,7 +163,7 @@ export const useSubscription = () => {
       channel.unsubscribe();
     };
     */
-  }, []);
+  }, [fetchSubscription]);
 
   // Get current tier (defaults to 'free' if no active subscription)
   const currentTier: SubscriptionTier['id'] = subscription?.tier || 'free';

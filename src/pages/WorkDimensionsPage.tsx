@@ -38,7 +38,7 @@ export default function WorkDimensionsPage() {
       const table = tableMap[dimension];
       
       // Query with importance filter
-      let query = supabase
+      const query = supabase
         .from(table)
         .select("*")
         .gte("importance", minImportance)

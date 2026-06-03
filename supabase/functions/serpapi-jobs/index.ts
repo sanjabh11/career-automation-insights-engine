@@ -32,6 +32,20 @@ interface JobMarketData {
   error?: string;
 }
 
+interface SerpApiJobResult {
+  title?: string;
+  company_name?: string;
+  location?: string;
+  salary?: number | string | null;
+  posted_at?: string;
+  via?: string;
+}
+
+interface SerpApiJobsResponse {
+  error?: string;
+  jobs_results?: SerpApiJobResult[];
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -49,7 +63,7 @@ serve(async (req) => {
       hl: 'en',
       gl: 'us',
       num: '10',
-    });
+    }) as SerpApiJobsResponse;
     console.log('SerpAPI response received, jobs found:', data.jobs_results?.length || 0);
 
     if (data.error) {
@@ -65,22 +79,22 @@ serve(async (req) => {
       });
     }
 
-    const jobs = data.jobs_results || [];
+    const jobs = (data.jobs_results || []) as SerpApiJobResult[];
     const totalJobs = jobs.length;
 
     // Process job data
-    const recentJobs: JobResult[] = jobs.slice(0, 5).map((job: any) => ({
+    const recentJobs: JobResult[] = jobs.slice(0, 5).map((job) => ({
       title: job.title || 'Unknown Title',
       company: job.company_name || 'Unknown Company',
       location: job.location || 'Unknown Location',
-      salary: job.salary ? `$${job.salary}` : null,
+      salary: job.salary ? `$${job.salary}` : undefined,
       postedDate: job.posted_at || 'Recently',
       source: job.via || 'Job Board'
     }));
 
     // Extract locations and count them
     const locationCounts = new Map<string, number>();
-    jobs.forEach((job: any) => {
+    jobs.forEach((job) => {
       if (job.location) {
         const location = job.location.split(',')[0].trim(); // Get city name
         locationCounts.set(location, (locationCounts.get(location) || 0) + 1);
@@ -94,8 +108,8 @@ serve(async (req) => {
 
     // Calculate salary information if available
     const salariesWithNumbers = jobs
-      .map((job: any) => job.salary)
-      .filter((salary: any) => salary && typeof salary === 'number');
+      .map((job) => job.salary)
+      .filter((salary): salary is number => typeof salary === 'number' && Number.isFinite(salary));
 
     let averageSalary: number | undefined;
     let salaryRange: { min: number; max: number } | undefined;

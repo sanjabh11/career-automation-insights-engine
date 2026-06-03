@@ -37,8 +37,8 @@ export function WhopHeroSection() {
 
           {/* Subtitle - Value prop for creators */}
           <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Give your members AI-powered career automation risk analysis, 
-            personalized roadmaps, and 24/7 AI coaching to future-proof their careers.
+            Give your members AI-assisted automation-defense planning,
+            personalized roadmaps, and 24/7 coaching prompts with source and limitation notes.
           </p>
 
           {/* CTA Buttons */}

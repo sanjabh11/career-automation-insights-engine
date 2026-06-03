@@ -7,19 +7,26 @@ Deno.env.set("GEMINI_API_KEY", "fake-key");
 Deno.env.set("SUPABASE_URL", "http://localhost:54321");
 Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", "fake-role");
 
+interface IntelligentTaskAssessmentResponse {
+  assessments: Array<{
+    category: string;
+  }>;
+}
+
 // Track intervals to clear after test
 const _setInterval = globalThis.setInterval;
 const _clearInterval = globalThis.clearInterval;
-const __intervalIds: number[] = [];
-globalThis.setInterval = ((handler: TimerHandler, timeout?: number, ...args: any[]): number => {
-  const id = _setInterval(handler as any, timeout as any, ...args);
+const __intervalIds: ReturnType<typeof globalThis.setInterval>[] = [];
+globalThis.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]): ReturnType<typeof globalThis.setInterval> => {
+  const id = _setInterval(handler, timeout, ...args);
   __intervalIds.push(id);
   return id;
-}) as any;
+}) as typeof globalThis.setInterval;
 
 const originalFetch = globalThis.fetch;
 
-globalThis.fetch = async (input: Request | string, init?: RequestInit): Promise<Response> => {
+globalThis.fetch = async (...args: Parameters<typeof fetch>): Promise<Response> => {
+  const [input] = args;
   if (typeof input === "string" && input.includes("gemini-2.5-flash")) {
     return new Response(
       JSON.stringify({
@@ -42,7 +49,7 @@ globalThis.fetch = async (input: Request | string, init?: RequestInit): Promise<
   if (typeof input === "string" && input.includes("/rest/v1/ai_task_assessments")) {
     return new Response(null, { status: 201 });
   }
-  return originalFetch(input as any, init);
+  return originalFetch(...args);
 };
 
 const { handler } = await import(
@@ -62,11 +69,11 @@ Deno.test("intelligent-task-assessment returns assessments", async () => {
   });
   const resp = await handler(req);
   assertEquals(resp.status, 200);
-  const data = await resp.json();
+  const data = await resp.json() as IntelligentTaskAssessmentResponse;
   assert(data.assessments.length === 1);
   assertEquals(data.assessments[0].category, "Automate");
 
-// Clear intervals created during handler execution
-for (const id of __intervalIds) _clearInterval(id as any);
-__intervalIds.length = 0;
+  // Clear intervals created during handler execution
+  for (const id of __intervalIds) _clearInterval(id);
+  __intervalIds.length = 0;
 });

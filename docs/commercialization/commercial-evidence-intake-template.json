@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "2026-06-01.apo-commercial-evidence-intake.v1",
+  "asOf": "2026-06-01",
+  "sourceBoundary": "Owner-held intake used only to compose redacted commercial evidence records. Keep this as a local file outside git or at docs/commercialization/commercial-evidence-intake.local.json. Do not commit partner names, emails, phone numbers, contracts, raw notes, private quotes, customer data, or the hash salt.",
+  "hashSalt": "replace-with-owner-held-random-salt-at-least-16-chars",
+  "designPartnerCommitments": [
+    {
+      "partnerRef": "replace-with-owner-stable-partner-reference-1",
+      "segment": "career_coach",
+      "committedAt": "2026-06-01",
+      "permissioned": true,
+      "contactPermission": true,
+      "pilotScopeAccepted": true,
+      "planningOnlyUseConfirmed": true,
+      "artifactReviewed": "sample_report",
+      "nextStepRecorded": true,
+      "redactionLevel": "public_segment_only",
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
+    }
+  ],
+  "documentedOutcomes": [
+    {
+      "outcomeRef": "replace-with-owner-stable-outcome-reference-1",
+      "observedAt": "2026-06-01",
+      "permissioned": true,
+      "baselineWorkflowCaptured": true,
+      "artifactReviewed": "sample_report",
+      "measuredChangeCaptured": true,
+      "approvedQuoteCaptured": true,
+      "quoteApprovalCaptured": true,
+      "redactionLevel": "public_quote_approved",
+      "doesNotProve": [
+        "Guaranteed career outcomes",
+        "Causal impact",
+        "Generalizable demand"
+      ]
+    }
+  ]
+}

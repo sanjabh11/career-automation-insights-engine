@@ -21,7 +21,9 @@ export function SkillFreshnessAlerts({ skill, derived }: { skill: string; derive
       at.setMonth(at.getMonth() + months);
       localStorage.setItem(key, JSON.stringify({ skill, remindAt: at.toISOString(), createdAt: new Date().toISOString() }));
       alert(`Reminder set for ~${months} months from now`);
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   };
 
   return (

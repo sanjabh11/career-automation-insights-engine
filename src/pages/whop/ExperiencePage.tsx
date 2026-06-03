@@ -17,7 +17,7 @@
 import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useWhopApp } from '@/contexts/WhopAppContext';
+import { useWhopApp } from '@/contexts/useWhopApp';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle, Crown, Zap } from 'lucide-react';
 import { WhopHeroSection } from '@/components/whop/WhopHeroSection';

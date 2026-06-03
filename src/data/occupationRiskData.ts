@@ -1,9 +1,9 @@
 /**
  * SEO Occupation Data - 50 High-Traffic Occupations for Landing Pages
- * Based on Value Proposition Research: Programmatic SEO for "Will AI Replace X" queries
+ * Based on bounded programmatic SEO for source-labeled automation-defense estimates
  * 
  * URL Pattern: /automation-risk/{occupation-slug}
- * Title: "Will AI Replace {Job}s? Risk: X%. See the Bridge to {Safe Role}"
+ * Title: "{Job} Automation Defense Estimate"
  */
 
 export interface OccupationRiskData {
@@ -51,7 +51,7 @@ export const occupationRiskData: Record<string, OccupationRiskData> = {
         ],
         bridgeRole: 'Business Analyst',
         bridgeRoleRisk: 35,
-        seoDescription: 'Data entry is 92% automatable. Learn which skills transfer to analyst roles and protect your career from AI displacement.'
+        seoDescription: 'Data entry has a high decision-support exposure estimate. Review which skills transfer to analyst roles and where human review remains important.'
     },
     'telemarketer': {
         title: 'Telemarketer',
@@ -107,7 +107,7 @@ export const occupationRiskData: Record<string, OccupationRiskData> = {
         ],
         bridgeRole: 'Staff Accountant',
         bridgeRoleRisk: 52,
-        seoDescription: 'Bookkeeping is 85% at risk. See the career bridge to accounting and controller positions that AI cannot easily replace.'
+        seoDescription: 'Bookkeeping has a high decision-support exposure estimate. See career bridge options toward accounting and controller responsibilities that require review.'
     },
     'loan-officer': {
         title: 'Loan Officer',
@@ -336,7 +336,7 @@ export const occupationRiskData: Record<string, OccupationRiskData> = {
         ],
         bridgeRole: 'UX Designer',
         bridgeRoleRisk: 22,
-        seoDescription: 'Detailed automation risk analysis for graphic designers. Learn which design tasks AI will replace and how to future-proof your design career.'
+        seoDescription: 'Detailed automation-defense estimate for graphic designers. Review which design tasks may face AI assistance pressure and which skills support resilience.'
     },
     'accountant': {
         title: 'Accountant',

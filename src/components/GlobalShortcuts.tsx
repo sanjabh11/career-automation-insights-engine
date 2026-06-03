@@ -10,7 +10,7 @@ export default function GlobalShortcuts() {
       const isTyping = !!target && (
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
-        (target as any).isContentEditable === true
+        target.isContentEditable === true
       );
       if (isTyping) return;
 

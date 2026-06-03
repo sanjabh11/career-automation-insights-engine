@@ -494,7 +494,7 @@ export default function ResumeAnalyzer() {
 
                 toast({
                     title: 'Analysis Complete',
-                    description: `Automation Risk Score: ${data.automation_risk_score}/100`,
+                    description: `Decision-support exposure estimate: ${data.automation_risk_score}/100`,
                 });
             }
         } catch (error: unknown) {

@@ -11,9 +11,17 @@ export interface SearchHistoryItem {
   searched_at: string;
 }
 
-function isMissingRelationOrColumn(error: any): boolean {
-  const msg = String(error?.message || "");
-  const code = String(error?.code || "");
+interface AddSearchInput {
+  search_term: string;
+  results_count: number;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+function isMissingRelationOrColumn(error: unknown): boolean {
+  const msg = isRecord(error) && typeof error.message === "string" ? error.message : "";
+  const code = isRecord(error) && typeof error.code === "string" ? error.code : "";
   return (
     code === "42P01" || // undefined_table
     code === "42703" || // undefined_column
@@ -79,10 +87,7 @@ export function useSearchHistory() {
     mutationFn: async ({ 
       search_term, 
       results_count 
-    }: {
-      search_term: string;
-      results_count: number;
-    }) => {
+    }: AddSearchInput) => {
       if (!user || !schemaAvailableRef.current) return;
 
       const { error } = await supabase
@@ -134,7 +139,7 @@ export function useSearchHistory() {
   return {
     searchHistory,
     isLoading,
-    addSearch: (data: any) => addSearchMutation.mutate(data),
+    addSearch: (data: AddSearchInput) => addSearchMutation.mutate(data),
     clearHistory: () => clearHistoryMutation.mutate(),
     isClearing: clearHistoryMutation.isPending,
   };

@@ -8,7 +8,7 @@
  * who don't have an active session. Real data shown for authenticated users.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Users, 
   TrendingUp, 
@@ -59,6 +59,20 @@ interface MemberSummary {
   lastActiveAt: string;
   analysesCount: number;
   riskScore: number | null;
+}
+
+interface WhopMembershipRow {
+  id: string;
+  whop_user_id: string;
+  tier: string | null;
+  valid: boolean | null;
+  created_at: string;
+  profile?: {
+    id: string;
+    email: string | null;
+    display_name: string | null;
+    updated_at: string | null;
+  } | null;
 }
 
 interface UsageMetric {
@@ -123,6 +137,7 @@ const DEMO_MEMBERS: MemberSummary[] = [
 
 export function CommunityDashboard() {
   const { session } = useSession();
+  const userId = session?.user?.id;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState<CommunityStats | null>(null);
@@ -131,13 +146,9 @@ export function CommunityDashboard() {
   const [communityName, setCommunityName] = useState<string>('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [session]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     // If no session, show demo data (for Whop reviewers)
-    if (!session?.user) {
+    if (!userId) {
       setIsPreviewMode(true);
       setStats(DEMO_STATS);
       setMembers(DEMO_MEMBERS);
@@ -155,7 +166,7 @@ export function CommunityDashboard() {
       const { data: community, error: communityError } = await supabase
         .from('whop_communities')
         .select('*')
-        .eq('owner_profile_id', session.user.id)
+        .eq('owner_profile_id', userId)
         .single();
 
       if (communityError) {
@@ -216,7 +227,7 @@ export function CommunityDashboard() {
       if (membersError) {
         console.error('Error loading members:', membersError);
       } else if (membersData) {
-        const formattedMembers: MemberSummary[] = membersData.map((m: any) => ({
+        const formattedMembers: MemberSummary[] = (membersData as WhopMembershipRow[]).map((m) => ({
           id: m.id,
           email: m.profile?.email || 'Unknown',
           displayName: m.profile?.display_name || m.whop_user_id,
@@ -235,7 +246,11 @@ export function CommunityDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

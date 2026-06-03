@@ -14,8 +14,8 @@ interface ManageContextRequest {
   conversationType?: 'career_coaching' | 'skill_planning' | 'resume_review' | 'general';
   data?: {
     message?: { role: string; content: string };
-    userContext?: Record<string, any>;
-    userPreferences?: Record<string, any>;
+    userContext?: Record<string, unknown>;
+    userPreferences?: Record<string, unknown>;
     mentionedOccupations?: string[];
     mentionedSkills?: string[];
   };
@@ -27,8 +27,8 @@ interface ContextResponse {
     sessionId: string;
     conversationType: string;
     conversationHistory: Array<{ role: string; content: string; timestamp: string }>;
-    userContext: Record<string, any>;
-    userPreferences: Record<string, any>;
+    userContext: Record<string, unknown>;
+    userPreferences: Record<string, unknown>;
     memorySummary?: string;
     keyFacts?: string[];
     lastInteractionAt: string;

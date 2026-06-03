@@ -7,11 +7,12 @@ import NavigationPremium from "@/components/NavigationPremium";
 import { redirectToCreditCheckout, CREDIT_PACKAGES } from "@/lib/stripe";
 import { useSession } from "@/hooks/useSession";
 import { useToast } from "@/hooks/use-toast";
+import { CoachAuditWorkspacePanel } from "@/components/proof/ProofVisibilityPanels";
 
 /**
  * ForCoachesPage - B2B Landing Page for Career Coaches
  * 
- * Value Proposition: "Generate Future-Proof Client Reports in 30 Seconds"
+ * Value Proposition: "Generate Source-Labeled Automation Defense Audits"
  * Target: Career counselors, executive coaches, resume writers
  * Pricing Push: $149/mo Coach tier or $20/report PAYG
  */
@@ -40,13 +41,13 @@ export default function ForCoachesPage() {
     const features = [
         {
             icon: Clock,
-            title: "30-Second Reports",
-            description: "Generate comprehensive automation risk audits in under a minute. No more hours of manual research."
+            title: "Fast Draft Audits",
+            description: "Generate a source-labeled automation defense audit draft for human review before client delivery."
         },
         {
             icon: Palette,
-            title: "100% White Label",
-            description: "Your logo, your colors, your brand. We're the invisible intelligence engine powering your practice."
+            title: "White Label",
+            description: "Your logo, colors, and review notes on a planning artifact that stays inside your coaching workflow."
         },
         {
             icon: Shield,
@@ -55,8 +56,8 @@ export default function ForCoachesPage() {
         },
         {
             icon: Users,
-            title: "Client Authority",
-            description: "Data-backed career advice builds trust. Stop guessing - start showing quantified evidence."
+            title: "Evidence Boundaries",
+            description: "Show source IDs, review state, uncertainty, and what the estimate does not prove."
         }
     ];
 
@@ -92,7 +93,7 @@ export default function ForCoachesPage() {
     ];
 
     const testimonialData = {
-        quote: "I used to spend 2 hours researching each client's industry before our sessions. Now I generate a personalized automation risk report in 30 seconds and charge clients $150 for it.",
+        quote: "The useful part is having a structured, source-labeled planning artifact I can review before a client session.",
         author: "Career Coach",
         role: "Executive Career Services"
     };
@@ -101,6 +102,9 @@ export default function ForCoachesPage() {
         <div className="min-h-screen overflow-x-hidden bg-[#0F172A]">
             <NavigationPremium />
             <main>
+            <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6 lg:px-8">
+                <CoachAuditWorkspacePanel />
+            </section>
 
             {/* Hero Section */}
             <section className="relative pt-24 pb-16 overflow-hidden">
@@ -117,15 +121,15 @@ export default function ForCoachesPage() {
                         </div>
 
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-                            Generate "Future-Proof"<br />
+                            Build Source-Labeled<br />
                             <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                                Client Reports in 30 Seconds
+                                Automation Defense Audits
                             </span>
                         </h1>
 
                         <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
-                            Stop guessing which jobs are safe. Differentiate your coaching practice with
-                            white-labeled, AI-driven automation risk audits and reskilling roadmaps.
+                            Differentiate your coaching practice with white-labeled, source-labeled
+                            decision-support audits, uncertainty notes, and reskilling roadmaps for review.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -175,7 +179,7 @@ export default function ForCoachesPage() {
                             <div className="grid grid-cols-3 gap-4 mb-6">
                                 <div className="bg-red-50 p-4 rounded-lg text-center">
                                     <div className="text-3xl font-bold text-red-600">73%</div>
-                                    <div className="text-sm text-red-700">Current Risk</div>
+                                    <div className="text-sm text-red-700">Current Exposure</div>
                                 </div>
                                 <div className="bg-amber-50 p-4 rounded-lg text-center">
                                     <div className="text-3xl font-bold text-amber-600">3</div>
@@ -183,7 +187,7 @@ export default function ForCoachesPage() {
                                 </div>
                                 <div className="bg-emerald-50 p-4 rounded-lg text-center">
                                     <div className="text-3xl font-bold text-emerald-600">18%</div>
-                                    <div className="text-sm text-emerald-700">Target Risk</div>
+                                    <div className="text-sm text-emerald-700">Target Exposure</div>
                                 </div>
                             </div>
 
@@ -193,7 +197,7 @@ export default function ForCoachesPage() {
                         </div>
 
                         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
-                            ✨ Generated in 28 seconds
+                            Draft generated for coach review
                         </div>
                     </motion.div>
                 </motion.div>
@@ -230,7 +234,7 @@ export default function ForCoachesPage() {
                         The Math is Simple
                     </h2>
                     <p className="text-slate-400 text-center mb-10 max-w-2xl mx-auto">
-                        Stop selling time. Start selling insights.
+                        Package a reviewed planning artifact with clear source and limitation boundaries.
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -248,15 +252,15 @@ export default function ForCoachesPage() {
                         </div>
                         <div className="bg-gradient-to-b from-emerald-900/40 to-slate-800/60 rounded-xl p-6 text-center border-2 border-emerald-500/40">
                             <Zap className="h-8 w-8 text-amber-400 mx-auto mb-3" />
-                            <div className="text-3xl font-bold text-emerald-400 mb-1">15x ROI</div>
-                            <div className="text-slate-400 text-sm">Return on your subscription</div>
-                            <div className="text-slate-500 text-xs mt-1">One client pays for 10 months</div>
+                            <div className="text-3xl font-bold text-emerald-400 mb-1">Review Loop</div>
+                            <div className="text-slate-400 text-sm">Coach-approved before delivery</div>
+                            <div className="text-slate-500 text-xs mt-1">Revenue proof remains owner-held until live evidence is attached</div>
                         </div>
                     </div>
 
                     <div className="text-center">
                         <p className="text-slate-300 text-lg">
-                            With just <strong className="text-emerald-400">2 clients per month</strong>, your Coach Pro subscription pays for itself <strong className="text-white">20x over</strong>.
+                            Use your own engagement model and client permissions before making pricing, ROI, or outcome claims.
                         </p>
                     </div>
                 </div>
@@ -284,7 +288,7 @@ export default function ForCoachesPage() {
                             {
                                 step: "3",
                                 title: "Deliver & Charge",
-                                description: "Download the PDF report. Share with your client. Charge $150-$300 for the 'Career Future-Proofing Audit.'"
+                                description: "Download the reviewed PDF report. Share with your client as a planning artifact, with caveats and source dates intact."
                             }
                         ].map((item) => (
                             <motion.div
@@ -332,7 +336,7 @@ export default function ForCoachesPage() {
             <section className="py-16 bg-slate-900/50">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-white text-center mb-12">
-                        Why Top Coaches Choose APO
+                        Why Coaches Review APO Artifacts
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -367,7 +371,7 @@ export default function ForCoachesPage() {
                         Simple, Transparent Pricing
                     </h2>
                     <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-                        One client session covers your monthly cost. Generate unlimited reports, charge clients $150-$300 each.
+                        Pricing is transparent; client billing and ROI claims must be supported by your own engagement evidence.
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

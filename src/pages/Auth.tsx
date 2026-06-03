@@ -7,7 +7,7 @@ import { Loader2, Shield } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useAuthMode } from "@/contexts/WhopAppContext";
+import { useAuthMode } from "@/contexts/useWhopApp";
 
 function mapAuthError(raw: string): string {
   const lower = raw.toLowerCase();
@@ -93,8 +93,8 @@ const Auth = () => {
         // Full reload to update state everywhere
         window.location.href = "/";
       }
-    } catch (err: any) {
-      const raw = err?.message || "";
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "";
       const friendly = mapAuthError(raw);
       setError(friendly);
       setPending(false);

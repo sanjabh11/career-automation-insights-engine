@@ -79,6 +79,28 @@ function result(id, label, passed, message, evidence = {}) {
   };
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableAuthError(error) {
+  const status = Number(error?.status || 0);
+  const message = String(error?.message || '');
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504 || /timeout|retryable|context/i.test(message);
+}
+
+async function signInWithRetry(supabase, credentials, attempts = 4) {
+  let lastResult = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    lastResult = await supabase.auth.signInWithPassword(credentials);
+    if (!lastResult.error || !isRetryableAuthError(lastResult.error) || attempt === attempts) {
+      return { ...lastResult, attempts: attempt };
+    }
+    await delay(1000 * attempt);
+  }
+  return { ...lastResult, attempts };
+}
+
 function buildRedactedProofHtml(runId) {
   return `<!doctype html>
 <html lang="en">
@@ -190,7 +212,7 @@ async function main() {
   let artifactId = null;
 
   try {
-    const signIn = await supabase.auth.signInWithPassword({
+    const signIn = await signInWithRetry(supabase, {
       email: testEmail,
       password: testPassword,
     });
@@ -205,6 +227,7 @@ async function main() {
       result('auth-sign-in', 'Dedicated synthetic test user signs in', true, 'Signed in with password without printing credentials.', {
         userIdHash: sha256(userId).slice(0, 16),
         emailHash: sha256(testEmail.toLowerCase()).slice(0, 16),
+        authAttempts: signIn.attempts,
       })
     );
 

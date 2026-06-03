@@ -9,10 +9,12 @@ import { Loader2, Search, Zap, TrendingUp, Clock, Database, ShieldCheck } from '
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+type SkillType = 'knowledge' | 'ability';
+
 interface SkillNode {
     id: string;
     name: string;
-    type: 'knowledge' | 'ability';
+    type: SkillType;
     isCurrent?: boolean;
     similarity?: number;
     learningHours?: number;
@@ -43,9 +45,39 @@ interface OccupationSkill {
     data_value: number;
 }
 
+interface OccupationSearchResponse {
+    occupations?: unknown[];
+}
+
+interface AdjacentSkill {
+    adjacent_skill_id?: string;
+    skill_id?: string;
+    adjacent_skill_name?: string;
+    skill_name?: string;
+    similarity_score?: number | string;
+    estimated_learning_hours?: number | string;
+    salary_impact_usd?: number | string;
+    demand_score?: number | string;
+}
+
+interface SkillAdjacencyItem {
+    skill_id?: string;
+    element_id?: string;
+    skill_name?: string;
+    element_name?: string;
+    skill_type?: SkillType;
+    adjacent_skills?: AdjacentSkill[];
+}
+
+interface SkillAdjacencyResponse {
+    success?: boolean;
+    data?: SkillAdjacencyItem[];
+    error?: string;
+}
+
 interface SkillAdjacencyGraphProps {
     currentSkillIds?: string[];
-    skillType?: 'knowledge' | 'ability';
+    skillType?: SkillType;
     occupationCode?: string;
 }
 
@@ -56,15 +88,38 @@ const EXAMPLE_OCCUPATIONS: OccupationOption[] = [
     { code: '17-2071.00', title: 'Electrical Engineers' },
 ];
 
-function normalizeOccupation(item: any): OccupationOption | null {
-    const code = item?.occupation_code || item?.code || item?.onetsoc_code;
-    const title = item?.occupation_title || item?.title || item?.name;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+    typeof value === 'string' && value.trim() ? value.trim() : undefined;
+
+const asNumber = (value: unknown): number | undefined => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string' && value.trim()) {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : undefined;
+    }
+    return undefined;
+};
+
+const asSkillType = (value: unknown, fallback: SkillType): SkillType =>
+    value === 'knowledge' || value === 'ability' ? value : fallback;
+
+const toErrorMessage = (error: unknown, fallback: string): string =>
+    error instanceof Error ? error.message : fallback;
+
+function normalizeOccupation(item: unknown): OccupationOption | null {
+    if (!isRecord(item)) return null;
+
+    const code = asString(item.occupation_code) || asString(item.code) || asString(item.onetsoc_code);
+    const title = asString(item.occupation_title) || asString(item.title) || asString(item.name);
     if (!code || !title) return null;
 
     return {
         code,
         title,
-        description: item?.description || item?.summary || 'O*NET occupation profile',
+        description: asString(item.description) || asString(item.summary) || 'O*NET occupation profile',
     };
 }
 
@@ -88,7 +143,7 @@ export default function SkillAdjacencyGraph({
     const [selectedOccupation, setSelectedOccupation] = useState<OccupationOption | null>(
         occupationCode ? { code: occupationCode, title: occupationCode } : null
     );
-    const [activeSkillType, setActiveSkillType] = useState<'knowledge' | 'ability'>(skillType);
+    const [activeSkillType, setActiveSkillType] = useState<SkillType>(skillType);
     const [currentSkills, setCurrentSkills] = useState<OccupationSkill[]>([]);
     const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>(currentSkillIds);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -131,13 +186,13 @@ export default function SkillAdjacencyGraph({
 
             if (error) throw error;
 
-            const occupations = Array.isArray((data as any)?.occupations)
-                ? (data as any).occupations
-                : [];
+            const payload = data as OccupationSearchResponse | null;
+            const occupations = Array.isArray(payload?.occupations) ? payload.occupations : [];
 
-            const normalized = occupations
-                .map(normalizeOccupation)
-                .filter(Boolean) as OccupationOption[];
+            const normalized = occupations.flatMap((occupation) => {
+                const normalizedOccupation = normalizeOccupation(occupation);
+                return normalizedOccupation ? [normalizedOccupation] : [];
+            });
 
             setOccupationResults(normalized);
             setStatusMessage(
@@ -145,12 +200,12 @@ export default function SkillAdjacencyGraph({
                     ? `Found ${normalized.length} matching occupation${normalized.length === 1 ? '' : 's'}.`
                     : 'No matching occupations found. Try a broader title.'
             );
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error searching occupations:', error);
             setOccupationResults([]);
             toast({
                 title: 'Occupation Search Failed',
-                description: error.message || 'Unable to search occupations',
+                description: toErrorMessage(error, 'Unable to search occupations'),
                 variant: 'destructive'
             });
         } finally {
@@ -160,7 +215,7 @@ export default function SkillAdjacencyGraph({
 
     const loadOccupationSkills = async (
         occupation: OccupationOption,
-        nextSkillType: 'knowledge' | 'ability' = activeSkillType
+        nextSkillType: SkillType = activeSkillType
     ) => {
         setSelectedOccupation(occupation);
         setActiveSkillType(nextSkillType);
@@ -194,13 +249,13 @@ export default function SkillAdjacencyGraph({
             const skillIds = skills.map(skill => skill.element_id);
             setSelectedSkillIds(skillIds);
             await calculateAdjacency(skillIds, nextSkillType, occupation);
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error fetching occupation skills:', error);
             setGraphData({ nodes: [], links: [] });
             setStatusMessage('Skill data could not be loaded for this occupation.');
             toast({
                 title: 'Skill Load Failed',
-                description: error.message || 'Failed to load occupation skills',
+                description: toErrorMessage(error, 'Failed to load occupation skills'),
                 variant: 'destructive'
             });
         } finally {
@@ -210,7 +265,7 @@ export default function SkillAdjacencyGraph({
 
     const calculateAdjacency = async (
         skillIds: string[] = selectedSkillIds,
-        nextSkillType: 'knowledge' | 'ability' = activeSkillType,
+        nextSkillType: SkillType = activeSkillType,
         occupation: OccupationOption | null = selectedOccupation
     ) => {
         if (skillIds.length === 0) {
@@ -232,20 +287,21 @@ export default function SkillAdjacencyGraph({
 
             if (error) throw error;
 
-            if (data && data.success) {
-                buildGraphData(data.data || [], nextSkillType);
+            const payload = data as SkillAdjacencyResponse | null;
+            if (payload?.success) {
+                buildGraphData(Array.isArray(payload.data) ? payload.data : [], nextSkillType);
                 const label = occupation?.title || 'selected skills';
                 setStatusMessage(`Adjacency graph created for ${label}.`);
             } else {
-                throw new Error(data?.error || 'Adjacency function returned no usable data');
+                throw new Error(payload?.error || 'Adjacency function returned no usable data');
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error calculating adjacency:', error);
             setGraphData({ nodes: [], links: [] });
             setStatusMessage('Adjacency calculation failed. Check Supabase function keys and seeded skill data.');
             toast({
                 title: 'Adjacency Calculation Failed',
-                description: error.message || 'Failed to calculate skill adjacency',
+                description: toErrorMessage(error, 'Failed to calculate skill adjacency'),
                 variant: 'destructive'
             });
         } finally {
@@ -253,7 +309,7 @@ export default function SkillAdjacencyGraph({
         }
     };
 
-    const buildGraphData = (adjacencyData: any[], nextSkillType: 'knowledge' | 'ability') => {
+    const buildGraphData = (adjacencyData: SkillAdjacencyItem[], nextSkillType: SkillType) => {
         const nodes: SkillNode[] = [];
         const links: SkillLink[] = [];
         const nodeMap = new Map<string, SkillNode>();
@@ -266,7 +322,7 @@ export default function SkillAdjacencyGraph({
             const currentNode: SkillNode = {
                 id: skillId,
                 name: skillName,
-                type: item.skill_type || nextSkillType,
+                type: asSkillType(item.skill_type, nextSkillType),
                 isCurrent: true
             };
             nodes.push(currentNode);
@@ -276,21 +332,24 @@ export default function SkillAdjacencyGraph({
         adjacencyData.forEach(item => {
             const sourceId = item.skill_id || item.element_id;
             if (!sourceId) return;
+            const itemSkillType = asSkillType(item.skill_type, nextSkillType);
+            const adjacentSkills = Array.isArray(item.adjacent_skills) ? item.adjacent_skills : [];
 
-            item.adjacent_skills?.forEach((adj: any) => {
+            adjacentSkills.forEach((adj) => {
                 const adjacentId = adj.adjacent_skill_id || adj.skill_id;
                 if (!adjacentId) return;
+                const similarity = asNumber(adj.similarity_score);
 
                 if (!nodeMap.has(adjacentId)) {
                     const adjacentNode: SkillNode = {
                         id: adjacentId,
                         name: adj.adjacent_skill_name || adj.skill_name || adjacentId,
-                        type: item.skill_type || nextSkillType,
+                        type: itemSkillType,
                         isCurrent: false,
-                        similarity: adj.similarity_score,
-                        learningHours: adj.estimated_learning_hours,
-                        salaryImpact: adj.salary_impact_usd,
-                        demandScore: adj.demand_score
+                        similarity,
+                        learningHours: asNumber(adj.estimated_learning_hours),
+                        salaryImpact: asNumber(adj.salary_impact_usd),
+                        demandScore: asNumber(adj.demand_score)
                     };
                     nodes.push(adjacentNode);
                     nodeMap.set(adjacentId, adjacentNode);
@@ -299,7 +358,7 @@ export default function SkillAdjacencyGraph({
                 links.push({
                     source: sourceId,
                     target: adjacentId,
-                    value: Number(adj.similarity_score || 0.25)
+                    value: similarity ?? 0.25
                 });
             });
         });
@@ -337,7 +396,7 @@ export default function SkillAdjacencyGraph({
         return { width, height, positions };
     }, [graphData]);
 
-    const handleSkillTypeChange = (nextSkillType: 'knowledge' | 'ability') => {
+    const handleSkillTypeChange = (nextSkillType: SkillType) => {
         setActiveSkillType(nextSkillType);
         if (selectedOccupation) {
             loadOccupationSkills(selectedOccupation, nextSkillType);

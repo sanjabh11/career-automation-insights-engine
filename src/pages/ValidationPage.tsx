@@ -8,13 +8,66 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalibrationHealthWidget, RegionalLaborMarketSourceRowsPanel, SourceFreshnessPanel } from "@/components/proof/ProofVisibilityPanels";
+
+type CalibrationRun = {
+  id: string;
+  created_at?: string | null;
+  cohort?: string | null;
+};
+
+type CalibrationResult = {
+  bin_lower?: number | null;
+  bin_upper?: number | null;
+  predicted_avg?: number | null;
+  observed_avg?: number | null;
+  ece_component?: number | null;
+  count?: number | null;
+};
+
+type ValidationMetric = {
+  metric_name: string;
+  value: number;
+  sample_size?: number | null;
+  created_at?: string | null;
+};
+
+type CalibrationRunData = {
+  run: CalibrationRun;
+  results: CalibrationResult[];
+};
+
+type QueryResponse<T> = {
+  data: T | null;
+  error: { message?: string } | null;
+};
+
+type QueryBuilder<T> = {
+  select(columns: string): QueryBuilder<T>;
+  order(column: string, options?: { ascending?: boolean }): QueryBuilder<T>;
+  limit(count: number): QueryBuilder<T>;
+  eq(column: string, value: unknown): QueryBuilder<T>;
+  maybeSingle(): Promise<QueryResponse<T>>;
+  then<TResult1 = QueryResponse<T[]>, TResult2 = never>(
+    onfulfilled?: ((value: QueryResponse<T[]>) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+  ): PromiseLike<TResult1 | TResult2>;
+};
+
+type ValidationSupabaseClient = {
+  from(table: "calibration_runs"): QueryBuilder<CalibrationRun>;
+  from(table: "calibration_results"): QueryBuilder<CalibrationResult>;
+  from(table: "validation_metrics"): QueryBuilder<ValidationMetric>;
+};
+
+const validationSupabase = supabase as unknown as ValidationSupabaseClient;
 
 export default function ValidationPage() {
   const [cohort, setCohort] = React.useState<string>("all");
-  const { data: run, isLoading: runLoading, error: runError, refetch } = useQuery({
+  const { data: run, isLoading: runLoading, error: runError, refetch } = useQuery<CalibrationRunData | null>({
     queryKey: ["calibration-run-latest", cohort],
     queryFn: async () => {
-      let q = (supabase as any)
+      let q = validationSupabase
         .from("calibration_runs")
         .select("*")
         .order("created_at", { ascending: false })
@@ -29,7 +82,7 @@ export default function ValidationPage() {
         return null;
       }
       if (!data) return null;
-      const { data: results, error: resultsError } = await (supabase as any)
+      const { data: results, error: resultsError } = await validationSupabase
         .from("calibration_results")
         .select("*")
         .eq("run_id", data.id)
@@ -37,16 +90,16 @@ export default function ValidationPage() {
       if (resultsError) {
         console.warn('[ValidationPage] calibration_results query failed:', resultsError.message);
       }
-      return { run: data, results: results || [] } as any;
+      return { run: data, results: results || [] };
     },
     staleTime: 60_000,
     retry: false, // Don't retry on quota exceeded
   });
 
-  const { data: corrMetric, error: corrError } = useQuery({
+  const { data: corrMetric, error: corrError } = useQuery<ValidationMetric | null>({
     queryKey: ["validation-metric-pearson-r"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await validationSupabase
         .from("validation_metrics")
         .select("metric_name, value, sample_size, created_at")
         .eq("metric_name", "apo_vs_academic_pearson_r")
@@ -58,20 +111,20 @@ export default function ValidationPage() {
         console.warn('[ValidationPage] validation_metrics query failed:', error.message);
         return null;
       }
-      return data as any;
+      return data;
     },
     staleTime: 60_000,
     retry: false, // Don't retry on quota exceeded
   });
 
   const ece = React.useMemo(() => {
-    const rows = (run as any)?.results || [];
-    const total = rows.reduce((a: number, r: any) => a + (r.count || 0), 0) || 1;
-    const sum = rows.reduce((a: number, r: any) => a + (Number(r.ece_component ?? Math.abs((r.observed_avg||0)-(r.predicted_avg||0))) * (r.count||0) / total), 0);
+    const rows = run?.results || [];
+    const total = rows.reduce((a, r) => a + (r.count || 0), 0) || 1;
+    const sum = rows.reduce((a, r) => a + (Number(r.ece_component ?? Math.abs((r.observed_avg||0)-(r.predicted_avg||0))) * (r.count||0) / total), 0);
     return Math.round(sum * 1000) / 1000;
   }, [run]);
 
-  const chartData = ((run as any)?.results || []).map((r: any) => ({
+  const chartData = (run?.results || []).map((r) => ({
     bin: `${Math.round((r.bin_lower||0)*100)}–${Math.round((r.bin_upper||0)*100)}%`,
     predicted: Math.round((r.predicted_avg || 0) * 1000) / 10,
     observed: Math.round((r.observed_avg || 0) * 1000) / 10,
@@ -118,6 +171,10 @@ export default function ValidationPage() {
         </div>
       </Card>
 
+      <CalibrationHealthWidget />
+      <SourceFreshnessPanel />
+      <RegionalLaborMarketSourceRowsPanel />
+
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-3">
           <BarChart3 className="h-5 w-5 text-indigo-600" />
@@ -145,7 +202,6 @@ export default function ValidationPage() {
               try {
                 await supabase.functions.invoke("calibrate-ece", { body: { days: 90, binCount: 10, cohort: cohort === 'all' ? null : cohort } });
                 // Force refetch
-                await (supabase as any); // no-op to keep types quiet
                 window.location.reload();
               } catch (e) {
                 // swallow
@@ -169,9 +225,9 @@ export default function ValidationPage() {
         {run && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground">Latest run: {(run as any).run.created_at?.slice(0,19).replace('T',' ')}</div>
+              <div className="text-sm text-muted-foreground">Latest run: {run.run.created_at?.slice(0,19).replace('T',' ')}</div>
               <Badge variant="outline">ECE: {ece}</Badge>
-              <Badge variant="outline">Bins: {(run as any).results?.length || 0}</Badge>
+              <Badge variant="outline">Bins: {run.results.length}</Badge>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card className="p-3">

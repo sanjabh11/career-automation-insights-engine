@@ -42,7 +42,7 @@ interface ProfileAnalysisResult {
     estimatedDuration?: string;
   }>;
   matchScore?: number;
-  matchFactors?: Record<string, any>;
+  matchFactors?: Record<string, unknown>;
   estimatedTransitionMonths?: number;
 }
 
@@ -128,7 +128,7 @@ serve(async (req) => {
 
     // Build prompt based on analysis type
     let prompt = "";
-    let systemInstruction = `You are an expert career analyst specializing in automation risk assessment, skill gap analysis, and career transition planning. Analyze the provided profile data and provide detailed, actionable insights in JSON format.`;
+    const systemInstruction = `You are an expert career analyst specializing in automation risk assessment, skill gap analysis, and career transition planning. Analyze the provided profile data and provide detailed, actionable insights in JSON format.`;
 
     switch (analysisType) {
       case "automation_risk":

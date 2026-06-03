@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface UserSkill {
   id: string;
@@ -135,15 +135,15 @@ export function useCareerPlanningStorage() {
     localStorage.setItem(STORAGE_KEYS.USER_SKILLS, JSON.stringify(skills));
   };
 
-  const saveSkillGaps = (gaps: SkillGap[]) => {
+  const saveSkillGaps = useCallback((gaps: SkillGap[]) => {
     setSkillGaps(gaps);
     localStorage.setItem(STORAGE_KEYS.SKILL_GAPS, JSON.stringify(gaps));
-  };
+  }, []);
 
-  const saveCourseRecommendations = (courses: CourseRecommendation[]) => {
+  const saveCourseRecommendations = useCallback((courses: CourseRecommendation[]) => {
     setCourseRecommendations(courses);
     localStorage.setItem(STORAGE_KEYS.COURSE_RECOMMENDATIONS, JSON.stringify(courses));
-  };
+  }, []);
 
   const saveLearningPaths = (paths: LearningPath[]) => {
     setLearningPaths(paths);
@@ -262,7 +262,7 @@ export function useCareerPlanningStorage() {
     }
   };
 
-  const analyzeSkillGaps = (skills: UserSkill[]): SkillGap[] => {
+  const analyzeSkillGaps = useCallback((skills: UserSkill[]): SkillGap[] => {
     return skills
       .filter(skill => skill.currentLevel < skill.targetLevel)
       .map(skill => {
@@ -291,7 +291,7 @@ export function useCareerPlanningStorage() {
           recommendations,
         };
       });
-  };
+  }, []);
 
   return {
     // Data

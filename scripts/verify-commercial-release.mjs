@@ -19,6 +19,11 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-report-evidence.mjs'],
   },
   {
+    id: 'proof-visibility-ui',
+    label: 'Verify proof visibility UI surfaces',
+    command: ['node', 'scripts/verify-proof-visibility-ui.mjs'],
+  },
+  {
     id: 'supabase-function-governance',
     label: 'Verify Supabase function governance and launch readiness',
     command: ['node', 'scripts/verify-supabase-function-governance.mjs'],
@@ -39,6 +44,36 @@ const DEFAULT_STEPS = [
     command: ['node', 'scripts/verify-commercial-data-provenance.mjs', '--write'],
   },
   {
+    id: 'live-gate-evidence',
+    label: 'Validate redacted live-gate evidence intake',
+    command: ['node', 'scripts/verify-live-gate-evidence.mjs'],
+  },
+  {
+    id: 'commercial-evidence-records',
+    label: 'Validate redacted commercial partner/outcome evidence records',
+    command: ['node', 'scripts/verify-commercial-evidence-records.mjs', '--write'],
+  },
+  {
+    id: 'owner-evidence-prep',
+    label: 'Inspect owner-evidence local prep status',
+    command: ['node', 'scripts/prepare-owner-evidence-workspace.mjs'],
+  },
+  {
+    id: 'owner-evidence-fixtures',
+    label: 'Verify redacted owner-evidence fixture completion path',
+    command: ['node', 'scripts/verify-owner-evidence-fixture-path.mjs'],
+  },
+  {
+    id: 'remediation-gates',
+    label: 'Write APO remediation external gate ledger',
+    command: ['node', 'scripts/verify-remediation-external-gates.mjs', '--write'],
+  },
+  {
+    id: 'remediation-completion-audit',
+    label: 'Write APO remediation completion audit',
+    command: ['node', 'scripts/verify-remediation-completion-audit.mjs', '--write'],
+  },
+  {
     id: 'lint-commercial',
     label: 'Lint commercial proof-pack files',
     command: ['node', 'scripts/lint-commercial-scope.mjs'],
@@ -47,6 +82,11 @@ const DEFAULT_STEPS = [
     id: 'secret-hygiene',
     label: 'Verify tracked files do not contain high-confidence secrets',
     command: ['node', 'scripts/verify-secret-hygiene.mjs'],
+  },
+  {
+    id: 'repo-presentation',
+    label: 'Verify repository presentation, license, and adoption-claim boundaries',
+    command: ['node', 'scripts/verify-repo-presentation.mjs'],
   },
   {
     id: 'build',
@@ -140,8 +180,11 @@ Options:
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
 
 Default gate:
-  index, trust, report evidence, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
-  data provenance, scoped commercial lint, production build, route smoke.
+  index, trust, report evidence, proof visibility UI, O*NET Task Ratings ingest boundary, live Supabase deployment packet,
+  data provenance, redacted live-gate evidence intake, commercial evidence records, owner-evidence prep status,
+  owner-evidence fixture smoke,
+  remediation gate ledger, remediation completion audit, scoped commercial lint, secret hygiene,
+  repository presentation, production build, route smoke.
 `);
 }
 

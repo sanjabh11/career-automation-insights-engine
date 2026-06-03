@@ -3,7 +3,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { APIErrorHandler, withRetry } from "@/utils/apiErrorHandler";
-import type { OnetEnrichmentData } from "@/types/onet-enrichment";
+import type { OnetEnrichmentData, RelatedOccupation } from "@/types/onet-enrichment";
+
+type RelatedOccupationFallbackRow = {
+  related_occupation_code: string | null;
+  related_occupation_title: string | null;
+  similarity_score: number | null;
+};
+
+function normalizeFallbackRelatedOccupation(row: RelatedOccupationFallbackRow): RelatedOccupation | null {
+  if (!row.related_occupation_code || !row.related_occupation_title) return null;
+
+  return {
+    code: row.related_occupation_code,
+    title: row.related_occupation_title,
+    ...(typeof row.similarity_score === "number" ? { similarity_score: row.similarity_score } : {}),
+  };
+}
 
 /**
  * Hook to fetch O*NET enrichment data for an occupation
@@ -76,32 +92,32 @@ export function useOnetEnrichment(occupationCode?: string) {
  */
 export function useRelatedOccupations(occupationCode?: string) {
   const { enrichmentData, isLoading, error } = useOnetEnrichment(occupationCode);
+  const related = enrichmentData?.relatedOccupations;
+  const hasRelated = Array.isArray(related) && related.length > 0;
 
   const {
     data: fallbackRelated,
     isLoading: isFallbackLoading,
     error: fallbackError,
-  } = useQuery({
+  } = useQuery<RelatedOccupation[]>({
     queryKey: ["onet-related-fallback", occupationCode],
-    enabled: !!occupationCode && (!enrichmentData || !Array.isArray((enrichmentData as any).relatedOccupations) || ((enrichmentData as any).relatedOccupations as any[]).length === 0),
+    enabled: !!occupationCode && !hasRelated,
     staleTime: 24 * 60 * 60 * 1000,
     queryFn: async () => {
+      if (!occupationCode) return [];
+
       const { data, error } = await supabase
         .from("onet_related_occupations")
         .select("related_occupation_code, related_occupation_title, similarity_score")
         .eq("source_occupation_code", occupationCode)
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      return (data || []).map((r: any) => ({
-        code: r.related_occupation_code,
-        title: r.related_occupation_title,
-        similarity_score: r.similarity_score,
-      }));
+      return ((data || []) as RelatedOccupationFallbackRow[]).flatMap((row) => {
+        const normalized = normalizeFallbackRelatedOccupation(row);
+        return normalized ? [normalized] : [];
+      });
     },
   });
-
-  const related = (enrichmentData as any)?.relatedOccupations;
-  const hasRelated = Array.isArray(related) && related.length > 0;
 
   return {
     relatedOccupations: hasRelated ? related : (fallbackRelated || []),

@@ -5,14 +5,33 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
+type RiskTolerance = "conservative" | "balanced" | "aggressive";
+
+interface CareerSimulationResult {
+  months_p50: number;
+  months_p90: number;
+  p_success_12m: number;
+  p_success_18m: number;
+  p_success_24m: number;
+  median_salary_at_completion?: number;
+}
+
+function isRiskTolerance(value: string): value is RiskTolerance {
+  return value === "conservative" || value === "balanced" || value === "aggressive";
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Simulation failed";
+}
+
 export function CareerSimulatorCard({ currentSalary, targetSalary }: { currentSalary?: number; targetSalary?: number }) {
   const [hours, setHours] = React.useState<number>(10);
-  const [risk, setRisk] = React.useState<"conservative"|"balanced"|"aggressive">("balanced");
+  const [risk, setRisk] = React.useState<RiskTolerance>("balanced");
   const [iterations, setIterations] = React.useState<number>(2000);
   const [duration, setDuration] = React.useState<number>(36);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [result, setResult] = React.useState<any | null>(null);
+  const [result, setResult] = React.useState<CareerSimulationResult | null>(null);
 
   const run = async () => {
     setLoading(true);
@@ -29,9 +48,9 @@ export function CareerSimulatorCard({ currentSalary, targetSalary }: { currentSa
         }
       });
       if (error) throw error;
-      setResult(data);
-    } catch (e: any) {
-      setError(e?.message || 'Simulation failed');
+      setResult(data as CareerSimulationResult);
+    } catch (e: unknown) {
+      setError(getErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -50,7 +69,14 @@ export function CareerSimulatorCard({ currentSalary, targetSalary }: { currentSa
         </div>
         <div>
           <label className="text-xs text-[var(--text-secondary)]">Risk tolerance</label>
-          <select className="w-full border rounded h-9 text-sm" value={risk} onChange={e=>setRisk(e.target.value as any)}>
+          <select
+            className="w-full border rounded h-9 text-sm"
+            value={risk}
+            onChange={e => {
+              const value = e.target.value;
+              if (isRiskTolerance(value)) setRisk(value);
+            }}
+          >
             <option value="conservative">Conservative</option>
             <option value="balanced">Balanced</option>
             <option value="aggressive">Aggressive</option>

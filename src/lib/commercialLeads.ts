@@ -1,5 +1,6 @@
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { createCommercialReportArtifact } from '@/lib/commercialReportArtifacts';
+import { analytics } from '@/lib/posthog';
 import { getReportSourceSnapshot } from '@/lib/reportProvenance';
 
 export interface CommercialLeadInput {
@@ -318,6 +319,7 @@ export async function captureCommercialLead(input: CommercialLeadInput): Promise
 
   try {
     const lead = await persistCommercialLeadPayload(payload);
+    analytics.commercialLeadCaptured(payload.source, payload.buyer_segment, true);
     if (getQueuedCommercialLeadCount() > 0) {
       void flushQueuedCommercialLeads(5).catch((flushError) => {
         console.warn('Queued commercial lead retry failed:', flushError);
@@ -335,6 +337,7 @@ export async function captureCommercialLead(input: CommercialLeadInput): Promise
   } catch (error: unknown) {
     const message = getErrorMessage(error);
     console.warn('Commercial lead capture fell back to offline queue:', message);
+    analytics.commercialLeadCaptured(payload.source, payload.buyer_segment, false);
     try {
       queueOfflineLead(payload, message);
     } catch (queueError) {

@@ -16,15 +16,136 @@ const corsHeaders = {
 //   region?: string
 // }
 
+type JsonRecord = Record<string, unknown>;
+type BlsMode = 'fetch' | 'upsert' | 'fetch_oews' | 'upsert_oews_batch';
+
+interface SupabaseTableClient {
+  upsert(
+    payload: BlsEmploymentDataRow,
+    options?: { onConflict: string },
+  ): Promise<{ error?: unknown }>;
+}
+
+interface SupabaseClientLike {
+  from(table: string): SupabaseTableClient;
+}
+
+interface BlsEmploymentDataRow {
+  occupation_code_6: string;
+  year: number;
+  employment_level: number | null;
+  median_wage_annual: number | null;
+  region: string | null;
+  data_source: string;
+}
+
+interface BlsSeriesInput {
+  soc6: string;
+  seriesId: string;
+}
+
+interface BlsTimeseriesRequest {
+  seriesid: string[];
+  startyear: string;
+  endyear: string;
+  registrationkey?: string;
+}
+
+interface BlsSeriesPoint {
+  year?: unknown;
+  period?: unknown;
+  value?: unknown;
+}
+
+interface BlsSeriesResponseItem {
+  data?: BlsSeriesPoint[];
+}
+
+const isRecord = (value: unknown): value is JsonRecord =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+
+const asArray = (value: unknown): unknown[] =>
+  Array.isArray(value) ? value : [];
+
+const asNumber = (value: unknown): number | null => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const clean = value.replace(/[^0-9.-]/g, '');
+    if (!clean) return null;
+    const n = Number(clean);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+};
+
+const parseMode = (value: unknown): BlsMode => {
+  const mode = asString(value);
+  if (mode === 'fetch' || mode === 'upsert' || mode === 'fetch_oews' || mode === 'upsert_oews_batch') {
+    return mode;
+  }
+  return 'upsert';
+};
+
+const toSoc6 = (value: unknown): string => {
+  const raw = String(value || '');
+  const match = raw.match(/^(\d{2}-\d{4})/);
+  return match ? match[1] : raw;
+};
+
+const getFirstString = (record: JsonRecord, keys: string[]): string | undefined => {
+  for (const key of keys) {
+    const value = asString(record[key]);
+    if (value) return value;
+  }
+  return undefined;
+};
+
+const getFirstNumber = (record: JsonRecord, keys: string[]): number | null => {
+  for (const key of keys) {
+    const value = asNumber(record[key]);
+    if (value !== null) return value;
+  }
+  return null;
+};
+
+const parseStringList = (value: unknown, fallback: string[]): string[] => {
+  const items = asArray(value)
+    .map(asString)
+    .filter((item): item is string => !!item);
+  return items.length > 0 ? items : fallback;
+};
+
+const parseSeriesList = (value: unknown): BlsSeriesInput[] =>
+  asArray(value).flatMap((item) => {
+    if (!isRecord(item)) return [];
+    const soc6 = asString(item.soc6);
+    const seriesId = asString(item.seriesId);
+    return soc6 && seriesId ? [{ soc6, seriesId }] : [];
+  });
+
+const parseBlsSeriesResponse = (value: unknown): BlsSeriesResponseItem[] => {
+  if (!isRecord(value) || !isRecord(value.Results) || !Array.isArray(value.Results.series)) {
+    return [];
+  }
+  return value.Results.series.flatMap((item) => {
+    if (!isRecord(item)) return [];
+    const data = asArray(item.data).filter(isRecord) as BlsSeriesPoint[];
+    return [{ data }];
+  });
+};
+
 async function upsertBlsRows(
-  supabase: any,
+  supabase: SupabaseClientLike,
   soc6: string,
   region: string | null,
   rows: Array<{ year: number; employment: number | null; wage?: number | null }>,
   dataSource?: string
 ) {
   for (const r of rows) {
-    const payload: any = {
+    const payload: BlsEmploymentDataRow = {
       occupation_code_6: soc6,
       year: r.year,
       employment_level: r.employment ?? null,
@@ -54,10 +175,15 @@ export async function handler(req: Request) {
       }
     }
 
-    const body = await req.json();
-    const mode = (body?.mode || 'upsert') as 'fetch' | 'upsert' | 'fetch_oews' | 'upsert_oews_batch';
-    let { series } = body as { series?: Array<{ soc6: string; seriesId: string }>; };
-    const { startYear, endYear, region } = body as { startYear?: string; endYear?: string; region?: string };
+    const body = await req.json() as unknown;
+    if (!isRecord(body)) {
+      return new Response(JSON.stringify({ error: 'Request body must be a JSON object' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const mode = parseMode(body.mode);
+    let series = parseSeriesList(body.series);
+    const startYear = asString(body.startYear);
+    const endYear = asString(body.endYear);
+    const region = asString(body.region);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -66,25 +192,23 @@ export async function handler(req: Request) {
     }
 
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.39.3");
-    const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
+    const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } }) as SupabaseClientLike;
 
     if (mode === 'upsert_oews_batch') {
-      const { year, rows } = body as { year?: number; rows?: Array<Record<string, any>> };
-      if (!Number.isFinite(Number(year)) || !Array.isArray(rows)) {
+      const year = asNumber(body.year);
+      const rowsRaw = body.rows;
+      const rows = asArray(rowsRaw).filter(isRecord);
+      if (year === null || !Number.isFinite(year) || !Array.isArray(rowsRaw)) {
         return new Response(JSON.stringify({ error: 'year (number) and rows (array) are required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
-      const y = Number(year);
+      const y = year;
       let upserts = 0;
-      const toSoc6 = (s: string) => {
-        const m = String(s || '').match(/^(\d{2}-\d{4})/);
-        return m ? m[1] : String(s || '');
-      };
       for (const r of rows) {
-        const occ = toSoc6(r.occ_code || r.soc_code || r.soc6 || r.soc || '');
+        const occ = toSoc6(getFirstString(r, ['occ_code', 'soc_code', 'soc6', 'soc']) || '');
         if (!occ) continue;
-        const emp = Number(r.tot_emp ?? r.employment ?? r.emp ?? null);
-        const wage = Number(r.a_median ?? r.annual_median_wage ?? r.a_mean ?? r.annual_mean_wage ?? null);
-        await upsertBlsRows(supabase, occ, null, [{ year: y, employment: Number.isFinite(emp) ? emp : null, wage: Number.isFinite(wage) ? wage : null }], `OEWS ${y}`);
+        const emp = getFirstNumber(r, ['tot_emp', 'employment', 'emp']);
+        const wage = getFirstNumber(r, ['a_median', 'annual_median_wage', 'a_mean', 'annual_mean_wage']);
+        await upsertBlsRows(supabase, occ, null, [{ year: y, employment: emp, wage }], `OEWS ${y}`);
         upserts++;
       }
       return new Response(JSON.stringify({ ok: true, totalUpserted: upserts, source: 'batch' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -110,7 +234,7 @@ export async function handler(req: Request) {
     // If mode=fetch, build series[] from known mapping (for expert 6 SOC-6) or provided list
     if (mode === 'fetch') {
       const defaultSoc6 = ['15-1252', '29-1141', '41-2011', '43-4051', '53-3032', '11-1021'];
-      const list: string[] = Array.isArray(body?.soc6List) && body.soc6List.length ? body.soc6List : defaultSoc6;
+      const list = parseStringList(body.soc6List, defaultSoc6);
       const map: Record<string, string> = {
         '15-1252': 'OEUM000000151252',
         '29-1141': 'OEUM000000291141',
@@ -131,7 +255,7 @@ export async function handler(req: Request) {
     // If mode=fetch_oews, download OEWS national CSVs for each year and upsert
     if (mode === 'fetch_oews') {
       const defaultSoc6 = ['15-1252', '29-1141', '41-2011', '43-4051', '53-3032', '11-1021'];
-      const list: string[] = Array.isArray(body?.soc6List) && body.soc6List.length ? body.soc6List : defaultSoc6;
+      const list = parseStringList(body.soc6List, defaultSoc6);
       const y0 = Number(startYear);
       const y1 = Number(endYear);
       if (!Number.isFinite(y0) || !Number.isFinite(y1) || y1 < y0) {
@@ -147,17 +271,19 @@ export async function handler(req: Request) {
       };
 
       // Direct CSV ingestion if csvUrl + year provided (e.g., mirror or Supabase Storage)
-      if (typeof body?.csvUrl === 'string' && Number.isFinite(Number(body?.year))) {
-        const year = Number(body.year);
+      const csvUrl = asString(body.csvUrl);
+      const csvYear = asNumber(body.year);
+      if (csvUrl && csvYear !== null && Number.isFinite(csvYear)) {
+        const year = csvYear;
         // Allowlist check
         const allowlistRaw = (Deno.env.get('BLS_OEWS_ALLOWLIST') || '').trim();
         const allowlist: string[] = allowlistRaw ? JSON.parse(allowlistRaw) : [];
-        const u = new URL(String(body.csvUrl));
+        const u = new URL(csvUrl);
         const hostOk = allowlist.length === 0 || allowlist.some((p) => u.href.startsWith(p));
         if (!hostOk) {
           return new Response(JSON.stringify({ error: 'csvUrl not allowed by BLS_OEWS_ALLOWLIST' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
-        const rcsv = await fetch(String(body.csvUrl), { headers: fetchHeaders });
+        const rcsv = await fetch(csvUrl, { headers: fetchHeaders });
         if (!rcsv.ok) {
           return new Response(JSON.stringify({ error: 'csvUrl fetch failed', status: rcsv.status }), { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
@@ -200,25 +326,25 @@ export async function handler(req: Request) {
 
     // Batch the series into chunks of up to 20 per BLS API
     const chunkSize = 20;
-    const chunks: Array<Array<{ soc6: string; seriesId: string }>> = [];
-    for (let i = 0; i < (series as Array<{ soc6: string; seriesId: string }>).length; i += chunkSize) {
-      chunks.push((series as Array<{ soc6: string; seriesId: string }>).slice(i, i + chunkSize));
+    const chunks: Array<BlsSeriesInput[]> = [];
+    for (let i = 0; i < series.length; i += chunkSize) {
+      chunks.push(series.slice(i, i + chunkSize));
     }
 
     let totalUpserted = 0;
 
     for (const chunk of chunks) {
       const seriesIds = chunk.map(s => s.seriesId);
-      const body: any = { seriesid: seriesIds, startyear: startYear, endyear: endYear };
-      if (registrationkey) body.registrationkey = registrationkey;
+      const blsBody: BlsTimeseriesRequest = { seriesid: seriesIds, startyear: startYear, endyear: endYear };
+      if (registrationkey) blsBody.registrationkey = registrationkey;
 
-      const res = await fetch(timeseriesUrl, { method: 'POST', headers, body: JSON.stringify(body) });
+      const res = await fetch(timeseriesUrl, { method: 'POST', headers, body: JSON.stringify(blsBody) });
       if (!res.ok) {
         const txt = await res.text();
         return new Response(JSON.stringify({ error: 'BLS API error', status: res.status, body: txt }), { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
-      const data = await res.json();
-      const seriesArr: Array<any> = data?.Results?.series || [];
+      const data = await res.json() as unknown;
+      const seriesArr = parseBlsSeriesResponse(data);
 
       for (let i = 0; i < seriesArr.length; i++) {
         const s = seriesArr[i];
@@ -254,7 +380,7 @@ export async function handler(req: Request) {
   }
 }
 
-async function processOEWSCSVText(supabase: any, soc6List: string[], csvText: string, year: number, region: string | null): Promise<number> {
+async function processOEWSCSVText(supabase: SupabaseClientLike, soc6List: string[], csvText: string, year: number, region: string | null): Promise<number> {
   const records = await parse(csvText, { skipFirstRow: false }) as string[][];
   if (!records || records.length === 0) return 0;
   const header = (records[0] || []).map((h) => String(h || '').trim().toLowerCase());
@@ -267,7 +393,7 @@ async function processOEWSCSVText(supabase: any, soc6List: string[], csvText: st
   const toNum = (s: unknown) => {
     const v = typeof s === 'string' ? s : String(s ?? '');
     if (!v) return null;
-    const clean = v.replace(/[^0-9.\-]/g, '');
+    const clean = v.replace(/[^0-9.-]/g, '');
     const n = Number(clean);
     return Number.isFinite(n) ? n : null;
   };

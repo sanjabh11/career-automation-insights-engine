@@ -4,11 +4,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
+interface OutcomeRow {
+  id: string;
+  created_at: string;
+  goal_occupation: string | null;
+  completed_learning_hours: number | null;
+  new_salary: number | null;
+  transition_months: number | null;
+  satisfaction_score: number | null;
+  selected_transition_option: string | null;
+  artifact_reviewed: boolean | null;
+  consent_to_research: boolean | null;
+}
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
+
 export function OutcomesList() {
   const { user } = useSession();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [rows, setRows] = React.useState<any[]>([]);
+  const [rows, setRows] = React.useState<OutcomeRow[]>([]);
 
   const fetchRows = React.useCallback(async () => {
     if (!user) return;
@@ -22,8 +38,8 @@ export function OutcomesList() {
         .limit(10);
       if (error) throw error;
       setRows(data || []);
-    } catch (e: any) {
-      setError(e?.message || 'Failed to load outcomes');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load outcomes'));
     } finally {
       setLoading(false);
     }
@@ -59,6 +75,8 @@ export function OutcomesList() {
                 <th className="text-right p-2">New Salary</th>
                 <th className="text-right p-2">Months</th>
                 <th className="text-right p-2">Satisfaction</th>
+                <th className="text-left p-2">Revealed choice</th>
+                <th className="text-left p-2">Consent</th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +88,8 @@ export function OutcomesList() {
                   <td className="p-2 text-right">{r.new_salary != null ? `$${Math.round(r.new_salary).toLocaleString()}` : '—'}</td>
                   <td className="p-2 text-right">{r.transition_months ?? '—'}</td>
                   <td className="p-2 text-right">{r.satisfaction_score ?? '—'}</td>
+                  <td className="p-2">{r.selected_transition_option || (r.artifact_reviewed ? 'Artifact reviewed' : '—')}</td>
+                  <td className="p-2">{r.consent_to_research ? 'Research OK' : 'Private'}</td>
                 </tr>
               ))}
             </tbody>

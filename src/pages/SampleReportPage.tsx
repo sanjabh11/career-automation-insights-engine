@@ -199,7 +199,7 @@ function generateSampleReportPayload(
   </div>
 
   <div class="score-box">
-    <div class="score-label">Overall Automation Risk</div>
+    <div class="score-label">Decision-Support Exposure Estimate</div>
     <div class="score-value">${data.overallRisk}%</div>
     <div class="badge">${riskLevel} Risk</div>
   </div>
@@ -210,10 +210,10 @@ function generateSampleReportPayload(
     <div class="stat"><div class="stat-value">${escapeHtml(data.industry)}</div><div class="stat-label">Industry</div></div>
   </div>
 
-  <h2>Tasks at Highest Automation Risk</h2>
+  <h2>Tasks To Review First</h2>
   <ul class="task-list">${data.highRiskTasks.map(t => `<li class="task-risk">${escapeHtml(t)}</li>`).join('')}</ul>
 
-  <h2>Skills That Remain Human</h2>
+  <h2>Resilience Skills For Human Review</h2>
   <ul class="task-list">${data.safeSkills.map(s => `<li class="task-safe">${escapeHtml(s)}</li>`).join('')}</ul>
 
   <h2>Recommended Reskilling Paths</h2>
@@ -222,7 +222,7 @@ function generateSampleReportPayload(
   <h2>Bridge Role Recommendation</h2>
   <div class="bridge">
     <div class="bridge-title">${escapeHtml(data.bridgeRole)}</div>
-    <div style="font-size:13px;">Automation Risk: ${data.bridgeRoleRisk}% - ${data.bridgeRoleRisk <= 30 ? 'Significantly safer' : 'Lower risk'} than ${escapeHtml(data.title)}</div>
+    <div style="font-size:13px;">Bridge-role exposure estimate: ${data.bridgeRoleRisk}% - ${data.bridgeRoleRisk <= 30 ? 'lower review priority' : 'lower exposure estimate'} than ${escapeHtml(data.title)}</div>
   </div>
 
   <div class="cta no-print">
@@ -338,6 +338,11 @@ export default function SampleReportPage() {
       slug: selectedSlug,
       branded: !!resolvedBrandConfig.companyName,
       artifact_capture_requested: !!resolvedBrandConfig.contactEmail,
+    });
+    trackEvent('activation_proof_artifact_created', {
+      artifact_type: 'coach-sample-report',
+      buyer_segment: 'career-coach',
+      branded: !!resolvedBrandConfig.companyName,
     });
     const reportPayload = generateSampleReportPayload(selectedData, resolvedBrandConfig);
     const win = window.open('', '_blank');

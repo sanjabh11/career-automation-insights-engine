@@ -20,6 +20,12 @@ const resolveEnv = (...keys: string[]): string | undefined => {
   return undefined;
 };
 
+type TaskAssessmentResponse = {
+  category: string;
+  explanation: string;
+  confidence: number;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -54,7 +60,7 @@ serve(async (req) => {
     const generationConfig = { ...envDefaults, temperature: 0.2, topK: 1, topP: 0.8, maxOutputTokens: 1024 } as const;
     const { text } = await client.generateContent(prompt, generationConfig);
 
-    let assessmentData: any;
+    let assessmentData: TaskAssessmentResponse;
     try {
       assessmentData = JSON.parse(text);
     } catch (_e) {

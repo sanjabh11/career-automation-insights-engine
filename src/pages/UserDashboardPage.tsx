@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { EnhancedUserDashboard } from "@/components/EnhancedUserDashboard";
+import type { SavedAnalysisItem } from "@/components/SavedAnalysesPanel";
 import { UsageDashboard } from "@/components/UsageDashboard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home, CheckCircle2, X, Sparkles, FileText, Brain, Users } from "lucide-react";
@@ -32,9 +33,9 @@ export default function UserDashboardPage() {
       newParams.delete('credits');
       setSearchParams(newParams, { replace: true });
     }
-  }, [checkoutStatus]);
+  }, [checkoutStatus, checkoutTier, creditsPurchased, searchParams, setSearchParams]);
 
-  const handleLoadAnalysis = (analysis: any) => {
+  const handleLoadAnalysis = (analysis: SavedAnalysisItem) => {
     localStorage.setItem('loadedAnalysis', JSON.stringify(analysis));
     navigate('/');
   };

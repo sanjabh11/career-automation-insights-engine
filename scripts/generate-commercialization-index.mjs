@@ -141,8 +141,9 @@ const featureMap = [
       'scripts/verify-report-evidence.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-supabase-function-governance.mjs',
+      'scripts/prepare-owner-evidence-workspace.mjs',
     ],
-    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records.',
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -343,19 +344,19 @@ ${formatTable(['Script', 'Command'], scriptRows)}
 
 Required commercial pre-demo gate:
 
-1. \`npm run verify:commercial\`
-2. \`npm run verify:commercial-a11y\` or \`npm run verify:commercial -- --with-a11y\` when Chromium startup is stable; this writes \`docs/commercialization/commercial-accessibility-audit-latest.md\` and \`.json\`
-3. \`npm run verify:sources\` when DNS/network access is available
-4. \`npm audit --omit=dev --audit-level=high\` when registry access is available
-5. \`npm run verify:commercial-browser\` when macOS/CI browser startup is stable enough for the full lead/report/workforce journey
+1. \`npm run verify:commercial\` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, owner-evidence fixture smoke, remediation external-gate ledger, remediation completion audit, commercial lint/build checks, and route smoke proof
+2. \`npm run verify:owner-evidence-closeout\` to run the non-writing ordered owner-evidence closeout status bundle; after owner proof exists, run \`npm run closeout:owner-evidence -- --write --refresh-tracked\`
+3. \`npm run verify:commercial-a11y\` or \`npm run verify:commercial -- --with-a11y\` when Chromium startup is stable; this writes \`docs/commercialization/commercial-accessibility-audit-latest.md\` and \`.json\`
+4. \`npm run verify:sources\` when DNS/network access is available
+5. \`npm audit --omit=dev --audit-level=high\` when registry access is available
+6. \`npm run verify:commercial-browser\` when macOS/CI browser startup is stable enough for the full lead/report/workforce journey
 
 CI boundary:
 
-- \`.github/workflows/commercial-proof-pack.yml\` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
+- \`.github/workflows/commercial-proof-pack.yml\` is the installed GitHub Actions workflow. It uses Node 24-compatible action wrappers, keeps Node 20 as the app test runtime, runs the commercial proof-pack gate with Playwright a11y and browser journey checks on push/PR across \`main\`, \`live-auth-e2e-closeout\`, and the Phase A-E remediation branch chain, refreshes the remediation external-gate ledger and completion audit through \`verify:commercial\`, and runs source verification plus production audit on manual or scheduled runs. Hosted run evidence must be checked after each workflow-affecting push.
 
 ## Remaining Index Gaps
 
-- Full repo lint is still legacy-failing outside the commercial proof-pack files.
 - Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.

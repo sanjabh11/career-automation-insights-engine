@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User } from "@supabase/supabase-js";
 
@@ -12,6 +13,16 @@ export interface SavedSelection<T> {
 }
 
 const STORAGE_KEY = "apo_saved_selections_v1";
+
+function errorField(error: unknown, field: "message" | "code"): string {
+  if (typeof error !== "object" || error === null) return "";
+  const value = (error as Record<string, unknown>)[field];
+  return typeof value === "string" ? value : "";
+}
+
+function toSupabaseJson(value: unknown): Json {
+  return value as Json;
+}
 
 // Helpers for localStorage for anonymous users
 function getLocalSelections<T>(): SavedSelection<T>[] {
@@ -34,9 +45,9 @@ export function useSavedSelections<T = unknown>() {
   const [user, setUser] = useState<User | null>(null);
   const queryClient = useQueryClient();
 
-  function isMissingRelationOrColumn(error: any): boolean {
-    const msg = String(error?.message || "");
-    const code = String(error?.code || "");
+  function isMissingRelationOrColumn(error: unknown): boolean {
+    const msg = errorField(error, "message");
+    const code = errorField(error, "code");
     return (
       code === "42P01" || // undefined_table
       code === "42703" || // undefined_column
@@ -111,7 +122,7 @@ export function useSavedSelections<T = unknown>() {
 
       const { data, error } = await supabase
         .from('user_selections')
-        .insert({ user_id: user.id, name: name || "Untitled", selections: listData as any })
+        .insert({ user_id: user.id, name: name || "Untitled", selections: toSupabaseJson(listData) })
         .select('id')
         .single();
       
@@ -126,7 +137,7 @@ export function useSavedSelections<T = unknown>() {
             createdAt: Date.now(),
           };
           setLocalSelections([newEntry, ...currentSelections]);
-          return { id: newEntry.id } as any;
+          return { id: newEntry.id };
         }
         console.error('Error saving selection to Supabase:', error);
         throw error;

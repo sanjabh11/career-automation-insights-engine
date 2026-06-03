@@ -2,20 +2,46 @@
 export interface APIError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getNestedRecord = (value: unknown, key: string): Record<string, unknown> | null => {
+  if (!isRecord(value)) return null;
+  const child = value[key];
+  return isRecord(child) ? child : null;
+};
+
+const getString = (value: unknown, key: string): string | undefined => {
+  if (!isRecord(value)) return undefined;
+  const child = value[key];
+  return typeof child === 'string' ? child : undefined;
+};
+
+const getNumber = (value: unknown, key: string): number | undefined => {
+  if (!isRecord(value)) return undefined;
+  const child = value[key];
+  return typeof child === 'number' ? child : undefined;
+};
+
 export class APIErrorHandler {
-  static handle(error: any): APIError {
+  static handle(error: unknown): APIError {
     const timestamp = new Date().toISOString();
+    const supabaseError = getNestedRecord(error, 'error');
+    const supabaseMessage = getString(supabaseError, 'message');
+    const supabaseCode = getString(supabaseError, 'code');
+    const status = getNumber(error, 'status');
+    const message = getString(error, 'message');
     
     // Supabase errors
-    if (error?.error?.message) {
+    if (supabaseMessage) {
       return {
-        code: error.error.code || 'SUPABASE_ERROR',
-        message: error.error.message,
-        details: error.error,
+        code: supabaseCode || 'SUPABASE_ERROR',
+        message: supabaseMessage,
+        details: supabaseError,
         timestamp
       };
     }
@@ -30,7 +56,7 @@ export class APIErrorHandler {
     }
 
     // Rate limit errors
-    if (error?.status === 429) {
+    if (status === 429) {
       return {
         code: 'RATE_LIMIT_EXCEEDED',
         message: 'Too many requests. Please wait a moment before trying again.',
@@ -39,7 +65,7 @@ export class APIErrorHandler {
     }
 
     // Authentication errors
-    if (error?.status === 401) {
+    if (status === 401) {
       return {
         code: 'UNAUTHORIZED',
         message: 'Please sign in to continue.',
@@ -48,7 +74,7 @@ export class APIErrorHandler {
     }
 
     // Server errors
-    if (error?.status >= 500) {
+    if (typeof status === 'number' && status >= 500) {
       return {
         code: 'SERVER_ERROR',
         message: 'Server temporarily unavailable. Please try again later.',
@@ -59,7 +85,7 @@ export class APIErrorHandler {
     // Generic error
     return {
       code: 'UNKNOWN_ERROR',
-      message: error?.message || 'An unexpected error occurred. Please try again.',
+      message: message || 'An unexpected error occurred. Please try again.',
       details: error,
       timestamp
     };

@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-06-03T08:52:26.797Z",
+  "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
+  "gateIds": [
+    "three_committed_partners",
+    "documented_outcomes"
+  ],
+  "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
+  "found": false,
+  "status": "no_local_evidence",
+  "confidence": "bounded_redacted_commercial_evidence_records",
+  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. Partner and outcome hashes must be unique. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.",
+  "acceptedDesignPartnerCount": 0,
+  "acceptedOutcomeCount": 0,
+  "uniqueDesignPartnerCount": 0,
+  "uniqueOutcomeCount": 0,
+  "partnerGateSatisfied": false,
+  "outcomeGateSatisfied": false,
+  "evidenceHash": null,
+  "doesNotProve": [
+    "Revenue",
+    "Retention",
+    "Causal product impact",
+    "Market-wide demand",
+    "Guaranteed career outcomes"
+  ],
+  "manualInterventionIfMissing": [
+    "Collect at least three permissioned design-partner commitments with pilot scope, planning-only use confirmation, artifact reviewed, contact permission, and next step recorded.",
+    "Collect at least one permissioned documented outcome with baseline workflow, artifact reviewed, measured change, approved quote, quote approval, and explicit does-not-prove boundaries.",
+    "Option A: place owner-held intake in docs/commercialization/commercial-evidence-intake.local.json with an owner-held hash salt, then run npm run compose:commercial-evidence-records -- --write --require-all.",
+    "Option B: store only redacted metadata in docs/commercialization/commercial-evidence-records.local.json or pass --evidence <path>; keep raw names, contacts, contracts, notes, quotes, and salts owner-held.",
+    "Validate the redacted records with npm run verify:commercial-evidence-records -- --require-all.",
+    "Run npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete as the read-only final gate.",
+    "Run npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete only when refreshing tracked closeout artifacts."
+  ],
+  "nextCommands": {
+    "composeFromOwnerIntake": "npm run compose:commercial-evidence-records -- --write --require-all",
+    "validateCommercialEvidence": "npm run verify:commercial-evidence-records -- --require-all",
+    "finalReadOnlyLedger": "npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete",
+    "refreshTrackedLedger": "npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete"
+  },
+  "errors": []
+}

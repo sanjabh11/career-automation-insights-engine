@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-25T12:57:12.727Z",
-  "target": null,
-  "status": "skipped_missing_env",
+  "generatedAt": "2026-06-02T07:53:46.567Z",
+  "target": "https://kvunnankqgfokeufvsrv.supabase.co",
+  "status": "passed",
   "confidence": "bounded_authenticated_live_e2e",
   "caveat": "This verifier signs in with a dedicated synthetic test user and exercises user-owned rows/RPCs. It proves the redacted artifact save/delete and saved-analysis deletion receipt path for that test user only; it does not prove malware scanning, PDF/DOCX extraction, provider-log deletion, backups, legal compliance, employment-selection validity, or buyer-specific governance.",
   "doesNotProve": [
@@ -21,16 +21,57 @@
   ],
   "checks": [
     {
-      "id": "auth-e2e-env",
-      "label": "Authenticated live e2e credentials are configured",
-      "passed": false,
-      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD"
+      "id": "auth-sign-in",
+      "label": "Dedicated synthetic test user signs in",
+      "passed": true,
+      "message": "Signed in with password without printing credentials.",
+      "userIdHash": "a70430c60efa9600",
+      "emailHash": "33485ac4545fdc1c",
+      "authAttempts": 3
+    },
+    {
+      "id": "resume-analysis-insert",
+      "label": "Synthetic saved resume analysis can be created under RLS",
+      "passed": true,
+      "message": "Inserted a synthetic non-sensitive row owned by the signed-in test user.",
+      "analysisId": "b6d560a2-cbb6-427e-95f8-3c045d7f0cbd"
+    },
+    {
+      "id": "redacted-artifact-create",
+      "label": "Redacted resume proof artifact can be created through authenticated RPC",
+      "passed": true,
+      "message": "Created artifact preserves raw-text false, detail-row redaction true, and staff-review-required state.",
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb",
+      "reviewStatus": "staff_review_required",
+      "rawResumeTextStored": false,
+      "resumeDetailRowsRedacted": true
+    },
+    {
+      "id": "redacted-artifact-delete-receipt",
+      "label": "Redacted proof artifact delete returns bounded receipt",
+      "passed": true,
+      "message": "Deleted artifact and received an app-level bounded deletion receipt.",
+      "receiptId": "a28eafbc-228f-45e7-96f0-2e9ef10d6aa7",
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb",
+      "deletionStatus": "deleted",
+      "receiptHashPrefix": "63f74cb20f568647"
+    },
+    {
+      "id": "redacted-artifact-delete-readback",
+      "label": "Deleted redacted proof artifact is no longer readable by owner",
+      "passed": true,
+      "message": "Artifact row is absent after delete receipt.",
+      "artifactId": "1cf19f1a-0002-4732-8406-d9aa93d14ecb"
+    },
+    {
+      "id": "resume-analysis-delete-receipt",
+      "label": "Saved resume analysis delete returns bounded receipt",
+      "passed": true,
+      "message": "Deleted synthetic saved analysis and received an app-level bounded deletion receipt.",
+      "receiptId": "9d82fd49-609b-4d24-8485-f97f572facf3",
+      "analysisId": "b6d560a2-cbb6-427e-95f8-3c045d7f0cbd",
+      "deletionStatus": "deleted",
+      "receiptHashPrefix": "1b0cb3c25b5a30d4"
     }
-  ],
-  "missingEnv": [
-    "SUPABASE_URL or VITE_SUPABASE_URL",
-    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
-    "LIVE_SUPABASE_TEST_USER_EMAIL",
-    "LIVE_SUPABASE_TEST_USER_PASSWORD"
   ]
 }

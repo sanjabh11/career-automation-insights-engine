@@ -3,7 +3,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserProfilePanel } from "./UserProfilePanel";
 import { UserSettingsPanel } from "./UserSettingsPanel";
-import { SavedAnalysesPanel } from "./SavedAnalysesPanel";
+import { SavedAnalysesPanel, type SavedAnalysisItem } from "./SavedAnalysesPanel";
 import { SearchHistoryPanel } from "./SearchHistoryPanel";
 import { SystemAdminPanel } from "./SystemAdminPanel";
 import { User, Settings, BookOpen, History, Activity, Lightbulb } from "lucide-react";
@@ -11,7 +11,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 interface UserDashboardProps {
-  onLoadAnalysis?: (analysis: any) => void;
+  onLoadAnalysis?: (analysis: SavedAnalysisItem) => void;
   onSearchSelect?: (searchTerm: string) => void;
 }
 

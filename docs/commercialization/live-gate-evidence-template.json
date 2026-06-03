@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
+  "asOf": "2026-05-31",
+  "sourceBoundary": "Redacted owner-attested evidence for credential-gated live proof only. Raw screenshots, exports, customer details, secrets, future-dated proof metadata, and item dates later than asOf remain outside the repository. Use commercial-evidence-records.local.json for design-partner and outcome records.",
+  "evidenceItems": [
+    {
+      "gateId": "real_stripe_test_checkout",
+      "status": "proven",
+      "observedAt": "2026-05-31T00:00:00Z",
+      "evidenceType": "stripe_test_checkout_session",
+      "redactionBoundary": "Stripe secret keys, customer email, payment method details, and raw Checkout Session payload are redacted or owner-held.",
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "evidenceSummary": {
+        "testMode": true,
+        "checkoutSessionCreated": true,
+        "checkoutUrlOpened": true,
+        "edgeFunction": "create-checkout-session"
+      },
+      "doesNotProve": [
+        "Live revenue",
+        "MRR",
+        "Payment fulfillment in live mode"
+      ]
+    },
+    {
+      "gateId": "production_calibration_run",
+      "status": "proven",
+      "observedAt": "2026-05-31T00:00:00Z",
+      "evidenceType": "production_calibration_run",
+      "redactionBoundary": "Supabase service-role key, raw respondent details, and non-public expert labels remain owner-held.",
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "evidenceSummary": {
+        "ece": 0,
+        "expertAssessmentCount": 1,
+        "predictionPairCount": 1,
+        "targetProject": "redacted"
+      },
+      "doesNotProve": [
+        "Scientific validity beyond the measured sample",
+        "Future model performance",
+        "Employment-decision validity"
+      ]
+    },
+    {
+      "gateId": "authenticated_live_artifact_e2e",
+      "status": "proven",
+      "observedAt": "2026-05-31T00:00:00Z",
+      "evidenceType": "authenticated_live_e2e",
+      "redactionBoundary": "Synthetic user credentials, auth tokens, and raw stored artifact payloads are redacted or owner-held.",
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "evidenceSummary": {
+        "passed": true,
+        "syntheticUser": true,
+        "artifactSaved": true,
+        "artifactDeleted": true,
+        "deletionReceiptVerified": true
+      },
+      "doesNotProve": [
+        "Payment proof",
+        "Malware scanning",
+        "Legal compliance"
+      ]
+    },
+    {
+      "gateId": "live_mrr_gt_zero",
+      "status": "proven",
+      "observedAt": "2026-05-31T00:00:00Z",
+      "evidenceType": "stripe_live_mrr_export",
+      "redactionBoundary": "Customer identities, subscription IDs, payment method details, and raw Stripe exports are redacted or owner-held.",
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "evidenceSummary": {
+        "liveMode": true,
+        "totalMrrGreaterThanZero": true,
+        "activeSubscriptionCount": 1,
+        "paidInvoiceCount": 1,
+        "currency": "usd"
+      },
+      "doesNotProve": [
+        "Retention",
+        "Product-market fit",
+        "Future revenue"
+      ]
+    }
+  ]
+}

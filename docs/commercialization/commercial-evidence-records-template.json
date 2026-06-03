@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
+  "asOf": "2026-06-01",
+  "sourceBoundary": "Redacted founder-held commercial evidence records only. Partner and outcome hashes must be unique; future-dated proof metadata, record dates later than asOf, partner names, contact details, contracts, raw interview notes, private quotes, and customer data remain owner-held outside the repository.",
+  "designPartnerCommitments": [
+    {
+      "partnerIdHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "segment": "career_coach",
+      "committedAt": "2026-06-01",
+      "permissioned": true,
+      "contactPermission": true,
+      "pilotScopeAccepted": true,
+      "planningOnlyUseConfirmed": true,
+      "artifactReviewed": "sample_report",
+      "nextStepRecorded": true,
+      "redactionLevel": "public_segment_only",
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
+    }
+  ],
+  "documentedOutcomes": [
+    {
+      "outcomeIdHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "observedAt": "2026-06-01",
+      "permissioned": true,
+      "baselineWorkflowCaptured": true,
+      "artifactReviewed": "sample_report",
+      "measuredChangeCaptured": true,
+      "approvedQuoteCaptured": true,
+      "quoteApprovalCaptured": true,
+      "redactionLevel": "public_quote_approved",
+      "doesNotProve": [
+        "Guaranteed career outcomes",
+        "Causal impact",
+        "Generalizable demand"
+      ]
+    }
+  ]
+}

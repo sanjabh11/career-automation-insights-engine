@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Shield, User, ChevronDown, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/useSession";
-import { useAuthMode } from "@/contexts/WhopAppContext";
+import { useAuthMode } from "@/contexts/useWhopApp";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,

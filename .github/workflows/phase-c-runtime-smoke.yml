@@ -7,6 +7,17 @@ on:
       - live-auth-e2e-closeout
       - phase-a-truth-claims-reconciliation
       - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
+  push:
+    branches:
+      - live-auth-e2e-closeout
+      - phase-a-truth-claims-reconciliation
+      - phase-b-validation-calibration
+      - phase-c-runtime-verification-bugfixes
+      - phase-d-global-english-localization
+      - phase-e-commercial-validation
   workflow_dispatch:
 
 permissions:
@@ -42,4 +53,4 @@ jobs:
         run: npm run smoke:skill-adjacency
 
       - name: Playwright Phase C smoke
-        run: npm run e2e:smoke
+        run: npm run e2e:phase-c-smoke

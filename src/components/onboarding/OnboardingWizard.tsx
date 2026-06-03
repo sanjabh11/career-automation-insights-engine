@@ -49,7 +49,9 @@ export function OnboardingWizard() {
   React.useEffect(() => {
     try {
       localStorage.setItem("wizard:step", String(step));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
   }, [step]);
 
   if (!open) return null;
@@ -62,14 +64,18 @@ export function OnboardingWizard() {
       if (jobTitle.trim()) {
         localStorage.setItem("planner:lastSearch", jobTitle.trim());
       }
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
     setOpen(false);
   };
 
   const skip = () => {
     try {
       localStorage.setItem("wizard:status", "done");
-    } catch {}
+    } catch {
+      // localStorage may be unavailable in private or restricted browser contexts.
+    }
     setOpen(false);
   };
 

@@ -11,6 +11,8 @@ import { Copy, Mail, Link2, Clock, Eye, Calendar } from "lucide-react";
 import { useShareAnalysis } from "@/hooks/useShareAnalysis";
 import { toast } from "sonner";
 
+type ShareType = 'link' | 'email' | 'token';
+
 interface ShareAnalysisModalProps {
   open: boolean;
   onClose: () => void;
@@ -19,7 +21,7 @@ interface ShareAnalysisModalProps {
 }
 
 export function ShareAnalysisModal({ open, onClose, analysisId, occupationTitle }: ShareAnalysisModalProps) {
-  const [shareType, setShareType] = useState<'link' | 'email' | 'token'>('link');
+  const [shareType, setShareType] = useState<ShareType>('link');
   const [email, setEmail] = useState('');
   const [hasExpiration, setHasExpiration] = useState(false);
   const [expirationDays, setExpirationDays] = useState('7');
@@ -78,7 +80,7 @@ export function ShareAnalysisModal({ open, onClose, analysisId, occupationTitle 
 
           <div>
             <Label className="text-sm font-medium">Share Method</Label>
-            <Select value={shareType} onValueChange={(value: any) => setShareType(value)}>
+            <Select value={shareType} onValueChange={(value) => setShareType(value as ShareType)}>
               <SelectTrigger className="mt-1">
                 <SelectValue />
               </SelectTrigger>

@@ -11,13 +11,9 @@ type ApoLogRow = {
   created_at: string;
   occupation_code: string;
   occupation_title: string;
-  model_json: JsonValue;
-  category_scores: JsonValue;
   overall_apo: number | null;
   cohort: string | null;
 };
-
-type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 type ExpertAssessmentRow = {
   occupation_code: string;
@@ -44,12 +40,6 @@ type CalibrationBin = {
 };
 
 function clamp01(x: number) { return Math.max(0, Math.min(1, x)); }
-
-function getNumberProperty(value: JsonValue, key: string): number | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const maybeNumber = value[key];
-  return typeof maybeNumber === "number" ? maybeNumber : null;
-}
 
 function computeECE(values: CalibrationPair[], binCount: number): { ece: number; bins: CalibrationBin[] } {
   if (!values.length) return { ece: 0, bins: [] };
@@ -131,11 +121,15 @@ export async function handler(req: Request) {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    days = Number.isFinite(days) && days > 0 ? Math.min(days, 365) : 90;
+    binCount = Number.isFinite(binCount) && binCount > 0 ? Math.min(binCount, 50) : 10;
+
     const sinceIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
     let query = supabase
       .from("apo_logs")
-      .select("id, created_at, occupation_code, occupation_title, model_json, category_scores, overall_apo, cohort")
+      .select("id, created_at, occupation_code, occupation_title, overall_apo, cohort")
       .gte("created_at", sinceIso)
+      .not("overall_apo", "is", null)
       .order("created_at", { ascending: false })
       .limit(5000);
     if (cohort) query = query.eq("cohort", cohort);
@@ -171,9 +165,7 @@ export async function handler(req: Request) {
     for (const r of apoRows) {
       const expertMatches = expertByOccupation.get(r.occupation_code) || [];
       if (!expertMatches.length) continue;
-      const predictedRaw = typeof r.overall_apo === "number"
-        ? r.overall_apo
-        : getNumberProperty(r.model_json, "overall_apo");
+      const predictedRaw = r.overall_apo;
       if (typeof predictedRaw !== "number") continue;
       const observedRaw = mean(expertMatches.map((expert) => Number(expert.automation_probability)));
       pairs.push({

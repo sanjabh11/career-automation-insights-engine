@@ -30,6 +30,39 @@ type Explanation = {
   disclaimer?: string;
 };
 
+const categoryKeys: CategoryKey[] = ["tasks", "knowledge", "skills", "abilities", "technologies"];
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isCategoryKey = (value: unknown): value is CategoryKey =>
+  typeof value === "string" && categoryKeys.includes(value as CategoryKey);
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+const isExplanation = (value: unknown): value is Explanation => {
+  if (!isRecord(value) || typeof value.narrative !== "string" || !Array.isArray(value.waterfall)) {
+    return false;
+  }
+
+  return (
+    value.waterfall.every((item) =>
+      isRecord(item) &&
+      isCategoryKey(item.category) &&
+      typeof item.apo_contribution === "number" &&
+      typeof item.rationale === "string"
+    ) &&
+    (value.top_factors === undefined || isStringArray(value.top_factors)) &&
+    (value.uncertainties === undefined || isStringArray(value.uncertainties)) &&
+    (value.next_steps === undefined || isStringArray(value.next_steps)) &&
+    (value.disclaimer === undefined || typeof value.disclaimer === "string")
+  );
+};
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : "Failed to load explanation";
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -68,21 +101,21 @@ export default function APOExplanation({ open, onOpenChange, occupation }: Props
 
       const { data, error } = await supabase.functions.invoke("explain-apo", { body, headers });
       if (error) throw new Error(error.message || "Failed to get explanation");
-      const explanation = (data as any)?.explanation as Explanation | undefined;
+      const explanation = isRecord(data) && isExplanation(data.explanation) ? data.explanation : undefined;
       if (!explanation) throw new Error("Malformed response from explain-apo");
       setData(explanation);
-    } catch (e: any) {
-      setError(e?.message || "Failed to load explanation");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
-  }, [occupation?.code, occupation?.title, occupation?.overallAPO]);
+  }, [occupation]);
 
   React.useEffect(() => {
     if (open) fetchExplanation();
   }, [open, fetchExplanation]);
 
-  const categories: CategoryKey[] = ["tasks", "knowledge", "skills", "abilities", "technologies"];
+  const categories = categoryKeys;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

@@ -197,8 +197,17 @@ async function signIn(page: Page) {
   await page.goto('/auth');
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill('phase-c-password');
+
+  const rootDocumentReload = page.waitForResponse((response) => {
+    const request = response.request();
+    const url = new URL(response.url());
+    return request.resourceType() === 'document' && url.pathname === '/' && response.status() < 400;
+  });
+
   await page.getByRole('button', { name: /^Sign In$/ }).click();
+  await rootDocumentReload;
   await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('button', { name: 'Dashboard' })).toBeVisible();
 }
 
 async function clickOptional(locator: Locator, timeout = 2500) {

@@ -12,8 +12,10 @@ import { ShareAnalysisModal } from "./ShareAnalysisModal";
 import { toast } from "sonner";
 import { exportAnalysesToCSV, exportAnalysesToPrintableHTML } from "@/utils/export";
 
+export type SavedAnalysisItem = ReturnType<typeof useSavedAnalysesUnified>["savedAnalyses"][number];
+
 interface SavedAnalysesPanelProps {
-  onLoadAnalysis?: (analysis: any) => void;
+  onLoadAnalysis?: (analysis: SavedAnalysisItem) => void;
 }
 
 export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) {
@@ -22,9 +24,9 @@ export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) 
   const [editTags, setEditTags] = useState<string>("");
   const [editNotes, setEditNotes] = useState<string>("");
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [selectedAnalysisForShare, setSelectedAnalysisForShare] = useState<any>(null);
+  const [selectedAnalysisForShare, setSelectedAnalysisForShare] = useState<SavedAnalysisItem | null>(null);
 
-  const handleEdit = (analysis: any) => {
+  const handleEdit = (analysis: SavedAnalysisItem) => {
     setEditingId(analysis.id);
     setEditTags(analysis.tags?.join(", ") || "");
     setEditNotes(analysis.notes || "");
@@ -58,7 +60,7 @@ export function SavedAnalysesPanel({ onLoadAnalysis }: SavedAnalysesPanelProps) 
     }
   };
 
-  const handleShare = (analysis: any) => {
+  const handleShare = (analysis: SavedAnalysisItem) => {
     setSelectedAnalysisForShare(analysis);
     setShareModalOpen(true);
   };

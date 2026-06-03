@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-06-01T11:38:19.235Z",
+  "repository": "sanjabh11/career-automation-insights-engine",
+  "branch": "phase-e-commercial-validation",
+  "local": {
+    "licenseFilePresent": true,
+    "packageLicense": "MIT",
+    "packageDescription": "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines.",
+    "maintainerBurdenCopy": true
+  },
+  "github": {
+    "repoApiUrl": "https://api.github.com/repos/sanjabh11/career-automation-insights-engine",
+    "htmlUrl": "https://github.com/sanjabh11/career-automation-insights-engine",
+    "description": "Decision-support APO dashboard for career automation exposure, proof-pack review, CI regression gates, and source-labeled workforce data pipelines.",
+    "descriptionMatches": true,
+    "defaultBranch": "main",
+    "defaultBranchLicense": null,
+    "branchLicensePresent": true,
+    "branchLicensePath": "LICENSE",
+    "branchLicenseSize": 1065,
+    "licenseStatus": "default_branch_pending",
+    "stargazersCount": 0
+  },
+  "boundaries": [
+    "Repository description is scope framing, not adoption proof.",
+    "GitHub API license metadata follows the default branch and may remain null until this branch is merged.",
+    "Stars are not used as maturity, popularity, or commercial traction evidence.",
+    "Reviewer-facing copy should focus on maintainer burden, PR review, CI triage, regression coverage, and source-labeled data-pipeline maintenance."
+  ]
+}

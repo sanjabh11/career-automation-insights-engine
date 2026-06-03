@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-06-03T08:52:30.104Z",
+  "branch": "phase-e-commercial-validation",
+  "goalComplete": false,
+  "requireComplete": false,
+  "gates": [
+    {
+      "id": "phase_a_truth_claims",
+      "label": "Phase A truth and claim reconciliation",
+      "status": "locally_proven",
+      "evidence": "Completion audit records route/proof-link crawl and forbidden-claim scan.",
+      "neededEvidence": "Keep route crawl and forbidden-claim scan current before merging Phase A.",
+      "sourceBoundary": "local verifier",
+      "doesNotProve": []
+    },
+    {
+      "id": "phase_b_calibration_artifacts",
+      "label": "Phase B public calibration/model-card artifacts",
+      "status": "locally_proven_with_scope_limit",
+      "evidence": "APO model card, task model card, calibration report, reliability curve, and calibration JSON are present.",
+      "neededEvidence": "Production accuracy still needs live APO logs joined to approved expert assessments.",
+      "sourceBoundary": "local verifier",
+      "doesNotProve": [
+        "Production calibration",
+        "scientific validity",
+        "generalization beyond the fixture rows"
+      ]
+    },
+    {
+      "id": "phase_c_embedding_runtime",
+      "label": "Phase C embedding/runtime smoke path",
+      "status": "locally_proven",
+      "evidence": "`smoke:skill-adjacency` is wired to the embedding dimensionality/non-empty adjacency verifier.",
+      "neededEvidence": "Run `npm run smoke:skill-adjacency` after embedding or adjacency code changes.",
+      "sourceBoundary": "local verifier",
+      "doesNotProve": []
+    },
+    {
+      "id": "phase_d_global_english",
+      "label": "Phase D global-English disclosure/mapping/adapter layer",
+      "status": "satisfied_by_mapping_adapter_and_us_basis_disclosure",
+      "evidence": "Global-English source registry, sample crosswalks, static verifier, source-fetch verifier, visible U.S.-basis disclosure, and source-registered local wage/outlook adapter gates are present.",
+      "neededEvidence": "If the product needs local wage values instead of disclosure, import source-dated ONS/Job Bank/JSA rows and test joins before display.",
+      "sourceBoundary": "local verifier",
+      "doesNotProve": []
+    },
+    {
+      "id": "phase_e_instrumentation",
+      "label": "Phase E activation/retention/commercial validation instrumentation",
+      "status": "locally_proven_with_scope_limit",
+      "evidence": "Commercial validation gates, activation/retention catalog, onboarding checklist, and case-study template are implemented.",
+      "neededEvidence": "Live MRR, committed partners, and permissioned outcomes remain external evidence.",
+      "sourceBoundary": "local verifier",
+      "doesNotProve": []
+    },
+    {
+      "id": "redacted_live_gate_evidence_intake",
+      "label": "Redacted live-gate evidence intake verifier",
+      "status": "locally_proven",
+      "evidence": "A non-secret redacted evidence schema, template, and verifier are wired for the remaining credential-gated live proof gates.",
+      "neededEvidence": "Use `docs/commercialization/live-gate-evidence-template.json` as the shape for owner-held proof metadata and validate with `npm run verify:live-gate-evidence`.",
+      "sourceBoundary": "local verifier and redacted owner-evidence schema",
+      "doesNotProve": [
+        "Live proof until a valid evidence file is attached",
+        "Raw evidence authenticity without owner-held artifacts"
+      ]
+    },
+    {
+      "id": "real_stripe_test_checkout",
+      "label": "Real Stripe test-mode checkout",
+      "status": "blocked_non_test_stripe_key",
+      "evidence": "Required secret/env names are present, but the resolved Stripe checkout key is not test-mode. Add `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`, or temporarily use a test-mode `STRIPE_SECRET_KEY` for this proof run.",
+      "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.",
+      "sourceBoundary": "owner credential gate",
+      "doesNotProve": [
+        "Live revenue",
+        "MRR",
+        "payment fulfillment in live mode"
+      ]
+    },
+    {
+      "id": "production_calibration_run",
+      "label": "Production calibration run",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:production-calibration` only after the target project already has approved migrations, deployed `calibrate-ece`, function secrets, APO logs, and expert labels.",
+      "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+      "sourceBoundary": "owner credential and deployment-precondition gate",
+      "doesNotProve": [
+        "Scientific validation before live labels exist",
+        "Migrations or deployments were applied by this verifier"
+      ]
+    },
+    {
+      "id": "authenticated_live_artifact_e2e",
+      "label": "Authenticated live artifact e2e",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:commercial-live-auth-e2e` with a synthetic test user.",
+      "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
+      "sourceBoundary": "owner credential gate",
+      "doesNotProve": [
+        "Payment proof",
+        "malware scanning",
+        "legal compliance"
+      ]
+    },
+    {
+      "id": "live_mrr_gt_zero",
+      "label": "Live MRR greater than zero",
+      "status": "ready_for_owner_live_run",
+      "evidence": "Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.",
+      "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.",
+      "sourceBoundary": "owner live Stripe credential gate",
+      "doesNotProve": [
+        "Retention",
+        "Product-market fit",
+        "Future revenue",
+        "Accounting-recognized revenue"
+      ]
+    },
+    {
+      "id": "three_committed_partners",
+      "label": "Three committed design partners",
+      "status": "blocked_missing_owner_evidence_records",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held partner commitment hash(es) are attached.",
+      "neededEvidence": "At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+      "sourceBoundary": "owner redacted commercial-evidence records",
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
+    },
+    {
+      "id": "documented_outcomes",
+      "label": "Permissioned documented outcomes",
+      "status": "blocked_missing_owner_evidence_records",
+      "evidence": "Redacted commercial-evidence record verifier is ready; 0 unique accepted owner-held documented outcome hash(es) are attached.",
+      "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.",
+      "sourceBoundary": "owner redacted commercial-evidence records",
+      "doesNotProve": [
+        "Guaranteed career outcomes",
+        "Causal impact",
+        "Generalizable demand"
+      ]
+    }
+  ],
+  "remainingManualEvidence": [
+    "Real Stripe test-mode checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.",
+    "Production calibration run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+    "Authenticated live artifact e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
+    "Live MRR greater than zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.",
+    "Three committed design partners: At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.",
+    "Permissioned documented outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text."
+  ],
+  "liveGateEvidence": {
+    "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
+    "templatePath": "docs/commercialization/live-gate-evidence-template.json",
+    "defaultPath": "docs/commercialization/live-gate-evidence.local.json",
+    "found": false,
+    "evidencePath": "docs/commercialization/live-gate-evidence.local.json",
+    "acceptedGateIds": [],
+    "rejectedGateIds": [],
+    "errorCount": 0,
+    "errors": []
+  },
+  "commercialEvidenceRecords": {
+    "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
+    "templatePath": "docs/commercialization/commercial-evidence-records-template.json",
+    "defaultPath": "docs/commercialization/commercial-evidence-records.local.json",
+    "found": false,
+    "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
+    "acceptedDesignPartnerCount": 0,
+    "acceptedOutcomeCount": 0,
+    "uniqueDesignPartnerCount": 0,
+    "uniqueOutcomeCount": 0,
+    "partnerGateSatisfied": false,
+    "outcomeGateSatisfied": false,
+    "errorCount": 0,
+    "errors": []
+  }
+}

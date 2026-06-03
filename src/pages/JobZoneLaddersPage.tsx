@@ -6,8 +6,40 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, Route, TrendingUp } from "lucide-react";
 
+interface JobZoneLadderRow {
+  job_zone: number;
+  zone_name: string | null;
+  education: string | null;
+  experience: string | null;
+  training: string | null;
+  occupation_count: number | null;
+  sample_occupations: unknown;
+  transitions_available: number | null;
+}
+
+interface JobZoneTransitionRow {
+  from_zone: number;
+  to_zone: number;
+  typical_duration_months: number | null;
+  cost_estimate_usd: number | null;
+  prerequisites: unknown;
+  recommended_certifications: unknown;
+  sample_path: string | null;
+  success_rate_pct: number | null;
+}
+
+interface JobZoneLadderExampleRow {
+  ladder_name: string;
+  from_zone: number;
+  to_zone: number;
+  occupation_path: string[] | null;
+  total_time_months: number | null;
+  total_cost_usd: number | null;
+  roi_description: string | null;
+}
+
 export default function JobZoneLaddersPage() {
-  const { data: zones, isLoading: zonesLoading } = useQuery({
+  const { data: zones, isLoading: zonesLoading } = useQuery<JobZoneLadderRow[]>({
     queryKey: ["v_job_zone_ladders"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -15,12 +47,12 @@ export default function JobZoneLaddersPage() {
         .select("job_zone, zone_name, education, experience, training, occupation_count, sample_occupations, transitions_available")
         .order("job_zone");
       if (error) throw error;
-      return data || [];
+      return (data || []) as JobZoneLadderRow[];
     },
     staleTime: 1000 * 60 * 10,
   });
 
-  const { data: transitions, isLoading: transLoading } = useQuery({
+  const { data: transitions, isLoading: transLoading } = useQuery<JobZoneTransitionRow[]>({
     queryKey: ["job_zone_transitions"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,12 +61,12 @@ export default function JobZoneLaddersPage() {
         .order("from_zone")
         .order("to_zone");
       if (error) throw error;
-      return data || [];
+      return (data || []) as JobZoneTransitionRow[];
     },
     staleTime: 1000 * 60 * 10,
   });
 
-  const { data: ladders, isLoading: laddersLoading } = useQuery({
+  const { data: ladders, isLoading: laddersLoading } = useQuery<JobZoneLadderExampleRow[]>({
     queryKey: ["job_zone_ladder_examples"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -42,7 +74,7 @@ export default function JobZoneLaddersPage() {
         .select("ladder_name, from_zone, to_zone, occupation_path, total_time_months, total_cost_usd, roi_description")
         .order("ladder_name");
       if (error) throw error;
-      return data || [];
+      return (data || []) as JobZoneLadderExampleRow[];
     },
     staleTime: 1000 * 60 * 10,
   });
@@ -72,7 +104,7 @@ export default function JobZoneLaddersPage() {
             <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading zones...
           </div>
         ) : (
-          zones?.map((z: any) => (
+          zones?.map((z) => (
             <Card key={z.job_zone} className="p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -105,7 +137,7 @@ export default function JobZoneLaddersPage() {
             </div>
           )}
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
-            {transitions?.map((t: any, i: number) => (
+            {transitions?.map((t, i) => (
               <div key={`${t.from_zone}-${t.to_zone}-${i}`} className="p-3 rounded border">
                 <div className="flex items-center justify-between">
                   <div className="font-medium text-sm">Zone {t.from_zone} → {t.to_zone}</div>
@@ -132,7 +164,7 @@ export default function JobZoneLaddersPage() {
             </div>
           )}
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
-            {ladders?.map((l: any, i: number) => (
+            {ladders?.map((l, i) => (
               <div key={`${l.ladder_name}-${i}`} className="p-3 rounded border">
                 <div className="flex items-center justify-between">
                   <div className="font-medium text-sm">{l.ladder_name}</div>

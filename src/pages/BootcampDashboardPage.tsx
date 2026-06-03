@@ -3,7 +3,7 @@
  * Phase 3 - Student portal for bootcamp participants
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,7 @@ import { InstructorGradingUI } from '@/components/InstructorGradingUI';
 
 interface Enrollment {
   id: string;
+  cohort_id: string;
   cohort: {
     id: string;
     name: string;
@@ -60,6 +61,19 @@ interface LiveSession {
   recording_url: string | null;
 }
 
+type AssignmentSubmission = Assignment['submission'];
+
+type AssignmentRow = Omit<Assignment, 'submission'> & {
+  submission: AssignmentSubmission | AssignmentSubmission[] | null;
+};
+
+const normalizeAssignment = (assignment: AssignmentRow): Assignment => ({
+  ...assignment,
+  submission: Array.isArray(assignment.submission)
+    ? assignment.submission[0] ?? null
+    : assignment.submission,
+});
+
 const BootcampDashboardPage = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -69,11 +83,7 @@ const BootcampDashboardPage = () => {
   const [liveSessions, setLiveSessions] = useState<LiveSession[]>([]);
   const [userId, setUserId] = useState<string>('');
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -100,17 +110,19 @@ const BootcampDashboardPage = () => {
 
       if (enrollError) throw enrollError;
 
-      setEnrollment(enrollmentData as any);
+      const activeEnrollment = enrollmentData as Enrollment;
+      setEnrollment(activeEnrollment);
 
       // Load modules for cohort
       const { data: modulesData } = await supabase
         .from('bootcamp_modules')
         .select('*')
-        .eq('cohort_id', enrollmentData.cohort_id)
+        .eq('cohort_id', activeEnrollment.cohort_id)
         .eq('is_published', true)
         .order('week_number');
 
-      setModules(modulesData || []);
+      const publishedModules = (modulesData || []) as Module[];
+      setModules(publishedModules);
 
       // Load assignments with submission status
       const { data: assignmentsData } = await supabase
@@ -119,25 +131,26 @@ const BootcampDashboardPage = () => {
           *,
           submission:bootcamp_submissions(status, points_earned)
         `)
-        .in('module_id', modulesData?.map((m: any) => m.id) || [])
+        .in('module_id', publishedModules.map((m) => m.id))
         .order('due_date');
 
-      setAssignments(assignmentsData as any || []);
+      const assignmentRows = (assignmentsData || []) as AssignmentRow[];
+      setAssignments(assignmentRows.map(normalizeAssignment));
 
       // Load upcoming live sessions
       const { data: sessionsData } = await supabase
         .from('bootcamp_live_sessions')
         .select('*')
-        .eq('cohort_id', enrollmentData.cohort_id)
+        .eq('cohort_id', activeEnrollment.cohort_id)
         .gte('scheduled_at', new Date().toISOString())
         .order('scheduled_at')
         .limit(5);
 
-      setLiveSessions(sessionsData || []);
+      setLiveSessions((sessionsData || []) as LiveSession[]);
 
       // Update progress
       await supabase.rpc('calculate_student_progress', {
-        p_enrollment_id: enrollmentData.id,
+        p_enrollment_id: activeEnrollment.id,
       });
     } catch (error) {
       console.error('Error loading dashboard:', error);
@@ -149,7 +162,11 @@ const BootcampDashboardPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {

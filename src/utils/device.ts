@@ -3,7 +3,7 @@ export function getDeviceId(): string {
   try {
     let id = localStorage.getItem(KEY);
     if (!id) {
-      id = crypto && 'randomUUID' in crypto ? (crypto as any).randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      id = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
       localStorage.setItem(KEY, id);
     }
     return id;

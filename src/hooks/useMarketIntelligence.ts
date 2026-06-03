@@ -12,9 +12,8 @@ export function useMarketIntelligence(occupationCode: string | null) {
             if (!occupationCode) return null;
 
             // In local dev, skip calling the Edge Function unless explicitly enabled
-            const envAny = (import.meta as any)?.env || {};
-            const enableDev = envAny.VITE_ENABLE_MARKET_INTEL_DEV === 'true';
-            const isDevBuild = !!envAny.DEV;
+            const enableDev = import.meta.env.VITE_ENABLE_MARKET_INTEL_DEV === 'true';
+            const isDevBuild = !!import.meta.env.DEV;
             if (isDevBuild && !enableDev) {
                 return null;
             }

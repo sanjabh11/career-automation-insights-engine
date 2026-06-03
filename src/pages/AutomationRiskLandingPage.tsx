@@ -33,7 +33,7 @@ export const AutomationRiskLandingPage: React.FC = () => {
     useEffect(() => {
         // Set page title for SEO
         if (data) {
-            document.title = `Will AI Replace ${data.title}s? Automation Risk Analysis | APO Dashboard`;
+            document.title = `${data.title} Automation Defense Estimate | APO Dashboard`;
 
             // Add meta description
             const metaDesc = document.querySelector('meta[name="description"]');
@@ -55,7 +55,7 @@ export const AutomationRiskLandingPage: React.FC = () => {
             const schema = {
                 "@context": "https://schema.org",
                 "@type": "Article",
-                "headline": `Will AI Replace ${data.title}s? Automation Risk Analysis`,
+                "headline": `${data.title} Automation Defense Estimate`,
                 "description": data.seoDescription,
                 "author": {
                     "@type": "Organization",
@@ -82,10 +82,10 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 },
                 "keywords": [
                     `${data.title} automation risk`,
-                    `AI replacing ${data.title}s`,
-                    `${data.title} future career`,
+                    `${data.title} AI task exposure`,
+                    `${data.title} career resilience`,
                     `${data.industry} automation`,
-                    "career future-proofing"
+                    "automation defense planning"
                 ]
             };
 
@@ -141,7 +141,7 @@ export const AutomationRiskLandingPage: React.FC = () => {
                         AI Career Analysis
                     </Badge>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        Will AI Replace <span className="text-primary">{data.title}s</span>?
+                        {data.title} <span className="text-primary">Automation Defense Estimate</span>
                     </h1>
                     <p className="text-xl text-muted-foreground mb-8">
                         {data.seoDescription}
@@ -156,13 +156,13 @@ export const AutomationRiskLandingPage: React.FC = () => {
                                     {data.overallRisk}%
                                 </div>
                                 <div className="text-lg text-muted-foreground">
-                                    Automation Risk Score
+                                    Decision-Support Exposure Estimate
                                 </div>
                             </div>
                         </div>
                         <Progress value={data.overallRisk} className="h-4 mb-4" />
                         <Badge className={`${riskColor} text-lg px-4 py-1`}>
-                            {riskLevel} Risk
+                            {riskLevel} Exposure
                         </Badge>
                     </div>
                 </div>
@@ -195,12 +195,12 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* High Risk Tasks */}
+            {/* Higher Exposure Tasks */}
             <section className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                         <ShieldX className="h-6 w-6 text-red-500" />
-                        Tasks at Highest Automation Risk
+                        Tasks To Review First
                     </h2>
                     <div className="grid gap-3">
                         {data.highRiskTasks.map((task, i) => (
@@ -213,12 +213,12 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Safe Skills */}
+            {/* Resilience Skills */}
             <section className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                         <ShieldCheck className="h-6 w-6 text-emerald-500" />
-                        Skills That Remain Human
+                        Skills For Human Review And Resilience
                     </h2>
                     <div className="grid gap-3">
                         {data.safeSkills.map((skill, i) => (
@@ -369,8 +369,8 @@ export const AutomationRiskLandingPage: React.FC = () => {
                 <div className="max-w-4xl mx-auto text-center bg-card border rounded-xl p-8">
                     <h2 className="text-xl font-bold mb-2">Are You a Career Coach?</h2>
                     <p className="text-muted-foreground mb-4">
-                        Generate white-labeled "{data.title} Career Future-Proofing" reports for your clients in 30 seconds.
-                        You pay $10 per report. Clients pay $150+. <strong>That's 15x ROI.</strong>
+                        Generate white-labeled "{data.title} Automation Defense" planning artifacts for client discussions.
+                        Pricing and client billing must be set by the coach and supported by their own engagement evidence.
                     </p>
                     <Link to="/for-coaches">
                         <Button size="lg">

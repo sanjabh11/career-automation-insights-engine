@@ -3,17 +3,20 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
-export interface SavedAnalysis {
+type SavedAnalysesTable = Database["public"]["Tables"]["saved_analyses"];
+
+export type SavedAnalysis = SavedAnalysesTable["Row"];
+
+type SaveAnalysisInput = Pick<
+  SavedAnalysesTable["Insert"],
+  "occupation_code" | "occupation_title" | "analysis_data" | "tags" | "notes"
+>;
+
+type UpdateAnalysisInput = Pick<SavedAnalysesTable["Update"], "tags" | "notes"> & {
   id: string;
-  occupation_code: string;
-  occupation_title: string;
-  analysis_data: any;
-  tags: string[];
-  notes?: string;
-  created_at: string;
-  updated_at: string;
-}
+};
 
 export function useSavedAnalyses() {
   const [user, setUser] = useState<User | null>(null);
@@ -69,7 +72,7 @@ export function useSavedAnalyses() {
     }: {
       occupation_code: string;
       occupation_title: string;
-      analysis_data: any;
+      analysis_data: SaveAnalysisInput["analysis_data"];
       tags?: string[];
       notes?: string;
     }) => {
@@ -153,8 +156,8 @@ export function useSavedAnalyses() {
   return {
     savedAnalyses,
     isLoading,
-    saveAnalysis: (data: any) => saveAnalysisMutation.mutate(data),
-    updateAnalysis: (data: any) => updateAnalysisMutation.mutate(data),
+    saveAnalysis: (data: SaveAnalysisInput) => saveAnalysisMutation.mutate(data),
+    updateAnalysis: (data: UpdateAnalysisInput) => updateAnalysisMutation.mutate(data),
     deleteAnalysis: (id: string) => deleteAnalysisMutation.mutate(id),
     isSaving: saveAnalysisMutation.isPending,
     isUpdating: updateAnalysisMutation.isPending,
