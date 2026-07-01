@@ -40,7 +40,10 @@ const UpstreamSchema = z.object({
 
 const ReqSchema = z.object({
   occupation_code: z.string().optional(),
-  upstream: z.array(UpstreamSchema).min(1),
+  upstream: z.array(UpstreamSchema).min(1).optional(),
+  mode: z.enum(['simple', 'graph']).default('simple'),
+  shock_magnitude: z.number().min(0).max(100).default(50),
+  depth: z.number().min(1).max(5).default(2),
 });
 
 function clamp(v: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, v)); }
@@ -64,6 +67,33 @@ serve(async (req) => {
     const raw = await req.text();
     let body: z.infer<typeof ReqSchema>;
     try { body = ReqSchema.parse(JSON.parse(raw)); } catch (_e) { return new Response(JSON.stringify({ error: 'Invalid request' }), { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } }); }
+
+    // Graph mode: delegate to cascade-risk-graph edge function
+    if (body.mode === 'graph' && body.occupation_code) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const graphUrl = `${supabaseUrl}/functions/v1/cascade-risk-graph`;
+      const graphResp = await fetch(graphUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''}`,
+        },
+        body: JSON.stringify({
+          occupation_code: body.occupation_code,
+          shock_magnitude: body.shock_magnitude,
+          depth: body.depth,
+        }),
+      });
+      const graphData = await graphResp.text();
+      return new Response(graphData, {
+        status: graphResp.status,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!body.upstream || body.upstream.length === 0) {
+      return new Response(JSON.stringify({ error: 'upstream array required for simple mode' }), { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } });
+    }
 
     const contributions = body.upstream.map(u => ({
       ...u,

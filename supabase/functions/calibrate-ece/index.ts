@@ -41,6 +41,93 @@ type CalibrationBin = {
 
 function clamp01(x: number) { return Math.max(0, Math.min(1, x)); }
 
+// --- Isotonic Regression (Pool Adjacent Violators Algorithm) ---
+// Fits a non-decreasing function mapping predicted -> observed
+function fitIsotonic(pairs: CalibrationPair[]): { x: number[]; y: number[] } {
+  if (!pairs.length) return { x: [], y: [] };
+  const sorted = [...pairs].sort((a, b) => a.predicted - b.predicted);
+  const xs = sorted.map(p => p.predicted);
+  const ys = sorted.map(p => p.observed);
+
+  // Pool Adjacent Violators: merge blocks where y[i] > y[i+1]
+  const blocks: { x: number[]; y: number[]; sum: number }[] = [];
+  for (let i = 0; i < xs.length; i++) {
+    blocks.push({ x: [xs[i]], y: [ys[i]], sum: ys[i] });
+    while (blocks.length >= 2) {
+      const n = blocks.length;
+      const prev = blocks[n - 2];
+      const curr = blocks[n - 1];
+      const prevMean = prev.sum / prev.y.length;
+      const currMean = curr.sum / curr.y.length;
+      if (prevMean > currMean) {
+        // Merge
+        prev.x.push(...curr.x);
+        prev.y.push(...curr.y);
+        prev.sum += curr.sum;
+        blocks.pop();
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Build isotonic mapping: for each block, all x values map to block mean
+  const outX: number[] = [];
+  const outY: number[] = [];
+  for (const b of blocks) {
+    const mean = b.sum / b.y.length;
+    for (const x of b.x) {
+      outX.push(x);
+      outY.push(clamp01(mean));
+    }
+  }
+  return { x: outX, y: outY };
+}
+
+// Apply isotonic mapping to a new predicted value via linear interpolation
+function applyIsotonic(pred: number, iso: { x: number[]; y: number[] }): number {
+  if (!iso.x.length) return pred;
+  if (pred <= iso.x[0]) return iso.y[0];
+  if (pred >= iso.x[iso.x.length - 1]) return iso.y[iso.y.length - 1];
+  // Binary search for position
+  let lo = 0, hi = iso.x.length - 1;
+  while (lo < hi - 1) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (iso.x[mid] <= pred) lo = mid; else hi = mid;
+  }
+  const t = (pred - iso.x[lo]) / (iso.x[hi] - iso.x[lo] || 1);
+  return clamp01(iso.y[lo] + t * (iso.y[hi] - iso.y[lo]));
+}
+
+// --- Temperature Scaling ---
+// Find temperature T that minimizes squared error of observed given predicted
+function fitTemperature(pairs: CalibrationPair[]): number {
+  if (!pairs.length) return 1.0;
+  // Binary search for optimal T in [0.1, 10]
+  let lo = 0.1, hi = 10.0;
+  for (let iter = 0; iter < 50; iter++) {
+    const mid = (lo + hi) / 2;
+    const midLoss = nllLoss(pairs, mid);
+    const midLo = nllLoss(pairs, Math.max(0.01, mid - 0.01));
+    if (midLo < midLoss) hi = mid; else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+function nllLoss(pairs: CalibrationPair[], T: number): number {
+  // Simplified: minimize squared error of (predicted/T) vs observed
+  let loss = 0;
+  for (const p of pairs) {
+    const scaled = clamp01(p.predicted / T);
+    loss += Math.pow(p.observed - scaled, 2);
+  }
+  return loss / pairs.length;
+}
+
+function applyTemperature(pred: number, T: number): number {
+  return clamp01(pred / T);
+}
+
 function computeECE(values: CalibrationPair[], binCount: number): { ece: number; bins: CalibrationBin[] } {
   if (!values.length) return { ece: 0, bins: [] };
   const bins = Array.from({ length: binCount }, (_, i) => ({
@@ -176,9 +263,40 @@ export async function handler(req: Request) {
       });
     }
 
-    const { ece, bins } = computeECE(pairs, binCount);
+    // --- Baseline ECE ---
+    const { ece: baselineECE, bins } = computeECE(pairs, binCount);
     const mae = pairs.length ? mean(pairs.map((pair) => Math.abs(pair.observed - pair.predicted))) : 0;
     const rootMeanSquaredError = rmse(pairs);
+
+    // --- Isotonic Regression Calibration ---
+    const isoFit = fitIsotonic(pairs);
+    const isotonicCorrected = pairs.map(p => ({
+      ...p,
+      corrected: applyIsotonic(p.predicted, isoFit),
+    }));
+    const { ece: isotonicECE } = computeECE(
+      isotonicCorrected.map(p => ({ predicted: p.corrected, observed: p.observed })),
+      binCount
+    );
+
+    // --- Temperature Scaling Calibration ---
+    const tempT = fitTemperature(pairs);
+    const tempCorrected = pairs.map(p => ({
+      ...p,
+      corrected: applyTemperature(p.predicted, tempT),
+    }));
+    const { ece: temperatureECE } = computeECE(
+      tempCorrected.map(p => ({ predicted: p.corrected, observed: p.observed })),
+      binCount
+    );
+
+    // Choose best calibration method
+    const bestMethod = isotonicECE <= temperatureECE ? 'isotonic' : 'temperature';
+    const bestECE = Math.min(isotonicECE, temperatureECE);
+    const eceReductionPct = baselineECE > 0 ? Math.round(((baselineECE - bestECE) / baselineECE) * 10000) / 100 : 0;
+
+    // Build calibration curve (isotonic mapping at sample points)
+    const calibrationCurve = isoFit.x.map((x, i) => ({ predicted: x, corrected: isoFit.y[i] }));
 
     const { data: runIns, error: runErr } = await supabase
       .from("calibration_runs")
@@ -186,7 +304,7 @@ export async function handler(req: Request) {
         cohort: cohort || null,
         bin_count: binCount,
         method: "apo_overall_vs_expert_assessments",
-        notes: `Compared APO overall_apo to mean expert_assessments. days=${days}; expert_source=${source || "all"}; matched_pairs=${pairs.length}; expert_rows=${expertRows.length}`,
+        notes: `Compared APO overall_apo to mean expert_assessments. days=${days}; expert_source=${source || "all"}; matched_pairs=${pairs.length}; expert_rows=${expertRows.length}; baseline_ece=${baselineECE.toFixed(4)}; isotonic_ece=${isotonicECE.toFixed(4)}; temperature_ece=${temperatureECE.toFixed(4)}; best_method=${bestMethod}; ece_reduction=${eceReductionPct}%; temperature_T=${tempT.toFixed(4)}`,
       })
       .select("id, created_at")
       .single();
@@ -210,9 +328,21 @@ export async function handler(req: Request) {
       await supabase.from("validation_metrics").insert([
         {
           metric_name: "apo_vs_expert_ece",
-          value: ece,
+          value: baselineECE,
           sample_size: pairs.length,
-          notes: `Expected calibration error against expert_assessments; binCount=${binCount}; source=${source || "all"}`,
+          notes: `Baseline ECE; binCount=${binCount}; source=${source || "all"}`,
+        },
+        {
+          metric_name: "apo_vs_expert_ece_isotonic",
+          value: isotonicECE,
+          sample_size: pairs.length,
+          notes: `Isotonic regression calibrated ECE; reduction=${eceReductionPct}%`,
+        },
+        {
+          metric_name: "apo_vs_expert_ece_temperature",
+          value: temperatureECE,
+          sample_size: pairs.length,
+          notes: `Temperature scaling calibrated ECE; T=${tempT.toFixed(4)}`,
         },
         {
           metric_name: "apo_vs_expert_mae",
@@ -233,7 +363,7 @@ export async function handler(req: Request) {
       runId: runIns.id,
       created_at: runIns.created_at,
       method: "apo_overall_vs_expert_assessments",
-      ece,
+      ece: baselineECE,
       mae,
       rmse: rootMeanSquaredError,
       binsCount: bins.length,
@@ -241,6 +371,17 @@ export async function handler(req: Request) {
       expertRowsCount: expertRows.length,
       unmatchedApoLogs: Math.max(0, (rows || []).length - pairs.length),
       source: source || "all",
+      // Calibration results
+      calibration: {
+        baseline_ece: baselineECE,
+        isotonic_ece: isotonicECE,
+        temperature_ece: temperatureECE,
+        best_method: bestMethod,
+        best_ece: bestECE,
+        ece_reduction_pct: eceReductionPct,
+        temperature_T: tempT,
+        calibration_curve: calibrationCurve.slice(0, 100), // cap for response size
+      },
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

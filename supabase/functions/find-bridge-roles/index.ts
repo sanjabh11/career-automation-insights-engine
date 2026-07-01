@@ -16,7 +16,10 @@ type BridgePathResult = {
     total_distance: number;
     path_length: number;
     feasibility_score: number;
-    algorithm_used: 'a_star';
+    algorithm_used: 'a_star' | 'graph_edges' | 'direct';
+    asymmetric?: boolean;
+    forward_difficulty?: number;
+    reverse_difficulty?: number;
 };
 
 /**
@@ -72,15 +75,15 @@ serve(async (req) => {
         // Fetch origin and destination occupations
         const { data: occupations } = await supabase
             .from('onet_occupation_enrichment')
-            .select('soc_code, title')
-            .in('soc_code', [origin_soc, destination_soc]);
+            .select('occupation_code, occupation_title')
+            .in('occupation_code', [origin_soc, destination_soc]);
 
         if (!occupations || occupations.length < 2) {
             throw new Error('One or both SOC codes not found');
         }
 
-        const originOccupation = occupations.find(o => o.soc_code === origin_soc);
-        const destinationOccupation = occupations.find(o => o.soc_code === destination_soc);
+        const originOccupation = occupations.find(o => o.occupation_code === origin_soc);
+        const destinationOccupation = occupations.find(o => o.occupation_code === destination_soc);
 
         // Get skills for origin and destination
         const originSkills = await getOccupationSkills(supabase, origin_soc);
@@ -93,11 +96,11 @@ serve(async (req) => {
         if (directOverlap >= 0.60) {
             const path = {
                 origin_soc,
-                origin_title: originOccupation?.title,
+                origin_title: originOccupation?.occupation_title,
                 destination_soc,
-                destination_title: destinationOccupation?.title,
+                destination_title: destinationOccupation?.occupation_title,
                 path_socs: [origin_soc, destination_soc],
-                path_titles: [originOccupation?.title, destinationOccupation?.title],
+                path_titles: [originOccupation?.occupation_title, destinationOccupation?.occupation_title],
                 skill_overlaps: [directOverlap],
                 avg_skill_overlap: directOverlap,
                 total_distance: 1 - directOverlap,
@@ -122,7 +125,7 @@ serve(async (req) => {
             );
         }
 
-        // Use A* pathfinding to find bridge roles
+        // Try graph-based path from job_edges table first
         const bridgePath = await findBridgePath(
             supabase,
             origin_soc,
@@ -146,9 +149,9 @@ serve(async (req) => {
         // Construct full path response
         const pathData = {
             origin_soc,
-            origin_title: originOccupation?.title,
+            origin_title: originOccupation?.occupation_title,
             destination_soc,
-            destination_title: destinationOccupation?.title,
+            destination_title: destinationOccupation?.occupation_title,
             ...bridgePath,
             calculation_time_ms: Date.now() - startTime
         };
@@ -177,20 +180,20 @@ async function getOccupationSkills(supabase: BridgeSupabaseClient, socCode: stri
     // Get knowledge requirements
     const { data: knowledge } = await supabase
         .from('onet_knowledge')
-        .select('element_id, scale_id, data_value')
-        .eq('onetsoc_code', socCode)
-        .gte('data_value', 3.0); // Moderate importance threshold
+        .select('knowledge_id, importance')
+        .eq('occupation_code', socCode)
+        .gte('importance', 3.0); // Moderate importance threshold
 
-    knowledge?.forEach((k) => skills.add(`knowledge:${k.element_id}`));
+    knowledge?.forEach((k) => skills.add(`knowledge:${k.knowledge_id}`));
 
     // Get ability requirements
     const { data: abilities } = await supabase
         .from('onet_abilities')
-        .select('element_id, scale_id, data_value')
-        .eq('onetsoc_code', socCode)
-        .gte('data_value', 3.0);
+        .select('ability_id, importance')
+        .eq('occupation_code', socCode)
+        .gte('importance', 3.0);
 
-    abilities?.forEach((a) => skills.add(`ability:${a.element_id}`));
+    abilities?.forEach((a) => skills.add(`ability:${a.ability_id}`));
 
     return skills;
 }
@@ -212,10 +215,99 @@ async function findBridgePath(
     destSkills: Set<string>,
     maxLength: number
 ): Promise<BridgePathResult | null> {
+    // Try job_edges table first (pre-computed graph)
+    const { data: directEdge } = await supabase
+        .from('job_edges')
+        .select('source_soc, target_soc, skill_overlap, transition_difficulty')
+        .eq('source_soc', origin)
+        .eq('target_soc', destination)
+        .single() as { data: { skill_overlap: number; transition_difficulty: number } | null };
+
+    // Also check reverse edge for asymmetry
+    const { data: reverseEdge } = await supabase
+        .from('job_edges')
+        .select('source_soc, target_soc, skill_overlap, transition_difficulty')
+        .eq('source_soc', destination)
+        .eq('target_soc', origin)
+        .single() as { data: { skill_overlap: number; transition_difficulty: number } | null };
+
+    // If we have direct edge with high overlap, use it
+    if (directEdge && directEdge.skill_overlap >= 0.50) {
+        const forwardDiff = directEdge.transition_difficulty ?? (1 - directEdge.skill_overlap);
+        const reverseDiff = reverseEdge?.transition_difficulty ?? (1 - (reverseEdge?.skill_overlap ?? 0));
+        const asymmetric = Math.abs(forwardDiff - reverseDiff) > 0.1;
+
+        return {
+            path_socs: [origin, destination],
+            skill_overlaps: [directEdge.skill_overlap],
+            avg_skill_overlap: directEdge.skill_overlap,
+            total_distance: forwardDiff,
+            path_length: 0,
+            feasibility_score: directEdge.skill_overlap * 100,
+            algorithm_used: 'graph_edges',
+            asymmetric,
+            forward_difficulty: Math.round(forwardDiff * 100) / 100,
+            reverse_difficulty: Math.round(reverseDiff * 100) / 100,
+        };
+    }
+
+    // Try multi-hop path through job_edges
+    if (maxLength >= 1) {
+        const { data: outgoingEdges } = await supabase
+            .from('job_edges')
+            .select('source_soc, target_soc, skill_overlap, transition_difficulty')
+            .eq('source_soc', origin)
+            .gte('skill_overlap', 0.40)
+            .order('skill_overlap', { ascending: false })
+            .limit(20) as { data: Array<{ target_soc: string; skill_overlap: number; transition_difficulty: number }> | null };
+
+        if (outgoingEdges && outgoingEdges.length > 0) {
+            for (const edge of outgoingEdges) {
+                if (edge.target_soc === destination) continue;
+                // Check if this intermediate connects to destination
+                const { data: connectingEdge } = await supabase
+                    .from('job_edges')
+                    .select('source_soc, target_soc, skill_overlap, transition_difficulty')
+                    .eq('source_soc', edge.target_soc)
+                    .eq('target_soc', destination)
+                    .single() as { data: { skill_overlap: number; transition_difficulty: number } | null };
+
+                if (connectingEdge && connectingEdge.skill_overlap >= 0.40) {
+                    const overlaps = [edge.skill_overlap, connectingEdge.skill_overlap];
+                    const avgOverlap = overlaps.reduce((a, b) => a + b, 0) / overlaps.length;
+                    const totalDist = (1 - edge.skill_overlap) + (1 - connectingEdge.skill_overlap);
+
+                    return {
+                        path_socs: [origin, edge.target_soc, destination],
+                        skill_overlaps: overlaps,
+                        avg_skill_overlap: avgOverlap,
+                        total_distance: totalDist,
+                        path_length: 1,
+                        feasibility_score: avgOverlap * 100,
+                        algorithm_used: 'graph_edges',
+                    };
+                }
+            }
+        }
+    }
+
+    // Fallback to A* pathfinding with skill computation
+    return findBridgePathAStar(supabase, origin, destination, originSkills, destSkills, maxLength);
+}
+
+// Original A* pathfinding (fallback when job_edges table is empty)
+async function findBridgePathAStar(
+    supabase: BridgeSupabaseClient,
+    origin: string,
+    destination: string,
+    originSkills: Set<string>,
+    destSkills: Set<string>,
+    maxLength: number
+): Promise<BridgePathResult | null> {
     // Get related occupations from O*NET
     const { data: relatedOccupations } = await supabase
         .from('onet_occupation_enrichment')
-        .select('soc_code, title')
+        .select('occupation_code, occupation_title')
         .limit(500); // Get sample of occupations for pathfinding
 
     if (!relatedOccupations) return null;
@@ -268,12 +360,12 @@ async function findBridgePath(
 
         // Explore neighbors (related occupations)
         for (const neighbor of relatedOccupations) {
-            if (visited.has(neighbor.soc_code)) continue;
-            if (current.path.includes(neighbor.soc_code)) continue; // Avoid cycles
+            if (visited.has(neighbor.occupation_code)) continue;
+            if (current.path.includes(neighbor.occupation_code)) continue; // Avoid cycles
 
 
 
-            const neighborSkills = await getOccupationSkills(supabase, neighbor.soc_code);
+            const neighborSkills = await getOccupationSkills(supabase, neighbor.occupation_code);
             const overlap = calculateSkillOverlap(currentSkills, neighborSkills);
 
             // Only consider transitions with >50% overlap
@@ -284,8 +376,8 @@ async function findBridgePath(
             const newFScore = newGScore + heuristic;
 
             queue.push({
-                soc: neighbor.soc_code,
-                path: [...current.path, neighbor.soc_code],
+                soc: neighbor.occupation_code,
+                path: [...current.path, neighbor.occupation_code],
                 overlaps: [...current.overlaps, overlap],
                 gScore: newGScore,
                 fScore: newFScore

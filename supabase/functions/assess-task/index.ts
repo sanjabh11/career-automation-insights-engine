@@ -24,6 +24,9 @@ type TaskAssessmentResponse = {
   category: string;
   explanation: string;
   confidence: number;
+  exposure_score?: number;
+  complementarity_score?: number;
+  exposure_complementarity_profile?: string;
 };
 
 serve(async (req) => {
@@ -53,7 +56,17 @@ serve(async (req) => {
     const supabaseKey = resolveEnv('SUPABASE_SERVICE_ROLE_KEY', 'SERVICE_ROLE_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const prompt = `You are an AI assistant assessing task automation potential. Based on the task description${occupationContext ? ` for the occupation "${occupationContext}"` : ''}, classify it as one of: Automate, Augment, Human-only. Provide a brief explanation and a confidence score (0-1). Output ONLY JSON with keys category, explanation, confidence.\nTask description: ${taskDescription}`;
+    const prompt = `You are an AI assistant assessing task automation potential using a dual-index model. Based on the task description${occupationContext ? ` for the occupation "${occupationContext}"` : ''}:
+
+1. Classify it as one of: Automate, Augment, Human-only.
+2. Rate EXPOSURE (substitution risk, 0-1): How likely is this task to be fully automated/replaced by AI?
+3. Rate COMPLEMENTARITY (augmentation potential, 0-1): How much could AI tools augment/enhance human performance of this task?
+4. Classify the profile as one of: HEHC (high exposure, high complementarity), HELC (high exposure, low complementarity), LEHC (low exposure, high complementarity), LELC (low exposure, low complementarity).
+5. Provide a brief explanation and confidence score (0-1).
+
+Output ONLY JSON with keys: category, explanation, confidence, exposure_score, complementarity_score, exposure_complementarity_profile.
+
+Task description: ${taskDescription}`;
 
     const client = new GeminiClient(GEMINI_API_KEY);
     const envDefaults = getEnvGenerationDefaults();

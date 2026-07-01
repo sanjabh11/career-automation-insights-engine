@@ -318,6 +318,155 @@ export function calculateSkillPortfolioDecay(
   };
 }
 
+// ============================================================================
+// BAYESIAN SKILL DECAY WITH MARKET-SIGNAL UPDATING
+// ============================================================================
+
+export interface MarketSignal {
+  skillName: string;
+  postingVolume: number;       // Job posting count (normalized 0-100)
+  postingTrend: 'rising' | 'stable' | 'declining';
+  salaryTrend: 'rising' | 'stable' | 'declining';
+  weeksObserved: number;       // How many weeks of data
+}
+
+export interface BayesianDecayResult extends SkillDecayResult {
+  posteriorHalfLife: number;
+  priorHalfLife: number;
+  marketAdjustment: number;
+  signalStrength: number;
+  bayesianUpdated: boolean;
+}
+
+/**
+ * Bayesian update of skill half-life using market signals.
+ *
+ * Prior: exponential decay with known half-life
+ * Likelihood: market posting volume / trend data
+ * Posterior: updated half-life reflecting market reality
+ *
+ * Uses conjugate prior approach: Inverse-Gamma prior on decay rate λ,
+ * updated with observed market signal strength.
+ *
+ * @param skillName - Name of the skill
+ * @param monthsSinceAcquired - Months since skill was acquired
+ * @param practiceFrequency - How often skill is practiced
+ * @param marketSignal - Optional market signal for Bayesian update
+ */
+export function calculateBayesianSkillDecay(
+  skillName: string,
+  monthsSinceAcquired: number,
+  practiceFrequency: 'daily' | 'weekly' | 'monthly' | 'rarely' = 'monthly',
+  marketSignal?: MarketSignal,
+): BayesianDecayResult {
+  const halfLifeData = getSkillHalfLife(skillName);
+  const priorHalfLife = halfLifeData.baseHalfLifeMonths;
+
+  // Compute prior decay result (same as calculateSkillDecay)
+  const priorResult = calculateSkillDecay(skillName, monthsSinceAcquired, practiceFrequency);
+
+  if (!marketSignal) {
+    return {
+      ...priorResult,
+      posteriorHalfLife: priorResult.halfLifeMonths,
+      priorHalfLife: priorResult.halfLifeMonths,
+      marketAdjustment: 0,
+      signalStrength: 0,
+      bayesianUpdated: false,
+    };
+  }
+
+  // Bayesian update: adjust half-life based on market signals
+  // Prior: half-life ~ Inverse-Gamma(α₀, β₀)
+  // We use a simplified conjugate update:
+  // α₀ = 2 (weak prior), β₀ = α₀ * priorHalfLife
+  // Signal: posting volume and trend modify the effective observation count
+
+  const alpha0 = 2;
+  const beta0 = alpha0 * priorHalfLife;
+
+  // Signal strength: how much weight to give the market observation
+  // More weeks of data + higher posting volume = stronger signal
+  const volumeWeight = Math.min(1, marketSignal.postingVolume / 50);
+  const weeksWeight = Math.min(1, marketSignal.weeksObserved / 12);
+  const signalStrength = volumeWeight * weeksWeight;
+
+  // Trend adjustment factor
+  const trendFactor = {
+    rising: 1.3,    // Rising demand → longer half-life
+    stable: 1.0,
+    declining: 0.7, // Declining demand → shorter half-life
+  };
+  const salaryFactor = {
+    rising: 1.1,
+    stable: 1.0,
+    declining: 0.9,
+  };
+
+  const combinedTrend = trendFactor[marketSignal.postingTrend] * salaryFactor[marketSignal.salaryTrend];
+
+  // Effective observation: the market suggests a different half-life
+  const marketSuggestedHalfLife = priorHalfLife * combinedTrend;
+
+  // Conjugate update: posterior λ ~ Inverse-Gamma(α₀ + n, β₀ + n * market_suggested)
+  const n = signalStrength * 5; // Effective sample size from market signal
+  const alphaPost = alpha0 + n;
+  const betaPost = beta0 + n * marketSuggestedHalfLife;
+  const posteriorHalfLife = betaPost / alphaPost; // Posterior mean
+
+  // Market adjustment ratio
+  const marketAdjustment = (posteriorHalfLife - priorHalfLife) / priorHalfLife;
+
+  // Recalculate decay with posterior half-life
+  const practiceMultiplier = {
+    daily: 1.5, weekly: 1.2, monthly: 1.0, rarely: 0.7,
+  }[practiceFrequency];
+
+  const trendMultiplier = {
+    rising: 1.2, stable: 1.0, declining: 0.8,
+  }[halfLifeData.demandTrend];
+
+  const effectiveHalfLife = posteriorHalfLife * practiceMultiplier * trendMultiplier;
+  const decayExponent = monthsSinceAcquired / effectiveHalfLife;
+  const currentRelevance = Math.round(100 * Math.pow(0.5, decayExponent));
+  const decayRate = (Math.log(2) / effectiveHalfLife) * 100;
+  const monthsUntil50 = Math.max(0, effectiveHalfLife - monthsSinceAcquired);
+  const monthsUntil25 = Math.max(0, (effectiveHalfLife * 2) - monthsSinceAcquired);
+
+  let urgencyLevel: SkillDecayResult['urgencyLevel'];
+  let recommendation: string;
+
+  if (currentRelevance < 25) {
+    urgencyLevel = 'critical';
+    recommendation = `Your ${skillName} skills are critically outdated. Market signals show ${marketSignal.postingTrend} demand. Immediate upskilling recommended.`;
+  } else if (currentRelevance < 50) {
+    urgencyLevel = 'warning';
+    recommendation = `Your ${skillName} skills are decaying. Market trend: ${marketSignal.postingTrend}. Consider refresher training within ${Math.ceil(monthsUntil25)} months.`;
+  } else if (currentRelevance < 75) {
+    urgencyLevel = 'moderate';
+    recommendation = `Your ${skillName} skills are moderately fresh. Market trend: ${marketSignal.postingTrend}. Plan maintenance in ${Math.ceil(monthsUntil50)} months.`;
+  } else {
+    urgencyLevel = 'stable';
+    recommendation = `Your ${skillName} skills are current. Market trend: ${marketSignal.postingTrend}. Continue practicing to maintain relevance.`;
+  }
+
+  return {
+    skillName,
+    currentRelevance,
+    halfLifeMonths: Math.round(effectiveHalfLife),
+    decayRate: Math.round(decayRate * 100) / 100,
+    monthsUntil50Percent: Math.round(monthsUntil50),
+    monthsUntil25Percent: Math.round(monthsUntil25),
+    urgencyLevel,
+    recommendation,
+    posteriorHalfLife: Math.round(posteriorHalfLife * 10) / 10,
+    priorHalfLife: Math.round(priorHalfLife * 10) / 10,
+    marketAdjustment: Math.round(marketAdjustment * 10000) / 10000,
+    signalStrength: Math.round(signalStrength * 100) / 100,
+    bayesianUpdated: true,
+  };
+}
+
 /**
  * Get skill refresh recommendations based on decay analysis
  */

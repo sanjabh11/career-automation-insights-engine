@@ -159,7 +159,18 @@ const RequestSchema = z.object({
     code: z.string().min(1),
     title: z.string().min(1),
   }),
+  career_stage: z.enum(['early', 'mid', 'late', 'executive']).optional(),
 });
+
+// Career-stage vulnerability weights: adjust APO based on career stage
+// Early-career workers are more vulnerable to automation displacement
+// Late-career workers face retraining difficulty but have tacit knowledge
+const CAREER_STAGE_ADJUSTMENTS: Record<string, { apoMultiplier: number; retrainingDifficulty: number; description: string }> = {
+  early:       { apoMultiplier: 1.08, retrainingDifficulty: 0.7, description: 'Early career (0-5 yrs): higher displacement risk, lower retraining barrier' },
+  mid:         { apoMultiplier: 1.0,  retrainingDifficulty: 1.0, description: 'Mid career (5-15 yrs): baseline vulnerability' },
+  late:        { apoMultiplier: 0.95, retrainingDifficulty: 1.3, description: 'Late career (15+ yrs): tacit knowledge buffers, retraining harder' },
+  executive:   { apoMultiplier: 0.85, retrainingDifficulty: 1.5, description: 'Executive: strategic judgment resists automation, high retraining cost' },
+};
 
 type ApoItem = z.infer<typeof ApoItemSchema>;
 type ComputedApoItem = ApoItem & { computedAPO: number };
@@ -312,7 +323,7 @@ serve(async (req) => {
       requestPayload.occupation = { code: String(requestPayload.occupation_code), title: String(requestPayload.occupation_title) };
     }
 
-    const { occupation } = RequestSchema.parse(requestPayload);
+    const { occupation, career_stage } = RequestSchema.parse(requestPayload);
 
     console.log(`Calculating enhanced APO for occupation: ${occupation.title} (${occupation.code})`);
 
@@ -593,36 +604,99 @@ serve(async (req) => {
       console.warn('External adjustments failed (non-fatal):', e);
     }
 
-    // Confidence Intervals via Monte Carlo sampling (fast, light-touch)
+    // Confidence Intervals: Conformal prediction (primary) with Monte Carlo fallback
+    let conformalApplied = false;
     try {
-      const N = Number(Deno.env.get('APO_CI_ITERATIONS') ?? '200');
-      const sims: number[] = [];
-      for (let i = 0; i < N; i++) {
-        // Apply small noise to each category score and external adjustments
-        const jitter = (x: number) => clamp100(x * (1 + randn(0.03)));
-        const cs = {
-          tasks: jitter(categoryScores.tasks?.apo ?? 0),
-          knowledge: jitter(categoryScores.knowledge?.apo ?? 0),
-          skills: jitter(categoryScores.skills?.apo ?? 0),
-          abilities: jitter(categoryScores.abilities?.apo ?? 0),
-          technologies: jitter(categoryScores.technologies?.apo ?? 0),
-        };
-        let sim = clamp100(
-          cs.tasks * weights.tasks +
-          cs.knowledge * weights.knowledge +
-          cs.skills * weights.skills +
-          cs.abilities * weights.abilities +
-          cs.technologies * weights.technologies
-        );
-        if (typeof blsAdjustmentPts === 'number') sim = clamp100(sim + blsAdjustmentPts * (1 + randn(0.2)));
-        if (typeof econViabilityDiscount === 'number') sim = clamp100(sim - econViabilityDiscount * (1 + randn(0.2)));
-        sims.push(sim);
+      // --- Split-conformal prediction using expert_assessments as calibration set ---
+      // Fetch historical apo_logs joined with expert_assessments to build nonconformity scores
+      if (supabase) {
+        const { data: calApoRows } = await supabase
+          .from('apo_logs')
+          .select('id, occupation_code, overall_apo')
+          .not('overall_apo', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(500);
+
+        if (calApoRows && calApoRows.length >= 10) {
+          const calOccCodes = Array.from(new Set(calApoRows.map((r: { occupation_code: string }) => r.occupation_code).filter(Boolean)));
+          const { data: calExpertRows } = await supabase
+            .from('expert_assessments')
+            .select('occupation_code, automation_probability')
+            .in('occupation_code', calOccCodes)
+            .not('automation_probability', 'is', null);
+
+          if (calExpertRows && calExpertRows.length >= 10) {
+            // Build expert mean per occupation
+            const expertByOcc = new Map<string, number[]>();
+            for (const er of calExpertRows as { occupation_code: string; automation_probability: number }[]) {
+              const arr = expertByOcc.get(er.occupation_code) || [];
+              arr.push(Number(er.automation_probability));
+              expertByOcc.set(er.occupation_code, arr);
+            }
+
+            // Compute nonconformity scores: |predicted_apo - observed_expert_mean|
+            const nonconformityScores: number[] = [];
+            for (const ar of calApoRows as { occupation_code: string; overall_apo: number }[]) {
+              const expertArr = expertByOcc.get(ar.occupation_code);
+              if (!expertArr || !expertArr.length) continue;
+              const observedMean = expertArr.reduce((a, b) => a + b, 0) / expertArr.length;
+              const predicted = Number(ar.overall_apo);
+              if (Number.isFinite(predicted) && Number.isFinite(observedMean)) {
+                nonconformityScores.push(Math.abs(predicted - observedMean));
+              }
+            }
+
+            if (nonconformityScores.length >= 10) {
+              // Sort and take the ceil((1 - alpha) * (n + 1)) quantile for 90% coverage (alpha = 0.1)
+              nonconformityScores.sort((a, b) => a - b);
+              const alpha = 0.1;
+              const n = nonconformityScores.length;
+              const qIdx = Math.min(n - 1, Math.ceil((1 - alpha) * (n + 1)) - 1);
+              const conformalHalfWidth = nonconformityScores[qIdx];
+
+              ciLower = Math.round(Math.max(0, finalApo - conformalHalfWidth) * 100) / 100;
+              ciUpper = Math.round(Math.min(100, finalApo + conformalHalfWidth) * 100) / 100;
+              ciIterations = n;
+              conformalApplied = true;
+              console.log(`Conformal CI applied: n=${n}, halfWidth=${conformalHalfWidth.toFixed(2)}, interval=[${ciLower}, ${ciUpper}]`);
+            }
+          }
+        }
+
+      // --- Monte Carlo fallback (if conformal not applicable) ---
+      if (!conformalApplied) {
+        const N = Number(Deno.env.get('APO_CI_ITERATIONS') ?? '200');
+        const sims: number[] = [];
+        for (let i = 0; i < N; i++) {
+          const jitter = (x: number) => clamp100(x * (1 + randn(0.03)));
+          const cs = {
+            tasks: jitter(categoryScores.tasks?.apo ?? 0),
+            knowledge: jitter(categoryScores.knowledge?.apo ?? 0),
+            skills: jitter(categoryScores.skills?.apo ?? 0),
+            abilities: jitter(categoryScores.abilities?.apo ?? 0),
+            technologies: jitter(categoryScores.technologies?.apo ?? 0),
+          };
+          let sim = clamp100(
+            cs.tasks * weights.tasks +
+            cs.knowledge * weights.knowledge +
+            cs.skills * weights.skills +
+            cs.abilities * weights.abilities +
+            cs.technologies * weights.technologies
+          );
+          if (typeof blsAdjustmentPts === 'number') sim = clamp100(sim + blsAdjustmentPts * (1 + randn(0.2)));
+          if (typeof econViabilityDiscount === 'number') sim = clamp100(sim - econViabilityDiscount * (1 + randn(0.2)));
+          sims.push(sim);
+        }
+        sims.sort((a, b) => a - b);
+        const q = (p: number) => sims[Math.max(0, Math.min(sims.length - 1, Math.floor(p * (sims.length - 1))))];
+        ciLower = Math.round(q(0.05) * 100) / 100;
+        ciUpper = Math.round(q(0.95) * 100) / 100;
+        ciIterations = sims.length;
+        console.log(`Monte Carlo CI fallback applied: N=${N}`);
       }
-      sims.sort((a,b)=>a-b);
-      const q = (p: number) => sims[Math.max(0, Math.min(sims.length - 1, Math.floor(p * (sims.length - 1))))];
-      ciLower = Math.round(q(0.05) * 100) / 100;
-      ciUpper = Math.round(q(0.95) * 100) / 100;
-      ciIterations = sims.length;
+      } else {
+        throw new Error('No supabase client for CI');
+      }
     } catch (e) {
       console.warn('CI computation failed (non-fatal):', e);
     }
@@ -650,7 +724,12 @@ serve(async (req) => {
       code: occupation.code,
       title: occupation.title,
       description: `AI-analyzed occupation with deterministic APO assessment using research-driven methodology.`,
-      overallAPO: validateAPOScore(finalApo, 'final APO with external adjustments'),
+      overallAPO: validateAPOScore(
+        career_stage
+          ? Math.round(finalApo * (CAREER_STAGE_ADJUSTMENTS[career_stage]?.apoMultiplier ?? 1.0) * 100) / 100
+          : finalApo,
+        'final APO with career-stage adjustment',
+      ),
       confidence: (() => {
         // overall confidence from mean of category confidences
         const map = { low: 0.3, medium: 0.6, high: 0.85 } as const;
@@ -693,9 +772,10 @@ serve(async (req) => {
         analysis_version: '3.0',
         calculation_method: 'deterministic_formula',
         weights_used: weights,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        ...(career_stage ? { career_stage, career_stage_adjustment: CAREER_STAGE_ADJUSTMENTS[career_stage] } : {}),
       },
-      ci: (ciLower != null && ciUpper != null) ? { lower: ciLower, upper: ciUpper, iterations: ciIterations } : undefined,
+      ci: (ciLower != null && ciUpper != null) ? { lower: ciLower, upper: ciUpper, iterations: ciIterations, method: conformalApplied ? 'conformal' : 'monte_carlo' } : undefined,
       externalSignals: {
         blsTrendPct: blsTrendPct ?? undefined,
         blsAdjustmentPts: blsAdjustmentPts ?? undefined,

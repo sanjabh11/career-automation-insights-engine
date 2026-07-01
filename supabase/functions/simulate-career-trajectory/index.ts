@@ -37,7 +37,11 @@ const ReqSchema = z.object({
   current_salary: z.number().min(0).optional(),
   target_salary: z.number().min(0).optional(),
   duration_months_max: z.number().min(6).max(60).default(36),
-  iterations: z.number().min(200).max(20000).default(2000)
+  iterations: z.number().min(200).max(20000).default(2000),
+  // Markov chain parameters
+  start_soc: z.string().optional(),
+  target_soc: z.string().optional(),
+  transition_matrix: z.record(z.record(z.number())).optional(),
 });
 
 function clamp(v: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, v)); }
@@ -47,6 +51,45 @@ function randn(std = 1): number {
   while (u === 0) u = Math.random();
   while (v === 0) v = Math.random();
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v) * std;
+}
+
+/**
+ * Estimate expected number of transitions to reach target from start
+ * using the transition matrix. Uses iterative approach (fundamental matrix).
+ */
+function estimateTransitions(
+  matrix: Record<string, Record<string, number>>,
+  start: string,
+  target: string,
+  maxIter = 100,
+): number {
+  if (start === target) return 0;
+  const states = Object.keys(matrix);
+  if (!states.includes(start) || !states.includes(target)) return Infinity;
+
+  // Expected hitting time: solve h_i = 1 + sum_j P_ij * h_j for all i != target
+  // h_target = 0
+  const h: Record<string, number> = {};
+  for (const s of states) h[s] = s === target ? 0 : 10; // Initial guess
+  for (let iter = 0; iter < maxIter; iter++) {
+    const newH: Record<string, number> = {};
+    for (const s of states) {
+      if (s === target) { newH[s] = 0; continue; }
+      let sum = 1;
+      const row = matrix[s] || {};
+      for (const j of states) {
+        const p = row[j] ?? 0;
+        if (p > 0) sum += p * h[j];
+      }
+      newH[s] = sum;
+    }
+    // Check convergence
+    let maxDelta = 0;
+    for (const s of states) maxDelta = Math.max(maxDelta, Math.abs(newH[s] - h[s]));
+    for (const s of states) h[s] = newH[s];
+    if (maxDelta < 0.001) break;
+  }
+  return h[start] > 1e6 ? Infinity : Math.round(h[start] * 100) / 100;
 }
 
 serve(async (req) => {
@@ -114,7 +157,23 @@ serve(async (req) => {
       months_p50,
       months_p90,
       median_salary_at_completion,
-      notes: ["Monte Carlo-lite with stochastic learning and market factors"]
+      // Markov chain trajectory data (if transition info provided)
+      ...(body.start_soc && body.target_soc ? {
+        markov: {
+          start_soc: body.start_soc,
+          target_soc: body.target_soc,
+          // Asymmetric transition: P(A→B) ≠ P(B→A) in general
+          forward_probability: body.transition_matrix?.[body.start_soc]?.[body.target_soc] ?? 0.3,
+          reverse_probability: body.transition_matrix?.[body.target_soc]?.[body.start_soc] ?? 0.1,
+          asymmetric: (body.transition_matrix?.[body.start_soc]?.[body.target_soc] ?? 0.3) !== (body.transition_matrix?.[body.target_soc]?.[body.start_soc] ?? 0.1),
+          // Expected number of transitions to reach target
+          expected_transitions: body.transition_matrix ? estimateTransitions(body.transition_matrix, body.start_soc, body.target_soc) : null,
+        },
+      } : {}),
+      notes: [
+        "Monte Carlo-lite with stochastic learning and market factors",
+        ...(body.start_soc && body.target_soc ? ["Markov chain with asymmetric transition probabilities"] : []),
+      ],
     };
 
     return new Response(JSON.stringify(resp), { status: 200, headers: { ...headers, 'Content-Type': 'application/json' } });
