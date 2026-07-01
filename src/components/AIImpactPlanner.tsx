@@ -1,26 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Notebook as Robot, Brain, User, Zap, BookOpen, Lightbulb, AlertTriangle, CheckCircle, Clock, Save, RefreshCw, Briefcase, GraduationCap, ThumbsUp, DollarSign, TrendingUp, Award, ExternalLink } from 'lucide-react';
+import { Search, Brain, User, BookOpen, AlertTriangle, CheckCircle, Save, GraduationCap } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useSession } from '@/hooks/useSession';
-import { occupationDefaults } from '@/content/templates/occupationDefaults';
-import { HelpTrigger } from '@/components/help/HelpTrigger';
-import { PortfolioHedgingCard } from '@/components/PortfolioHedgingCard';
-import { PortfolioFrontierCard } from '@/components/PortfolioFrontierCard';
-import { SkillFreshnessAlerts } from '@/components/SkillFreshnessAlerts';
-import { OutcomeSurvey } from '@/components/outcomes/OutcomeSurvey';
-import { OutcomesList } from '@/components/outcomes/OutcomesList';
 import type {
   Occupation, Task, Skill, Resource, LearningPathData,
   CIPProgram, CourseResult, UserPreferences, FeedbackData,

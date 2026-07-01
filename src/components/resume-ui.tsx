@@ -15,6 +15,29 @@ export interface ResumeProofEvidenceCard {
     reviewStatus: string;
 }
 
+export interface ResumeServerParserReceipt {
+    receiptId: string;
+    generatedAt: string;
+    filename: string;
+    filenameHash: string;
+    fileSha256: string;
+    byteLength: number;
+    declaredMimeType: string;
+    detectedFileKind: string;
+    accepted: boolean;
+    extractedTextAvailable: boolean;
+    inputMode: string;
+    rawFileStored: boolean;
+    rawResumeTextStored: boolean;
+    productionPdfDocxParser: boolean;
+    tempFileDeletionStatus: string;
+    deletionStatus: string;
+    validationControls: string[];
+    sourceIds: string[];
+    caveat: string;
+    doesNotProve: string;
+}
+
 export interface ResumeParserBoundary {
     filename: string;
     inputMode: string;

@@ -4,9 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Upload, FileText, AlertTriangle, CheckCircle2, Download, Lightbulb, Lock, ShieldCheck, Trash2, FileWarning } from 'lucide-react';
+import { Upload, FileText, Download, Lock, FileWarning } from 'lucide-react';
 import { isSupabaseConfigured, supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
@@ -30,6 +28,7 @@ import {
     type ResumeProofConfidence,
     type ResumeParserBoundary,
     type ResumeProofPack,
+    type ResumeServerParserReceipt,
 } from '@/components/resume-ui';
 import { UploadSection } from '@/components/resume-panels/UploadSection';
 import { RiskScoreCard } from '@/components/resume-panels/RiskScoreCard';
@@ -49,29 +48,6 @@ interface RewriteSuggestion {
     original: string;
     suggested: string;
     rationale: string;
-}
-
-interface ResumeServerParserReceipt {
-    receiptId: string;
-    generatedAt: string;
-    filename: string;
-    filenameHash: string;
-    fileSha256: string;
-    byteLength: number;
-    declaredMimeType: string;
-    detectedFileKind: string;
-    accepted: boolean;
-    extractedTextAvailable: boolean;
-    inputMode: string;
-    rawFileStored: boolean;
-    rawResumeTextStored: boolean;
-    productionPdfDocxParser: boolean;
-    tempFileDeletionStatus: string;
-    deletionStatus: string;
-    validationControls: string[];
-    sourceIds: string[];
-    caveat: string;
-    doesNotProve: string;
 }
 
 interface ResumeServerParseResponse {

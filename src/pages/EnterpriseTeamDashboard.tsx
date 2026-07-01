@@ -19,10 +19,8 @@ import {
 } from '@/components/ui/select';
 import {
   Users,
-  TrendingUp,
   AlertTriangle,
   Building2,
-  DollarSign,
   Target,
   FileText,
   Download,
@@ -30,19 +28,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
 
 import { CSVEmployeeImporter } from '@/components/CSVEmployeeImporter';
 import { OverviewTab } from '@/components/enterprise-panels/OverviewTab';
