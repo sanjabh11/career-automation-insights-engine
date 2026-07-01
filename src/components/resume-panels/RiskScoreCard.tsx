@@ -10,7 +10,6 @@ import {
   ResumeEvidenceBoundaryNote,
   getRiskLevel,
   type ResumeProofEvidenceCard,
-  type ResumeProofPack,
 } from '@/components/resume-ui';
 import type { ResumeDeletionReceipt } from '@/lib/resumeAnalysisPrivacy';
 import type {
