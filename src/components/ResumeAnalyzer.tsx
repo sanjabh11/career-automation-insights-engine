@@ -19,6 +19,18 @@ import {
     type ResumeProofReportArtifact,
     type ResumeProofReportArtifactDeletionReceipt,
 } from '@/lib/resumeProofReportArtifacts';
+import {
+    formatReviewStatus,
+    formatConfidence,
+    findResumeEvidenceCard,
+    ResumeEvidenceBoundaryNote,
+    getRiskLevel,
+    getSeverityColor,
+    type ResumeProofEvidenceCard,
+    type ResumeProofConfidence,
+    type ResumeParserBoundary,
+    type ResumeProofPack,
+} from '@/components/resume-ui';
 
 const RESUME_SERVER_PARSER_EVIDENCE_CARD_ID = 'resume-server-parser-boundary';
 const RESUME_SERVER_PARSER_SOURCE_IDS = ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
@@ -34,35 +46,6 @@ interface RewriteSuggestion {
     original: string;
     suggested: string;
     rationale: string;
-}
-
-type ResumeProofConfidence = 'low' | 'medium' | 'high';
-
-interface ResumeProofEvidenceCard {
-    id: string;
-    claim: string;
-    sourceIds: string[];
-    confidence: ResumeProofConfidence | string;
-    generatedAt: string;
-    caveat: string;
-    doesNotProve: string;
-    reviewStatus: string;
-}
-
-interface ResumeParserBoundary {
-    filename: string;
-    inputMode: string;
-    serverParserReceiptId?: string | null;
-    fileSha256?: string | null;
-    detectedFileKind?: string;
-    uploadValidation?: string;
-    rawFileStored: boolean;
-    rawResumeTextStored: boolean;
-    savedAnalysisId: string | null;
-    deletionReceiptAvailable: boolean;
-    productionPdfDocxParser: boolean;
-    tempFileDeletionStatus?: string;
-    caveat: string;
 }
 
 interface ResumeServerParserReceipt {
@@ -95,17 +78,6 @@ interface ResumeServerParseResponse {
     parser_receipt?: ResumeServerParserReceipt;
 }
 
-interface ResumeProofPack {
-    proofPackType: string;
-    schemaVersion?: string;
-    generatedAt: string;
-    reviewStatus: string;
-    sourceIds: string[];
-    evidenceCards: ResumeProofEvidenceCard[];
-    parserBoundary?: ResumeParserBoundary;
-    decisionBoundaries: string[];
-}
-
 interface AnalysisResult {
     analysis_id?: string | null;
     automation_risk_score: number;
@@ -127,53 +99,6 @@ interface ResumeProofReportOptions {
 
 const FREE_SCAN_KEY = 'apo:resume_free_scan_used';
 const MAX_FREE_SCANS = 1;
-const REVIEW_STATUS_LABELS: Record<string, string> = {
-    auto_generated: 'Auto-generated',
-    staff_review_required: 'Staff review required',
-    staff_reviewed: 'Staff reviewed',
-    coach_reviewed: 'Coach reviewed',
-    client_ready: 'Client ready',
-};
-
-function formatReviewStatus(status?: string): string {
-    if (!status) return 'Review status unknown';
-    return REVIEW_STATUS_LABELS[status] || status.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
-}
-
-function formatConfidence(confidence?: string): string {
-    if (!confidence) return 'Unknown confidence';
-    return `${confidence.charAt(0).toUpperCase()}${confidence.slice(1)} confidence`;
-}
-
-function findResumeEvidenceCard(proofPack: ResumeProofPack | undefined, id: string): ResumeProofEvidenceCard | undefined {
-    return proofPack?.evidenceCards.find((card) => card.id === id);
-}
-
-function ResumeEvidenceBoundaryNote({ card, label }: { card?: ResumeProofEvidenceCard; label: string }) {
-    if (!card) return null;
-
-    return (
-        <Alert data-resume-evidence-note={card.id}>
-            <ShieldCheck className="h-4 w-4" />
-            <AlertDescription>
-                <div className="space-y-1">
-                    <p>
-                        <strong>{label}:</strong> {card.claim}
-                    </p>
-                    <p>
-                        <strong>Sources:</strong> {card.sourceIds.join(', ')}. <strong>{formatConfidence(card.confidence)}.</strong> <strong>Review:</strong> {formatReviewStatus(card.reviewStatus)}.
-                    </p>
-                    <p>
-                        <strong>Caveat:</strong> {card.caveat}
-                    </p>
-                    <p>
-                        <strong>Does not prove:</strong> {card.doesNotProve}
-                    </p>
-                </div>
-            </AlertDescription>
-        </Alert>
-    );
-}
 
 function escapeHtml(value: unknown): string {
     return String(value ?? '')
@@ -757,21 +682,6 @@ export default function ResumeAnalyzer() {
         }
     };
 
-    const getRiskLevel = (score: number) => {
-        if (score < 30) return { label: 'Low Risk', color: 'text-green-600', bgColor: 'bg-green-100' };
-        if (score < 60) return { label: 'Moderate Risk', color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
-        return { label: 'High Risk', color: 'text-red-600', bgColor: 'bg-red-100' };
-    };
-
-    const getSeverityColor = (severity: string) => {
-        switch (severity) {
-            case 'high': return 'destructive';
-            case 'medium': return 'default';
-            case 'low': return 'secondary';
-            default: return 'outline';
-        }
-    };
-
     const proofPack = analysisResult?.proof_pack;
     const riskEvidenceCard = findResumeEvidenceCard(proofPack, 'resume-risk-score-boundary');
     const rewriteEvidenceCard = findResumeEvidenceCard(proofPack, 'resume-rewrite-boundary');
@@ -801,11 +711,11 @@ export default function ResumeAnalyzer() {
 
                     {/* Dropzone */}
                     <div
-                        {...getRootProps()}
+                        {...getRootProps({ role: 'button', 'aria-label': 'Upload resume file' })}
                         className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${isDragActive ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10' : 'border-gray-300 hover:border-[var(--accent-primary)]'
                             } ${(uploading || analyzing) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        <input {...getInputProps({ 'aria-label': 'Upload resume file' })} />
+                        <input {...getInputProps({ 'aria-hidden': true, tabIndex: -1 })} />
                         <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                         {isDragActive ? (
                             <p className="text-lg font-medium">Drop your resume here...</p>
