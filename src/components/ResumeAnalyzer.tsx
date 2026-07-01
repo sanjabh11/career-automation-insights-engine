@@ -9,7 +9,7 @@ import { isSupabaseConfigured, supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { ShareableScoreBadge } from '@/components/ShareableScoreBadge';
-import { getReportSourceSnapshot, REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
+import { getReportSourceSnapshot } from '@/lib/reportProvenance';
 import { deleteResumeAnalysisWithReceipt, type ResumeDeletionReceipt } from '@/lib/resumeAnalysisPrivacy';
 import {
     createResumeProofReportArtifact,
@@ -21,12 +21,6 @@ import {
     formatReviewStatus,
     formatConfidence,
     findResumeEvidenceCard,
-    ResumeEvidenceBoundaryNote,
-    getRiskLevel,
-    getSeverityColor,
-    type ResumeProofEvidenceCard,
-    type ResumeProofConfidence,
-    type ResumeParserBoundary,
     type ResumeProofPack,
     type ResumeServerParserReceipt,
 } from '@/components/resume-ui';

@@ -14,7 +14,7 @@ import type {
   CIPProgram, CourseResult, UserPreferences, FeedbackData,
 } from '@/components/planner/types';
 import { normalizeOccupation } from '@/components/planner/types';
-import { TaskCard, InfoIcon, containerVariants, itemVariants } from '@/components/planner/ui';
+import { containerVariants, itemVariants } from '@/components/planner/ui';
 import { OccupationSearchPanel } from '@/components/planner/panels/OccupationSearchPanel';
 import { ImpactSummaryPanel } from '@/components/planner/panels/ImpactSummaryPanel';
 import { TasksAnalysisPanel } from '@/components/planner/panels/TasksAnalysisPanel';
