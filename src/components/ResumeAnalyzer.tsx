@@ -31,6 +31,9 @@ import {
     type ResumeParserBoundary,
     type ResumeProofPack,
 } from '@/components/resume-ui';
+import { UploadSection } from '@/components/resume-panels/UploadSection';
+import { RiskScoreCard } from '@/components/resume-panels/RiskScoreCard';
+import { PhrasesAndRewritesPanel } from '@/components/resume-panels/PhrasesAndRewritesPanel';
 
 const RESUME_SERVER_PARSER_EVIDENCE_CARD_ID = 'resume-server-parser-boundary';
 const RESUME_SERVER_PARSER_SOURCE_IDS = ['owasp-file-upload', 'supabase-edge-functions', 'nist-ai-rmf', 'ada-ai-hiring-guidance'];
@@ -691,295 +694,46 @@ export default function ResumeAnalyzer() {
         <main className="space-y-6">
             <h1 className="sr-only">Resume Automation Risk Analyzer</h1>
             {/* Upload Section */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        Resume Automation Risk Analyzer
-                    </CardTitle>
-                    <CardDescription>
-                        Upload your resume to identify automation-prone phrases and get strategic rewrites
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <Alert>
-                        <ShieldCheck className="h-4 w-4" />
-                        <AlertDescription>
-                            Reliable path today: paste text or upload .txt. When Supabase is configured, uploads are first sent through a server-side parser boundary that validates type, size, and file signature without storing the raw file. PDF/DOCX extraction remains adapter-pending until a dedicated parser and deletion evidence are deployed. Guest scans are not stored; signed-in scans may create a saved analysis record that can be deleted below. {REPORT_TRUST_NOTICES[1]}
-                        </AlertDescription>
-                    </Alert>
-
-                    {/* Dropzone */}
-                    <div
-                        {...getRootProps({ role: 'button', 'aria-label': 'Upload resume file' })}
-                        className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${isDragActive ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10' : 'border-gray-300 hover:border-[var(--accent-primary)]'
-                            } ${(uploading || analyzing) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        <input {...getInputProps({ 'aria-hidden': true, tabIndex: -1 })} />
-                        <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                        {isDragActive ? (
-                            <p className="text-lg font-medium">Drop your resume here...</p>
-                        ) : uploading ? (
-                            <div className="flex flex-col items-center gap-2">
-                                <Loader2 className="h-8 w-8 animate-spin text-[var(--accent-primary)]" />
-                                <p>Uploading...</p>
-                            </div>
-                        ) : analyzing ? (
-                            <div className="flex flex-col items-center gap-2">
-                                <Loader2 className="h-8 w-8 animate-spin text-[var(--accent-primary)]" />
-                                <p>Analyzing with AI...</p>
-                            </div>
-                        ) : (
-                            <>
-                                <p className="text-lg font-medium mb-2">Drag & drop your resume here</p>
-                                <p className="text-sm text-muted-foreground">or click to browse</p>
-                                <p className="text-xs text-muted-foreground mt-2">Best support: .txt. PDF/DOC/DOCX may require paste fallback.</p>
-                            </>
-                        )}
-                    </div>
-
-                    {filename && (
-                        <Alert>
-                            <FileText className="h-4 w-4" />
-                            <AlertDescription>
-                                <strong>{filename}</strong> uploaded successfully
-                            </AlertDescription>
-                        </Alert>
-                    )}
-
-                    {fileWarning && (
-                        <Alert>
-                            <FileWarning className="h-4 w-4" />
-                            <AlertDescription>{fileWarning}</AlertDescription>
-                        </Alert>
-                    )}
-
-                    {serverParserReceipt && (
-                        <Alert data-resume-server-parser-receipt="true" data-resume-server-parser-evidence-id={RESUME_SERVER_PARSER_EVIDENCE_CARD_ID}>
-                            <ShieldCheck className="h-4 w-4" />
-                            <AlertDescription>
-                                <div className="space-y-1">
-                                    <p>
-                                        <strong>Server parser receipt:</strong> {serverParserReceipt.receiptId.slice(0, 8)} for {serverParserReceipt.detectedFileKind.toUpperCase()} upload.
-                                    </p>
-                                    <p>
-                                        Raw file stored: {serverParserReceipt.rawFileStored ? 'yes' : 'no'}; raw resume text stored: {serverParserReceipt.rawResumeTextStored ? 'yes' : 'no'}; temp deletion status: {serverParserReceipt.tempFileDeletionStatus}.
-                                    </p>
-                                    <p>
-                                        <strong>Sources:</strong> {(serverParserReceipt.sourceIds.length > 0 ? serverParserReceipt.sourceIds : RESUME_SERVER_PARSER_SOURCE_IDS).join(', ')}. <strong>Does not prove:</strong> {serverParserReceipt.doesNotProve}
-                                    </p>
-                                </div>
-                            </AlertDescription>
-                        </Alert>
-                    )}
-
-                    <div className="space-y-3">
-                        <Textarea
-                            value={resumeText}
-                            onChange={(event) => {
-                                setResumeText(event.target.value);
-                                setFileWarning(null);
-                                setServerParserReceipt(null);
-                            }}
-                            placeholder="Paste resume text here if PDF/DOCX extraction is blocked or incomplete..."
-                            rows={8}
-                            disabled={uploading || analyzing}
-                        />
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => analyzeResume(resumeText, filename || 'pasted-resume.txt')}
-                            disabled={uploading || analyzing || resumeText.trim().length < 200}
-                            className="w-full"
-                        >
-                            {analyzing ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Analyzing...
-                                </>
-                            ) : (
-                                'Analyze Pasted Text'
-                            )}
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+            <UploadSection
+                getRootProps={getRootProps}
+                getInputProps={getInputProps}
+                isDragActive={isDragActive}
+                uploading={uploading}
+                analyzing={analyzing}
+                filename={filename}
+                fileWarning={fileWarning}
+                serverParserReceipt={serverParserReceipt}
+                resumeText={resumeText}
+                setResumeText={setResumeText}
+                setFileWarning={setFileWarning}
+                setServerParserReceipt={setServerParserReceipt}
+                analyzeResume={analyzeResume}
+                RESUME_SERVER_PARSER_EVIDENCE_CARD_ID={RESUME_SERVER_PARSER_EVIDENCE_CARD_ID}
+                RESUME_SERVER_PARSER_SOURCE_IDS={RESUME_SERVER_PARSER_SOURCE_IDS}
+            />
 
             {/* Analysis Results */}
             {analysisResult && (
                 <>
                     {/* Risk Score Card */}
-                    <Card className="border-2 border-[var(--accent-primary)]/20">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle>Automation Risk Assessment</CardTitle>
-                                    <CardDescription>
-                                        Based on AI analysis of {analysisResult.automation_prone_phrases.length} potential risk indicators
-                                    </CardDescription>
-                                </div>
-
-                                <div className="text-right">
-                                    <div className={`text-4xl font-bold ${getRiskLevel(analysisResult.automation_risk_score).color}`}>
-                                        {analysisResult.automation_risk_score}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">out of 100</div>
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span>Risk Level</span>
-                                    <span className="font-medium">{getRiskLevel(analysisResult.automation_risk_score).label}</span>
-                                </div>
-                                <Progress
-                                    value={analysisResult.automation_risk_score}
-                                    className="h-3"
-                                />
-                            </div>
-
-                            <Badge className={getRiskLevel(analysisResult.automation_risk_score).bgColor} variant="outline">
-                                Confidence: {Math.round(analysisResult.confidence_score * 100)}%
-                            </Badge>
-
-                            <ResumeEvidenceBoundaryNote card={riskEvidenceCard} label="Risk score evidence" />
-
-                            <Alert>
-                                <ShieldCheck className="h-4 w-4" />
-                                <AlertDescription className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                    <span>
-                                        {analysisId
-                                            ? 'This signed-in analysis is saved to your account. Use delete when the client review is complete.'
-                                            : 'No saved analysis record is available for this result in the current session.'}
-                                    </span>
-                                    {analysisId && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={deleteSavedAnalysis}
-                                            disabled={deletingAnalysis}
-                                        >
-                                            {deletingAnalysis ? (
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                            )}
-                                            Delete Saved Record
-                                        </Button>
-                                    )}
-                                </AlertDescription>
-                            </Alert>
-
-                            {deletionReceipt && (
-                                <Alert data-resume-deletion-receipt="true">
-                                    <ShieldCheck className="h-4 w-4" />
-                                    <AlertDescription>
-                                        <div className="space-y-2">
-                                            <p>
-                                                <strong>Deletion receipt:</strong> {deletionReceipt.receiptId}
-                                            </p>
-                                            <p>
-                                                Saved analysis {deletionReceipt.analysisId} was marked {deletionReceipt.deletionStatus} at {new Date(deletionReceipt.deletedAt).toLocaleString()}.
-                                            </p>
-                                            <p>
-                                                <strong>Receipt hash:</strong> <code>{deletionReceipt.receiptHash.slice(0, 16)}...</code>
-                                            </p>
-                                            <p>{deletionReceipt.rawTextRetentionPolicy}</p>
-                                            <p>{deletionReceipt.modelProviderBoundary}</p>
-                                            <p>
-                                                <strong>Sources:</strong> {deletionReceipt.sourceIds.join(', ')}. <strong>Caveat:</strong> {deletionReceipt.caveat}
-                                            </p>
-                                        </div>
-                                    </AlertDescription>
-                                </Alert>
-                            )}
-
-                            <Alert data-resume-proof-artifact-boundary="true">
-                                <ShieldCheck className="h-4 w-4" />
-                                <AlertDescription className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                    <span>
-                                        Saved proof artifacts are redacted: raw resume text, phrase detail rows, and rewrite detail rows are omitted. Keep the local download for user-controlled detailed review.
-                                        {!isAuthenticated && ' Sign in to save a redacted proof artifact.'}
-                                        {isAuthenticated && !isSupabaseConfigured && ' Supabase is not configured, so saving is unavailable in this environment.'}
-                                    </span>
-                                    <div className="flex flex-col gap-2 sm:flex-row">
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => void saveRedactedProofArtifact()}
-                                            disabled={savingProofArtifact || !isAuthenticated || !isSupabaseConfigured}
-                                        >
-                                            {savingProofArtifact ? (
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <ShieldCheck className="mr-2 h-4 w-4" />
-                                            )}
-                                            Save Redacted Artifact
-                                        </Button>
-                                        {savedProofArtifact && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => void deleteSavedProofArtifact()}
-                                                disabled={deletingProofArtifact}
-                                            >
-                                                {deletingProofArtifact ? (
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                ) : (
-                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                )}
-                                                Delete Artifact
-                                            </Button>
-                                        )}
-                                    </div>
-                                </AlertDescription>
-                            </Alert>
-
-                            {savedProofArtifact && (
-                                <Alert data-resume-proof-artifact-status="true">
-                                    <ShieldCheck className="h-4 w-4" />
-                                    <AlertDescription>
-                                        <div className="space-y-1">
-                                            <p>
-                                                <strong>Saved redacted artifact:</strong> {savedProofArtifact.id.slice(0, 8)}.
-                                            </p>
-                                            <p>
-                                                <strong>Review:</strong> {formatReviewStatus(savedProofArtifact.reviewStatus)}. <strong>Sources:</strong> {savedProofArtifact.sourceIds.join(', ')}.
-                                            </p>
-                                            <p>{savedProofArtifact.retentionPolicy}</p>
-                                            <p>
-                                                <strong>Caveat:</strong> {savedProofArtifact.caveat}
-                                            </p>
-                                        </div>
-                                    </AlertDescription>
-                                </Alert>
-                            )}
-
-                            {proofArtifactDeletionReceipt && (
-                                <Alert data-resume-proof-artifact-deletion-receipt="true">
-                                    <ShieldCheck className="h-4 w-4" />
-                                    <AlertDescription>
-                                        <div className="space-y-1">
-                                            <p>
-                                                <strong>Artifact deletion receipt:</strong> {proofArtifactDeletionReceipt.receiptId}
-                                            </p>
-                                            <p>
-                                                Artifact {proofArtifactDeletionReceipt.artifactId} was marked {proofArtifactDeletionReceipt.deletionStatus} at {new Date(proofArtifactDeletionReceipt.deletedAt).toLocaleString()}.
-                                            </p>
-                                            <p>
-                                                <strong>Receipt hash:</strong> <code>{proofArtifactDeletionReceipt.receiptHash.slice(0, 16)}...</code>
-                                            </p>
-                                            <p>{proofArtifactDeletionReceipt.caveat}</p>
-                                        </div>
-                                    </AlertDescription>
-                                </Alert>
-                            )}
-                        </CardContent>
-                    </Card>
+                    <RiskScoreCard
+                        automationRiskScore={analysisResult.automation_risk_score}
+                        confidenceScore={analysisResult.confidence_score}
+                        automationPronePhrasesCount={analysisResult.automation_prone_phrases.length}
+                        riskEvidenceCard={riskEvidenceCard}
+                        analysisId={analysisId}
+                        deletingAnalysis={deletingAnalysis}
+                        deleteSavedAnalysis={deleteSavedAnalysis}
+                        deletionReceipt={deletionReceipt}
+                        isAuthenticated={isAuthenticated}
+                        isSupabaseConfigured={isSupabaseConfigured}
+                        savingProofArtifact={savingProofArtifact}
+                        saveRedactedProofArtifact={saveRedactedProofArtifact}
+                        savedProofArtifact={savedProofArtifact}
+                        deletingProofArtifact={deletingProofArtifact}
+                        deleteSavedProofArtifact={deleteSavedProofArtifact}
+                        proofArtifactDeletionReceipt={proofArtifactDeletionReceipt}
+                    />
 
                     {proofPack && (
                         <Card data-resume-proof-pack-boundary="true">
@@ -1067,124 +821,16 @@ export default function ResumeAnalyzer() {
                         </Card>
                     )}
 
-                    {/* Automation-Prone Phrases */}
-                    {analysisResult.automation_prone_phrases.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <AlertTriangle className="h-5 w-5 text-red-500" />
-                                    Automation-Prone Phrases ({analysisResult.automation_prone_phrases.length})
-                                </CardTitle>
-                                <CardDescription>
-                                    These phrases signal routine work that may be automated
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <ResumeEvidenceBoundaryNote card={riskEvidenceCard} label="Phrase evidence" />
-                                {analysisResult.automation_prone_phrases.map((phrase, index) => (
-                                    <div key={index} className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <span className="font-semibold text-red-800">"{phrase.phrase}"</span>
-                                            <Badge variant={getSeverityColor(phrase.severity)}>
-                                                {phrase.severity}
-                                            </Badge>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mb-1">
-                                            <strong>Context:</strong> {phrase.context}
-                                        </p>
-                                        <p className="text-sm text-red-700">
-                                            <strong>Why risky:</strong> {phrase.reason}
-                                        </p>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {/* Rewrite Suggestions */}
-                    {analysisResult.rewrite_suggestions.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Lightbulb className="h-5 w-5 text-green-500" />
-                                    Strategic Rewrites ({analysisResult.rewrite_suggestions.length})
-                                </CardTitle>
-                                <CardDescription>
-                                    Improve your resume by emphasizing strategic and creative skills
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <ResumeEvidenceBoundaryNote card={rewriteEvidenceCard} label="Rewrite evidence" />
-                                {analysisResult.rewrite_suggestions.map((suggestion, index) => (
-                                    <div key={index} className="border rounded-lg overflow-hidden">
-                                        <div className="p-3 bg-red-50 border-b">
-                                            <div className="flex items-center gap-2 text-sm text-red-800 mb-1">
-                                                <span className="font-semibold">❌ Before:</span>
-                                            </div>
-                                            <p className="text-red-900">{suggestion.original}</p>
-                                        </div>
-                                        <div className="p-3 bg-green-50">
-                                            <div className="flex items-center gap-2 text-sm text-green-800 mb-1">
-                                                <span className="font-semibold">✅ After:</span>
-                                            </div>
-                                            <p className="text-green-900 font-medium">{suggestion.suggested}</p>
-                                            <p className="text-sm text-green-700 mt-2">
-                                                <strong>Why better:</strong> {suggestion.rationale}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {/* Skills Analysis */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Detected Skills */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <CheckCircle2 className="h-5 w-5 text-[var(--accent-primary)]" />
-                                    Detected Skills
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex flex-wrap gap-2">
-                                    {analysisResult.detected_skills.slice(0, 15).map((skill, index) => (
-                                        <Badge key={index} variant="secondary">
-                                            {skill}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Recommended Skills */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Lightbulb className="h-5 w-5 text-[var(--accent-primary)]" />
-                                    Recommended Skills
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-2">
-                                    <ResumeEvidenceBoundaryNote card={skillEvidenceCard} label="Skill recommendation evidence" />
-                                    {analysisResult.recommended_skills.slice(0, 5).map((rec, index) => (
-                                        <div key={index} className="flex items-start gap-2">
-                                            <Badge variant={rec.priority === 'high' ? 'default' : 'outline'} className="mt-0.5">
-                                                {rec.priority}
-                                            </Badge>
-                                            <div className="flex-1">
-                                                <p className="font-medium text-sm">{rec.skill}</p>
-                                                <p className="text-xs text-muted-foreground">{rec.reason}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    {/* Automation-Prone Phrases, Rewrites, Skills */}
+                    <PhrasesAndRewritesPanel
+                        automationPronePhrases={analysisResult.automation_prone_phrases}
+                        rewriteSuggestions={analysisResult.rewrite_suggestions}
+                        detectedSkills={analysisResult.detected_skills}
+                        recommendedSkills={analysisResult.recommended_skills}
+                        riskEvidenceCard={riskEvidenceCard}
+                        rewriteEvidenceCard={rewriteEvidenceCard}
+                        skillEvidenceCard={skillEvidenceCard}
+                    />
 
                     {/* Shareable work-transition score badge */}
                     <ShareableScoreBadge

@@ -45,6 +45,11 @@ import {
 } from 'recharts';
 
 import { CSVEmployeeImporter } from '@/components/CSVEmployeeImporter';
+import { OverviewTab } from '@/components/enterprise-panels/OverviewTab';
+import { DepartmentsTab } from '@/components/enterprise-panels/DepartmentsTab';
+import { OpportunitiesTab } from '@/components/enterprise-panels/OpportunitiesTab';
+import { ROICalculatorTab } from '@/components/enterprise-panels/ROICalculatorTab';
+import { ScenariosTab } from '@/components/enterprise-panels/ScenariosTab';
 import { useSession } from '@/hooks/useSession';
 import {
   CommercialWorkforceAuditRecord,
@@ -816,6 +821,15 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
       { name: 'High Risk', value: metrics.risk_distribution.high_risk, color: COLORS.high },
     ]
     : [];
+  const departmentChartData = departments.slice(0, 5);
+  const riskDistributionSummary = riskData.length > 0
+    ? riskData.map((item) => `${item.name}: ${item.value} employees`).join(', ')
+    : 'No risk distribution data available.';
+  const departmentRiskSummary = departmentChartData.length > 0
+    ? departmentChartData
+      .map((department) => `${department.department}: ${Math.round(department.avg_apo_score)} APO`)
+      .join(', ')
+    : 'No department data available.';
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -924,155 +938,21 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Risk Distribution Pie Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Risk Distribution</CardTitle>
-                <CardDescription>
-                  Employee distribution by automation risk level
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={riskData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {riskData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Department APO Scores */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Department Risk Levels</CardTitle>
-                <CardDescription>
-                  Average APO score by department
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={departments.slice(0, 5)}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="department" angle={-45} textAnchor="end" height={100} />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="avg_apo_score" fill="#8b5cf6" name="Avg APO Score" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
+          <OverviewTab
+            riskData={riskData}
+            riskDistributionSummary={riskDistributionSummary}
+            departmentChartData={departmentChartData}
+            departmentRiskSummary={departmentRiskSummary}
+          />
         </TabsContent>
 
         {/* Departments Tab */}
         <TabsContent value="departments" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Department Analysis</CardTitle>
-                  <CardDescription>
-                    Detailed breakdown by department
-                  </CardDescription>
-                </div>
-                <Select value={selectedDepartment || 'all'} onValueChange={(val) => {
-                  setSelectedDepartment(val === 'all' ? null : val);
-                }}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="All Departments" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept.department} value={dept.department}>
-                        {dept.department}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {departments.map((dept) => (
-                  <div key={dept.department} className="p-4 border rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h4 className="font-semibold text-lg">{dept.department}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {dept.employee_count} employees
-                        </p>
-                      </div>
-                      <Badge
-                        variant={
-                          dept.avg_apo_score >= 70
-                            ? 'destructive'
-                            : dept.avg_apo_score >= 50
-                              ? 'secondary'
-                              : 'default'
-                        }
-                      >
-                        APO: {dept.avg_apo_score.toFixed(1)}
-                      </Badge>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <p className="text-xs text-muted-foreground">High Risk</p>
-                        <p className="text-lg font-semibold text-red-600">
-                          {dept.high_risk_count}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Medium Risk</p>
-                        <p className="text-lg font-semibold text-amber-600">
-                          {dept.medium_risk_count}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Low Risk</p>
-                        <p className="text-lg font-semibold text-green-600">
-                          {dept.low_risk_count}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Total Payroll:</span>
-                        <span className="font-semibold">
-                          ${(dept.total_payroll / 1000000).toFixed(2)}M
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-primary" />
-                        <span className="text-muted-foreground">Automation Potential:</span>
-                        <span className="font-semibold text-primary">
-                          ${(dept.automation_savings_potential / 1000000).toFixed(2)}M
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <DepartmentsTab
+            departments={departments}
+            selectedDepartment={selectedDepartment}
+            setSelectedDepartment={setSelectedDepartment}
+          />
         </TabsContent>
 
         {/* Employees Tab */}
@@ -1459,198 +1339,23 @@ const EnterpriseTeamDashboard = ({ orgId }: { orgId: string }) => {
 
         {/* Automation Opportunities Tab */}
         <TabsContent value="opportunities" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Automation Opportunities</CardTitle>
-              <CardDescription>
-                Roles with highest automation potential and savings
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {opportunities.map((opp, index) => (
-                  <div key={opp.soc_code} className="p-4 border rounded-lg">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-semibold shrink-0">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold">{opp.occupation_title}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            SOC: {opp.soc_code} • {opp.employee_count} employees
-                          </p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <Badge variant="outline">
-                              APO: {opp.avg_apo_score.toFixed(1)}
-                            </Badge>
-                            <span className="text-sm text-muted-foreground">
-                              Payroll: ${(opp.total_payroll / 1000).toFixed(0)}K
-                            </span>
-                            <span className="text-sm font-semibold text-primary">
-                              Potential Savings: ${(opp.automation_potential_savings / 1000).toFixed(0)}K
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <Badge
-                        variant={
-                          opp.recommended_action.includes('High')
-                            ? 'destructive'
-                            : opp.recommended_action.includes('Medium')
-                              ? 'secondary'
-                              : 'default'
-                        }
-                      >
-                        {opp.recommended_action.split(' - ')[0]}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-3 ml-12">
-                      {opp.recommended_action.split(' - ')[1]}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <OpportunitiesTab opportunities={opportunities} />
         </TabsContent>
 
         {/* ROI Calculator Tab */}
         <TabsContent value="roi" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Learning ROI Calculator</CardTitle>
-              <CardDescription>
-                Calculate the potential return on investment for employee reskilling programs.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Number of Employees to Reskill</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded-md"
-                      value={roiParams.employeeCount}
-                      onChange={(e) => setRoiParams({ ...roiParams, employeeCount: Number(e.target.value) })}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Average Annual Salary ($)</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded-md"
-                      value={roiParams.avgSalary}
-                      onChange={(e) => setRoiParams({ ...roiParams, avgSalary: Number(e.target.value) })}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Training Cost per Employee ($)</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded-md"
-                      value={roiParams.trainingCost}
-                      onChange={(e) => setRoiParams({ ...roiParams, trainingCost: Number(e.target.value) })}
-                    />
-                  </div>
-                  <Button onClick={calculateROI} disabled={roiLoading} className="w-full">
-                    {roiLoading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <DollarSign className="w-4 h-4 mr-2" />}
-                    Calculate ROI
-                  </Button>
-                </div>
-
-                <div className="bg-slate-50 p-6 rounded-lg border">
-                  <h3 className="text-lg font-semibold mb-4">Projected ROI Analysis</h3>
-                  {roiResult ? (
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center p-3 bg-[var(--bg-secondary)] rounded border">
-                        <span className="text-sm text-muted-foreground">Total Investment</span>
-                        <span className="font-bold">${roiResult.totalInvestment?.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-[var(--bg-secondary)] rounded border">
-                        <span className="text-sm text-muted-foreground">Projected Savings (1 Year)</span>
-                        <span className="font-bold text-green-600">${roiResult.projectedSavings?.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-[var(--bg-secondary)] rounded border">
-                        <span className="text-sm text-muted-foreground">ROI Percentage</span>
-                        <span className="font-bold text-[var(--accent-primary)]">{roiResult.roiPercentage}%</span>
-                      </div>
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-sm text-muted-foreground">{roiResult.analysis}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground">
-                      <TrendingUp className="w-8 h-8 mb-2 opacity-20" />
-                      <p>Enter parameters and click Calculate to see ROI projections.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ROICalculatorTab
+            roiParams={roiParams}
+            setRoiParams={setRoiParams}
+            calculateROI={calculateROI}
+            roiLoading={roiLoading}
+            roiResult={roiResult}
+          />
         </TabsContent>
 
         {/* Scenario Planner Tab */}
         <TabsContent value="scenarios" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Utilities Workforce Audit Starter</CardTitle>
-              <CardDescription>
-                Role templates and grid-modernization skill gaps for a utilities/energy workforce audit.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="rounded-lg border bg-amber-50 p-4 text-sm text-amber-900">
-                This is a starter package, not a completed utility audit. Use it to seed role mapping and buyer demos; a sellable version still needs persisted CSV imports, unmapped-row review, deterministic ROI, and an executive report.
-              </div>
-              <div className="grid gap-4">
-                {UTILITY_ROLE_TEMPLATES.map((template) => (
-                  <div key={template.soc_code} className="rounded-lg border p-4">
-                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <Badge variant="outline">{template.soc_code}</Badge>
-                          <Badge variant="secondary">{template.department}</Badge>
-                        </div>
-                        <h4 className="font-semibold">{template.role}</h4>
-                        <p className="text-sm text-muted-foreground mt-1">{template.reskilling_focus}</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 md:justify-end md:max-w-md">
-                        {template.grid_modernization_skills.map((skill) => (
-                          <Badge key={skill} variant="outline">{skill}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="grid md:grid-cols-3 gap-4">
-                <Card>
-                  <CardContent className="pt-6">
-                    <Target className="w-5 h-5 text-[var(--accent-primary)] mb-2" />
-                    <p className="font-medium">Mapping Input</p>
-                    <p className="text-sm text-muted-foreground">CSV rows should map job title, department, headcount, wage, and SOC code.</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <DollarSign className="w-5 h-5 text-green-600 mb-2" />
-                    <p className="font-medium">ROI Formula</p>
-                    <p className="text-sm text-muted-foreground">Use training cost, wage, time-to-proficiency, risk reduction, retention, and avoided hiring cost.</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <FileText className="w-5 h-5 text-[var(--accent-primary)] mb-2" />
-                    <p className="font-medium">Report Output</p>
-                    <p className="text-sm text-muted-foreground">Executive reports must label O*NET, BLS/OEWS, job posting, macro, and AI-generated sources.</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
+          <ScenariosTab utilityRoleTemplates={UTILITY_ROLE_TEMPLATES} />
         </TabsContent>
       </Tabs>
     </main>
