@@ -39,8 +39,11 @@ const featureMap = [
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-supabase-function-governance.mjs',
+      'scripts/generate-commercial-evidence-intake-packet.mjs',
+      'scripts/generate-owner-evidence-completion-drill.mjs',
+      'scripts/verify-owner-evidence-completion-drill-alignment.mjs',
     ],
-    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, and pilot validation worksheet CSV.',
+    proof: 'Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, generated partner/outcome owner-evidence intake worksheet, generated owner-evidence completion drill with Trust Center alignment verifier, and pilot validation worksheet CSV.',
   },
   {
     feature: 'Institutional readiness and governance packet',
@@ -52,11 +55,14 @@ const featureMap = [
       'scripts/verify-report-evidence.mjs',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-accessibility.mjs',
+      'scripts/generate-manual-wcag-review-packet.mjs',
       'scripts/verify-commercial-data-provenance.mjs',
       'docs/commercialization/commercial-accessibility-audit-latest.md',
       'docs/commercialization/commercial-accessibility-audit-latest.json',
+      'docs/commercialization/manual-wcag-review-packet-latest.md',
+      'docs/commercialization/manual-wcag-review-matrix-latest.csv',
     ],
-    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review.',
+    proof: 'Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, generated manual WCAG route/checkpoint review packet and CSV matrix, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review.',
   },
   {
     feature: 'Commercial proof-pack CI workflow',
@@ -68,12 +74,18 @@ const featureMap = [
       'docs/commercialization/live-supabase-deployment-runbook.md',
       'scripts/verify-commercial-release.mjs',
       'scripts/generate-commercial-supabase-deployment-packet.mjs',
+      'scripts/generate-live-proof-run-packet.mjs',
+      'scripts/generate-commercial-evidence-intake-packet.mjs',
+      'scripts/generate-owner-evidence-completion-drill.mjs',
+      'scripts/verify-owner-evidence-completion-drill-alignment.mjs',
       'scripts/verify-commercial-live-auth-e2e.mjs',
       'scripts/verify-commercial-browser.mjs',
       'scripts/verify-commercial-accessibility.mjs',
+      'scripts/generate-manual-wcag-review-packet.mjs',
       'docs/commercialization/commercial-accessibility-audit-latest.md',
+      'docs/commercialization/manual-wcag-review-packet-latest.md',
     ],
-    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks.',
+    proof: 'GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, generated live-proof owner run packet, generated partner/outcome owner-evidence intake packet, generated owner-evidence completion drill with UI/model/CSV alignment verification, a generated WCAG 2.2 audit packet with manual review boundary, a generated manual WCAG owner review packet, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks.',
   },
   {
     feature: 'SEO report lead capture',
@@ -142,8 +154,13 @@ const featureMap = [
       'scripts/verify-commercial-trust-boundaries.mjs',
       'scripts/verify-supabase-function-governance.mjs',
       'scripts/prepare-owner-evidence-workspace.mjs',
+      'scripts/generate-live-proof-run-packet.mjs',
+      'scripts/generate-commercial-evidence-intake-packet.mjs',
+      'scripts/generate-manual-wcag-review-packet.mjs',
+      'scripts/generate-owner-evidence-completion-drill.mjs',
+      'scripts/verify-owner-evidence-completion-drill-alignment.mjs',
     ],
-    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof.',
+    proof: 'Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, generated live-proof run packet, generated partner/outcome intake packet, generated owner WCAG review packet, generated owner-evidence completion drill with Trust Center alignment verification, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof.',
   },
   {
     feature: 'Source provenance and claim boundaries',
@@ -345,7 +362,7 @@ ${formatTable(['Script', 'Command'], scriptRows)}
 Required commercial pre-demo gate:
 
 1. \`npm run verify:commercial\` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, owner-evidence fixture smoke, remediation external-gate ledger, remediation completion audit, commercial lint/build checks, and route smoke proof
-2. \`npm run verify:owner-evidence-closeout\` to run the non-writing ordered owner-evidence closeout status bundle; after owner proof exists, run \`npm run closeout:owner-evidence -- --write --refresh-tracked\`
+2. \`npm run verify:owner-evidence-closeout\` to run the non-writing ordered owner-evidence closeout status bundle; use \`npm run generate:commercial-evidence-intake-packet\` before partner/outcome proof hashing and \`npm run generate:manual-wcag-review-packet\` before owner-held manual WCAG review/hashing, and after owner proof and manual WCAG evidence exists, run \`npm run closeout:owner-evidence -- --write --refresh-tracked --manual-wcag-evidence docs/commercialization/manual-wcag-evidence.local.json\`
 3. \`npm run verify:commercial-a11y\` or \`npm run verify:commercial -- --with-a11y\` when Chromium startup is stable; this writes \`docs/commercialization/commercial-accessibility-audit-latest.md\` and \`.json\`
 4. \`npm run verify:sources\` when DNS/network access is available
 5. \`npm audit --omit=dev --audit-level=high\` when registry access is available
@@ -357,7 +374,7 @@ CI boundary:
 
 ## Remaining Index Gaps
 
-- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
+- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus generated WCAG 2.2 audit and manual owner-review packets, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - \`npm run verify:commercial-full\` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, the live parser receipt verifier, and the optional signed-in synthetic artifact/deletion e2e verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while paid PDF/DOCX parser adapters, malware scanning, completed authenticated e2e run evidence, and formal e-signature/PDF storage remain Phase 5 hardening work.

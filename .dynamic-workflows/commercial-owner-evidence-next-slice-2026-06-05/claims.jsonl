@@ -1,0 +1,4 @@
+{"type":"evidence","taskId":"T001","evidence":"docs/commercialization/commercial-verification-summary-latest.json","createdAt":"2026-06-05T22:27:33.432Z"}
+{"type":"evidence","taskId":"T002","evidence":"scripts/verify-manual-wcag-review-packet-sources.mjs","createdAt":"2026-06-05T22:27:43.287Z"}
+{"type":"evidence","taskId":"T003","evidence":"docs/commercialization/manual-wcag-review-packet-source-audit-latest.json","createdAt":"2026-06-05T22:27:52.924Z"}
+{"type":"evidence","taskId":"T004","evidence":".phase-loop/phase-ledger.jsonl","createdAt":"2026-06-05T22:28:02.889Z"}

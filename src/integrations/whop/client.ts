@@ -8,8 +8,8 @@
  * - API interactions
  */
 
-// Environment variables — client_secret is NO LONGER exposed here (moved to server-side Edge Function)
-const WHOP_API_KEY = import.meta.env.VITE_WHOP_API_KEY || '';
+// Environment variables: only OAuth public config belongs in the browser.
+// Client secrets and API keys are handled by server-side Edge Functions.
 const WHOP_CLIENT_ID = import.meta.env.VITE_WHOP_CLIENT_ID || '';
 const WHOP_REDIRECT_URI = import.meta.env.VITE_WHOP_REDIRECT_URI || 'http://localhost:5173/auth/whop/callback';
 
@@ -24,9 +24,8 @@ const WHOP_API_BASE = 'https://api.whop.com/v5';
 export function validateWhopConfig(): boolean {
   const missing: string[] = [];
   
-  if (!WHOP_API_KEY) missing.push('VITE_WHOP_API_KEY');
   if (!WHOP_CLIENT_ID) missing.push('VITE_WHOP_CLIENT_ID');
-  // client_secret no longer needed on frontend — handled by whop-oauth Edge Function
+  // Client secret and API keys are server-only and handled by whop-oauth Edge Function.
   
   if (missing.length > 0) {
     console.warn(`[Whop] Missing environment variables: ${missing.join(', ')}`);

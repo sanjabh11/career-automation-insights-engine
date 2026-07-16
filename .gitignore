@@ -15,7 +15,7 @@ test-results/
 playwright-report/
 
 # Environment files (keep example checked in)
-.env
+#.env
 .env.*
 !.env.example
 
@@ -40,5 +40,7 @@ supabase/.temp/
 docs/commercialization/live-gate-evidence.local.json
 docs/commercialization/commercial-evidence-intake.local.json
 docs/commercialization/commercial-evidence-records.local.json
+docs/commercialization/manual-wcag-evidence.local.json
+docs/commercialization/*.local.json
 .gemini/
 .codegraph/

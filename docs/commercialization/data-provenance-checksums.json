@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-03T08:52:25.620Z",
+  "generatedAt": "2026-06-08T23:23:11.442Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
-    "generatedAt": "2026-06-01T18:32:57.633Z",
+    "generatedAt": "2026-06-08T22:56:12.323Z",
     "allPassed": true,
-    "requiredForPass": false
+    "requiredForPass": true
   },
   "allPassed": true,
   "artifacts": [
@@ -149,25 +149,47 @@
         "careeronestop-api",
         "census-acs-api",
         "wef-foj-2025",
+        "ilo-genai-jobs-2025",
+        "openai-eloundou-gpts-are-gpts",
         "oecd-skills-outlook-2025",
         "ai-workforce-consortium-2025",
         "nace-career-readiness",
         "nace-first-destination",
+        "ftc-consumer-reviews-rule-questions",
+        "ftc-endorsements-reviews",
+        "ftc-endorsement-guides-faq",
+        "ftc-soliciting-paying-online-reviews",
         "ferpa-student-privacy",
         "dol-ai-literacy-framework",
+        "dol-ai-worker-wellbeing-best-practices",
         "anthropic-economic-index",
+        "anthropic-economic-index-2026",
         "anthropic-observed-exposure",
         "openai-gdpval",
         "bls-ai-mlr-2025",
         "wcag-22",
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool",
+        "wcag2ict-22",
         "nist-ai-rmf",
+        "nist-ai-genai-profile",
+        "nist-ssdf",
+        "cisa-secure-by-design",
+        "owasp-asvs-5",
+        "owasp-llm-top-10-2025",
+        "pci-dss-v4-0-1",
         "owasp-file-upload",
+        "cwe-59-link-following",
+        "cwe-367-toctou",
         "supabase-edge-functions",
         "ada-ai-hiring-guidance",
         "eeoc-employment-selection-procedures",
         "cfpb-employment-algorithmic-scores",
+        "eu-ai-act-annex-iii-high-risk",
         "iso-42001",
         "esco",
+        "abs-osca-2024",
         "lightcast",
         "workera-positioning",
         "serpapi",
@@ -179,9 +201,9 @@
         "adapter-ready"
       ],
       "caveat": "Commercial source registry; adapter-ready records are not imported provider-backed data.",
-      "bytes": 38727,
-      "rows": 633,
-      "sha256": "c9a8de61f8b53f5e5bf2bfca06a622f64c9573e663c6c21c3656ddbf5ad92dd5",
+      "bytes": 58879,
+      "rows": 903,
+      "sha256": "f9b1ba7470dec34bd0b1999cb2bb2abfed82b9ad4bb1836346ceb5a41f3916bb",
       "failures": [],
       "passed": true
     },
@@ -436,9 +458,9 @@
         "Payment fulfillment"
       ],
       "caveat": "Launch-gate model separates controls already implemented from owner-held secrets, manual function review, provider integration, and payment replay evidence still needed before scaled outreach.",
-      "bytes": 7096,
+      "bytes": 7302,
       "rows": 122,
-      "sha256": "3bbd16c7f30b8966dd1d7fd7b7b34e0d1a07dabb4306746560c2fc57099be5d7",
+      "sha256": "5c55d9f4b1898ae69823f75df17428f4ee5ea2b885dba99ff1fdb7f3810e18dc",
       "failures": [],
       "passed": true
     },
@@ -499,6 +521,7 @@
       "type": "payment-runtime",
       "sourceIds": [
         "supabase-edge-functions",
+        "pci-dss-v4-0-1",
         "llm-output"
       ],
       "expectedSnippets": [
@@ -688,9 +711,9 @@
         "--require-complete"
       ],
       "caveat": "Composes redacted metadata only after owner-run proof artifacts pass; it does not create Stripe sessions, query live systems, fabricate proof, or store raw customer/partner data.",
-      "bytes": 14117,
-      "rows": 317,
-      "sha256": "100312bbc1bbe3bf51e295eed443a23a8d013a9fd12c53f409a13c45046f6d37",
+      "bytes": 16872,
+      "rows": 354,
+      "sha256": "8fe85f6a69f2a9725369b21b4a38cde355f9443770398a74823684ddbd835528",
       "failures": [],
       "passed": true
     },
@@ -702,6 +725,8 @@
       "sourceIds": [
         "nist-ai-rmf",
         "iso-42001",
+        "ftc-consumer-reviews-rule-questions",
+        "ftc-endorsement-guides-faq",
         "llm-output"
       ],
       "expectedSnippets": [
@@ -714,9 +739,9 @@
         "--require-all"
       ],
       "caveat": "Composes salted hashes and redacted partner/outcome metadata from owner-held local intake; it does not store raw names, contacts, contracts, private notes, quotes, customer data, or the hash salt.",
-      "bytes": 12663,
-      "rows": 274,
-      "sha256": "9d5a97ae43953b10bbf866b50f69a381a65ab1a29cb90a56fba04dc52a05e6c1",
+      "bytes": 18401,
+      "rows": 387,
+      "sha256": "610534a0ad5c57d3393f1d917171094e2e663a8e7858f2b059015696803b5648",
       "failures": [],
       "passed": true
     },
@@ -728,6 +753,8 @@
       "sourceIds": [
         "nist-ai-rmf",
         "iso-42001",
+        "ftc-consumer-reviews-rule-questions",
+        "ftc-endorsement-guides-faq",
         "llm-output"
       ],
       "expectedSnippets": [
@@ -739,9 +766,9 @@
         "doesNotProve"
       ],
       "caveat": "Template documents local intake fields only; real partner refs, outcome refs, and hash salts must remain owner-held and untracked.",
-      "bytes": 1592,
-      "rows": 43,
-      "sha256": "228e202f7648338aee71476579f9e9ed765a13425d273be2b67603a33cbf1c20",
+      "bytes": 7047,
+      "rows": 184,
+      "sha256": "9dcf7385b2ed93e0df1e4982049e562d154304e9c90973a3f5138d90a89e132d",
       "failures": [],
       "passed": true
     },
@@ -763,9 +790,9 @@
         "goalCompleteWithSyntheticFixtures"
       ],
       "caveat": "Creates temporary synthetic redacted evidence outside the repo and proves validator compatibility only; it does not prove live checkout, production calibration, live MRR, partner commitments, or outcomes.",
-      "bytes": 7840,
-      "rows": 204,
-      "sha256": "efb207e7171a70809b25ff51225e25a190471669478dbb654b311757dab4c38c",
+      "bytes": 26188,
+      "rows": 681,
+      "sha256": "8f07b306e076bc0fade4e95abe8ffaaea4ec5367b3e140c8ef46bdc2a8065e1e",
       "failures": [],
       "passed": true
     },
@@ -788,9 +815,9 @@
         "--require-ready"
       ],
       "caveat": "Creates or inspects ignored local scaffolding for owner-held evidence collection; placeholders, unloaded env values, and local templates do not satisfy final proof gates.",
-      "bytes": 12197,
-      "rows": 320,
-      "sha256": "8c6f6b5b07c563aa7bd51f7d33e8c87486b0fe6fa2bd902f673db9d996698eec",
+      "bytes": 30609,
+      "rows": 660,
+      "sha256": "a8767070c496725e50801f8f6c936a169b593f93faee0425b2798d12894b2476",
       "failures": [],
       "passed": true
     },
@@ -815,9 +842,9 @@
         "--stripe-test-artifact"
       ],
       "caveat": "Runs the ordered redacted owner-evidence closeout path and fails closed unless all live/commercial gates are accepted; it does not print secrets or prove missing owner-held evidence.",
-      "bytes": 7931,
-      "rows": 217,
-      "sha256": "505fbbac2ab9e6f5afa1f39b2b8d7be9234bada4c266ea7f77dafbbe2b29cdcb",
+      "bytes": 41949,
+      "rows": 855,
+      "sha256": "c30b6535962e9e69042ad51976601cf23d02b940c5d8f60de024b6f861ac0a3f",
       "failures": [],
       "passed": true
     },
@@ -839,9 +866,9 @@
         "remediation-completion-audit-latest.md"
       ],
       "caveat": "Generates a phase-by-phase closeout ledger from current gate artifacts and repo evidence; it does not convert local proof into owner-held live or commercial evidence.",
-      "bytes": 11624,
-      "rows": 218,
-      "sha256": "50d17d063318683b86ed571c0ae9046553e187f246d5060677c5d6ae6d2b005e",
+      "bytes": 12651,
+      "rows": 231,
+      "sha256": "5e93ead4eaefe0e51d2144697a9be773bb42474f1a0c142e088bd3bc6073dd16",
       "failures": [],
       "passed": true
     },
@@ -871,9 +898,9 @@
         "allow-missing-env"
       ],
       "caveat": "Mutating live verifier for a dedicated synthetic test user; it proves user-owned redacted artifact save/delete and saved-analysis deletion receipts for that test account only, not malware scanning, PDF/DOCX extraction, external-provider deletion, legal compliance, or employment-selection validity.",
-      "bytes": 16193,
-      "rows": 378,
-      "sha256": "8d153c505632ad66a398826183b597735a05d728cc013ec53bf1ae2720a95b85",
+      "bytes": 16246,
+      "rows": 380,
+      "sha256": "21cc46afe83a9e973b63f0697a68277b88c9aa8acf9933075db8ffc5d7f26b5e",
       "failures": [],
       "passed": true
     },
@@ -911,9 +938,9 @@
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
       "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 68420,
+      "bytes": 68473,
       "rows": 1218,
-      "sha256": "592a4ef06380b84e0d0c102f74659558a5079069809ef773a5e849f86345326d",
+      "sha256": "377424c0aba0349c43e5b4e042b6ba715de1d5f0712f506227404eaf49a25e6c",
       "failures": [],
       "passed": true
     },
@@ -1022,9 +1049,9 @@
         "Workera positioning"
       ],
       "caveat": "Public sample gallery, institutional readiness packet, local labor-market snapshot packet, and CRM import CSV are outreach enablement artifacts; they do not prove live CRM automation, deployed-domain analytics, local hiring demand, or institutional compliance.",
-      "bytes": 84324,
+      "bytes": 84342,
       "rows": 1363,
-      "sha256": "ccbc4e53f7deb5ce1175a10304f5cd3d1ef94bfb4ee4d12dd83795b848758ccb",
+      "sha256": "9b172139f1cb887a2f251e23fd745ff3680df4ba0c09402e58c0447e143fc6e0",
       "failures": [],
       "passed": true
     },
@@ -1037,9 +1064,11 @@
         "nist-ai-rmf",
         "iso-42001",
         "wcag-22",
+        "wcag2ict-22",
         "ada-ai-hiring-guidance",
         "eeoc-employment-selection-procedures",
         "cfpb-employment-algorithmic-scores",
+        "eu-ai-act-annex-iii-high-risk",
         "onet-task-ratings",
         "lightcast",
         "esco",
@@ -1067,9 +1096,9 @@
         "SUPABASE_DB_PASSWORD"
       ],
       "caveat": "Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.",
-      "bytes": 35735,
+      "bytes": 35783,
       "rows": 662,
-      "sha256": "ab4e664a6a8c412690f2b6a78790b45157c64534c4e01ce7cfa10419bab0f1e6",
+      "sha256": "77350233b26a7f1b5cff6e8abf9c2f83fb1d3d77979429727f6fc4188bea1802",
       "failures": [],
       "passed": true
     },
@@ -1082,9 +1111,11 @@
         "nist-ai-rmf",
         "iso-42001",
         "wcag-22",
+        "wcag2ict-22",
         "ada-ai-hiring-guidance",
         "eeoc-employment-selection-procedures",
         "cfpb-employment-algorithmic-scores",
+        "eu-ai-act-annex-iii-high-risk",
         "supabase-edge-functions",
         "llm-output"
       ],
@@ -1114,9 +1145,9 @@
         "do not certify legal compliance, WCAG conformance, or employment-selection validity"
       ],
       "caveat": "Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.",
-      "bytes": 18238,
-      "rows": 374,
-      "sha256": "2a8ed21d6a0b707f0b8d818ef4dc6109f20c780660eb379b69927bae40308cb8",
+      "bytes": 18368,
+      "rows": 377,
+      "sha256": "42f41a661c7ce26d137202a5302f2ec10eac6df31bd9aaa6c90a34e0646ed375",
       "failures": [],
       "passed": true
     },
@@ -1142,9 +1173,9 @@
         "WAI-ARIA Authoring Practices"
       ],
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
-      "bytes": 19431,
-      "rows": 619,
-      "sha256": "0611b371afdf906fb72071c74f5295f51030779632176943b165256768c6b4e3",
+      "bytes": 28102,
+      "rows": 768,
+      "sha256": "11ce554899e8b74e63708a270404b00e164963e71b14e528ae0d47af35cd5697",
       "failures": [],
       "passed": true
     },
@@ -1172,9 +1203,9 @@
         "WCAG-EM"
       ],
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
-      "bytes": 7065,
-      "rows": 53,
-      "sha256": "f060381881ac2e463dcf0de95bfb8418d4ff7ee3b1ae0e0bdc53d6c3ed27e320",
+      "bytes": 11104,
+      "rows": 64,
+      "sha256": "7baba9d55ff67d0273193171bd246b695b02e80f07eebef60b5f1b6f9f3152a7",
       "failures": [],
       "passed": true
     },
@@ -1346,7 +1377,7 @@
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
       "bytes": 6105,
       "rows": 83,
-      "sha256": "c082c30fa126fd7207368f19fb0f5074bc2b8040a16c74933ac3d1f1a4ef54b1",
+      "sha256": "51edd257869f5d1b924847d7eb9636cfa5cc8624d440e0e4712b459ce3939983",
       "failures": [],
       "passed": true
     },

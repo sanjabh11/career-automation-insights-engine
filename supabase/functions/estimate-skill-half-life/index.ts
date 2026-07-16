@@ -38,6 +38,11 @@ const ReqSchema = z.object({
   trend: z.enum(["growing","stable","declining"]).optional(),
   half_life_years: z.number().min(0.5).max(12).optional(),
   critical_threshold: z.number().min(1).max(99.9).optional(),
+  // Bayesian market-signal parameters
+  posting_volume: z.number().min(0).max(100).optional(),
+  posting_trend: z.enum(["rising","stable","declining"]).optional(),
+  salary_trend: z.enum(["rising","stable","declining"]).optional(),
+  weeks_observed: z.number().min(0).max(52).optional(),
 });
 
 function clamp(v: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, v)); }
@@ -111,6 +116,51 @@ serve(async (req) => {
 
     const recommended_hours_per_month = Math.round((Math.max(1, Math.min(12, 20 / halfLife))) * 10) / 10;
 
+    // Bayesian market-signal update
+    const hasMarketSignal = body.posting_volume !== undefined || body.posting_trend || body.salary_trend;
+    let bayesianUpdate: Record<string, unknown> | null = null;
+
+    if (hasMarketSignal) {
+      const postingVolume = body.posting_volume ?? 50;
+      const postingTrend = body.posting_trend ?? 'stable';
+      const salaryTrend = body.salary_trend ?? 'stable';
+      const weeksObserved = body.weeks_observed ?? 4;
+
+      // Signal strength
+      const volumeWeight = Math.min(1, postingVolume / 50);
+      const weeksWeight = Math.min(1, weeksObserved / 12);
+      const signalStrength = volumeWeight * weeksWeight;
+
+      // Trend factors
+      const trendFactor: Record<string, number> = { rising: 1.3, stable: 1.0, declining: 0.7 };
+      const salaryFactorMap: Record<string, number> = { rising: 1.1, stable: 1.0, declining: 0.9 };
+      const combinedTrend = trendFactor[postingTrend] * salaryFactorMap[salaryTrend];
+
+      // Conjugate update: Inverse-Gamma(α₀ + n, β₀ + n * market_suggested)
+      const alpha0 = 2;
+      const beta0 = alpha0 * halfLife;
+      const n = signalStrength * 5;
+      const alphaPost = alpha0 + n;
+      const betaPost = beta0 + n * (halfLife * combinedTrend);
+      const posteriorHalfLife = betaPost / alphaPost;
+      const marketAdjustment = (posteriorHalfLife - halfLife) / halfLife;
+
+      // Recompute with posterior
+      const postLambda = Math.log(2) / posteriorHalfLife;
+      const postRemaining = Math.exp(-postLambda * yearsElapsed);
+      const postFreshness = Math.round(postRemaining * 10000) / 100;
+
+      bayesianUpdate = {
+        bayesian_updated: true,
+        prior_half_life_years: Math.round(halfLife * 100) / 100,
+        posterior_half_life_years: Math.round(posteriorHalfLife * 100) / 100,
+        market_adjustment: Math.round(marketAdjustment * 10000) / 10000,
+        signal_strength: Math.round(signalStrength * 100) / 100,
+        posterior_freshness_score: postFreshness,
+        market_signals: { posting_volume: postingVolume, posting_trend: postingTrend, salary_trend: salaryTrend, weeks_observed: weeksObserved },
+      };
+    }
+
     const resp = {
       skill: body.skill,
       acquired_year: acquiredYear,
@@ -126,10 +176,12 @@ serve(async (req) => {
       months_to_critical_from_now,
       below_critical,
       recommended_hours_per_month,
+      ...(bayesianUpdate ? bayesianUpdate : { bayesian_updated: false }),
       notes: [
         'Exponential half-life model with bounded priors',
         'Trend-adjusted half-life; consider updating with market signals',
         'Includes maintenance hours and critical threshold alert',
+        ...(hasMarketSignal ? ['Bayesian posterior updated with market signals (Inverse-Gamma conjugate)'] : []),
       ],
     };
 

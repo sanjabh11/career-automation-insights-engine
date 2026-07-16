@@ -78,7 +78,7 @@ export const commercialLaunchGateItems: CommercialLaunchGateItem[] = [
     gap: "Accessibility proof",
     control: "Automated commercial a11y smoke writes WCAG 2.2 audit artifacts without claiming full conformance.",
     currentProof: "verify-commercial-accessibility.mjs and commercial-accessibility-audit-latest.md/json.",
-    remainingAction: "Complete manual WCAG-EM, keyboard, screen-reader, text-spacing, target-size, and form-error evidence.",
+    remainingAction: "Complete redacted manual WCAG-EM evidence with `npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete`, including keyboard, screen-reader, contrast, text-spacing, target-size, form-error, authentication, and downloadable-artifact review.",
     priority: "medium",
     owner: "staff-review",
     maturity: 4.0,

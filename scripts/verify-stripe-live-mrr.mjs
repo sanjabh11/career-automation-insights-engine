@@ -2,11 +2,13 @@
 
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { LIVE_PROOF_ARCHIVE_REQUIREMENTS } from './lib/liveGateEvidence.mjs';
 
 const OUTPUT_PATH = 'docs/commercialization/stripe-live-mrr-proof-latest.json';
 const ENV_FILES = ['.env.local', '.env'];
 const DEFAULT_MAX_PAGES = 10;
 const STRIPE_API_BASE = 'https://api.stripe.com/v1';
+const LIVE_MRR_ARCHIVE_REQUIRED_FIELD = 'rawSubscriptionExportOwnerHeld';
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -95,6 +97,13 @@ function validateLiveSecretKey(secretKey) {
   if (/^(sk|rk)_live_/.test(secretKey)) return null;
   if (/^(sk|rk)_test_/.test(secretKey)) return 'Stripe key is test-mode; this verifier only accepts live-mode keys.';
   return 'Stripe key must be a live-mode Stripe secret or restricted key.';
+}
+
+function ownerEvidenceArchive(gateId) {
+  if (gateId === 'live_mrr_gt_zero' && !LIVE_PROOF_ARCHIVE_REQUIREMENTS[gateId]?.includes(LIVE_MRR_ARCHIVE_REQUIRED_FIELD)) {
+    throw new Error('Live MRR ownerEvidenceArchive requirements are missing raw subscription export retention.');
+  }
+  return Object.fromEntries((LIVE_PROOF_ARCHIVE_REQUIREMENTS[gateId] || []).map((key) => [key, true]));
 }
 
 async function stripeGet(secretKey, path, params = []) {
@@ -258,10 +267,12 @@ async function main() {
       'Webhook fulfillment',
       'Commercial outcomes',
     ],
+    doesNotProveCount: 6,
     manualInterventionIfSkipped: [
       'Provide a live-mode Stripe restricted or secret key via STRIPE_LIVE_SECRET_KEY, STRIPE_LIVE_RESTRICTED_KEY, or STRIPE_SECRET_KEY; test-mode keys are rejected.',
       'Prefer a restricted read-only key with read access for subscriptions and invoices.',
       'Run npm run verify:stripe-live-mrr. Do not paste Stripe keys, customer emails, subscription IDs, invoice IDs, or raw Stripe payloads into chat or tracked files.',
+      'Preserve raw subscription and invoice exports, Stripe dashboard screenshots, and any customer-level evidence outside git; commit only the generated redacted artifact.',
       'Attach only redacted proof metadata through docs/commercialization/live-gate-evidence.local.json when owner-held proof is accepted.',
     ],
     request: {
@@ -390,6 +401,7 @@ async function main() {
         countedSubscriptionHashSample: mrrSummary.countedSubscriptionHashes.slice(0, 3),
         omittedItemCount: mrrSummary.omittedItemCount,
         truncated,
+        ownerEvidenceArchive: ownerEvidenceArchive('live_mrr_gt_zero'),
       },
     };
 

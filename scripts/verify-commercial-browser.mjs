@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 const HOST = '127.0.0.1';
 const START_PORT = 5175;
@@ -9,6 +10,7 @@ const SERVER_PROBE_TIMEOUT_MS = 3_000;
 const ROUTE_TIMEOUT_MS = 90_000;
 const INTERACTION_TIMEOUT_MS = 20_000;
 const BROWSER_LAUNCH_TIMEOUT_MS = 60_000;
+const OWNER_EVIDENCE_HANDOFF_JSON = 'docs/commercialization/owner-evidence-handoff-latest.json';
 
 function wait(ms) {
   return new Promise((resolve) => {
@@ -25,7 +27,19 @@ function isIgnoredConsoleError(text) {
   );
 }
 
-function isIgnoredRequestFailure(url) {
+function isIgnoredRequestFailure(request) {
+  const url = request.url();
+  const failureText = request.failure()?.errorText || '';
+
+  if (failureText === 'net::ERR_ABORTED' && request.method() === 'GET') {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === HOST && parsed.pathname === '/icon.svg') return true;
+    } catch {
+      // Fall through to the explicit third-party ignore list below.
+    }
+  }
+
   return (
     url.includes('supabase-disabled.invalid') ||
     url.includes('m.stripe.com') ||
@@ -106,7 +120,7 @@ function createPageIssueCollector(page) {
 
   page.on('requestfailed', (request) => {
     const url = request.url();
-    if (isIgnoredRequestFailure(url)) return;
+    if (isIgnoredRequestFailure(request)) return;
     if (url.startsWith('data:')) return;
     issues.push(`request failed: ${request.method()} ${url} - ${request.failure()?.errorText || 'unknown'}`);
   });
@@ -143,6 +157,23 @@ async function assertButtonEnabled(locator, label) {
   console.log(`ok enabled - ${label}`);
 }
 
+async function assertBodyText(page, pattern, label) {
+  const bodyText = await page.locator('body').innerText({ timeout: ROUTE_TIMEOUT_MS });
+  if (!pattern.test(bodyText)) {
+    throw new Error(`${label} was not found in rendered body text`);
+  }
+  console.log(`ok text - ${label}`);
+}
+
+async function assertBodyTextAbsent(page, staleTexts, label) {
+  const bodyText = await page.locator('body').innerText({ timeout: ROUTE_TIMEOUT_MS });
+  const found = staleTexts.filter((text) => bodyText.includes(text));
+  if (found.length > 0) {
+    throw new Error(`${label} found stale rendered text: ${found.join(', ')}`);
+  }
+  console.log(`ok absent - ${label}`);
+}
+
 async function readDownloadBody(download, label) {
   const stream = await download.createReadStream();
   if (!stream) {
@@ -151,6 +182,65 @@ async function readDownloadBody(download, label) {
   const chunks = [];
   for await (const chunk of stream) chunks.push(chunk);
   return Buffer.concat(chunks).toString('utf8');
+}
+
+function readOwnerEvidenceHandoffCommandSequence() {
+  const handoff = JSON.parse(readFileSync(OWNER_EVIDENCE_HANDOFF_JSON, 'utf8'));
+  if (!Array.isArray(handoff.commandSequence) || handoff.commandSequence.length === 0) {
+    throw new Error(`${OWNER_EVIDENCE_HANDOFF_JSON} is missing commandSequence`);
+  }
+  return handoff.commandSequence;
+}
+
+function readOwnerOperationalAccessCommands() {
+  const handoff = JSON.parse(readFileSync(OWNER_EVIDENCE_HANDOFF_JSON, 'utf8'));
+  if (!Array.isArray(handoff.operationalAccessPrerequisites) || handoff.operationalAccessPrerequisites.length === 0) {
+    throw new Error(`${OWNER_EVIDENCE_HANDOFF_JSON} is missing operationalAccessPrerequisites`);
+  }
+  const commands = handoff.operationalAccessPrerequisites.flatMap((item) => item.accessRecoveryCommands || []);
+  if (commands.length === 0) {
+    throw new Error(`${OWNER_EVIDENCE_HANDOFF_JSON} has no operational access recovery commands`);
+  }
+  return commands;
+}
+
+async function verifyOwnerEvidenceCommandChecklist(panel) {
+  const expectedCommands = readOwnerEvidenceHandoffCommandSequence();
+  const commandCards = panel.locator('article');
+  const actualCardCount = await commandCards.count();
+  if (actualCardCount !== expectedCommands.length) {
+    throw new Error(
+      `Owner evidence command checklist rendered ${actualCardCount} card(s), expected ${expectedCommands.length}.`
+    );
+  }
+
+  const renderedCommands = await panel.locator('article code').evaluateAll((nodes) =>
+    nodes.map((node) => node.textContent?.trim() || '')
+  );
+  if (JSON.stringify(renderedCommands) !== JSON.stringify(expectedCommands)) {
+    throw new Error(
+      `Owner evidence command checklist does not match ${OWNER_EVIDENCE_HANDOFF_JSON}#commandSequence.`
+    );
+  }
+
+  console.log(`ok visible - owner evidence command checklist canonical sequence (${expectedCommands.length} commands)`);
+}
+
+async function verifyOwnerOperationalAccessCommands(panel) {
+  const expectedCommands = readOwnerOperationalAccessCommands();
+  const commandList = panel.locator('[data-owner-operational-access-commands="true"]');
+  await assertVisible(commandList, 'trust owner operational access command checklist');
+
+  const renderedCommands = await commandList.locator('li').evaluateAll((nodes) =>
+    nodes.map((node) => node.textContent?.trim() || '')
+  );
+  if (JSON.stringify(renderedCommands) !== JSON.stringify(expectedCommands)) {
+    throw new Error(
+      `Owner operational access commands do not match ${OWNER_EVIDENCE_HANDOFF_JSON}#operationalAccessPrerequisites.accessRecoveryCommands.`
+    );
+  }
+
+  console.log(`ok visible - owner operational access command checklist (${expectedCommands.length} commands)`);
 }
 
 async function verifyPopupReport(popupPromise, expectedText, label) {
@@ -401,6 +491,70 @@ async function verifyCommercialTrustCenter(page, baseUrl) {
   await assertVisible(page.getByText(/do not certify legal compliance, WCAG conformance/i), 'trust evidence boundary copy');
   await assertVisible(page.getByText(/Manual WCAG evidence worksheet/i), 'trust manual WCAG worksheet heading');
   await assertVisible(page.getByText(/Buyer acceptable-use signoff checklist/i), 'trust buyer signoff heading');
+  await assertBodyText(page, /Launch blockers\s*5\b/i, 'trust summary launch blocker count');
+  await assertBodyText(page, /Readiness risks\s*6\b/i, 'trust summary readiness risk count');
+  await assertVisible(page.locator('[data-proof-visibility="evidence-gate-dashboard"]'), 'trust evidence gate dashboard');
+  await assertVisible(page.getByText(/2\/7 accepted/i), 'trust evidence gate accepted count');
+  for (const [acceptedLiveGateId, labelPattern] of [
+    ['production_calibration_run', /Production calibration/i],
+    ['authenticated_live_artifact_e2e', /Authenticated live artifact e2e/i],
+  ]) {
+    await assertVisible(page.getByText(labelPattern).first(), `trust accepted live gate ${acceptedLiveGateId}`);
+  }
+  await assertBodyTextAbsent(
+    page,
+    ['Launch blockers 7', 'Readiness risks 8', '1/8 ready', 'same seven incomplete gates'],
+    'stale trust evidence counts'
+  );
+  const ownerEvidencePrepPanel = page.locator('[data-proof-visibility="owner-evidence-prep-readiness"]');
+  await assertVisible(ownerEvidencePrepPanel, 'trust owner evidence prep readiness');
+  await assertVisible(ownerEvidencePrepPanel.getByText(/Owner evidence prep readiness/i), 'trust owner evidence prep heading');
+  await assertVisible(ownerEvidencePrepPanel.getByText(/readyForCloseout=false/i), 'trust owner evidence prep closeout boundary');
+  await assertVisible(ownerEvidencePrepPanel.getByText(/6 owner actions/i), 'trust owner evidence prep action count');
+  await assertVisible(ownerEvidencePrepPanel.getByText(/redacted readiness only/i), 'trust owner evidence prep redaction badge');
+  await assertVisible(ownerEvidencePrepPanel.getByText(/stripe test checkout env/i), 'trust owner evidence prep stripe item');
+  await assertVisible(
+    ownerEvidencePrepPanel.getByText(/Provide explicit STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY/i),
+    'trust owner evidence prep stripe guidance',
+  );
+  await assertVisible(ownerEvidencePrepPanel.locator('[data-owner-evidence-prep-readiness-download="true"]'), 'owner evidence prep CSV export');
+  const ownerEvidenceCommandChecklistPanel = page.locator('[data-proof-visibility="owner-evidence-command-checklist"]');
+  await assertVisible(ownerEvidenceCommandChecklistPanel, 'trust owner evidence command checklist');
+  await verifyOwnerEvidenceCommandChecklist(ownerEvidenceCommandChecklistPanel);
+  const ownerEvidenceCompletionPanel = page.locator('[data-proof-visibility="owner-evidence-completion-drill"]');
+  await assertVisible(ownerEvidenceCompletionPanel, 'trust owner evidence completion drill');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/Owner evidence completion drill/i), 'trust owner evidence completion drill heading');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/status=owner_evidence_required/i), 'trust owner evidence completion drill status');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/goalComplete=false/i), 'trust owner evidence completion drill goal boundary');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/5 blocked gates/i), 'trust owner evidence completion drill blocked count');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/6 owner-prep actions/i), 'trust owner evidence completion drill prep count');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/5 matrix rows/i), 'trust owner evidence completion drill row count');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/verify:owner-evidence-completion-drill/i), 'trust owner evidence completion drill verifier');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/live_proof_run/i).first(), 'trust owner evidence completion drill live packet');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/commercial_evidence_intake/i).first(), 'trust owner evidence completion drill commercial packet');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/manual_wcag_review/i).first(), 'trust owner evidence completion drill manual WCAG packet');
+  await assertVisible(ownerEvidenceCompletionPanel.getByText(/stripe-test-checkout-proof-latest\.json/i).first(), 'trust owner evidence completion drill stripe artifact');
+  await assertVisible(ownerEvidenceCompletionPanel.locator('[data-owner-evidence-completion-drill-blockers="true"]').first(), 'trust owner evidence completion drill blocker detail block');
+  await assertVisible(ownerEvidenceCompletionPanel.locator('[data-owner-evidence-completion-drill-download="true"]'), 'owner evidence completion drill CSV export');
+  const ownerOperationalAccessPanel = page.locator('[data-proof-visibility="owner-operational-access-prerequisites"]');
+  await assertVisible(ownerOperationalAccessPanel, 'trust owner operational access prerequisites');
+  await assertVisible(ownerOperationalAccessPanel.getByText(/Operational access prerequisites/i), 'trust owner operational access heading');
+  await assertVisible(ownerOperationalAccessPanel.getByText(/1 access item/i), 'trust owner operational access item count');
+  await assertVisible(ownerOperationalAccessPanel.getByText(/supabase-target-project-visible/i), 'trust owner operational access target-project blocker');
+  await assertVisible(ownerOperationalAccessPanel.getByText(/supabase-functions-api-accessible/i), 'trust owner operational access functions-api blocker');
+  await verifyOwnerOperationalAccessCommands(ownerOperationalAccessPanel);
+  const ownerEvidenceHandoffPanel = page.locator('[data-proof-visibility="owner-evidence-handoff-packet"]');
+  await assertVisible(ownerEvidenceHandoffPanel, 'trust owner evidence handoff packet');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/Owner evidence handoff packet/i), 'trust owner evidence handoff heading');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/goalComplete=false/i), 'trust owner evidence handoff goal boundary');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/5 handoff rows/i), 'trust owner evidence handoff row count');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/aligned with canonical ledgers/i), 'trust owner evidence handoff alignment badge');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/verify:owner-evidence-handoff-alignment/i), 'trust owner evidence handoff verifier');
+  await assertVisible(ownerEvidenceHandoffPanel.locator('[data-owner-evidence-handoff-blockers="true"]').first(), 'trust owner evidence handoff blocker detail block');
+  await assertVisible(ownerEvidenceHandoffPanel.locator('[data-owner-evidence-handoff-failure-details="true"]').first(), 'trust owner evidence handoff failure detail block');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/Redacted failure detail/i).first(), 'trust owner evidence handoff failure detail heading');
+  await assertVisible(ownerEvidenceHandoffPanel.getByText(/proofArtifactHashes must contain at least one non-placeholder sha256 hash/i).first(), 'trust owner evidence handoff commercial failure detail');
+  await assertVisible(ownerEvidenceHandoffPanel.locator('[data-owner-evidence-handoff-download="true"]'), 'owner evidence handoff CSV export');
   await assertVisible(page.getByRole('button', { name: /Download trust packet/i }), 'trust packet export');
   await assertVisible(page.getByRole('button', { name: /Download risk CSV/i }), 'risk CSV export');
   await assertVisible(page.getByRole('button', { name: /Download acceptance checklist/i }), 'acceptance checklist CSV export');
@@ -460,6 +614,120 @@ async function verifyCommercialTrustCenter(page, baseUrl) {
     }
   }
   console.log('ok download - trust center acceptance checklist CSV');
+
+  const ownerPrepCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await ownerEvidencePrepPanel.locator('[data-owner-evidence-prep-readiness-download="true"]').click();
+  const ownerPrepCsvDownload = await ownerPrepCsvDownloadPromise;
+  if (!ownerPrepCsvDownload.suggestedFilename().includes('owner-evidence-prep-readiness.csv')) {
+    throw new Error(`Unexpected owner evidence prep CSV filename: ${ownerPrepCsvDownload.suggestedFilename()}`);
+  }
+  const ownerPrepCsvBody = await readDownloadBody(ownerPrepCsvDownload, 'Owner evidence prep CSV');
+  for (const expectedColumn of ['item_id', 'track', 'status', 'owner_action', 'source', 'next_command', 'does_not_prove']) {
+    if (!ownerPrepCsvBody.includes(expectedColumn)) {
+      throw new Error(`Owner evidence prep CSV is missing ${expectedColumn}`);
+    }
+  }
+  for (const expectedItemId of [
+    'stripe_test_checkout_env',
+    'live_mrr_env',
+    'commercial_intake_placeholders',
+    'manual_wcag_evidence_missing',
+    'stripe_test_checkout_artifact_failed',
+    'stripe_live_mrr_artifact_failed',
+  ]) {
+    if (!ownerPrepCsvBody.includes(expectedItemId)) {
+      throw new Error(`Owner evidence prep CSV is missing ${expectedItemId}`);
+    }
+  }
+  const ownerPrepCsvRows = ownerPrepCsvBody.trim().split(/\r?\n/);
+  if (ownerPrepCsvRows.length !== 7) {
+    throw new Error(`Owner evidence prep CSV should include one header and six owner-action rows; got ${ownerPrepCsvRows.length} row(s).`);
+  }
+  console.log('ok download - trust center owner evidence prep CSV');
+
+  const ownerCompletionCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await ownerEvidenceCompletionPanel.locator('[data-owner-evidence-completion-drill-download="true"]').click();
+  const ownerCompletionCsvDownload = await ownerCompletionCsvDownloadPromise;
+  if (!ownerCompletionCsvDownload.suggestedFilename().includes('owner-evidence-completion-matrix-latest.csv')) {
+    throw new Error(`Unexpected owner evidence completion drill CSV filename: ${ownerCompletionCsvDownload.suggestedFilename()}`);
+  }
+  const ownerCompletionCsvBody = await readDownloadBody(ownerCompletionCsvDownload, 'Owner evidence completion drill CSV');
+  for (const expectedColumn of [
+    'order',
+    'gate_id',
+    'track',
+    'status',
+    'completion_state',
+    'packet_type',
+    'packet_status',
+    'packet_markdown',
+    'packet_csv',
+    'expected_proof_artifact',
+    'accepted_when',
+    'acceptance_verifier_command',
+    'repo_does_not_do',
+  ]) {
+    if (!ownerCompletionCsvBody.includes(expectedColumn)) {
+      throw new Error(`Owner evidence completion drill CSV is missing ${expectedColumn}`);
+    }
+  }
+  for (const expectedGateId of [
+    'manual_wcag_evidence',
+    'real_stripe_test_checkout',
+    'live_mrr_gt_zero',
+    'three_committed_partners',
+    'documented_outcomes',
+  ]) {
+    if (!ownerCompletionCsvBody.includes(expectedGateId)) {
+      throw new Error(`Owner evidence completion drill CSV is missing ${expectedGateId}`);
+    }
+  }
+  const ownerCompletionCsvRows = ownerCompletionCsvBody.trim().split(/\r?\n/);
+  if (ownerCompletionCsvRows.length !== 6) {
+    throw new Error(`Owner evidence completion drill CSV should include one header and five gate rows; got ${ownerCompletionCsvRows.length} row(s).`);
+  }
+  console.log('ok download - trust center owner evidence completion drill CSV');
+
+  const ownerHandoffCsvDownloadPromise = page.waitForEvent('download', { timeout: INTERACTION_TIMEOUT_MS });
+  await ownerEvidenceHandoffPanel.locator('[data-owner-evidence-handoff-download="true"]').click();
+  const ownerHandoffCsvDownload = await ownerHandoffCsvDownloadPromise;
+  if (!ownerHandoffCsvDownload.suggestedFilename().includes('owner-evidence-handoff-latest.csv')) {
+    throw new Error(`Unexpected owner evidence handoff CSV filename: ${ownerHandoffCsvDownload.suggestedFilename()}`);
+  }
+  const ownerHandoffCsvBody = await readDownloadBody(ownerHandoffCsvDownload, 'Owner evidence handoff CSV');
+  for (const expectedColumn of [
+    'gate_id',
+    'track',
+    'status',
+    'owner_action',
+    'owner_prep_command',
+    'blocking_owner_actions',
+    'next_command',
+    'closeout_steps',
+    'closeout_failure_details',
+    'raw_evidence_policy',
+    'repo_does_not_do',
+  ]) {
+    if (!ownerHandoffCsvBody.includes(expectedColumn)) {
+      throw new Error(`Owner evidence handoff CSV is missing ${expectedColumn}`);
+    }
+  }
+  for (const expectedGateId of [
+    'manual_wcag_evidence',
+    'real_stripe_test_checkout',
+    'live_mrr_gt_zero',
+    'three_committed_partners',
+    'documented_outcomes',
+  ]) {
+    if (!ownerHandoffCsvBody.includes(expectedGateId)) {
+      throw new Error(`Owner evidence handoff CSV is missing ${expectedGateId}`);
+    }
+  }
+  const ownerHandoffCsvRows = ownerHandoffCsvBody.trim().split(/\r?\n/);
+  if (ownerHandoffCsvRows.length !== 6) {
+    throw new Error(`Owner evidence handoff CSV should include one header and five gate rows; got ${ownerHandoffCsvRows.length} row(s).`);
+  }
+  console.log('ok download - trust center owner evidence handoff CSV');
 }
 
 async function verifyCoachSampleReport(page, baseUrl) {

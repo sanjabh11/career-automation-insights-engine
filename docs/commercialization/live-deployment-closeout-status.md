@@ -1,17 +1,27 @@
 # Live Deployment Closeout Status
 
-Updated: 2026-05-25
+Updated: 2026-06-05
 Target Supabase project: `kvunnankqgfokeufvsrv`
 Netlify site: `career-automation-insights-engine`
 
-## Proven
+## Current Generated Status
+
+Current source of truth: `docs/commercialization/live-closeout-readiness-latest.json` and
+`docs/commercialization/live-closeout-readiness-latest.md`.
+
+As of the latest local status run, required GitHub live-closeout secret names are readable and present, but the
+current Supabase CLI account cannot see the target project or access its functions API. Treat live closeout
+readiness as `owner_access_required` until `npm run verify:live-closeout-readiness` passes in a shell/account that
+can manage `kvunnankqgfokeufvsrv`.
+
+## Previously Proven Snapshot
 
 | Gate | Evidence | Status |
 |---|---|---|
 | Commercial Supabase schema/RPC proof | `npm run verify:commercial-live-supabase` with production public Supabase URL/anon key | Pass |
 | Live resume parser proof | `npm run verify:resume-parser-live` with production public Supabase URL/anon key | Pass |
 | Live O*NET Task Ratings proof | `npm run verify:onet-task-ratings-live` with production public Supabase URL/anon key | Pass |
-| Live closeout readiness verifier | `env -u SUPABASE_ACCESS_TOKEN npm run verify:live-closeout-readiness` | Pass |
+| Live closeout readiness verifier | `npm run verify:live-closeout-readiness` | Current local status: owner access required |
 | Local commercial release gate | `npm run verify:commercial` | Pass |
 | Secret hygiene gate | `npm run verify:secrets` and as part of `npm run verify:commercial` | Pass |
 | Official source registry | `npm run verify:sources` | Pass |
@@ -21,6 +31,7 @@ Netlify site: `career-automation-insights-engine`
 
 | Residual Risk | Current Evidence | Required Follow-up |
 |---|---|---|
+| Current Supabase CLI account cannot see target project/functions | `npm run generate:live-closeout-readiness` writes `status=owner_access_required` because project `kvunnankqgfokeufvsrv` is not visible and functions API access returns 403 | Use a Supabase account that can manage the target project, then rerun `npm run verify:live-closeout-readiness` for strict proof |
 | Local Codex process still contains a stale `SUPABASE_ACCESS_TOKEN` env var | Supabase CLI calls succeed when run as `env -u SUPABASE_ACCESS_TOKEN ...`; the process-level token returned platform 403 before being unset per command | Start a fresh Codex shell or replace the process-level token before future Supabase CLI work |
 | Supabase Data API schema cache is large and can be slow cold | PostGREST returned `PGRST002`/statement-timeout during initial closeout. Migrations `20260525083000` and `20260525084500` now pin exposed schemas and raise authenticator timeouts; live proof passes after cache warm-up | Keep exposed schemas narrow and avoid adding broad public-schema objects without running `npm run verify:commercial-live-supabase` |
 | Older GitHub failure notifications may still arrive after the fix | Failed run `26398010920` timed out on a broad O*NET live row probe; follow-up run `26398237303` on commit `5825a73` passed commercial live Supabase, O*NET Task Ratings, and resume parser proof | Treat run `26398237303` as the current closeout proof for `main`; rerun the workflow after each future verifier/workflow change |

@@ -33,6 +33,7 @@ const files = {
   liveGateEvidenceLibrary: read('scripts/lib/liveGateEvidence.mjs'),
   commercialEvidenceRecordsComposer: read('scripts/compose-commercial-evidence-records.mjs'),
   commercialEvidenceRecordsVerifier: read('scripts/verify-commercial-evidence-records.mjs'),
+  ownerEvidenceArtifactHasher: read('scripts/hash-owner-evidence-artifacts.mjs'),
   ownerEvidenceFixtureVerifier: read('scripts/verify-owner-evidence-fixture-path.mjs'),
   ownerEvidencePrep: read('scripts/prepare-owner-evidence-workspace.mjs'),
   ownerEvidenceCloseout: read('scripts/closeout-owner-evidence.mjs'),
@@ -46,6 +47,7 @@ const files = {
   gitignore: read('.gitignore'),
   remediationGatesVerifier: read('scripts/verify-remediation-external-gates.mjs'),
 };
+const commercialEvidenceIntakeTemplate = JSON.parse(files.commercialEvidenceIntakeTemplate);
 
 assert(!/DISABLED: Analytics events table has schema issues/.test(files.analyticsHook), 'analytics hook must not remain disabled');
 assert(/event_type: eventType/.test(files.analyticsHook), 'analytics hook must write event_type');
@@ -110,6 +112,7 @@ assert(
   'npm run verify:production-calibration',
   'npm run verify:owner-evidence-prep',
   'npm run prepare:owner-evidence',
+  'npm run hash:owner-evidence-artifacts',
   'npm run verify:owner-evidence-closeout',
   'npm run closeout:owner-evidence',
   'live-gate-evidence-template.json',
@@ -122,6 +125,7 @@ assert(/"verify:commercial-evidence-records": "node scripts\/verify-commercial-e
 assert(/"verify:commercial-evidence-records:write": "node scripts\/verify-commercial-evidence-records\.mjs --write"/.test(files.packageJson), 'commercial evidence records write verifier script must be wired explicitly');
 assert(/"verify:owner-evidence-fixtures": "node scripts\/verify-owner-evidence-fixture-path\.mjs"/.test(files.packageJson), 'owner evidence fixture verifier script must be wired');
 assert(/"prepare:owner-evidence": "node scripts\/prepare-owner-evidence-workspace\.mjs"/.test(files.packageJson), 'owner evidence preparation command must be wired');
+assert(/"hash:owner-evidence-artifacts": "node scripts\/hash-owner-evidence-artifacts\.mjs"/.test(files.packageJson), 'owner evidence artifact hashing command must be wired');
 assert(/"verify:owner-evidence-prep": "node scripts\/prepare-owner-evidence-workspace\.mjs"/.test(files.packageJson), 'owner evidence preparation status command must be wired');
 assert(/"closeout:owner-evidence": "node scripts\/closeout-owner-evidence\.mjs"/.test(files.packageJson), 'owner evidence closeout command must be wired');
 assert(/"verify:owner-evidence-closeout": "node scripts\/closeout-owner-evidence\.mjs --allow-incomplete"/.test(files.packageJson), 'owner evidence closeout status command must be wired');
@@ -147,6 +151,10 @@ assert(/COMMERCIAL_EVIDENCE_HASH_SALT/.test(files.commercialEvidenceRecordsCompo
 assert(/validateCommercialEvidence/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must validate composed records');
 assert(/partnerRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held partner refs');
 assert(/outcomeRef/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must consume owner-held outcome refs');
+assert(/proofArtifactHashes/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must carry proof artifact hashes');
+assert(/proofArtifactTypes/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must carry proof artifact types');
+assert(/rawEvidenceOwnerHeld/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must require owner-held raw evidence attestation');
+assert(/ownerEvidenceArchive/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must require owner-held commercial archive metadata');
 assert(/finalReadOnlyLedger/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must return the read-only final ledger command');
 assert(/refreshTrackedLedger/.test(files.commercialEvidenceRecordsComposer), 'commercial evidence composer must return the tracked-ledger refresh command');
 assert(/three_committed_partners/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must cover partner commitments');
@@ -155,10 +163,20 @@ assert(/acceptedDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier
 assert(/acceptedOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count accepted outcome records');
 assert(/uniqueDesignPartnerCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique partner hashes');
 assert(/uniqueOutcomeCount/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must count unique outcome hashes');
+assert(/proofArtifactHashes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must require proof artifact hashes');
+assert(/proofArtifactTypes/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must require proof artifact types');
+assert(/rawEvidenceOwnerHeld/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must require owner-held raw evidence attestation');
+assert(/ownerEvidenceArchive/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must require owner-held commercial archive metadata');
 assert(/future-dated/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject future-dated metadata');
 assert(/later than asOf/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must reject record dates later than asOf');
 assert(/composeFromOwnerIntake/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must publish the owner-intake compose command');
 assert(/refreshTrackedLedger/.test(files.commercialEvidenceRecordsVerifier), 'commercial evidence verifier must publish the tracked-ledger refresh command');
+assert(/apo-owner-evidence-artifact-hashes\.v1/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must declare its schema version');
+assert(/proofArtifactHash/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must emit proof artifact hashes');
+assert(/sourcePathHash/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must avoid source filenames by using path fingerprints');
+assert(/noSourceFilenamesPrinted/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must state that source filenames are not printed');
+assert(/noRawFileContentsPrinted/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must state that raw file contents are not printed');
+assert(/rawArtifactsOwnerHeld/.test(files.ownerEvidenceArtifactHasher), 'owner evidence artifact hasher must preserve owner-held raw artifact boundary');
 assert(/verify-live-gate-evidence\.mjs/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must exercise live evidence validation');
 assert(/verify-commercial-evidence-records\.mjs/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must exercise commercial evidence validation');
 assert(/verify-remediation-external-gates\.mjs/.test(files.ownerEvidenceFixtureVerifier), 'owner evidence fixture verifier must exercise final remediation gates');
@@ -169,6 +187,8 @@ assert(/commercial-evidence-intake-template\.json/.test(files.ownerEvidencePrep)
 assert(/This helper creates or inspects local owner-evidence scaffolding only/.test(files.ownerEvidencePrep), 'owner evidence prep must describe its non-proof boundary');
 assert(/readyForCloseout/.test(files.ownerEvidencePrep), 'owner evidence prep must report whether owner inputs are closeout-ready');
 assert(/--require-ready/.test(files.ownerEvidencePrep), 'owner evidence prep must support fail-closed readiness mode');
+assert(/hashCommercialProofArtifacts/.test(files.ownerEvidencePrep), 'owner evidence prep must publish the partner/outcome proof artifact hash command');
+assert(/hashManualWcagProofArtifacts/.test(files.ownerEvidencePrep), 'owner evidence prep must publish the manual WCAG proof artifact hash command');
 assert(/compose-live-gate-evidence\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run live evidence composition');
 assert(/compose-commercial-evidence-records\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run commercial records composition');
 assert(/verify-live-gate-evidence\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must validate live evidence');
@@ -176,6 +196,8 @@ assert(/verify-commercial-evidence-records\.mjs/.test(files.ownerEvidenceCloseou
 assert(/verify-remediation-external-gates\.mjs/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must run the final remediation gate');
 assert(/--allow-incomplete/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must support incomplete status runs');
 assert(/--stripe-test-artifact/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must pass through alternate live proof artifact paths');
+assert(/hashCommercialProofArtifacts/.test(files.ownerEvidenceCloseout), 'owner evidence closeout status must surface the partner/outcome proof artifact hash command');
+assert(/hashManualWcagProofArtifacts/.test(files.ownerEvidenceCloseout), 'owner evidence closeout status must surface the manual WCAG proof artifact hash command');
 assert(/const refreshTracked = hasFlag\('--refresh-tracked'\)/.test(files.ownerEvidenceCloseout), 'owner evidence closeout must not refresh tracked ledgers unless explicitly requested');
 assert(/COMMERCIAL_EVIDENCE_HASH_SALT/.test(files.playbook), 'Phase E playbook must document owner-held hash salt use for closeout');
 assert(/phaseDeliverables/.test(files.remediationCompletionAuditVerifier), 'remediation completion audit must publish per-phase deliverables');
@@ -186,6 +208,21 @@ assert(/designPartnerCommitments/.test(files.commercialEvidenceRecordsTemplate),
 assert(/documentedOutcomes/.test(files.commercialEvidenceRecordsTemplate), 'commercial evidence template must include documented outcomes');
 assert(/2026-06-01\.apo-commercial-evidence-intake\.v1/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must declare the expected schema version');
 assert(/hashSalt/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include hash salt guidance');
+assert(/proofArtifactHashes/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include proof artifact hash guidance');
+assert(/proofArtifactTypes/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include proof artifact type guidance');
+assert(/rawEvidenceOwnerHeld/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include owner-held raw evidence attestation');
+assert(/ownerEvidenceArchive/.test(files.commercialEvidenceIntakeTemplate), 'commercial evidence intake template must include owner-held commercial archive metadata');
+assert(Array.isArray(commercialEvidenceIntakeTemplate.designPartnerCommitments), 'commercial evidence intake template must include designPartnerCommitments array');
+assert(commercialEvidenceIntakeTemplate.designPartnerCommitments.length >= 3, 'commercial evidence intake template must include at least three design-partner placeholder records');
+assert(Array.isArray(commercialEvidenceIntakeTemplate.documentedOutcomes), 'commercial evidence intake template must include documentedOutcomes array');
+assert(commercialEvidenceIntakeTemplate.documentedOutcomes.length >= 1, 'commercial evidence intake template must include at least one documented-outcome placeholder record');
+commercialEvidenceIntakeTemplate.designPartnerCommitments.forEach((item, index) => {
+  assert(/replace-with-owner-stable-partner-reference-/.test(item.partnerRef), `design partner template ${index + 1} must use a placeholder partner reference`);
+  assert(Array.isArray(item.proofArtifactHashes) && item.proofArtifactHashes.length > 0, `design partner template ${index + 1} must include proof artifact hashes`);
+  assert(Array.isArray(item.proofArtifactTypes) && item.proofArtifactTypes.includes('artifact_review_log'), `design partner template ${index + 1} must include artifact_review_log proof type`);
+  assert(item.rawEvidenceOwnerHeld === true, `design partner template ${index + 1} must preserve owner-held raw evidence attestation`);
+  assert(item.ownerEvidenceArchive?.permissionTrailOwnerHeld === true, `design partner template ${index + 1} must preserve owner-held permission archive attestation`);
+});
 assert(/docs\/commercialization\/live-gate-evidence\.local\.json/.test(files.gitignore), 'owner-held live evidence file must be gitignored');
 assert(/docs\/commercialization\/commercial-evidence-intake\.local\.json/.test(files.gitignore), 'owner-held commercial intake file must be gitignored');
 assert(/docs\/commercialization\/commercial-evidence-records\.local\.json/.test(files.gitignore), 'owner-held commercial evidence records file must be gitignored');

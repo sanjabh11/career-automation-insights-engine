@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-02T11:27:26.752Z",
+  "generatedAt": "2026-06-07T13:13:49.745Z",
   "target": "https://kvunnankqgfokeufvsrv.supabase.co",
-  "status": "failed_non_test_stripe_key",
+  "status": "skipped_missing_env",
   "confidence": "bounded_stripe_test_checkout",
   "caveat": "This verifier creates a Stripe test-mode Checkout Session through the deployed create-checkout-session Supabase Edge Function and retrieves the session from Stripe to confirm livemode=false. It does not complete payment, prove live revenue, prove webhook fulfillment, or prove MRR.",
   "doesNotProve": [
@@ -12,19 +12,24 @@
     "Report-credit balance mutation",
     "Bootcamp demand"
   ],
+  "doesNotProveCount": 6,
   "manualInterventionIfSkipped": [
     "Create or choose a Stripe test-mode Price object and set STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID.",
-    "Provide a Stripe test-mode secret or restricted key via STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.",
+    "Provide a Stripe test-mode secret or restricted key via explicit STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; generic STRIPE_SECRET_KEY is intentionally ignored by this test proof.",
     "Provide a dedicated Supabase Auth synthetic test user via LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD.",
     "Confirm the deployed create-checkout-session function has its own STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY secrets configured.",
+    "Preserve raw Checkout Session payloads, function invocation metadata, and any screenshots/Stripe dashboard evidence outside git; commit only the generated redacted artifact.",
     "Run npm run verify:stripe-test-checkout. Do not paste secret values into chat or tracked files."
   ],
   "checks": [
     {
-      "id": "stripe-test-key-mode",
-      "label": "Stripe key is test-mode only",
+      "id": "stripe-test-checkout-env",
+      "label": "Stripe test checkout credentials are configured",
       "passed": false,
-      "message": "Stripe test checkout key is live-mode; this verifier only accepts STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY when it is test-mode."
+      "message": "Missing: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY"
     }
+  ],
+  "missingEnv": [
+    "STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY"
   ]
 }

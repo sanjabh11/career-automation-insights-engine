@@ -205,7 +205,6 @@ function normalizeAiData(value: unknown, fallback: OccupationSummary): Occupatio
 
 export default function OccupationDetailPage() {
   const { code } = useParams<{ code: string }>();
-  const apoFunctionApiKey = import.meta.env.VITE_APO_FUNCTION_API_KEY as string | undefined;
   const [aiData, setAiData] = React.useState<OccupationAiData | null>(null);
   const [aiLoading, setAiLoading] = React.useState(false);
   const [aiError, setAiError] = React.useState<string | null>(null);
@@ -242,7 +241,6 @@ export default function OccupationDetailPage() {
   React.useEffect(() => {
     (async () => {
       if (!occupationSummary) return;
-      if (!apoFunctionApiKey) { setAiError("APO configuration missing"); return; }
       setAiLoading(true);
       setAiError(null);
       try {
@@ -257,7 +255,7 @@ export default function OccupationDetailPage() {
         } catch {
           session = null;
         }
-        const headers: Record<string, string> = { 'x-api-key': apoFunctionApiKey };
+        const headers: Record<string, string> = {};
         if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
         const { data, error } = await withTimeout(
           supabase.functions.invoke('calculate-apo', {
@@ -281,7 +279,7 @@ export default function OccupationDetailPage() {
         setAiLoading(false);
       }
     })();
-  }, [occupationSummary, apoFunctionApiKey]);
+  }, [occupationSummary]);
 
   const { data: zoneInfo } = useQuery({
     queryKey: ["job-zone", occupation?.job_zone],

@@ -90,8 +90,8 @@ export const INSTITUTIONAL_READINESS_STATUS_LABELS: Record<InstitutionalReadines
 
 const sourceIds = {
   governance: ["nist-ai-rmf", "iso-42001", "llm-output"],
-  employment: ["ada-ai-hiring-guidance", "eeoc-employment-selection-procedures", "cfpb-employment-algorithmic-scores"],
-  accessibility: ["wcag-22", "ada-ai-hiring-guidance"],
+  employment: ["ada-ai-hiring-guidance", "eeoc-employment-selection-procedures", "cfpb-employment-algorithmic-scores", "eu-ai-act-annex-iii-high-risk"],
+  accessibility: ["wcag-22", "wcag2ict-22", "ada-ai-hiring-guidance"],
   parser: ["owasp-file-upload", "supabase-edge-functions", "nist-ai-rmf", "ada-ai-hiring-guidance"],
   data: ["onet", "onet-task-ratings", "bls-oews", "bls-laus", "bls-qcew"],
   market: ["lightcast", "esco", "serpapi", "llm-output"],

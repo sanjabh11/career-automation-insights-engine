@@ -5,6 +5,7 @@ import {
   Circle,
   CreditCard,
   Database,
+  Download,
   FileText,
   Gauge,
   Map,
@@ -19,14 +20,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  commercialLaunchGateItems,
-} from "@/lib/commercialLaunchGate";
-import {
   blockedClaimVisibilityItems,
+  buildOwnerEvidenceCompletionDrillCsv,
+  buildOwnerEvidenceHandoffCsv,
+  buildOwnerEvidenceActionQueueCsv,
+  buildOwnerEvidencePrepReadinessCsv,
   caseStudyCaptureTemplate,
   coachCommercializationWorkflow,
-  commercialValidationEvidenceGates,
   designPartnerOnboardingChecklist,
+  OWNER_EVIDENCE_COMPLETION_DRILL_FILENAME,
+  OWNER_EVIDENCE_HANDOFF_FILENAME,
+  OWNER_EVIDENCE_ACTION_QUEUE_FILENAME,
+  OWNER_EVIDENCE_PREP_READINESS_FILENAME,
+  ownerEvidenceCompletionDrillItems,
+  ownerEvidenceCompletionDrillSummary,
+  ownerEvidenceHandoffItems,
+  ownerEvidenceHandoffSummary,
+  ownerEvidenceLocalSafetySummary,
+  ownerEvidenceOperationalAccessPrerequisites,
+  ownerEvidencePrepReadinessGateSummaries,
+  ownerEvidencePrepReadinessItems,
+  ownerEvidencePrepReadinessSummary,
+  ownerEvidenceActionQueueItems,
   ownerEvidenceCloseoutCommandItems,
   ownerEvidenceCloseoutStatusItems,
   ownerEvidenceCloseoutSummary,
@@ -69,6 +84,14 @@ function parseBoundaries(value: string) {
 
 function downloadJsonDraft(filename: string, value: unknown) {
   const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: "application/json;charset=utf-8" });
+  downloadBlob(filename, blob);
+}
+
+function downloadTextFile(filename: string, body: string, type = "text/plain;charset=utf-8") {
+  downloadBlob(filename, new Blob([body], { type }));
+}
+
+function downloadBlob(filename: string, blob: Blob) {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -153,26 +176,14 @@ function metric(value: number) {
 }
 
 export function EvidenceGateDashboard() {
-  const gateRows = commercialValidationEvidenceGates.map((gate) => ({
-    id: gate.gate,
-    label: gate.gate,
-    status: commercialGateStatus(gate.status),
-    proof: gate.currentProof,
-    required: gate.requiredEvidence,
-    boundary: gate.doesNotProve,
+  const rows = ownerEvidenceCloseoutStatusItems.map((item) => ({
+    id: item.gateId,
+    label: item.label,
+    status: commercialGateStatus(item.status),
+    proof: item.currentProof,
+    required: item.remainingAction,
+    boundary: item.doesNotProve,
   }));
-  const launchBlockers = commercialLaunchGateItems
-    .filter((item) => item.priority === "high")
-    .slice(0, 4)
-    .map((item) => ({
-      id: item.gap,
-      label: item.gap,
-      status: item.owner === "codex-implemented" ? "ready" : item.owner === "owner-secret" ? "manual" : "blocked",
-      proof: item.currentProof,
-      required: item.remainingAction,
-      boundary: `Owner: ${item.owner.replace(/-/g, " ")} · maturity ${metric(item.maturity)}`,
-    }));
-  const rows = [...gateRows, ...launchBlockers];
   const readyCount = rows.filter((row) => row.status === "ready").length;
 
   return (
@@ -182,10 +193,10 @@ export function EvidenceGateDashboard() {
           <div>
             <CardTitle className="text-xl">Evidence gate dashboard</CardTitle>
             <CardDescription>
-              Claims stay blocked until owner-held payment, partner, outcome, and live runtime proof passes.
+              Claims stay blocked until final closeout accepts the remaining payment, partner, outcome, and manual WCAG proof.
             </CardDescription>
           </div>
-          <Badge variant="outline">{readyCount}/{rows.length} ready</Badge>
+          <Badge variant="outline">{readyCount}/{rows.length} accepted</Badge>
         </div>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-2">
@@ -263,6 +274,34 @@ export function OwnerEvidenceCloseoutPanel() {
     await navigator.clipboard.writeText(command);
     setCopiedCommandId(commandId);
   };
+  const downloadOwnerActionQueue = () => {
+    downloadTextFile(
+      OWNER_EVIDENCE_ACTION_QUEUE_FILENAME,
+      `${buildOwnerEvidenceActionQueueCsv()}\n`,
+      "text/csv;charset=utf-8"
+    );
+  };
+  const downloadOwnerEvidenceHandoff = () => {
+    downloadTextFile(
+      OWNER_EVIDENCE_HANDOFF_FILENAME,
+      `${buildOwnerEvidenceHandoffCsv()}\n`,
+      "text/csv;charset=utf-8"
+    );
+  };
+  const downloadOwnerEvidencePrepReadiness = () => {
+    downloadTextFile(
+      OWNER_EVIDENCE_PREP_READINESS_FILENAME,
+      `${buildOwnerEvidencePrepReadinessCsv()}\n`,
+      "text/csv;charset=utf-8"
+    );
+  };
+  const downloadOwnerEvidenceCompletionDrill = () => {
+    downloadTextFile(
+      OWNER_EVIDENCE_COMPLETION_DRILL_FILENAME,
+      `${buildOwnerEvidenceCompletionDrillCsv()}\n`,
+      "text/csv;charset=utf-8"
+    );
+  };
 
   return (
     <Card data-proof-visibility="owner-evidence-closeout-panel" className="border-amber-200 bg-amber-50/40">
@@ -290,13 +329,431 @@ export function OwnerEvidenceCloseoutPanel() {
               goalComplete=false
             </Badge>
             <Badge variant="outline">{blockedCount} blocked</Badge>
+            <Badge variant="outline">{ownerEvidenceCloseoutSummary.remainingGateCount} remaining owner gates</Badge>
             <Badge variant="outline">{ownerActionCount} owner-held</Badge>
+            <Badge variant="outline">{ownerEvidenceCloseoutSummary.ownerActionNeededCount} owner actions</Badge>
+            <Badge variant="outline">{ownerEvidenceActionQueueItems.length} queue items</Badge>
           </div>
           <p className="mt-3 text-muted-foreground">{ownerEvidenceCloseoutSummary.closeoutBoundary}</p>
           <p className="mt-2 text-xs text-muted-foreground">
             <strong>Tracked ledger:</strong> {ownerEvidenceCloseoutSummary.trackedLedger}
           </p>
         </div>
+
+        <section
+          className="rounded-lg border border-emerald-200 bg-white p-4"
+          data-proof-visibility="owner-evidence-local-safety-preflight"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Local evidence safety preflight</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Git ignore, tracking, and staging status for owner-held evidence paths before refreshed proof metadata is
+                staged.
+              </p>
+            </div>
+            <Badge
+              variant="outline"
+              className={cn(
+                "border",
+                ownerEvidenceLocalSafetySummary.ok
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-rose-200 bg-rose-50 text-rose-800"
+              )}
+            >
+              localSafetyStatus={ownerEvidenceLocalSafetySummary.status}
+            </Badge>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline">
+              {ownerEvidenceLocalSafetySummary.ignoredProtectedPathCount}/
+              {ownerEvidenceLocalSafetySummary.protectedPathCount} protected paths ignored
+            </Badge>
+            <Badge variant="outline">
+              tracked violations={ownerEvidenceLocalSafetySummary.trackedSensitiveFileViolationCount}
+            </Badge>
+            <Badge variant="outline">
+              staged violations={ownerEvidenceLocalSafetySummary.stagedSensitivePathViolationCount}
+            </Badge>
+            <Badge variant="outline">errors={ownerEvidenceLocalSafetySummary.errorCount}</Badge>
+            <Badge variant="outline">
+              does-not-prove boundaries={ownerEvidenceLocalSafetySummary.doesNotProveCount}
+            </Badge>
+            <Badge variant="outline">source trace rows={ownerEvidenceLocalSafetySummary.sourceTraceCount}</Badge>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{ownerEvidenceLocalSafetySummary.evidenceBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">{ownerEvidenceLocalSafetySummary.sourceTraceBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Source artifact:</strong> {ownerEvidenceLocalSafetySummary.sourceArtifact}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Does not prove:</strong> {ownerEvidenceLocalSafetySummary.doesNotProve.join("; ")}
+          </p>
+        </section>
+
+        <section
+          className="rounded-lg border border-amber-200 bg-white p-4"
+          data-proof-visibility="owner-evidence-prep-readiness"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Owner evidence prep readiness</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Read-only local prep status embedded in the closeout packet. It shows what the owner must load or
+                replace before final closeout can even attempt the live, commercial, and manual WCAG gates.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={downloadOwnerEvidencePrepReadiness}
+              data-owner-evidence-prep-readiness-download="true"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Prep CSV
+            </Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline">readyForCloseout={String(ownerEvidencePrepReadinessSummary.readyForCloseout)}</Badge>
+            <Badge variant="outline">{ownerEvidencePrepReadinessSummary.ownerActionNeededCount} owner actions</Badge>
+            <Badge variant="outline">{ownerEvidencePrepReadinessGateSummaries.length} gate prep summaries</Badge>
+            <Badge variant="outline">redacted readiness only</Badge>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{ownerEvidencePrepReadinessSummary.evidenceBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Source artifact:</strong> {ownerEvidencePrepReadinessSummary.sourceArtifact}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Status verifier:</strong> {ownerEvidencePrepReadinessSummary.statusVerifier}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-owner-evidence-prep-by-gate="true">
+            {ownerEvidencePrepReadinessGateSummaries.map((item) => (
+              <article key={item.gateId} className="rounded-md border bg-muted/30 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="break-words font-mono text-[11px] text-muted-foreground">{item.gateId}</p>
+                  <Badge variant="outline">{item.status}</Badge>
+                </div>
+                <p className="mt-2 text-sm font-semibold">{item.ownerActionNeededCount} prep action(s)</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Source:</strong> {item.sourceArtifact}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">{item.evidenceBoundary}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {ownerEvidencePrepReadinessItems.map((item) => (
+              <article key={item.itemId} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.itemId.replace(/_/g, " ")}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.status}</p>
+                  </div>
+                  <Badge variant="outline">{item.track}</Badge>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">{item.ownerAction}</p>
+                {item.ownerPrepCommand ? (
+                  <div className="mt-3 rounded-md border border-blue-100 bg-blue-50/60 p-3">
+                    <p className="mb-2 text-[11px] font-semibold uppercase text-blue-900">Owner prep command</p>
+                    <code className="break-words text-xs">{item.ownerPrepCommand}</code>
+                  </div>
+                ) : null}
+                <div className="mt-3 rounded-md border bg-muted/40 p-3">
+                  <p className="mb-2 text-[11px] font-semibold uppercase text-muted-foreground">Next proof command</p>
+                  <code className="break-words text-xs">{item.nextCommand}</code>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  <strong>Source:</strong> {item.source}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Does not prove:</strong> {item.doesNotProve}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className="rounded-lg border border-amber-200 bg-white p-4"
+          data-proof-visibility="owner-evidence-completion-drill"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Owner evidence completion drill</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Gate-by-gate execution matrix for the generated live-proof, commercial-evidence, and manual WCAG owner
+                packets. It keeps the launch decision fail-closed while showing exactly which packet and verifier moves
+                each gate.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={downloadOwnerEvidenceCompletionDrill}
+              data-owner-evidence-completion-drill-download="true"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Completion CSV
+            </Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline">status={ownerEvidenceCompletionDrillSummary.status}</Badge>
+            <Badge variant="outline">goalComplete={String(ownerEvidenceCompletionDrillSummary.goalComplete)}</Badge>
+            <Badge variant="outline">{ownerEvidenceCompletionDrillSummary.blockedGateCount} blocked gates</Badge>
+            <Badge variant="outline">{ownerEvidenceCompletionDrillSummary.ownerActionNeededCount} owner-prep actions</Badge>
+            <Badge variant="outline">
+              {ownerEvidenceCompletionDrillSummary.operationalAccessPrerequisiteCount} operational access item
+            </Badge>
+            <Badge variant="outline">{ownerEvidenceCompletionDrillSummary.matrixRowCount} matrix rows</Badge>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{ownerEvidenceCompletionDrillSummary.evidenceBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Verification command:</strong> {ownerEvidenceCompletionDrillSummary.verificationCommand}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>CSV artifact:</strong> {OWNER_EVIDENCE_COMPLETION_DRILL_FILENAME}
+          </p>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {ownerEvidenceCompletionDrillItems.map((item) => (
+              <article key={item.gateId} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.order}. {item.label}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.gateId}</p>
+                  </div>
+                  <Badge variant="outline">{item.completionState}</Badge>
+                </div>
+                <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Packet:</strong> {item.packetType} ({item.packetStatus})
+                  </p>
+                  <p>
+                    <strong>Packet files:</strong> {item.packetMarkdown}; {item.packetCsv}
+                  </p>
+                  <p>
+                    <strong>Expected proof artifact:</strong> {item.expectedProofArtifact}
+                  </p>
+                  <p>
+                    <strong>Accepted when:</strong> {item.acceptedWhen}
+                  </p>
+                </div>
+                <div className="mt-3 rounded-md border bg-muted/40 p-3">
+                  <p className="mb-2 text-[11px] font-semibold uppercase text-muted-foreground">Acceptance verifier</p>
+                  <code className="break-words text-xs">{item.acceptanceVerifierCommand}</code>
+                </div>
+                <div className="mt-3" data-owner-evidence-completion-drill-blockers="true">
+                  <p className="text-xs font-semibold text-foreground">Blocking owner actions</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {item.blockingOwnerActions.map((action) => (
+                      <li key={action} className="break-words rounded border border-dashed bg-amber-50/50 px-2 py-1">
+                        {action}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  <strong>Repo does not do:</strong> {item.repoDoesNotDo}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Does not prove:</strong> {item.doesNotProve}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className="rounded-lg border border-amber-200 bg-white p-4"
+          data-proof-visibility="owner-operational-access-prerequisites"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Operational access prerequisites</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Owner account-access checks for live deployment closeout. These items are not counted as launch-evidence
+                gates and do not make missing owner evidence pass.
+              </p>
+            </div>
+            <Badge variant="outline">{ownerEvidenceOperationalAccessPrerequisites.length} access item</Badge>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {ownerEvidenceOperationalAccessPrerequisites.map((item) => (
+              <article key={item.id} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.label}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.id}</p>
+                  </div>
+                  <Badge variant="outline">{item.status}</Badge>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">{item.ownerAction}</p>
+                <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Source artifact:</strong> {item.sourceArtifact}
+                  </p>
+                  <p>
+                    <strong>Owner prep command:</strong> {item.ownerPrepCommand}
+                  </p>
+                  <p>
+                    <strong>Strict verifier:</strong> {item.nextCommand}
+                  </p>
+                </div>
+                <div className="mt-3" data-owner-operational-access-commands="true">
+                  <p className="text-xs font-semibold text-foreground">Owner access command checklist</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {item.accessRecoveryCommands.map((command) => (
+                      <li key={command} className="break-words rounded border border-dashed bg-background px-2 py-1">
+                        {command}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-3" data-owner-operational-access-blockers="true">
+                  <p className="text-xs font-semibold text-foreground">Blocking checks</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {item.blockingCheckIds.map((checkId) => (
+                      <li key={checkId} className="break-words rounded border border-dashed bg-amber-50/50 px-2 py-1">
+                        {checkId}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  <strong>Accepted when:</strong> {item.acceptedWhen}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Repo does not do:</strong> {item.repoDoesNotDo}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className="rounded-lg border border-amber-200 bg-white p-4"
+          data-proof-visibility="owner-evidence-action-queue"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Owner action queue</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Generated from the five remaining owner-evidence gates in the remediation ledger. It is safe to export
+                because it contains actions, commands, and proof boundaries only.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={downloadOwnerActionQueue}
+              data-owner-evidence-action-queue-download="true"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Action CSV
+            </Button>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {ownerEvidenceActionQueueItems.map((item) => (
+              <article key={item.gateId} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.label}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.gateId}</p>
+                  </div>
+                  {proofBadge(commercialGateStatus(item.status))}
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">{item.ownerAction}</p>
+                <div className="mt-3 rounded-md border bg-muted/40 p-3">
+                  <code className="break-words text-xs">{item.nextCommand}</code>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  <strong>Risk if skipped:</strong> {item.riskIfSkipped}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Does not prove:</strong> {item.doesNotProve}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className="rounded-lg border border-amber-200 bg-white p-4"
+          data-proof-visibility="owner-evidence-handoff-packet"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Owner evidence handoff packet</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Cross-checked execution packet for the five remaining owner-held gates. The alignment verifier confirms the
+                handoff rows match the remediation ledger, closeout status, and CSV export.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={downloadOwnerEvidenceHandoff}
+              data-owner-evidence-handoff-download="true"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Handoff CSV
+            </Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline">goalComplete={String(ownerEvidenceHandoffSummary.goalComplete)}</Badge>
+            <Badge variant="outline">{ownerEvidenceHandoffSummary.ownerActionQueueCount} handoff rows</Badge>
+            <Badge variant="outline">aligned with canonical ledgers</Badge>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">{ownerEvidenceHandoffSummary.evidenceBoundary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            <strong>Alignment verifier:</strong> {ownerEvidenceHandoffSummary.alignmentVerifier}
+          </p>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {ownerEvidenceHandoffItems.map((item) => (
+              <article key={item.gateId} className="rounded-md border bg-background p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">{item.label}</h4>
+                    <p className="mt-1 font-mono text-[11px] text-muted-foreground">{item.gateId}</p>
+                  </div>
+                  <Badge variant="outline">{item.track}</Badge>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  <strong>Closeout steps:</strong> {item.closeoutSteps}
+                </p>
+                <div className="mt-3" data-owner-evidence-handoff-blockers="true">
+                  <p className="text-xs font-semibold text-foreground">Blocking owner-prep actions</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {item.blockingOwnerActions.map((action) => (
+                      <li key={action} className="break-words rounded border border-dashed bg-amber-50/50 px-2 py-1">
+                        {action}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-3" data-owner-evidence-handoff-failure-details="true">
+                  <p className="text-xs font-semibold text-foreground">Redacted failure detail</p>
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    {item.closeoutFailureDetails.map((detail) => (
+                      <li key={detail} className="break-words rounded border border-dashed bg-muted/30 px-2 py-1">
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Raw evidence policy:</strong> {item.rawEvidencePolicy}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <strong>Repo does not do:</strong> {item.repoDoesNotDo}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="grid gap-3 md:grid-cols-2">
           {ownerEvidenceCloseoutStatusItems.map((item) => (
@@ -648,7 +1105,27 @@ export function PartnerEvidenceIntakePanel() {
     planningOnlyUseConfirmed: partnerFlags.planningOnlyUseConfirmed,
     artifactReviewed,
     nextStepRecorded: partnerFlags.nextStepRecorded,
+    proofArtifactHashes: [],
+    proofArtifactTypes: ["permissioned_email", "artifact_review_log"],
+    rawEvidenceOwnerHeld: Object.values(partnerFlags).every(Boolean),
     redactionLevel,
+    integrityAttestations: {
+      marketingUseReviewed: partnerFlags.permissioned,
+      materialConnectionReviewed: partnerFlags.permissioned,
+      incentiveOrCompensationReviewed: partnerFlags.permissioned,
+      noFakeOrSyntheticTestimonial: partnerFlags.permissioned,
+      noReviewGatingOrSuppression: partnerFlags.permissioned,
+    },
+    ownerEvidenceArchive: {
+      permissionTrailOwnerHeld: partnerFlags.permissioned && partnerFlags.contactPermission,
+      pilotScopeRecordOwnerHeld: partnerFlags.pilotScopeAccepted,
+      artifactReviewLogOwnerHeld: artifactReviewed.trim().length >= 3,
+      contactDetailsOwnerHeldOutsideGit: partnerFlags.contactPermission,
+      materialConnectionReviewOwnerHeld: partnerFlags.permissioned,
+      incentiveOrCompensationReviewOwnerHeld: partnerFlags.permissioned,
+      reviewSolicitationNotConditionedOnSentiment: partnerFlags.permissioned,
+      reReviewRequiredBeforePublicUse: partnerFlags.permissioned,
+    },
     doesNotProve: parseBoundaries(doesNotProve),
   }), [artifactReviewed, committedAt, doesNotProve, partnerFlags, partnerRef, redactionLevel, segment]);
   const partnerDraftJson = useMemo(() => compactJson(partnerDraft), [partnerDraft]);
@@ -656,6 +1133,7 @@ export function PartnerEvidenceIntakePanel() {
     && partnerDraft.partnerRef.trim().length >= 3
     && partnerDraft.segment.trim().length >= 3
     && partnerDraft.artifactReviewed.trim().length >= 3
+    && partnerDraft.proofArtifactHashes.length > 0
     && partnerDraft.redactionLevel.trim().length >= 6
     && partnerDraft.doesNotProve.length > 0;
 
@@ -790,13 +1268,40 @@ export function OutcomeEvidenceReviewPanel() {
     measuredChangeCaptured: outcomeFlags.measuredChangeCaptured,
     approvedQuoteCaptured: outcomeFlags.approvedQuoteCaptured,
     quoteApprovalCaptured: outcomeFlags.quoteApprovalCaptured,
+    measuredChangeUnit: "minutes_saved_per_report",
+    measurementWindow: "single reviewed workflow during owner-held pilot evidence window",
+    outcomeClaimScope: "single permissioned observed workflow only; not generalized beyond the reviewed artifact",
+    typicalityBoundary: "not represented as typical or expected for other users without additional evidence",
+    proofArtifactHashes: [],
+    proofArtifactTypes: ["baseline_workflow_note", "measured_change_summary", "quote_approval"],
+    rawEvidenceOwnerHeld: Object.values(outcomeFlags).every(Boolean),
     redactionLevel,
+    integrityAttestations: {
+      marketingUseReviewed: outcomeFlags.permissioned,
+      materialConnectionReviewed: outcomeFlags.permissioned,
+      incentiveOrCompensationReviewed: outcomeFlags.permissioned,
+      noFakeOrSyntheticTestimonial: outcomeFlags.permissioned,
+      noReviewGatingOrSuppression: outcomeFlags.permissioned,
+      counterfactualNotClaimed: outcomeFlags.measuredChangeCaptured,
+      guaranteedOutcomeNotClaimed: outcomeFlags.measuredChangeCaptured,
+    },
+    ownerEvidenceArchive: {
+      baselineWorkflowEvidenceOwnerHeld: outcomeFlags.baselineWorkflowCaptured,
+      measuredChangeEvidenceOwnerHeld: outcomeFlags.measuredChangeCaptured,
+      quoteApprovalRecordOwnerHeld: outcomeFlags.quoteApprovalCaptured,
+      privateQuoteTextOwnerHeldOutsideGit: outcomeFlags.approvedQuoteCaptured,
+      materialConnectionReviewOwnerHeld: outcomeFlags.permissioned,
+      incentiveOrCompensationReviewOwnerHeld: outcomeFlags.permissioned,
+      typicalitySubstantiationOwnerHeld: outcomeFlags.measuredChangeCaptured,
+      reReviewRequiredBeforePublicCaseStudyUse: outcomeFlags.permissioned,
+    },
     doesNotProve: parseBoundaries(doesNotProve),
   }), [artifactReviewed, doesNotProve, observedAt, outcomeFlags, outcomeRef, redactionLevel]);
   const outcomeDraftJson = useMemo(() => compactJson(outcomeDraft), [outcomeDraft]);
   const readyForComposer = Object.values(outcomeFlags).every(Boolean)
     && outcomeDraft.outcomeRef.trim().length >= 3
     && outcomeDraft.artifactReviewed.trim().length >= 3
+    && outcomeDraft.proofArtifactHashes.length > 0
     && outcomeDraft.redactionLevel.trim().length >= 6
     && outcomeDraft.doesNotProve.length > 0;
 

@@ -1,0 +1,96 @@
+{
+  "schema_version": "v8",
+  "audit_id": "caie-niche-positioning-2026-07-16",
+  "research_log": [
+    {
+      "query_id": "Q-001",
+      "query": "AI career automation risk assessment tools 2025 2026 market landscape competitors",
+      "phase": "P2",
+      "source_ids": ["aijobimpactcalculator.com", "meritforgeai.com", "willitreplace.me", "jobforesight.com", "kairocareer.com", "tripleten.com", "jobsecuritymeter.com", "github.com/manduks/ai-job-risk-database"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:10:00Z"
+    },
+    {
+      "query_id": "Q-002",
+      "query": "Career coaching software tools white-label automation defense reports market size 2025",
+      "phase": "P2",
+      "source_ids": ["market.us", "rapidevelopers.com", "giiresearch.com", "thebusinessresearchcompany.com", "pulserevops.com", "futuremarketinsights.com", "researchintelo.com"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:10:00Z"
+    },
+    {
+      "query_id": "Q-003",
+      "query": "Will Robots Take My Job alternative AI job displacement calculator O*NET automation exposure",
+      "phase": "P2",
+      "source_ids": ["willrobotstakemyjob.com", "omnicalculator.com", "displacement.ai", "aijobimpactcalculator.com", "opportunitydata.org", "willrobotstakemyjob.com/about/calculations", "jobreplacementai.com", "jobsdata.ai"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:10:00Z"
+    },
+    {
+      "query_id": "Q-004",
+      "query": "Enterprise workforce automation risk audit tool AI job displacement assessment platform B2B 2025 2026",
+      "phase": "P2",
+      "source_ids": ["jobroute.ai", "inop.ai", "draup.com/etter", "rolerisq.com", "trynexova.ai", "gloat.com", "edligo.net", "gofigr.ai"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:15:00Z"
+    },
+    {
+      "query_id": "Q-005",
+      "query": "Veterans military occupation code civilian career transition AI tool MOC crosswalk market 2025",
+      "phase": "P2",
+      "source_ids": ["onetonline.org/crosswalk/MOC", "careeronestop.org", "veterancareerpath.com", "cadient.ai/smart-veteran", "devpost.com/software/nextop"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:15:00Z"
+    },
+    {
+      "query_id": "Q-006",
+      "query": "Kairo career AI task-level automation exposure pricing model competitor 2026",
+      "phase": "P2",
+      "source_ids": ["kairocareer.com", "linkedin.com/posts/kairoaicareer", "jobroute.ai/blog/ai-jobs-2026", "kairox.in", "shrm.org"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:20:00Z"
+    },
+    {
+      "query_id": "Q-007",
+      "query": "Career coach software tools willingness to pay subscription 2025 2026",
+      "phase": "P2",
+      "source_ids": ["shapeshifter.so", "careerflow.ai", "mentorrd.com", "intrycareers.com", "blog.loopcv.pro", "pickaxe.co", "delenta.com", "coachstackhub.ai"],
+      "saturation_reached": true,
+      "contradiction_status": "none",
+      "counter_evidence": "n/a",
+      "timestamp": "2026-07-16T11:25:00Z"
+    },
+    {
+      "query_id": "Q-008",
+      "query": "AI job risk calculator market not viable low willingness to pay users prefer free tools ChatGPT sufficient",
+      "phase": "P2_counter",
+      "source_ids": ["ainews.cool", "vaasblock.com", "aijobimpactcalculator.com", "numbervibe.com", "aishortcutlab.com", "martinalderson.com"],
+      "saturation_reached": true,
+      "contradiction_status": "resolved — B2C repositioned as freemium acquisition, not primary revenue",
+      "counter_evidence": "Consumer AI cost trap, free expectation, 12+ free competitors",
+      "timestamp": "2026-07-16T11:30:00Z"
+    },
+    {
+      "query_id": "Q-009",
+      "query": "coaching platform pricing 2026 mid-market gap BetterUp B2C exit",
+      "phase": "P2_counter",
+      "source_ids": ["thesibs.prose.sh", "teamazing.com", "deelo.ai", "tycoon.us"],
+      "saturation_reached": true,
+      "contradiction_status": "none — supports B2B coach hypothesis",
+      "counter_evidence": "BetterUp abandoned B2C, $100-$500/mo gap exists, coaches pay $29-$299/mo",
+      "timestamp": "2026-07-16T11:30:00Z"
+    }
+  ]
+}

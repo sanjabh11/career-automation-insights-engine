@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "commercial-full-verification-2026-06-05",
+  "goal": "Strengthen career-automation-insights-engine commercial launch readiness by proving the full local commercial gate, including browser journey, accessibility, current source/network checks, dependency audit, and proof-boundary summary without secrets, production changes, payment changes, outreach, or destructive actions.",
+  "repoRoot": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+  "mode": "manual",
+  "maxConcurrency": 4,
+  "maxAgents": 64,
+  "tokenWarning": {
+    "risk": "low",
+    "estimatedAgentRuns": 4,
+    "estimatedReviewRuns": 2,
+    "estimatedTotalRuns": 6,
+    "warning": "Scoped run; still verify before exporting worker plans."
+  },
+  "createdAt": "2026-06-04T22:41:06.177Z",
+  "updatedAt": "2026-06-04T22:45:18.216Z"
+}

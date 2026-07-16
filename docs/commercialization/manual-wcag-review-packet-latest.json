@@ -1,0 +1,3488 @@
+{
+  "generatedAt": "2026-06-08T23:23:36.520Z",
+  "schemaVersion": "2026-06-04.apo-manual-wcag-review-packet.v1",
+  "status": "owner_manual_review_required",
+  "manualEvidenceSchemaVersion": "2026-06-04.apo-manual-wcag-evidence.v1",
+  "sourceArtifact": "docs/commercialization/manual-wcag-evidence-template.json",
+  "sourceArtifactCount": 6,
+  "sourceTraceCount": 6,
+  "sourceTrace": [
+    {
+      "key": "automatedAccessibilityAudit",
+      "artifactPath": "docs/commercialization/commercial-accessibility-audit-latest.json",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.automatedAccessibilityAudit"
+    },
+    {
+      "key": "manualEvidenceTemplate",
+      "artifactPath": "docs/commercialization/manual-wcag-evidence-template.json",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.manualEvidenceTemplate"
+    },
+    {
+      "key": "ownerHasher",
+      "artifactPath": "scripts/hash-owner-evidence-artifacts.mjs",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.ownerHasher"
+    },
+    {
+      "key": "latestManualWcagEvidence",
+      "artifactPath": "docs/commercialization/manual-wcag-evidence-latest.json",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.latestManualWcagEvidence"
+    },
+    {
+      "key": "closeoutStatus",
+      "artifactPath": "docs/commercialization/owner-evidence-closeout-status-latest.json",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.closeoutStatus"
+    },
+    {
+      "key": "manualEvidenceVerifier",
+      "artifactPath": "scripts/verify-manual-wcag-evidence.mjs",
+      "sourceArtifact": "docs/commercialization/manual-wcag-review-packet-latest.json#sourceArtifacts.manualEvidenceVerifier"
+    }
+  ],
+  "sourceTraceBoundary": "This source trace maps each generated manual WCAG review packet provenance row to the sourceArtifacts key used by the owner worksheet. It does not perform manual accessibility review, read owner-held reviewer notes, screenshots, recordings, assistive-technology transcripts, issue details, evaluation-tool output, sample archives, artifact hash source maps, private user data, or upgrade launch readiness.",
+  "sourceArtifacts": {
+    "automatedAccessibilityAudit": "docs/commercialization/commercial-accessibility-audit-latest.json",
+    "manualEvidenceTemplate": "docs/commercialization/manual-wcag-evidence-template.json",
+    "ownerHasher": "scripts/hash-owner-evidence-artifacts.mjs",
+    "latestManualWcagEvidence": "docs/commercialization/manual-wcag-evidence-latest.json",
+    "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json",
+    "manualEvidenceVerifier": "scripts/verify-manual-wcag-evidence.mjs"
+  },
+  "outputs": {
+    "json": "docs/commercialization/manual-wcag-review-packet-latest.json",
+    "markdown": "docs/commercialization/manual-wcag-review-packet-latest.md",
+    "csv": "docs/commercialization/manual-wcag-review-matrix-latest.csv"
+  },
+  "localManualEvidencePath": "docs/commercialization/manual-wcag-evidence.local.json",
+  "evidenceBoundary": "This packet is an owner-review worksheet only. Raw reviewer notes, screenshots, recordings, assistive-technology transcripts, reviewer identity, reviewer profile URLs, meeting/calendar links, issue tracker details, evaluation-tool output, sample archives, artifact hash source maps, and private user data must remain owner-held outside tracked files. The packet does not make placeholder hashes count as proof.",
+  "hasherInputBoundary": "When hashing proof artifacts, use ordinary owner-held files outside git or under an ignored local proof path. The hasher rejects symbolic links, hard-linked files, tracked files, staged files, and non-ignored repository files; copy proof material to a single-link owner-held file before hashing.",
+  "latestEvidenceSummary": {
+    "latestEvidencePath": "docs/commercialization/manual-wcag-evidence-latest.json",
+    "status": "no_local_evidence",
+    "acceptedCheckpointCount": 0,
+    "requiredCheckpointCount": 8,
+    "requiredRouteCount": 9,
+    "manualWcagGateSatisfied": false
+  },
+  "closeoutSummary": {
+    "closeoutStatusPath": "docs/commercialization/owner-evidence-closeout-status-latest.json",
+    "goalComplete": false,
+    "relevantOwnerActions": [
+      {
+        "id": "manual_wcag_evidence",
+        "status": "blocked_missing_manual_wcag_evidence",
+        "ownerAction": "Generate the manual WCAG review packet, complete the owner-held WCAG-EM review from the route/checkpoint matrix, document product scope, sample rationale, sample-selection method, technologies relied upon, complete processes, support-baseline combinations, reviewer type/conflict boundary, review-record archive attestations, and ownerEvidenceArchive policy metadata, hash local WCAG review proof files, replace placeholder hashes in the ignored local evidence file, and keep raw reviewer notes/screenshots/AT transcripts/tool output/sample archives/hash source maps outside git.",
+        "ownerPrepCommand": "npm run generate:manual-wcag-review-packet && npm run hash:owner-evidence-artifacts -- <local WCAG review proof files>",
+        "nextCommand": "npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete"
+      }
+    ]
+  },
+  "requiredRouteCount": 9,
+  "requiredCheckpointCount": 8,
+  "requiredOfficialReferenceCount": 7,
+  "officialReferenceCount": 7,
+  "requiredCompleteProcessIds": [
+    "public-trust-navigation",
+    "resume-analysis-proof-report",
+    "counselor-report-generation",
+    "proof-pack-downloads",
+    "payment-and-account-access"
+  ],
+  "requiredCompleteProcessCount": 5,
+  "requiredAccessibilitySupportBaselineCount": 2,
+  "ownerEvidenceArchiveRequirements": [
+    "rawReviewerNotesOwnerHeldOutsideGit",
+    "screenshotsRecordingsOwnerHeldOutsideGit",
+    "assistiveTechnologyTranscriptsOwnerHeldOutsideGit",
+    "reviewerIdentityOwnerHeldOutsideGit",
+    "issueDetailsOwnerHeldOutsideGit",
+    "evaluationToolOutputOwnerHeldOutsideGit",
+    "sampleArchivesOwnerHeldOutsideGit",
+    "artifactHashSourceMapOwnerHeld",
+    "reReviewRequiredAfterMaterialChange"
+  ],
+  "requiredOwnerEvidenceArchiveRequirementCount": 9,
+  "matrixRowCount": 72,
+  "routeReviewPlanCount": 9,
+  "checkpointReviewPlanCount": 8,
+  "routeCheckpointMatrixRowCount": 72,
+  "verifierAcceptanceChecklistCount": 8,
+  "officialReferences": [
+    {
+      "id": "wcag22",
+      "label": "WCAG 2.2 Recommendation",
+      "url": "https://www.w3.org/TR/WCAG22/"
+    },
+    {
+      "id": "wcag-em-overview",
+      "label": "WCAG-EM overview",
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/"
+    },
+    {
+      "id": "wcag-em-2",
+      "label": "WCAG-EM 2.0",
+      "url": "https://www.w3.org/TR/wcag-em-2/"
+    },
+    {
+      "id": "wcag-em-report-tool",
+      "label": "WCAG-EM Report Tool",
+      "url": "https://www.w3.org/WAI/eval/report-tool/"
+    },
+    {
+      "id": "wai-easy-checks",
+      "label": "WAI Easy Checks",
+      "url": "https://www.w3.org/WAI/test-evaluate/preliminary/"
+    },
+    {
+      "id": "wai-aria-apg",
+      "label": "WAI-ARIA Authoring Practices",
+      "url": "https://www.w3.org/WAI/ARIA/apg/"
+    },
+    {
+      "id": "wcag2ict-22",
+      "label": "WCAG2ICT 2.2",
+      "url": "https://www.w3.org/TR/wcag2ict-22/"
+    }
+  ],
+  "routeReviewPlan": [
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedResultCount": 3,
+      "automatedViewportCount": 3,
+      "viewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "targetSizeReview": [
+        "no obvious non-inline target below 24px"
+      ],
+      "textSpacingReview": [
+        "text-spacing stress passed"
+      ],
+      "boundary": "Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility."
+    }
+  ],
+  "checkpointReviewPlan": [
+    {
+      "checkpointId": "wcag-em-scope",
+      "label": "WCAG-EM scope and sampling",
+      "reviewerGoal": "Confirm the target standard, product scope, route sample, sample-selection method, technologies relied upon, complete-process coverage, browser/assistive-technology support baseline, evaluator role, independence/conflict boundary, owner-held WCAG-EM report-tool export, review-record archive, and reporting boundary before any conformance language is considered.",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "requiredEvidenceSummary": [
+        "scopeDefined=true",
+        "conformanceTarget=\"WCAG 2.2 A/AA\"",
+        "productScopeDefined=true",
+        "sampleSelectionRationaleDocumented=true",
+        "completeProcessesReviewed=true",
+        "accessibilitySupportBaselineDefined=true"
+      ],
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "keyboard-focus-not-obscured",
+      "label": "Keyboard focus and focus-not-obscured review",
+      "reviewerGoal": "Tab through each route and interactive state at mobile, tablet, and desktop widths, including sticky navigation, dialogs, long forms, report downloads, and status panels.",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "requiredEvidenceSummary": [
+        "keyboardTraversalCompleted=true",
+        "focusNotObscuredChecked=true"
+      ],
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "target-size",
+      "label": "Pointer target size review",
+      "reviewerGoal": "Measure compact links, icon buttons, table actions, badges used as controls, mobile CTA clusters, and form controls for target size or spacing exceptions.",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "requiredEvidenceSummary": [
+        "pointerTargetReviewCompleted=true"
+      ],
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "form-errors-and-redundant-entry",
+      "label": "Form errors, labels, instructions, and redundant entry",
+      "reviewerGoal": "Exercise lead capture, coach sample, resume analyzer, workforce CSV, counselor forms, and evidence download flows with missing, invalid, and repeated values.",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "requiredEvidenceSummary": [
+        "errorStateReviewCompleted=true",
+        "redundantEntryReviewCompleted=true"
+      ],
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "accessible-authentication",
+      "label": "Accessible authentication and account/payment access",
+      "reviewerGoal": "Review sign-in, payment, account, and synthetic-user flows for cognitive-function-test barriers and accessible alternatives before institutional pilots.",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "requiredEvidenceSummary": [
+        "authFlowReviewed=true"
+      ],
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "screen-reader-name-role-value",
+      "label": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "reviewerGoal": "Use assistive technologies to review menus, dialogs, generated reports, evidence cards, CSV/HTML download controls, dynamic status messages, and route navigation.",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "requiredEvidenceSummary": [
+        "assistiveTechnologies=[...]",
+        "nameRoleValueReviewCompleted=true"
+      ],
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "contrast-reflow-text-spacing",
+      "label": "Contrast, reflow, non-text contrast, and text spacing",
+      "reviewerGoal": "Run contrast and text-spacing/reflow checks on commercial cards, badges, alerts, charts, proof packets, downloadable HTML, mobile layouts, and any dark-theme surfaces.",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "requiredEvidenceSummary": [
+        "contrastReviewCompleted=true",
+        "reflowAndTextSpacingReviewCompleted=true"
+      ],
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "checkpointId": "downloadable-artifacts",
+      "label": "Downloadable HTML/CSV/proof artifact accessibility",
+      "reviewerGoal": "Open downloaded trust packets, risk CSVs, sample reports, proof-pack exports, and pilot-validation artifacts, then review names, headings, tables, keyboard access, assistive-technology behavior, and non-web document/software applicability boundaries.",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "requiredEvidenceSummary": [
+        "artifactsReviewed=[...]",
+        "downloadedArtifactReviewCompleted=true"
+      ],
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "acceptedStatuses": [
+        "passed",
+        "passed_with_remediation",
+        "not_applicable_with_rationale"
+      ],
+      "failureBoundary": "If unresolved issues remain, keep this checkpoint failed or blocked and do not mark the manual WCAG evidence gate complete.",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    }
+  ],
+  "verifierAcceptanceChecklist": [
+    {
+      "id": "scope-and-sample",
+      "label": "WCAG-EM scope and route sample",
+      "verifierPaths": [
+        "evaluationScope.productScope",
+        "evaluationScope.sampleSelectionRationale",
+        "evaluationScope.sampleSetSelectionMethod",
+        "targetStandard",
+        "methodology",
+        "evaluationScope.routesReviewed",
+        "evaluationScope.technologiesReliedUpon",
+        "evaluationScope.browsers",
+        "evaluationScope.assistiveTechnologies",
+        "evaluationScope.viewports"
+      ],
+      "acceptedWhen": "Evidence uses targetStandard=WCAG 2.2 A/AA, methodology=WCAG-EM, includes all 9 required commercial routes, describes the sample-selection method and technologies relied upon, and covers mobile/tablet/desktop plus browser and assistive-technology matrices.",
+      "ownerHeldEvidence": [
+        "product scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "browser and viewport notes",
+        "assistive-technology matrix notes"
+      ],
+      "boundary": "Scope metadata is necessary but does not prove accessibility until every checkpoint is manually reviewed and accepted."
+    },
+    {
+      "id": "complete-process-and-support-baseline",
+      "label": "Complete processes and accessibility support baseline",
+      "verifierPaths": [
+        "evaluationScope.completeProcessesReviewed",
+        "evaluationScope.accessibilitySupportBaseline[].operatingSystem",
+        "evaluationScope.accessibilitySupportBaseline[].browser",
+        "evaluationScope.accessibilitySupportBaseline[].assistiveTechnology",
+        "evaluationScope.accessibilitySupportBaseline[].inputModalities",
+        "evaluationScope.accessibilitySupportBaseline[].viewports"
+      ],
+      "acceptedWhen": "Evidence includes all 5 required complete processes and at least 2 explicit browser/assistive-technology support combinations with keyboard input covered.",
+      "ownerHeldEvidence": [
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline notes",
+        "keyboard and screen-reader setup notes"
+      ],
+      "boundary": "Support-baseline metadata defines reviewed combinations only; it does not prove unreviewed operating systems, browsers, assistive technologies, or future UI states."
+    },
+    {
+      "id": "evaluation-specifics-and-archive",
+      "label": "Evaluation specifics and review-record archive",
+      "verifierPaths": [
+        "reviewRecordArchive.samplesArchivedOwnerHeld",
+        "reviewRecordArchive.evaluationToolsRecorded",
+        "reviewRecordArchive.wcagEmReportToolExportOwnerHeld",
+        "reviewRecordArchive.browserAssistiveTechnologyVersionsRecorded",
+        "reviewRecordArchive.navigationPathsRecorded",
+        "reviewRecordArchive.issueLogOwnerHeld",
+        "reviewRecordArchive.rawEvidenceSecurityReviewed",
+        "reviewRecordArchive.reEvaluationRequiredAfterMaterialChange"
+      ],
+      "acceptedWhen": "Evidence includes reviewRecordArchive with all required attestations true: samplesArchivedOwnerHeld, evaluationToolsRecorded, wcagEmReportToolExportOwnerHeld, browserAssistiveTechnologyVersionsRecorded, navigationPathsRecorded, issueLogOwnerHeld, rawEvidenceSecurityReviewed, reEvaluationRequiredAfterMaterialChange.",
+      "ownerHeldEvidence": [
+        "sample archive",
+        "evaluation tool/version notes",
+        "browser/assistive-technology version notes",
+        "navigation path notes",
+        "issue log",
+        "raw evidence security review note"
+      ],
+      "boundary": "Archive metadata confirms review records were retained owner-side only; it does not expose the records or independently validate reviewer findings."
+    },
+    {
+      "id": "owner-evidence-archive",
+      "label": "Owner evidence archive policy",
+      "verifierPaths": [
+        "ownerEvidenceArchive.rawReviewerNotesOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.screenshotsRecordingsOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.assistiveTechnologyTranscriptsOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.reviewerIdentityOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.issueDetailsOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.evaluationToolOutputOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.sampleArchivesOwnerHeldOutsideGit",
+        "ownerEvidenceArchive.artifactHashSourceMapOwnerHeld",
+        "ownerEvidenceArchive.reReviewRequiredAfterMaterialChange"
+      ],
+      "acceptedWhen": "Evidence includes ownerEvidenceArchive with all required policy fields true: rawReviewerNotesOwnerHeldOutsideGit, screenshotsRecordingsOwnerHeldOutsideGit, assistiveTechnologyTranscriptsOwnerHeldOutsideGit, reviewerIdentityOwnerHeldOutsideGit, issueDetailsOwnerHeldOutsideGit, evaluationToolOutputOwnerHeldOutsideGit, sampleArchivesOwnerHeldOutsideGit, artifactHashSourceMapOwnerHeld, reReviewRequiredAfterMaterialChange.",
+      "ownerHeldEvidence": [
+        "raw reviewer notes archive",
+        "screenshot and recording archive",
+        "assistive-technology transcript archive",
+        "reviewer identity and qualification record",
+        "issue detail archive",
+        "evaluation-tool output archive",
+        "sample archive",
+        "artifact hash source map",
+        "material-change re-review policy"
+      ],
+      "boundary": "OwnerEvidenceArchive metadata is a storage and re-review policy only; it does not expose raw artifacts or prove WCAG conformance."
+    },
+    {
+      "id": "official-reference-basis",
+      "label": "Official W3C/WAI reference basis",
+      "verifierPaths": [
+        "officialReferences[].id",
+        "officialReferences[].url",
+        "officialReferences[].accessedAt"
+      ],
+      "acceptedWhen": "Evidence includes all 7 required W3C/WAI references with exact URLs and non-future accessedAt dates not later than asOf.",
+      "ownerHeldEvidence": [
+        "reviewer source-access notes"
+      ],
+      "boundary": "Reference metadata proves the review basis only; it does not prove the app satisfies those standards."
+    },
+    {
+      "id": "reviewer-attestation",
+      "label": "Reviewer attestation and redaction boundary",
+      "verifierPaths": [
+        "evaluator.reviewerIdHash",
+        "evaluator.reviewType",
+        "evaluator.independenceBoundary",
+        "evaluator.expertiseConfirmed",
+        "evaluator.conflictOfInterestDisclosed",
+        "reviewerAttestation.manualReviewCompleted",
+        "reviewerAttestation.assistiveTechnologyReviewCompleted",
+        "reviewerAttestation.noWcagConformanceClaim",
+        "reviewerAttestation.noProcurementApprovalClaim",
+        "reviewerAttestation.ownerHeldRawNotes"
+      ],
+      "acceptedWhen": "Reviewer identity is represented only by a non-placeholder sha256 hash, review type and independence/conflict boundary are disclosed, expertise is attested, manual and assistive-technology reviews are complete, raw notes stay owner-held, and no WCAG conformance or procurement-approval claim is made.",
+      "ownerHeldEvidence": [
+        "reviewer identity and qualification record",
+        "review independence/conflict disclosure",
+        "raw review notes",
+        "screenshots or recordings",
+        "assistive-technology transcripts"
+      ],
+      "boundary": "Reviewer attestation supports the owner evidence gate but does not create legal, procurement, or warranty language."
+    },
+    {
+      "id": "checkpoint-coverage",
+      "label": "Required checkpoint coverage",
+      "verifierPaths": [
+        "checkpointResults[].checkpointId",
+        "checkpointResults[].status",
+        "checkpointResults[].routesReviewed",
+        "checkpointResults[].standardRefs",
+        "checkpointResults[].evidenceSummary"
+      ],
+      "acceptedWhen": "All 8 required checkpoints are present once, use accepted statuses only, include every required route, include checkpoint-specific standard refs, and provide the required evidenceSummary fields.",
+      "ownerHeldEvidence": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist",
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log",
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots",
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes",
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes",
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix",
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes",
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "boundary": "Checkpoint coverage is redacted metadata; unresolved issues, missing routes, duplicate checkpoints, or missing evidenceSummary fields keep the gate incomplete."
+    },
+    {
+      "id": "artifact-hashes-and-issue-closeout",
+      "label": "Proof hashes and issue closeout",
+      "verifierPaths": [
+        "checkpointResults[].artifactHashes",
+        "checkpointResults[].unresolvedIssueCount",
+        "checkpointResults[].remediatedIssueCount",
+        "checkpointResults[].doesNotProve"
+      ],
+      "acceptedWhen": "Every accepted checkpoint has at least one non-placeholder sha256 proof hash, unresolvedIssueCount=0, a non-negative remediatedIssueCount, and explicit does-not-prove boundaries.",
+      "ownerHeldEvidence": [
+        "ordinary local proof files hashed with npm run hash:owner-evidence-artifacts; When hashing proof artifacts, use ordinary owner-held files outside git or under an ignored local proof path. The hasher rejects symbolic links, hard-linked files, tracked files, staged files, and non-ignored repository files; copy proof material to a single-link owner-held file before hashing.",
+        "issue remediation notes",
+        "raw screenshots or recordings"
+      ],
+      "boundary": "Hashes prove only that owner-held artifacts were represented in the metadata; they do not expose or independently validate the raw artifacts."
+    }
+  ],
+  "routeCheckpointMatrix": [
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/privacy",
+      "routeLabel": "privacy policy",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 3,
+      "interactiveCountMax": 1,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/trust-center",
+      "routeLabel": "commercial trust center",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 30,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/for-coaches",
+      "routeLabel": "coach landing page",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 16,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/sample-report",
+      "routeLabel": "coach sample report",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 27,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/resume-analyzer",
+      "routeLabel": "resume analyzer",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 12,
+      "interactiveCountMax": 4,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/tools/counselor-reports",
+      "routeLabel": "counselor reports",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/enterprise-dashboard",
+      "routeLabel": "workforce dashboard",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 10,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/proof-pack-gallery",
+      "routeLabel": "proof-pack gallery",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 35,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "wcag-em-scope",
+      "checkpointLabel": "WCAG-EM scope and sampling",
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "https://www.w3.org/TR/wcag-em-2/",
+        "https://www.w3.org/WAI/eval/report-tool/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "evaluation scope notes",
+        "route sample rationale",
+        "sample-selection method notes",
+        "technologies relied upon notes",
+        "complete-process walkthrough notes",
+        "browser/assistive-technology support baseline matrix",
+        "WCAG-EM Report Tool JSON or HTML export retained owner-held",
+        "review-record archive checklist"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=wcag-em-scope",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "keyboard-focus-not-obscured",
+      "checkpointLabel": "Keyboard focus and focus-not-obscured review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "keyboard traversal notes",
+        "focus screenshots or recordings",
+        "issue/remediation log"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=keyboard-focus-not-obscured",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "target-size",
+      "checkpointLabel": "Pointer target size review",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "target measurements",
+        "exception rationale",
+        "mobile screenshots"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=target-size",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "form-errors-and-redundant-entry",
+      "checkpointLabel": "Form errors, labels, instructions, and redundant entry",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "form error screenshots",
+        "label/instruction notes",
+        "re-entry test notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=form-errors-and-redundant-entry",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "accessible-authentication",
+      "checkpointLabel": "Accessible authentication and account/payment access",
+      "standardRefs": [
+        "wcag22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "auth flow notes",
+        "payment/account screenshots with private data redacted",
+        "accessibility exception notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=accessible-authentication",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "screen-reader-name-role-value",
+      "checkpointLabel": "Screen-reader name, role, value, relationships, and keyboard semantics",
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/ARIA/apg/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "screen-reader transcript notes",
+        "name/role/value defect log",
+        "assistive-technology matrix"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=screen-reader-name-role-value",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "contrast-reflow-text-spacing",
+      "checkpointLabel": "Contrast, reflow, non-text contrast, and text spacing",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "contrast measurements",
+        "text-spacing screenshots",
+        "reflow notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=contrast-reflow-text-spacing",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    },
+    {
+      "routePath": "/automation-risk/accountant",
+      "routeLabel": "occupation SEO report",
+      "checkpointId": "downloadable-artifacts",
+      "checkpointLabel": "Downloadable HTML/CSV/proof artifact accessibility",
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "officialReferenceUrls": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://www.w3.org/TR/wcag2ict-22/"
+      ],
+      "reviewStatus": "owner_manual_review_required",
+      "automatedSmokeStatus": "automated_smoke_passed",
+      "automatedViewports": [
+        "mobile",
+        "tablet",
+        "desktop"
+      ],
+      "keyboardTabStopsChecked": 30,
+      "interactiveCountMax": 25,
+      "ownerHeldArtifacts": [
+        "downloaded artifact list",
+        "artifact screenshots",
+        "assistive-technology notes"
+      ],
+      "evidenceJsonPath": "checkpointResults[].checkpointId=downloadable-artifacts",
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance",
+        "Institutional procurement approval",
+        "Assistive-technology coverage beyond reviewed combinations",
+        "Future accessibility after code changes"
+      ]
+    }
+  ],
+  "nextCommands": [
+    "npm run verify:commercial-a11y",
+    "npm run hash:owner-evidence-artifacts -- <local WCAG review proof files>",
+    "npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete",
+    "npm run closeout:owner-evidence -- --write --refresh-tracked --live-evidence docs/commercialization/live-gate-evidence.local.json --commercial-intake docs/commercialization/commercial-evidence-intake.local.json --commercial-evidence docs/commercialization/commercial-evidence-records.local.json --manual-wcag-evidence docs/commercialization/manual-wcag-evidence.local.json"
+  ],
+  "nextCommandCount": 4,
+  "doesNotProve": [
+    "WCAG conformance statement",
+    "Legal compliance",
+    "Institutional procurement approval",
+    "Manual review completion",
+    "Assistive-technology coverage beyond reviewed combinations",
+    "Future accessibility after code changes"
+  ],
+  "doesNotProveCount": 6
+}

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-03T08:52:30.739Z",
-  "branch": "phase-e-commercial-validation",
-  "sourceHeadAtGeneration": "8ca1976",
+  "generatedAt": "2026-06-08T23:26:54.376Z",
+  "branch": "main",
+  "sourceHeadAtGeneration": "8da4adc",
   "sourceGateArtifact": "docs/commercialization/remediation-external-gates-latest.json",
   "goalComplete": false,
   "phaseDeliverables": [
@@ -92,7 +92,9 @@
         "scripts/verify-commercial-release.mjs",
         "scripts/verify-remediation-external-gates.mjs",
         "scripts/verify-owner-evidence-fixture-path.mjs",
+        "scripts/verify-manual-wcag-evidence.mjs",
         "scripts/verify-remediation-completion-audit.mjs",
+        "docs/commercialization/manual-wcag-evidence-template.json",
         "docs/commercialization/phase-e-commercial-validation-playbook.md",
         "docs/commercialization/remediation-external-gates-latest.md",
         "docs/commercialization/remediation-completion-audit-latest.md"
@@ -103,57 +105,72 @@
         "npm run verify:commercial",
         "gh pr checks 9 --watch --interval 10"
       ],
-      "acceptanceEvidence": "Instrumentation, commercial evidence schemas, fail-closed owner gates, and hosted commercial/runtime checks are present; live MRR/partners/outcomes are still external.",
-      "confidenceDelta": "Commercial readiness improved from planned evidence collection to enforced local gates and redacted proof intake, but commercial validation remains unearned.",
+      "acceptanceEvidence": "Instrumentation, commercial/manual evidence schemas, fail-closed owner gates, and hosted commercial/runtime checks are present; live MRR/partners/outcomes/manual WCAG evidence are still external.",
+      "confidenceDelta": "Commercial readiness improved from planned evidence collection to enforced local gates and redacted proof intake, but commercial validation and accessibility conformance remain unearned.",
       "status": "locally_proven_with_scope_limit"
     }
   ],
   "remainingExternalGates": [
     {
+      "id": "manual_wcag_evidence",
+      "label": "Manual WCAG accessibility evidence",
+      "status": "blocked_missing_manual_wcag_evidence",
+      "neededEvidence": "Completed redacted manual WCAG 2.2 A/AA evidence metadata validated by `npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete`, including WCAG-EM product scope, route-sample rationale, sample-selection method, technologies relied upon, complete-process review, accessibility-support baseline combinations, reviewer type and conflict disclosure, review-record archive attestations, ownerEvidenceArchive policy metadata, keyboard/focus, target-size, form error, accessible-authentication, screen-reader, contrast/reflow/text-spacing, and downloadable-artifact review. Use `npm run generate:manual-wcag-review-packet`, `docs/commercialization/manual-wcag-review-packet-latest.md`, and `docs/commercialization/manual-wcag-review-matrix-latest.csv` as the reviewer worksheet before hashing owner-held proof artifacts.",
+      "ownerAction": "Generate the manual WCAG review packet, complete the owner-held WCAG-EM review from the route/checkpoint matrix, document product scope, sample rationale, sample-selection method, technologies relied upon, complete processes, support-baseline combinations, reviewer type/conflict boundary, review-record archive attestations, and ownerEvidenceArchive policy metadata, hash local WCAG review proof files, replace placeholder hashes in the ignored local evidence file, and keep raw reviewer notes/screenshots/AT transcripts/tool output/sample archives/hash source maps outside git.",
+      "ownerPrepCommand": "npm run generate:manual-wcag-review-packet && npm run hash:owner-evidence-artifacts -- <local WCAG review proof files>",
+      "nextCommand": "npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete",
+      "riskIfSkipped": "The product can keep automated accessibility smoke evidence, but it must not claim WCAG conformance or procurement-ready accessibility evidence."
+    },
+    {
       "id": "real_stripe_test_checkout",
       "label": "Real Stripe test-mode checkout",
-      "status": "blocked_non_test_stripe_key",
-      "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact."
-    },
-    {
-      "id": "production_calibration_run",
-      "label": "Production calibration run",
-      "status": "ready_for_owner_live_run",
-      "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact."
-    },
-    {
-      "id": "authenticated_live_artifact_e2e",
-      "label": "Authenticated live artifact e2e",
-      "status": "ready_for_owner_live_run",
-      "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts."
+      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.",
+      "ownerAction": "Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:stripe-test-checkout",
+      "riskIfSkipped": "Checkout remains source-ready only; no real Stripe test-mode session can be cited in buyer or launch evidence."
     },
     {
       "id": "live_mrr_gt_zero",
       "label": "Live MRR greater than zero",
       "status": "ready_for_owner_live_run",
-      "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence."
+      "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.",
+      "ownerAction": "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:stripe-live-mrr",
+      "riskIfSkipped": "Revenue must stay unclaimed; test checkout, configured prices, and UI conversion events do not prove live MRR."
     },
     {
       "id": "three_committed_partners",
       "label": "Three committed design partners",
       "status": "blocked_missing_owner_evidence_records",
-      "neededEvidence": "At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission."
+      "neededEvidence": "At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, contact permission, proof artifact hashes/types, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
+      "ownerAction": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held partner proof artifacts, then fill the ignored commercial evidence intake with three permissioned design-partner commitments, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and an owner-held salt; preserve raw names/contracts/proof artifacts outside git.",
+      "ownerPrepCommand": "npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>",
+      "nextCommand": "COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all",
+      "riskIfSkipped": "Pilot traction remains a worksheet or lead-ops capability, not committed partner evidence."
     },
     {
       "id": "documented_outcomes",
       "label": "Permissioned documented outcomes",
       "status": "blocked_missing_owner_evidence_records",
-      "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text."
+      "neededEvidence": "At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-outcomes`, with baseline workflow, artifact reviewed, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, proof artifact hashes/types, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, does-not-prove text, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
+      "ownerAction": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held outcome proof artifacts, then fill the ignored commercial evidence intake with at least one permissioned documented outcome, including baseline workflow, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and caveats.",
+      "ownerPrepCommand": "npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>",
+      "nextCommand": "COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all",
+      "riskIfSkipped": "Outcome claims must remain absent or anecdote-bounded; no case-study evidence can be cited as launch proof."
     }
   ],
   "decision": "Keep the active goal open. Local A-E implementation evidence is present, but owner-held live/commercial evidence is still required before full completion can be claimed.",
   "nonProofBoundaries": [
     "Synthetic fixtures prove schema compatibility only.",
     "Local verifier success does not prove live Stripe checkout, live MRR, production calibration, or partner/outcome authenticity.",
+    "Manual WCAG evidence metadata does not create a WCAG conformance statement, legal compliance claim, or procurement approval.",
     "Hosted CI proves this branch behavior, not target production data state.",
     "UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated."
   ],
-  "currentBranchFilesChangedCount": 252,
+  "currentBranchFilesChangedCount": 259,
   "currentBranchFilesChangedSample": [
     ".github/workflows/commercial-proof-pack.yml",
     ".github/workflows/phase-c-runtime-smoke.yml",

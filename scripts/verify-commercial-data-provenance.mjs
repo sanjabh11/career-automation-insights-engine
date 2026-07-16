@@ -59,7 +59,7 @@ const artifacts = [
     label: 'Source manifest module',
     path: SOURCE_MANIFEST_PATH,
     type: 'source-registry',
-    sourceIds: ['onet', 'onet-task-statements', 'onet-task-ratings', 'onet-task-categories', 'onet-scales-reference', 'bls-emp', 'bls-oews', 'bls-laus', 'bls-qcew', 'careeronestop-api', 'census-acs-api', 'wef-foj-2025', 'oecd-skills-outlook-2025', 'ai-workforce-consortium-2025', 'nace-career-readiness', 'nace-first-destination', 'ferpa-student-privacy', 'dol-ai-literacy-framework', 'anthropic-economic-index', 'anthropic-observed-exposure', 'openai-gdpval', 'bls-ai-mlr-2025', 'wcag-22', 'nist-ai-rmf', 'owasp-file-upload', 'supabase-edge-functions', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'iso-42001', 'esco', 'lightcast', 'workera-positioning', 'serpapi', 'llm-output'],
+    sourceIds: ['onet', 'onet-task-statements', 'onet-task-ratings', 'onet-task-categories', 'onet-scales-reference', 'bls-emp', 'bls-oews', 'bls-laus', 'bls-qcew', 'careeronestop-api', 'census-acs-api', 'wef-foj-2025', 'ilo-genai-jobs-2025', 'openai-eloundou-gpts-are-gpts', 'oecd-skills-outlook-2025', 'ai-workforce-consortium-2025', 'nace-career-readiness', 'nace-first-destination', 'ftc-consumer-reviews-rule-questions', 'ftc-endorsements-reviews', 'ftc-endorsement-guides-faq', 'ftc-soliciting-paying-online-reviews', 'ferpa-student-privacy', 'dol-ai-literacy-framework', 'dol-ai-worker-wellbeing-best-practices', 'anthropic-economic-index', 'anthropic-economic-index-2026', 'anthropic-observed-exposure', 'openai-gdpval', 'bls-ai-mlr-2025', 'wcag-22', 'wcag-em-overview', 'wcag-em-2', 'wcag-em-report-tool', 'wcag2ict-22', 'nist-ai-rmf', 'nist-ai-genai-profile', 'nist-ssdf', 'cisa-secure-by-design', 'owasp-asvs-5', 'owasp-llm-top-10-2025', 'pci-dss-v4-0-1', 'owasp-file-upload', 'cwe-59-link-following', 'cwe-367-toctou', 'supabase-edge-functions', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'eu-ai-act-annex-iii-high-risk', 'iso-42001', 'esco', 'abs-osca-2024', 'lightcast', 'workera-positioning', 'serpapi', 'llm-output'],
     expectedSnippets: ['export const SOURCE_MANIFEST', 'claimBoundary', 'adapter-ready'],
     caveat: 'Commercial source registry; adapter-ready records are not imported provider-backed data.',
   },
@@ -158,7 +158,7 @@ const artifacts = [
     label: 'Commercial checkout authentication boundary',
     path: 'src/lib/stripe.ts',
     type: 'payment-runtime',
-    sourceIds: ['supabase-edge-functions', 'llm-output'],
+    sourceIds: ['supabase-edge-functions', 'pci-dss-v4-0-1', 'llm-output'],
     expectedSnippets: ['session?.access_token', 'Sign in again before starting checkout', 'Sign in again before buying report credits', 'Authorization', 'create-checkout-session'],
     caveat: 'Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.',
   },
@@ -221,7 +221,7 @@ const artifacts = [
     label: 'Commercial evidence records composer',
     path: 'scripts/compose-commercial-evidence-records.mjs',
     type: 'commercial-verifier',
-    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'ftc-consumer-reviews-rule-questions', 'ftc-endorsement-guides-faq', 'llm-output'],
     expectedSnippets: ['commercial-evidence-intake.local.json', 'COMMERCIAL_EVIDENCE_HASH_SALT', 'partnerRef', 'outcomeRef', 'validateCommercialEvidence', 'DEFAULT_INPUT_PATH', '--require-all'],
     caveat: 'Composes salted hashes and redacted partner/outcome metadata from owner-held local intake; it does not store raw names, contacts, contracts, private notes, quotes, customer data, or the hash salt.',
   },
@@ -230,7 +230,7 @@ const artifacts = [
     label: 'Commercial evidence intake template',
     path: 'docs/commercialization/commercial-evidence-intake-template.json',
     type: 'commercial-template',
-    sourceIds: ['nist-ai-rmf', 'iso-42001', 'llm-output'],
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'ftc-consumer-reviews-rule-questions', 'ftc-endorsement-guides-faq', 'llm-output'],
     expectedSnippets: ['2026-06-01.apo-commercial-evidence-intake.v1', 'hashSalt', 'partnerRef', 'outcomeRef', 'commercial-evidence-intake.local.json', 'doesNotProve'],
     caveat: 'Template documents local intake fields only; real partner refs, outcome refs, and hash salts must remain owner-held and untracked.',
   },
@@ -320,7 +320,7 @@ const artifacts = [
     label: 'Institutional readiness risk packet',
     path: 'src/lib/institutionalReadinessPacket.ts',
     type: 'commercial-page',
-    sourceIds: ['nist-ai-rmf', 'iso-42001', 'wcag-22', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'onet-task-ratings', 'lightcast', 'esco', 'serpapi', 'llm-output'],
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'wcag-22', 'wcag2ict-22', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'eu-ai-act-annex-iii-high-risk', 'onet-task-ratings', 'lightcast', 'esco', 'serpapi', 'llm-output'],
     expectedSnippets: ['InstitutionalReadinessPacket', 'Institutional Risk Register', 'AI RMF Control Map', 'Employment Decision Boundary', 'WCAG 2.2 Accessibility Gate', 'Institutional Acceptance Gates', 'ManualWcagEvidenceRow', 'BuyerAcceptableUseSignoffRow', 'buildInstitutionalAcceptanceChecklistCsv', 'Manual WCAG Evidence Worksheet', 'Buyer Acceptable-Use Signoff Checklist', 'data-manual-wcag-evidence-worksheet="true"', 'data-buyer-acceptable-use-signoff="true"', 'blocked_live_credentials', 'buyer_policy_required', 'Do not furnish individual reports to employers for employment purposes', 'Do not claim WCAG conformance', 'SUPABASE_DB_PASSWORD'],
     caveat: 'Institutional readiness packet is a buyer-review trust artifact; it does not certify WCAG conformance, legal compliance, employment-selection validation, or live Supabase state.',
   },
@@ -329,7 +329,7 @@ const artifacts = [
     label: 'Responsible AI trust center',
     path: 'src/pages/ResponsibleAIPage.tsx',
     type: 'commercial-page',
-    sourceIds: ['nist-ai-rmf', 'iso-42001', 'wcag-22', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'supabase-edge-functions', 'llm-output'],
+    sourceIds: ['nist-ai-rmf', 'iso-42001', 'wcag-22', 'wcag2ict-22', 'ada-ai-hiring-guidance', 'eeoc-employment-selection-procedures', 'cfpb-employment-algorithmic-scores', 'eu-ai-act-annex-iii-high-risk', 'supabase-edge-functions', 'llm-output'],
     expectedSnippets: ['data-commercial-trust-center="true"', 'Responsible AI and institutional trust boundaries', 'Commercial Trust Center', 'Planning use only', 'buildInstitutionalReadinessPacket', 'buildInstitutionalAcceptanceChecklistCsv', 'commercialLaunchReadinessMilestones', 'commercialLaunchGateItems', 'supabaseFunctionGovernanceSummary', 'data-trust-employment-boundary="true"', 'data-trust-accessibility-boundary="true"', 'data-trust-launch-readiness="true"', 'data-trust-live-blockers="true"', 'data-trust-payment-proof="true"', 'data-trust-risk-register="true"', 'data-trust-manual-wcag-worksheet="true"', 'data-trust-buyer-signoff-checklist="true"', 'data-trust-ai-rmf="true"', 'data-trust-function-review="true"', 'Download trust packet', 'Download risk CSV', 'Download acceptance checklist', 'do not certify legal compliance, WCAG conformance, or employment-selection validity'],
     caveat: 'Public trust center is a buyer-review surface; it does not certify legal compliance, WCAG conformance, employment-selection validity, live payment fulfillment, or production secret rotation.',
   },
@@ -471,11 +471,17 @@ function validateArtifactSource(artifact, source) {
 async function loadSourceVerification() {
   try {
     const parsed = JSON.parse(await readFile(SOURCE_VERIFICATION_PATH, 'utf8'));
+    const sourceUrlById = await loadSourceManifestUrlById();
+    const passedResults = Array.isArray(parsed.results)
+      ? parsed.results.filter((result) => result.passed)
+      : [];
     const passedIds = new Set(
-      Array.isArray(parsed.results)
-        ? parsed.results.filter((result) => result.passed).map((result) => result.id)
-        : []
+      passedResults.map((result) => result.id)
     );
+    const passedUrls = new Set(passedResults.map((result) => result.url).filter(Boolean));
+    for (const [sourceId, sourceUrl] of sourceUrlById.entries()) {
+      if (passedUrls.has(sourceUrl)) passedIds.add(sourceId);
+    }
     return {
       generatedAt: parsed.generatedAt || null,
       allPassed: parsed.allPassed === true,
@@ -488,6 +494,16 @@ async function loadSourceVerification() {
       passedIds: new Set(),
     };
   }
+}
+
+async function loadSourceManifestUrlById() {
+  const source = await readFile(SOURCE_MANIFEST_PATH, 'utf8');
+  const entries = new Map();
+  const entryPattern = /\{\s*id:\s*'([^']+)'[\s\S]*?url:\s*'([^']+)'[\s\S]*?\}/g;
+  for (const match of source.matchAll(entryPattern)) {
+    entries.set(match[1], match[2]);
+  }
+  return entries;
 }
 
 async function verifyManifestSourceIds() {

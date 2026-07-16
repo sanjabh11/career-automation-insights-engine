@@ -135,7 +135,7 @@ serve(async (req) => {
     }
 
     try {
-        const { resume_text, user_id, filename = 'resume.txt', parser_receipt = null } = await req.json();
+        const { resume_text, user_id: bodyUserId, filename = 'resume.txt', parser_receipt = null } = await req.json();
 
         if (!resume_text) {
             throw new Error('resume_text is required');
@@ -147,6 +147,24 @@ serve(async (req) => {
         const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
         const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // SEC-1 fix: Verify JWT user_id matches body user_id before storing
+        let verifiedUserId: string | null = null;
+        const authHeader = req.headers.get('Authorization') || '';
+        if (authHeader && bodyUserId) {
+            const anonKey = Deno.env.get('SUPABASE_ANON_KEY') || supabaseKey;
+            const userClient = createClient(supabaseUrl, anonKey, {
+                global: { headers: { Authorization: authHeader } }
+            });
+            const { data: { user } } = await userClient.auth.getUser();
+            if (!user || user.id !== bodyUserId) {
+                return new Response(
+                    JSON.stringify({ error: 'User ID mismatch' }),
+                    { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+            }
+            verifiedUserId = bodyUserId;
+        }
 
         const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
         const geminiModel = Deno.env.get('GEMINI_MODEL') || 'gemini-2.5-flash';
@@ -246,13 +264,13 @@ Respond in JSON format:
 
         const processingTime = Date.now() - startTime;
 
-        // Store analysis if user_id provided
+        // Store analysis if verified user_id is available (SEC-1 fix)
         let analysisId = null;
-        if (user_id) {
+        if (verifiedUserId) {
             const { data: insertedAnalysis, error: insertError } = await supabase
                 .from('resume_analyses')
                 .insert({
-                    user_id,
+                    user_id: verifiedUserId,
                     filename,
                     resume_text: buildRetainedResumeStub(resume_text),
                     automation_risk_score: analysisResult.automation_risk_score,

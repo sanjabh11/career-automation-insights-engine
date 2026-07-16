@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "2026-06-05.apo-live-closeout-readiness.v1",
+  "generatedAt": "2026-06-08T23:23:08.202Z",
+  "ok": false,
+  "status": "owner_access_required",
+  "allowIncomplete": true,
+  "targetProjectRef": "kvunnankqgfokeufvsrv",
+  "commandContext": {
+    "command": "node scripts/verify-live-closeout-readiness.mjs --write --allow-incomplete",
+    "mutatesExternalState": false,
+    "printsSecretValues": false
+  },
+  "githubSecrets": {
+    "available": true,
+    "requiredSecretNames": [
+      "SUPABASE_ACCESS_TOKEN",
+      "SUPABASE_PROJECT_REF",
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "LIVE_SUPABASE_TEST_USER_EMAIL",
+      "LIVE_SUPABASE_TEST_USER_PASSWORD"
+    ],
+    "presentRequiredSecretNames": [
+      "SUPABASE_ACCESS_TOKEN",
+      "SUPABASE_PROJECT_REF",
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "LIVE_SUPABASE_TEST_USER_EMAIL",
+      "LIVE_SUPABASE_TEST_USER_PASSWORD"
+    ],
+    "missingRequiredSecretNames": [],
+    "valuesRedacted": true,
+    "allRepositorySecretNamesPersisted": false
+  },
+  "supabaseAccess": {
+    "projectsListAvailable": true,
+    "targetProjectVisible": false,
+    "visibleProjectRefCount": 4,
+    "visibleProjectRefsPersisted": false,
+    "functionsApiAccessible": false,
+    "projectMessage": "Target project kvunnankqgfokeufvsrv is not visible to the current Supabase account.",
+    "functionsMessage": "unexpected list functions status 403: {\"message\":\"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control\"} Try rerunning the command with --debug to troubleshoot the error."
+  },
+  "checkCount": 4,
+  "passedCheckCount": 2,
+  "failedCheckCount": 2,
+  "failedCheckIds": [
+    "supabase-target-project-visible",
+    "supabase-functions-api-accessible"
+  ],
+  "checks": [
+    {
+      "id": "github-secrets-visible",
+      "passed": true,
+      "message": "GitHub secret names are readable."
+    },
+    {
+      "id": "github-live-closeout-secrets-present",
+      "passed": true,
+      "message": "Required GitHub secret names are present."
+    },
+    {
+      "id": "supabase-target-project-visible",
+      "passed": false,
+      "message": "Target project kvunnankqgfokeufvsrv is not visible to the current Supabase account."
+    },
+    {
+      "id": "supabase-functions-api-accessible",
+      "passed": false,
+      "message": "unexpected list functions status 403: {\"message\":\"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control\"} Try rerunning the command with --debug to troubleshoot the error."
+    }
+  ],
+  "officialReferences": [
+    {
+      "id": "supabase-access-control",
+      "label": "Supabase access control",
+      "url": "https://supabase.com/docs/guides/platform/access-control",
+      "appliesTo": [
+        "supabase-target-project-visible",
+        "supabase-functions-api-accessible"
+      ]
+    },
+    {
+      "id": "supabase-cli-login",
+      "label": "Supabase CLI login",
+      "url": "https://supabase.com/docs/reference/cli/supabase-login",
+      "appliesTo": [
+        "supabase-target-project-visible",
+        "supabase-functions-api-accessible"
+      ]
+    },
+    {
+      "id": "supabase-functions-list",
+      "label": "Supabase functions list",
+      "url": "https://supabase.com/docs/reference/cli/supabase-functions-list",
+      "appliesTo": [
+        "supabase-functions-api-accessible"
+      ]
+    },
+    {
+      "id": "github-actions-secrets",
+      "label": "GitHub Actions secrets",
+      "url": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "appliesTo": [
+        "github-secrets-visible",
+        "github-live-closeout-secrets-present"
+      ]
+    }
+  ],
+  "officialReferenceCount": 4,
+  "nextActions": [
+    "Use a Supabase account that can manage the target project before claiming live closeout readiness.",
+    "If the target project should be visible, refresh Supabase CLI authentication outside tracked files and rerun npm run verify:live-closeout-readiness.",
+    "Keep the strict verifier as the acceptance proof; use --allow-incomplete only for redacted status artifacts."
+  ],
+  "nextActionCount": 3,
+  "evidenceBoundary": "This verifier checks only whether the current local CLI context can see required GitHub secret names and the target Supabase project/functions surface for live closeout. It records secret names only, never secret values, and does not deploy, mutate, ingest, rotate, or prove production behavior.",
+  "doesNotProve": [
+    "live deployment completion",
+    "O*NET ingest completion",
+    "parse-resume deployment completion",
+    "commercial-ready status",
+    "live checkout, live MRR, partner commitments, documented outcomes, manual WCAG conformance, legal compliance, or production uptime",
+    "validity, freshness, or correctness of any secret value"
+  ],
+  "doesNotProveCount": 6,
+  "outputs": {
+    "json": "docs/commercialization/live-closeout-readiness-latest.json",
+    "markdown": "docs/commercialization/live-closeout-readiness-latest.md"
+  }
+}

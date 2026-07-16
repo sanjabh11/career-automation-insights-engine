@@ -81,8 +81,6 @@ export default function APOExplanation({ open, onOpenChange, occupation }: Props
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const headers: Record<string, string> = {};
-      const apiKey = import.meta.env.VITE_APO_FUNCTION_API_KEY as string | undefined;
-      if (apiKey) headers["x-api-key"] = apiKey;
       if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
 
       const body = {

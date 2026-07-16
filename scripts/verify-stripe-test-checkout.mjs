@@ -3,10 +3,20 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createClient } from '@supabase/supabase-js';
+import { LIVE_PROOF_ARCHIVE_REQUIREMENTS } from './lib/liveGateEvidence.mjs';
 
 const OUTPUT_PATH = 'docs/commercialization/stripe-test-checkout-proof-latest.json';
 const ENV_FILES = ['.env.local', '.env'];
 const DEFAULT_ORIGIN = 'http://localhost:5173';
+const TEST_STRIPE_SECRET_KEY_NAMES = ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY'];
+const DOES_NOT_PROVE = [
+  'Live revenue',
+  'MRR',
+  'Successful payment method collection',
+  'Webhook fulfillment',
+  'Report-credit balance mutation',
+  'Bootcamp demand',
+];
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -85,9 +95,13 @@ function result(id, label, passed, message, evidence = {}) {
 function validateTestSecretKey(secretKey) {
   if (/^(sk|rk)_test_/.test(secretKey)) return null;
   if (/^(sk|rk)_live_/.test(secretKey)) {
-    return 'Stripe test checkout key is live-mode; this verifier only accepts STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY when it is test-mode.';
+    return 'Stripe test checkout key is live-mode; this verifier only accepts explicit STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY values with a sk_test_/rk_test_ prefix.';
   }
   return 'Stripe test checkout key must be a Stripe test-mode secret or restricted key.';
+}
+
+function ownerEvidenceArchive(gateId) {
+  return Object.fromEntries((LIVE_PROOF_ARCHIVE_REQUIREMENTS[gateId] || []).map((key) => [key, true]));
 }
 
 async function retrieveStripeCheckoutSession(secretKey, sessionId) {
@@ -116,7 +130,7 @@ async function main() {
   const anonKey = resolveEnv(localEnv, ['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY']);
   const testEmail = resolveEnv(localEnv, ['LIVE_SUPABASE_TEST_USER_EMAIL', 'STRIPE_TEST_USER_EMAIL']);
   const testPassword = resolveEnv(localEnv, ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD']);
-  const stripeSecretKey = resolveEnv(localEnv, ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY']);
+  const stripeSecretKey = resolveEnv(localEnv, TEST_STRIPE_SECRET_KEY_NAMES);
   const priceId = resolveEnv(localEnv, ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID']);
   const origin = resolveEnv(localEnv, ['CHECKOUT_TEST_ORIGIN', 'APP_URL', 'VITE_APP_URL']) || DEFAULT_ORIGIN;
   const tier = resolveEnv(localEnv, ['STRIPE_TEST_TIER']) || 'defender';
@@ -127,7 +141,7 @@ async function main() {
     ['SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY', anonKey],
     ['LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL', testEmail],
     ['LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD', testPassword],
-    ['STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY or STRIPE_SECRET_KEY', stripeSecretKey],
+    ['STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY', stripeSecretKey],
     ['STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID', priceId],
   ].filter(([, value]) => !value);
 
@@ -138,19 +152,14 @@ async function main() {
     confidence: 'bounded_stripe_test_checkout',
     caveat:
       'This verifier creates a Stripe test-mode Checkout Session through the deployed create-checkout-session Supabase Edge Function and retrieves the session from Stripe to confirm livemode=false. It does not complete payment, prove live revenue, prove webhook fulfillment, or prove MRR.',
-    doesNotProve: [
-      'Live revenue',
-      'MRR',
-      'Successful payment method collection',
-      'Webhook fulfillment',
-      'Report-credit balance mutation',
-      'Bootcamp demand',
-    ],
+    doesNotProve: DOES_NOT_PROVE,
+    doesNotProveCount: DOES_NOT_PROVE.length,
     manualInterventionIfSkipped: [
       'Create or choose a Stripe test-mode Price object and set STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID.',
-      'Provide a Stripe test-mode secret or restricted key via STRIPE_TEST_SECRET_KEY, STRIPE_TEST_RESTRICTED_KEY, or STRIPE_SECRET_KEY; live-mode keys are rejected by this verifier.',
+      'Provide a Stripe test-mode secret or restricted key via explicit STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; generic STRIPE_SECRET_KEY is intentionally ignored by this test proof.',
       'Provide a dedicated Supabase Auth synthetic test user via LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD.',
       'Confirm the deployed create-checkout-session function has its own STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY secrets configured.',
+      'Preserve raw Checkout Session payloads, function invocation metadata, and any screenshots/Stripe dashboard evidence outside git; commit only the generated redacted artifact.',
       'Run npm run verify:stripe-test-checkout. Do not paste secret values into chat or tracked files.',
     ],
     checks: [],
@@ -268,6 +277,9 @@ async function main() {
       stripeSession?.id === checkoutBody.sessionId &&
       stripeSession?.object === 'checkout.session' &&
       stripeSession?.livemode === false &&
+      stripeSession?.mode === 'subscription' &&
+      typeof stripeSession?.payment_status === 'string' &&
+      typeof stripeSession?.status === 'string' &&
       typeof stripeSession?.url === 'string';
 
     checks.push(
@@ -277,11 +289,12 @@ async function main() {
         stripeSessionOk,
         stripeSessionOk
           ? 'Stripe retrieved the Checkout Session and reported livemode=false.'
-          : 'Stripe retrieval did not return a matching test-mode Checkout Session.',
+          : 'Stripe retrieval did not return a matching test-mode subscription Checkout Session with status metadata.',
         {
           mode: stripeSession?.mode || null,
           livemode: stripeSession?.livemode === false ? false : null,
           status: typeof stripeSession?.status === 'string' ? stripeSession.status : null,
+          paymentStatus: typeof stripeSession?.payment_status === 'string' ? stripeSession.payment_status : null,
           sessionIdHash: sha256(checkoutBody.sessionId).slice(0, 16),
         }
       )
@@ -298,9 +311,13 @@ async function main() {
         checkoutUrlOpened: false,
         edgeFunction: 'create-checkout-session',
         checkoutUrlHost: checkoutBody.url ? new URL(checkoutBody.url).host : null,
+        checkoutSessionMode: stripeSession?.mode || null,
+        checkoutSessionStatus: stripeSession?.status || null,
+        paymentStatus: stripeSession?.payment_status || null,
         sessionIdHash: sha256(checkoutBody.sessionId).slice(0, 16),
         priceIdHash: sha256(priceId).slice(0, 16),
         syntheticUser: true,
+        ownerEvidenceArchive: ownerEvidenceArchive('real_stripe_test_checkout'),
       },
     };
 

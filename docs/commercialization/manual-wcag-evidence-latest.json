@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-06-08T23:23:35.568Z",
+  "schemaVersion": "2026-06-04.apo-manual-wcag-evidence.v1",
+  "gateIds": [
+    "manual_wcag_evidence"
+  ],
+  "gateIdCount": 1,
+  "inputPath": "docs/commercialization/manual-wcag-evidence.local.json",
+  "found": false,
+  "status": "no_local_evidence",
+  "confidence": "bounded_manual_wcag_evidence_metadata",
+  "caveat": "This verifier validates redacted manual WCAG evidence metadata only. Raw reviewer notes, screenshots, recordings, reviewer profile URLs, meeting/calendar links, assistive-technology transcripts, issue logs, evaluation-tool output, sample archives, and private identities remain owner-held. It does not create a WCAG conformance claim, legal compliance claim, procurement approval, or accessibility warranty.",
+  "requiredCheckpointIds": [
+    "wcag-em-scope",
+    "keyboard-focus-not-obscured",
+    "target-size",
+    "form-errors-and-redundant-entry",
+    "accessible-authentication",
+    "screen-reader-name-role-value",
+    "contrast-reflow-text-spacing",
+    "downloadable-artifacts"
+  ],
+  "requiredCheckpointCount": 8,
+  "requiredRouteCount": 9,
+  "requiredCompleteProcessIds": [
+    "public-trust-navigation",
+    "resume-analysis-proof-report",
+    "counselor-report-generation",
+    "proof-pack-downloads",
+    "payment-and-account-access"
+  ],
+  "requiredCompleteProcessCount": 5,
+  "requiredAccessibilitySupportBaselineCount": 2,
+  "ownerEvidenceArchiveRequirements": [
+    "rawReviewerNotesOwnerHeldOutsideGit",
+    "screenshotsRecordingsOwnerHeldOutsideGit",
+    "assistiveTechnologyTranscriptsOwnerHeldOutsideGit",
+    "reviewerIdentityOwnerHeldOutsideGit",
+    "issueDetailsOwnerHeldOutsideGit",
+    "evaluationToolOutputOwnerHeldOutsideGit",
+    "sampleArchivesOwnerHeldOutsideGit",
+    "artifactHashSourceMapOwnerHeld",
+    "reReviewRequiredAfterMaterialChange"
+  ],
+  "ownerEvidenceArchiveRequirementCount": 9,
+  "requiredOwnerEvidenceArchiveRequirementCount": 9,
+  "requiredOfficialReferenceIds": [
+    "wcag22",
+    "wcag-em-overview",
+    "wcag-em-2",
+    "wcag-em-report-tool",
+    "wai-easy-checks",
+    "wai-aria-apg",
+    "wcag2ict-22"
+  ],
+  "requiredOfficialReferenceCount": 7,
+  "checkpointStandardRefs": {
+    "wcag-em-scope": [
+      "wcag-em-overview",
+      "wcag-em-2",
+      "wcag-em-report-tool"
+    ],
+    "keyboard-focus-not-obscured": [
+      "wcag22"
+    ],
+    "target-size": [
+      "wcag22"
+    ],
+    "form-errors-and-redundant-entry": [
+      "wcag22",
+      "wai-easy-checks"
+    ],
+    "accessible-authentication": [
+      "wcag22"
+    ],
+    "screen-reader-name-role-value": [
+      "wcag22",
+      "wai-aria-apg"
+    ],
+    "contrast-reflow-text-spacing": [
+      "wcag22",
+      "wai-easy-checks"
+    ],
+    "downloadable-artifacts": [
+      "wcag22",
+      "wai-easy-checks",
+      "wai-aria-apg",
+      "wcag2ict-22"
+    ]
+  },
+  "acceptedCheckpointIds": [],
+  "acceptedCheckpointCount": 0,
+  "rejectedCheckpointIds": [],
+  "rejectedCheckpointCount": 0,
+  "checkpointResultCount": 0,
+  "routeReviewedCount": 0,
+  "completeProcessReviewedCount": 0,
+  "accessibilitySupportBaselineCount": 0,
+  "officialReferenceCount": 0,
+  "complete": false,
+  "manualWcagGateSatisfied": false,
+  "evidenceHash": null,
+  "doesNotProve": [
+    "WCAG conformance statement",
+    "Legal compliance",
+    "Institutional procurement approval",
+    "Assistive-technology coverage beyond the reviewed matrix",
+    "Future accessibility after code changes"
+  ],
+  "doesNotProveCount": 5,
+  "manualInterventionIfMissing": [
+    "Complete a WCAG-EM-scoped manual review over the commercial route sample.",
+    "Document the evaluated product scope, route-sample rationale, complete processes reviewed, and browser/assistive-technology support baseline combinations.",
+    "Record reviewer type, independence/conflict boundary, technologies relied upon, sample selection method, evaluation-tool/version notes, owner-held WCAG-EM report-tool export, sample/navigation archive, issue-log retention, ownerEvidenceArchive policy metadata, and re-evaluation trigger after material UI changes.",
+    "Review keyboard focus, focus-not-obscured behavior, target size, form errors, redundant entry, authentication, screen-reader name/role/value, contrast, reflow, text spacing, and downloadable artifacts.",
+    "Store only redacted metadata in docs/commercialization/manual-wcag-evidence.local.json or pass --evidence <path>; keep raw notes, screenshots, recordings, reviewer identity, reviewer profile URLs, meeting/calendar links, assistive-technology transcripts, issue tracker details, evaluation-tool output, sample archives, and artifact hash source maps owner-held.",
+    "Validate with npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete before relying on the manual accessibility gate.",
+    "Run npm run verify:remediation-gates -- --manual-wcag-evidence <path> with live and commercial evidence paths for final closeout."
+  ],
+  "manualInterventionIfMissingCount": 7,
+  "nextCommands": {
+    "validateManualWcagEvidence": "npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete",
+    "finalReadOnlyLedger": "npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --manual-wcag-evidence <path> --require-complete",
+    "refreshTrackedLedger": "npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --manual-wcag-evidence <path> --require-complete"
+  },
+  "errorCount": 0,
+  "errors": []
+}

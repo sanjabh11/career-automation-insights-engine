@@ -1,4 +1,96 @@
 {
   "version": 1,
-  "metrics": {}
+  "metrics": {
+    "planned_steps": {
+      "value": 79,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:18:22.197Z",
+      "phase_id": "commercial-owner-evidence-hasher-link-hardening"
+    },
+    "failed_steps": {
+      "value": 0,
+      "direction": "lower",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:40:21.944Z",
+      "phase_id": "commercial-cwe59-source-manifest-coverage"
+    },
+    "unresolved_owner_gates": {
+      "value": 5,
+      "direction": "lower",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:40:21.944Z",
+      "phase_id": "commercial-cwe59-source-manifest-coverage"
+    },
+    "operational_access_commands": {
+      "value": 6,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T18:57:53.854Z",
+      "phase_id": "commercial-owner-operational-access-command-checklist"
+    },
+    "commercial_evidence_fixture_cases": {
+      "value": 15,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T19:33:21.964Z",
+      "phase_id": "commercial-owner-evidence-redaction-url-hardening"
+    },
+    "manual_wcag_fixture_cases": {
+      "value": 19,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T19:33:21.964Z",
+      "phase_id": "commercial-owner-evidence-redaction-url-hardening"
+    },
+    "live_gate_negative_url_cases": {
+      "value": 4,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T19:54:38.189Z",
+      "phase_id": "commercial-live-evidence-url-redaction-hardening"
+    },
+    "live_proof_packet_source_count": {
+      "value": 6,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T19:54:38.189Z",
+      "phase_id": "commercial-live-evidence-url-redaction-hardening"
+    },
+    "owner_hasher_fixture_cases": {
+      "value": 7,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:18:22.199Z",
+      "phase_id": "commercial-owner-evidence-hasher-link-hardening"
+    },
+    "manual_wcag_packet_source_trace_count": {
+      "value": 6,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:18:22.199Z",
+      "phase_id": "commercial-owner-evidence-hasher-link-hardening"
+    },
+    "source_verification_results": {
+      "value": 48,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:40:21.937Z",
+      "phase_id": "commercial-cwe59-source-manifest-coverage"
+    },
+    "cwe59_source_passed": {
+      "value": 1,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:40:21.944Z",
+      "phase_id": "commercial-cwe59-source-manifest-coverage"
+    },
+    "commercial_steps": {
+      "value": 68,
+      "direction": "higher",
+      "threshold_pct": 0,
+      "updated_at": "2026-06-08T20:40:21.944Z",
+      "phase_id": "commercial-cwe59-source-manifest-coverage"
+    }
+  }
 }

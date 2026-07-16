@@ -9,6 +9,7 @@ const STARTUP_TIMEOUT_MS = 30_000;
 const SERVER_PROBE_TIMEOUT_MS = 3_000;
 const ROUTE_TIMEOUT_MS = 45_000;
 const BROWSER_LAUNCH_TIMEOUT_MS = 60_000;
+const MAX_TAB_STOPS_TO_CHECK = 10;
 const AUDIT_OUTPUT_DIR = 'docs/commercialization';
 const AUDIT_JSON_OUTPUT = `${AUDIT_OUTPUT_DIR}/commercial-accessibility-audit-latest.json`;
 const AUDIT_MD_OUTPUT = `${AUDIT_OUTPUT_DIR}/commercial-accessibility-audit-latest.md`;
@@ -197,7 +198,7 @@ function createPageIssueCollector(page) {
 function renderAuditMarkdown(audit) {
   const tableCell = (value) => String(value).replace(/\s+/g, ' ').replace(/\|/g, '\\|').trim();
   const routeRows = audit.routeResults.map((result) =>
-    `| \`${result.path}\` | ${tableCell(result.label)} | ${tableCell(result.viewport)} | ${tableCell(result.heading)} | ${result.interactiveCount} | ${result.bodyLength} | ${result.keyboardTabStopsChecked ?? 'n/a'} | pass |`
+    `| \`${result.path}\` | ${tableCell(result.label)} | ${tableCell(result.viewport)} | ${tableCell(result.heading)} | ${result.interactiveCount} | ${result.bodyLength} | ${result.keyboardTabStopsChecked ?? 'n/a'} | ${tableCell(result.focusReview)} | ${tableCell(result.targetSizeReview)} | ${tableCell(result.textSpacingReview)} | pass |`
   );
   const checklistRows = audit.manualReviewChecklist.map((item) =>
     `| \`${item.id}\` | ${tableCell(item.source)} | ${item.criteria.map(tableCell).join('<br/>')} | ${tableCell(item.status)} | ${tableCell(item.evidenceNeeded)} |`
@@ -209,6 +210,16 @@ function renderAuditMarkdown(audit) {
 Generated: ${audit.generatedAt}
 Target: ${audit.target}
 Status: **${audit.status}**
+Official reference count: ${audit.officialReferenceCount}
+
+## Proof Basis Counts
+
+| Basis | Count |
+|---|---:|
+| Routes | ${audit.routeCount} |
+| Viewports | ${audit.viewportCount} |
+| Route results | ${audit.routeResultCount} |
+| Manual review checklist | ${audit.manualReviewChecklistCount} |
 
 ## Boundary
 
@@ -216,9 +227,15 @@ ${audit.boundary}
 
 ## Automated Smoke Results
 
-| Route | Label | Viewport | H1 | Controls | Visible Text Length | Keyboard Tab Stops Checked | Result |
-|---|---|---|---|---:|---:|---:|---|
+| Route | Label | Viewport | H1 | Controls | Visible Text Length | Keyboard Tab Stops Checked | Focus Review | Target Size Review | Text Spacing Review | Result |
+|---|---|---|---|---:|---:|---:|---|---|---|---|
 ${routeRows.join('\n')}
+
+## Browser-Assisted WCAG Evidence
+
+This run checked each scoped route at mobile, tablet, and desktop widths for a main landmark, a single visible H1, visible content, horizontal overflow, accessible names on visible controls, keyboard focus landing on visible controls, browser-visible focus indicators, approximate focus-not-obscured hit testing, pointer target size review flags, and text-spacing/reflow stress behavior.
+
+This is still **not a WCAG conformance claim**. Screen-reader review, contrast measurement, full form-error exercises, downloadable artifact review, and assistive-technology evidence remain manual gates before institutional delivery.
 
 ## Manual WCAG 2.2 Review Checklist
 
@@ -321,11 +338,29 @@ async function evaluateCommercialAccessibility(page, route, viewportName) {
       issues.push(`interactive controls missing accessible names: ${nameless.join(', ')}`);
     }
 
+    const smallPointerTargets = interactive
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName.toLowerCase(),
+          text: textFor(element).slice(0, 50),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          inlineLink: element.tagName.toLowerCase() === 'a' && rect.height < 24,
+        };
+      })
+      .filter((target) => (target.width < 24 || target.height < 24) && !target.inlineLink)
+      .slice(0, 6);
+
     return {
       issues,
       heading: h1s[0]?.innerText?.trim() || '',
       bodyLength: bodyText.length,
       interactiveCount: interactive.length,
+      targetSizeReview:
+        smallPointerTargets.length === 0
+          ? 'no obvious non-inline target below 24px'
+          : `manual exceptions review required: ${smallPointerTargets.map((target) => `${target.tag} "${target.text}" ${target.width}x${target.height}`).join('; ')}`,
     };
   });
 
@@ -344,18 +379,20 @@ async function evaluateCommercialAccessibility(page, route, viewportName) {
     heading: result.heading,
     bodyLength: result.bodyLength,
     interactiveCount: result.interactiveCount,
+    targetSizeReview: result.targetSizeReview,
     automatedChecks: [
       'one visible h1',
       'main landmark present',
       'visible body text present',
       'no horizontal overflow above tolerance',
       'interactive controls have accessible names',
+      'pointer targets reviewed for obvious non-inline controls below 24px',
     ],
     result: 'pass',
   };
 }
 
-async function verifyKeyboardFocus(page, route) {
+async function verifyKeyboardFocus(page, route, viewportName) {
   const result = await page.evaluate(() => {
     const candidates = Array.from(
       document.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')
@@ -374,32 +411,108 @@ async function verifyKeyboardFocus(page, route) {
     throw new Error(`${route.path} has no visible focusable controls`);
   }
 
-  for (let index = 0; index < Math.min(5, result.count); index += 1) {
+  const focusSequence = [];
+  const maxStops = Math.min(MAX_TAB_STOPS_TO_CHECK, result.count);
+
+  for (let index = 0; index < maxStops; index += 1) {
     await page.keyboard.press('Tab');
     const focused = await page.evaluate(() => {
       const element = document.activeElement;
       if (!(element instanceof HTMLElement)) return null;
       const rect = element.getBoundingClientRect();
       const style = window.getComputedStyle(element);
+      const tag = element.tagName.toLowerCase();
+      const centerX = Math.min(Math.max(rect.left + rect.width / 2, 0), window.innerWidth - 1);
+      const centerY = Math.min(Math.max(rect.top + rect.height / 2, 0), window.innerHeight - 1);
+      const hitTarget = document.elementFromPoint(centerX, centerY);
+      const focusIndicatorVisible =
+        (style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth || '0') > 0) ||
+        style.boxShadow !== 'none' ||
+        element.matches(':focus-visible');
       return {
-        tag: element.tagName.toLowerCase(),
+        tag,
         id: element.id,
         text: (element.innerText || element.getAttribute('aria-label') || element.getAttribute('placeholder') || '').trim().slice(0, 60),
         visible: style.visibility !== 'hidden' && style.display !== 'none' && rect.width > 0 && rect.height > 0,
+        documentFocusWrap: tag === 'body' || tag === 'html',
+        inViewport: rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth,
+        focusIndicatorVisible,
+        notObscured: !!hitTarget && (element === hitTarget || element.contains(hitTarget) || hitTarget.contains(element)),
       };
     });
+
+    if (focused?.documentFocusWrap && focusSequence.length > 0) {
+      break;
+    }
 
     if (!focused?.visible) {
       throw new Error(`${route.path} tab stop ${index + 1} did not land on a visible control`);
     }
+    if (!focused.inViewport) {
+      throw new Error(`${route.path} ${viewportName} tab stop ${index + 1} landed outside the viewport`);
+    }
+    if (!focused.notObscured) {
+      throw new Error(`${route.path} ${viewportName} tab stop ${index + 1} may be obscured by another element`);
+    }
+
+    focusSequence.push(focused);
   }
 
-  console.log(`ok ${route.path} keyboard - first ${Math.min(5, result.count)} tab stops visible`);
+  const indicatorMisses = focusSequence
+    .filter((focused) => !focused.focusIndicatorVisible)
+    .slice(0, 3)
+    .map((focused) => `${focused.tag}${focused.id ? `#${focused.id}` : ''} "${focused.text}"`);
+
+  const focusReview = indicatorMisses.length === 0
+    ? `first ${maxStops} tab stops visible and not obscured`
+    : `visible/not-obscured passed; manual focus-indicator review: ${indicatorMisses.join('; ')}`;
+
+  console.log(`ok ${route.path} ${viewportName} keyboard - first ${maxStops} tab stops visible/not obscured`);
 
   return {
     focusableCount: result.count,
-    keyboardTabStopsChecked: Math.min(5, result.count),
+    keyboardTabStopsChecked: maxStops,
+    focusReview,
     result: 'pass',
+  };
+}
+
+async function verifyTextSpacing(page, route, viewportName) {
+  await page.addStyleTag({
+    content: `
+      * {
+        line-height: 1.5 !important;
+        letter-spacing: 0.12em !important;
+        word-spacing: 0.16em !important;
+      }
+      p, li, blockquote {
+        margin-bottom: 2em !important;
+      }
+    `,
+  });
+  await page.waitForTimeout(100);
+
+  const review = await page.evaluate(() => {
+    const main = document.querySelector('main, [role="main"]');
+    const h1 = document.querySelector('h1');
+    const overflowPx = Math.ceil(document.documentElement.scrollWidth - window.innerWidth);
+    const issues = [];
+
+    if (!main) issues.push('missing main landmark after text spacing');
+    if (!h1) issues.push('missing h1 after text spacing');
+    if (overflowPx > 16) issues.push(`horizontal overflow ${overflowPx}px after text spacing`);
+
+    return {
+      status: issues.length === 0 ? 'pass' : 'manual_review_required',
+      issues,
+    };
+  });
+
+  const textSpacingReview = review.status === 'pass' ? 'text-spacing stress passed' : review.issues.join('; ');
+  console.log(`ok ${route.path} ${viewportName} text spacing - ${textSpacingReview}`);
+
+  return {
+    textSpacingReview,
   };
 }
 
@@ -438,12 +551,9 @@ async function runChecks(baseUrl) {
         await page.goto(`${baseUrl}${route.path}`, { waitUntil: 'domcontentloaded', timeout: ROUTE_TIMEOUT_MS });
         await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
         const routeResult = await evaluateCommercialAccessibility(page, route, viewport.name);
-        if (viewport.name === 'mobile') {
-          const keyboardResult = await verifyKeyboardFocus(page, route);
-          routeResults.push({ ...routeResult, ...keyboardResult });
-        } else {
-          routeResults.push(routeResult);
-        }
+        const keyboardResult = await verifyKeyboardFocus(page, route, viewport.name);
+        const textSpacingResult = await verifyTextSpacing(page, route, viewport.name);
+        routeResults.push({ ...routeResult, ...keyboardResult, ...textSpacingResult });
       }
 
       if (pageIssues.length > 0) {
@@ -458,7 +568,7 @@ async function runChecks(baseUrl) {
 
   return {
     routeResults,
-    pageCount: routes.length,
+    routeCount: routes.length,
     viewportCount: viewports.length,
   };
 }
@@ -504,10 +614,15 @@ async function main() {
       boundary:
         'This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.',
       routes,
+      routeCount: checkSummary.routeCount,
       viewports,
+      viewportCount: checkSummary.viewportCount,
       routeResults: checkSummary.routeResults,
+      routeResultCount: checkSummary.routeResults.length,
       manualReviewChecklist,
+      manualReviewChecklistCount: manualReviewChecklist.length,
       officialReferences,
+      officialReferenceCount: officialReferences.length,
     });
     console.log(`Commercial accessibility/responsive smoke passed at ${baseUrl}`);
   } catch (error) {

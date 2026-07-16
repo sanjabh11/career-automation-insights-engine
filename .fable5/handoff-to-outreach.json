@@ -1,0 +1,295 @@
+{
+  "audit_report_path": "docs/audits/audit-2026-07-05-stage1.md",
+  "audited_commit_sha": "e9172b04346cb96b6d1f903495704f1cf0bb2e36",
+  "audit_date": "2026-07-05",
+  "implemented_gaps": [
+    {
+      "id": "SEC-4",
+      "severity": "Critical",
+      "title": "Enterprise RLS policies check authenticated not org membership",
+      "status": "FIXED",
+      "fix": "New migration 20260705120000_fix_enterprise_rls_org_membership.sql with enterprise_org_members table + user_belongs_to_org() function + org-scoped RLS policies"
+    },
+    {
+      "id": "SEC-2",
+      "severity": "High",
+      "title": "calculate-apo optional API key enforcement",
+      "status": "FIXED",
+      "fix": "API key now required — 503 if env missing, 401 if header mismatch"
+    },
+    {
+      "id": "SEC-3",
+      "severity": "High",
+      "title": "calculate-apo header fallback for Supabase service key",
+      "status": "FIXED",
+      "fix": "Removed header fallback — env vars only"
+    },
+    {
+      "id": "SEC-5",
+      "severity": "High",
+      "title": "Whop OAuth wildcard CORS + unvalidated redirect_uri",
+      "status": "FIXED",
+      "fix": "Origin-allowlist + redirect_uri validation + buildCorsHeaders()"
+    },
+    {
+      "id": "SEC-1",
+      "severity": "High",
+      "title": "analyze-resume accepts caller-supplied user_id without JWT verification",
+      "status": "FIXED",
+      "fix": "JWT user_id ownership verification via supabase.auth.getUser() — 403 on mismatch"
+    },
+    {
+      "id": "PRICE-3",
+      "severity": "High",
+      "title": "stripe-webhook placeholder price IDs",
+      "status": "FIXED",
+      "fix": "Replaced with real Stripe price IDs from src/lib/stripe.ts"
+    },
+    {
+      "id": "DEPS-3",
+      "severity": "High",
+      "title": "Stripe SDK version mismatch across Edge Functions",
+      "status": "FIXED",
+      "fix": "Aligned create-credit-checkout to stripe@14.5.0"
+    },
+    {
+      "id": "BIZ-4",
+      "severity": "High",
+      "title": "Subscription cancel/resume stubbed",
+      "status": "FIXED",
+      "fix": "Real Stripe API cancel + resume with DB updates"
+    },
+    {
+      "id": "TEST-1",
+      "severity": "High",
+      "title": "No unit test runner or test script",
+      "status": "PARTIALLY FIXED",
+      "fix": "Added vitest + jsdom + @testing-library/react + 10 unit tests in src/lib/stripe.test.ts. Edge Function tests still needed."
+    },
+    {
+      "id": "DEVEX-5",
+      "severity": "High",
+      "title": "No error monitoring",
+      "status": "FIXED",
+      "fix": "Added @sentry/react with env-based DSN initialization in main.tsx"
+    }
+  ],
+  "remaining_gaps": [
+    { "id": "CODE-1", "severity": "High", "title": "TypeScript strict:false — strictNullChecks and noImplicitAny disabled", "dimension": "Code Quality" },
+    { "id": "CODE-2", "severity": "High", "title": "CommercialLeadOpsPage 1916-LOC god component", "dimension": "Code Quality" },
+    { "id": "CODE-3", "severity": "Medium", "title": "commercialLaunchReadiness.ts 2171 LOC mixed responsibilities", "dimension": "Code Quality" },
+    { "id": "CODE-4", "severity": "Medium", "title": "workTransitionProofPack.ts 1596 LOC mixed rendering+data", "dimension": "Code Quality" },
+    { "id": "ARCH-3", "severity": "High", "title": "WhopAppContext conflates iframe detection, token handling, messaging, access tier", "dimension": "Architecture" },
+    { "id": "ARCH-5", "severity": "Medium", "title": "Import graph cycles around dashboard/sidebar", "dimension": "Architecture" },
+    { "id": "PERF-1", "severity": "Medium", "title": "Build artifact ~3.14 MB uncompressed JS/CSS", "dimension": "Performance" },
+    { "id": "PERF-2", "severity": "Medium", "title": "No bundle analyzer plugin", "dimension": "Performance" },
+    { "id": "PERF-3", "severity": "Medium", "title": "AIAssistant lazy-imported but always mounted", "dimension": "Performance" },
+    { "id": "PERF-4", "severity": "High", "title": "APO path synchronous: Gemini + multiple Supabase reads + telemetry", "dimension": "Performance" },
+    { "id": "DEPS-1", "severity": "Medium", "title": "32 npm vulnerabilities (4 low, 24 moderate, 3 high, 1 critical)", "dimension": "Dependencies" },
+    { "id": "DEVEX-1", "severity": "Medium", "title": "No CI pipeline for lint/type-check/test on PR", "dimension": "DevEx" },
+    { "id": "DEVEX-6", "severity": "Medium", "title": "No branch protection or pre-commit hooks", "dimension": "DevEx" },
+    { "id": "A11Y-1", "severity": "Medium", "title": "Color contrast in teal/amber dark theme not verified with automated tools", "dimension": "Accessibility" },
+    { "id": "BIZ-5", "severity": "High", "title": "$0 revenue with 45+ features — product over-built for validation stage", "dimension": "Business" },
+    { "id": "MKT-1", "severity": "High", "title": "No buyer-ready artifacts (case studies, battle cards, demo scripts)", "dimension": "Market Alignment" },
+    { "id": "MKTG-1", "severity": "High", "title": "Positioning paradox: decision-support tool vs Stay Indispensable in AI Era", "dimension": "Marketing Strategy" },
+    { "id": "OUT-1", "severity": "High", "title": "0 documented outreach touches despite templates existing", "dimension": "Outreach" },
+    { "id": "PRICE-1", "severity": "Medium", "title": "3 payment providers fragmented — no consistent value metric", "dimension": "Pricing" },
+    { "id": "VAL-1", "severity": "High", "title": "0% buyer validation — desk research only across all segments", "dimension": "Customer Validation" }
+  ],
+  "market_segment_table": [
+    {
+      "segment": "Solo Career Coaches / Resume Writers",
+      "icp": "Independent career counselors, executive coaches, resume writers charging $150-$300/hr. 109,200+ globally.",
+      "pricing": "$149/mo Coach Pro",
+      "tam": "$195M/yr",
+      "sam": "$48M",
+      "som": "$240K/yr",
+      "current_fit": "HIGH",
+      "key_routes": ["/for-coaches", "/tools/counselor-reports", "/sample-report", "/pricing"],
+      "competitors": ["JobWinner.ai ($19/mo)", "WriteSea (enterprise custom)"],
+      "validation_maturity": "Desk Research Only"
+    },
+    {
+      "segment": "Mid-Career Professionals (28-45)",
+      "icp": "Knowledge workers aged 28-45, tech-savvy, proactive about AI obsolescence.",
+      "pricing": "$29/mo Defender",
+      "tam": "$1.2B/yr",
+      "sam": "$120M",
+      "som": "$360K/yr",
+      "current_fit": "HIGH",
+      "key_routes": ["/", "/tools/resume-analyzer", "/ai-impact-planner", "/career-planning", "/automation-risk/:occupation"],
+      "competitors": ["WillRobotsTakeMyJob (free, 2013 data)", "Teal ($29/mo, tactical job search)"],
+      "validation_maturity": "Desk Research Only"
+    },
+    {
+      "segment": "Enterprise HR / Workforce Planning",
+      "icp": "HR directors, L&D leaders at companies with 500-5000 employees undergoing AI transformation.",
+      "pricing": "$10K-$50K one-time audit or $29-$149/mo per seat",
+      "tam": "$2.72B",
+      "sam": "$272M",
+      "som": "$500K/yr",
+      "current_fit": "MEDIUM",
+      "key_routes": ["/enterprise-dashboard", "/workshops", "/responsible-ai"],
+      "competitors": ["Eightfold AI ($50K+/yr)", "Lightcast ($16K+/yr)"],
+      "validation_maturity": "Desk Research Only"
+    },
+    {
+      "segment": "Veterans Transition Organizations",
+      "icp": "Hire Heroes USA, American Corporate Partners, DoD TAP, state VA offices. Federally funded.",
+      "pricing": "Free pilot → $5K-$25K contracts",
+      "tam": "$180M/yr",
+      "sam": "$18M",
+      "som": "$100K/yr",
+      "current_fit": "HIGH",
+      "key_routes": ["/veterans", "/crosswalk"],
+      "competitors": ["No AI-powered competitor exists"],
+      "validation_maturity": "Desk Research Only"
+    },
+    {
+      "segment": "University Career Services",
+      "icp": "University career centers, community college workforce programs.",
+      "pricing": "$149/mo Coach Pro or enterprise contract",
+      "tam": "$420M/yr",
+      "sam": "$42M",
+      "som": "$60K/yr",
+      "current_fit": "MEDIUM",
+      "key_routes": [],
+      "competitors": ["Handshake (job board)"],
+      "validation_maturity": "Desk Research Only"
+    },
+    {
+      "segment": "Outplacement Firms",
+      "icp": "Right Management, LHH, Randstad RiseSmart. Need branded reports for displaced workers.",
+      "pricing": "$149/mo per coach or enterprise contract",
+      "tam": "$800M/yr",
+      "sam": "$80M",
+      "som": "$180K/yr",
+      "current_fit": "HIGH",
+      "key_routes": ["/for-coaches", "/tools/counselor-reports"],
+      "competitors": ["No outplacement-specific automation risk tool"],
+      "validation_maturity": "Desk Research Only"
+    }
+  ],
+  "buyer_journey_gaps": [
+    "No pilot signup form for any segment",
+    "No trial workflow beyond free tier (3 APO checks)",
+    "No onboarding flow after purchase",
+    "No expansion mechanism (referral, team invite, upsell)",
+    "No lead capture form on SEO pages",
+    "No demo script or guided demo",
+    "No qualification criteria or process",
+    "No discovery process",
+    "No proposal template",
+    "No CRM integration or send log",
+    "PostHog env-gated — may be no-op in production",
+    "No dark funnel tracking (G2, Capterra, Gartner)",
+    "No university-specific landing page",
+    "No veterans-specific purchase route",
+    "SEO pages client-rendered — prerendering unverified"
+  ],
+  "sales_enablement_gaps": [
+    "No case studies (0 of 10)",
+    "No battle cards (0 of 10)",
+    "No demo scripts (0 of 10)",
+    "No one-pagers as PDF (ForCoachesPage is web only)",
+    "No RFP templates (0 of 10)",
+    "No pilot agreements (0 of 10)",
+    "No reference architectures (0 of 10)",
+    "No vendor assessment responses (0 of 10)",
+    "ROI calculator exists but not standalone (partial)",
+    "Security questionnaire partial — ResponsibleAIPage has content but not in questionnaire format",
+    "Overall: 1.5 of 10 ready (15%)"
+  ],
+  "gtm_readiness_status": {
+    "overall": "NOT READY",
+    "dimensions": {
+      "documented_gtm_strategy": "PARTIAL",
+      "target_segments_validated": "NOT READY",
+      "outreach_channel_per_segment": "NOT READY",
+      "pricing_public_and_consistent": "PARTIAL",
+      "sales_enablement_artifacts_ready": "NOT READY",
+      "analytics_instrumentation": "PARTIAL",
+      "pilot_onboarding_workflow": "NOT READY",
+      "compliance_guardrails": "PARTIAL"
+    },
+    "ready_count": 0,
+    "partial_count": 3,
+    "not_ready_count": 5
+  },
+  "unresolved_assumptions": [
+    "Assumes 109,200+ coaches globally would pay $149/mo — not validated with any interviews",
+    "Assumes $29/mo is the right price point for professionals — not validated with pricing tests",
+    "Assumes SEO pages will index and rank — prerendering effectiveness unverified",
+    "Assumes PostHog is capturing events in production — env key verification needed",
+    "Assumes veterans orgs have budget for AI career tools — not validated with any org conversations",
+    "Assumes enterprise buyers want a prosumer-priced tool — may cannibalize enterprise pricing perception",
+    "Assumes 3 payment providers are needed — may fragment focus",
+    "Assumes 'decision-support tool' positioning is compatible with 'Stay Indispensable in the AI Era' hero",
+    "Assumes outreach templates will generate replies — 0 sends means 0 data",
+    "Assumes product is ready for outreach — 0 tests means reliability is unproven"
+  ],
+  "recommended_outreach_focus": {
+    "primary_segment": "Solo Career Coaches / Resume Writers",
+    "reason": "Highest WTP ($149/mo), clearest ROI (7-15x), product already built (CounselorReportGenerator + ForCoachesPage + sample-report), 109,200+ reachable on LinkedIn, templates already drafted",
+    "secondary_segment": "Mid-Career Professionals (via SEO + resume analyzer viral loop)",
+    "proof_pack": "Coach white-label career resilience report (/for-coaches, /sample-report, /tools/counselor-reports)",
+    "first_action": "Conduct 10 coach interviews before any outreach sends. Show sample report. Ask: 'Would you pay $149/mo for this?' Validate before scaling.",
+    "channel": "LinkedIn connection requests + DMs using existing templates in APO_OUTREACH_AND_PILOT_TEMPLATES.md",
+    "cadence": "5-10 personalized sends per day per APO_OUTREACH_OPERATING_PLAN.md",
+    "compliance": "CAN-SPAM opt-out, physical address, no false claims, claim-boundary discipline enforced"
+  },
+  "top_5_revenue_opportunities": [
+    {
+      "rank": 1,
+      "opportunity": "Career Coaches — White-Label Reports",
+      "mrr_range": "$5K-$15K within 90 days",
+      "product_status": "Already built",
+      "channel": "LinkedIn outreach + sample reports"
+    },
+    {
+      "rank": 2,
+      "opportunity": "SEO-Driven B2C Organic",
+      "mrr_range": "$3K-$8K within 90 days (compounding)",
+      "product_status": "64 SEO pages exist, prerendering unverified",
+      "channel": "Organic search"
+    },
+    {
+      "rank": 3,
+      "opportunity": "Resume Analyzer Viral Tool",
+      "mrr_range": "$2K-$5K within 60 days",
+      "product_status": "analyze-resume complete",
+      "channel": "Reddit/LinkedIn/Product Hunt"
+    },
+    {
+      "rank": 4,
+      "opportunity": "Veterans Transition Services",
+      "revenue_range": "$5K-$25K contracts within 90 days",
+      "product_status": "MOC crosswalk + APO + bridge roles built",
+      "channel": "Direct outreach to Hire Heroes USA, American Corporate Partners"
+    },
+    {
+      "rank": 5,
+      "opportunity": "Enterprise Workforce Audit",
+      "revenue_range": "$10K-$50K one-time within 90 days",
+      "product_status": "EnterpriseTeamDashboard built, HRIS sync stubbed",
+      "channel": "LinkedIn + referral"
+    }
+  ],
+  "defensible_usps": [
+    "O*NET-Grounded Multi-Factor Scoring: Only platform using real-time O*NET 29.3 data + Gemini AI for task-level automation analysis. 19,000+ tasks, 109 enriched occupations, pgvector skill embeddings.",
+    "Actionable Career Transition Pathfinding: A* algorithm bridge role pathfinding + skill adjacency graph + Monte Carlo career trajectory simulation.",
+    "White-Label B2B Coach Reports: CounselorReportGenerator + generate-counselor-report. Branded HTML/PDF reports in 30 seconds. 7-15x ROI on $149/mo.",
+    "Veterans MOC→Civilian Crosswalk: Complete military occupation code translation + APO analysis + bridge roles + learning paths. No AI-powered competitor.",
+    "Enterprise Workforce Audit at Prosumer Price: EnterpriseTeamDashboard + ROI calculator at $29-$149/mo vs Eightfold at $50K+/year."
+  ],
+  "claim_boundary_rules": [
+    "No job loss predictions — use 'automation exposure' or 'automation risk', never 'will be replaced'",
+    "No scientific validation claims — APO scores are 'decision-support estimates'",
+    "No local labor-market outcome claims",
+    "No employment decision claims — not an HR decision-making tool",
+    "No broad adoption claims — no user counts, market share, or adoption metrics",
+    "No live revenue claims — $0 revenue, no traction claims",
+    "Decision-support framing — helps professionals make informed career decisions",
+    "Proof-pack discipline — any claim must be backed by a proof artifact in the repo"
+  ]
+}

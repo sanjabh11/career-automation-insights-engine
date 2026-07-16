@@ -38,11 +38,77 @@ export default defineConfig(async ({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            recharts: ['recharts'],
-            'framer-motion': ['framer-motion'],
-            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-            'tanstack': ['@tanstack/react-query'],
+          manualChunks(id) {
+            const normalizedId = id.split(path.sep).join("/");
+
+            if (!normalizedId.includes("/node_modules/")) {
+              if (
+                normalizedId.includes("/src/integrations/supabase/") ||
+                normalizedId.endsWith("/src/lib/supabase.ts")
+              ) {
+                return "supabase-app";
+              }
+
+              if (normalizedId.endsWith("/src/utils/webVitals.ts")) {
+                return "analytics-app";
+              }
+
+              return undefined;
+            }
+
+            if (
+              normalizedId.includes("/node_modules/react/") ||
+              normalizedId.includes("/node_modules/react-dom/") ||
+              normalizedId.includes("/node_modules/react-router/") ||
+              normalizedId.includes("/node_modules/react-router-dom/")
+            ) {
+              return "react-vendor";
+            }
+
+            if (normalizedId.includes("/node_modules/recharts/")) {
+              return "recharts";
+            }
+
+            if (normalizedId.includes("/node_modules/framer-motion/")) {
+              return "framer-motion";
+            }
+
+            if (normalizedId.includes("/node_modules/@tanstack/")) {
+              return "tanstack";
+            }
+
+            if (normalizedId.includes("/node_modules/@supabase/")) {
+              return "supabase-vendor";
+            }
+
+            if (
+              normalizedId.includes("/node_modules/posthog-js/") ||
+              normalizedId.includes("/node_modules/dompurify/")
+            ) {
+              return "analytics-vendor";
+            }
+
+            if (
+              normalizedId.includes("/node_modules/sonner/") ||
+              normalizedId.includes("/node_modules/next-themes/")
+            ) {
+              return "feedback-vendor";
+            }
+
+            if (normalizedId.includes("/node_modules/@radix-ui/")) {
+              return "radix-ui";
+            }
+
+            if (normalizedId.includes("/node_modules/@stripe/")) {
+              return "payments-vendor";
+            }
+
+            if (
+              normalizedId.includes("/node_modules/@whop-apps/") ||
+              normalizedId.includes("/node_modules/zod/")
+            ) {
+              return "whop-vendor";
+            }
           },
         },
       },

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
   "asOf": "2026-06-01",
-  "sourceBoundary": "Redacted founder-held commercial evidence records only. Partner and outcome hashes must be unique; future-dated proof metadata, record dates later than asOf, partner names, contact details, contracts, raw interview notes, private quotes, and customer data remain owner-held outside the repository.",
+  "sourceBoundary": "Redacted founder-held commercial evidence records only. Partner and outcome hashes must be unique; future-dated proof metadata, record dates later than asOf, partner names, contact details, profile URLs, meeting/calendar links, contracts, raw interview notes, private quotes, Stripe checkout URLs, proof artifacts, owner-held testimonial integrity review notes, and customer data remain owner-held outside the repository.",
   "designPartnerCommitments": [
     {
       "partnerIdHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
@@ -13,11 +13,38 @@
       "planningOnlyUseConfirmed": true,
       "artifactReviewed": "sample_report",
       "nextStepRecorded": true,
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "permissioned_email",
+        "artifact_review_log"
+      ],
+      "rawEvidenceOwnerHeld": true,
       "redactionLevel": "public_segment_only",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true
+      },
+      "ownerEvidenceArchive": {
+        "permissionTrailOwnerHeld": true,
+        "pilotScopeRecordOwnerHeld": true,
+        "artifactReviewLogOwnerHeld": true,
+        "contactDetailsOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "reviewSolicitationNotConditionedOnSentiment": true,
+        "reReviewRequiredBeforePublicUse": true
+      },
       "doesNotProve": [
         "Revenue",
         "Successful outcomes",
-        "Market-wide demand"
+        "Market-wide demand",
+        "Legal compliance",
+        "Testimonial compliance"
       ]
     }
   ],
@@ -31,11 +58,45 @@
       "measuredChangeCaptured": true,
       "approvedQuoteCaptured": true,
       "quoteApprovalCaptured": true,
+      "measuredChangeUnit": "minutes_saved_per_report",
+      "measurementWindow": "single reviewed workflow during owner-held pilot evidence window",
+      "outcomeClaimScope": "single permissioned observed workflow only; not generalized beyond the reviewed artifact",
+      "typicalityBoundary": "not represented as typical or expected for other users without additional evidence",
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "baseline_workflow_note",
+        "measured_change_summary",
+        "quote_approval"
+      ],
+      "rawEvidenceOwnerHeld": true,
       "redactionLevel": "public_quote_approved",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true,
+        "counterfactualNotClaimed": true,
+        "guaranteedOutcomeNotClaimed": true
+      },
+      "ownerEvidenceArchive": {
+        "baselineWorkflowEvidenceOwnerHeld": true,
+        "measuredChangeEvidenceOwnerHeld": true,
+        "quoteApprovalRecordOwnerHeld": true,
+        "privateQuoteTextOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "typicalitySubstantiationOwnerHeld": true,
+        "reReviewRequiredBeforePublicCaseStudyUse": true
+      },
       "doesNotProve": [
         "Guaranteed career outcomes",
         "Causal impact",
-        "Generalizable demand"
+        "Generalizable demand",
+        "Legal compliance",
+        "Testimonial compliance"
       ]
     }
   ]

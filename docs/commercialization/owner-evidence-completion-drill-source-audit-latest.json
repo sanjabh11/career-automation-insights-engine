@@ -1,0 +1,546 @@
+{
+  "schemaVersion": "2026-06-05.apo-owner-evidence-completion-drill-source-audit.v1",
+  "generatedAt": "2026-06-08T23:01:26.340Z",
+  "drillPath": "docs/commercialization/owner-evidence-completion-drill-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "This audit proves only that the owner-evidence completion drill official reference URLs are present and, when fetched, match expected official-page text at verification time. It does not prove owner-held evidence, live checkout, live MRR, partner commitments, documented outcomes, manual WCAG conformance, legal compliance, production state, or commercial readiness.",
+  "allPassed": true,
+  "sourceCount": 17,
+  "passedCount": 17,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "unexpectedReferenceCount": 0,
+  "topLevelUrlMismatch": false,
+  "failedSourceKeys": [],
+  "unexpectedReferences": [],
+  "packetTypes": [
+    "live_proof_run",
+    "commercial_evidence_intake",
+    "manual_wcag_review"
+  ],
+  "packetReferenceCounts": {
+    "live_proof_run": 6,
+    "commercial_evidence_intake": 4,
+    "manual_wcag_review": 7
+  },
+  "sources": [
+    {
+      "key": "live_proof_run:stripe-test-mode",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "stripe-test-mode",
+      "url": "https://docs.stripe.com/test-mode",
+      "expectedUrl": "https://docs.stripe.com/test-mode",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/testing-use-cases",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "069e81e702b0348bf1f9376dd9f44a180d02678adc91795315ea3d67ebbe23a3",
+        "byteLength": 1088578,
+        "evidence": [
+          {
+            "label": "Stripe testing use cases and sandboxes",
+            "matched": true
+          },
+          {
+            "label": "sandbox does not affect live payments",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "live_proof_run:stripe-api-keys",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "stripe-api-keys",
+      "url": "https://docs.stripe.com/keys",
+      "expectedUrl": "https://docs.stripe.com/keys",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/keys",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "f37c5de0c50f9795080e1070df713bb17b03376af718c5f3c15bf136472c22a7",
+        "byteLength": 1038782,
+        "evidence": [
+          {
+            "label": "Stripe API keys reference",
+            "matched": true
+          },
+          {
+            "label": "test and live key mode boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "live_proof_run:stripe-key-best-practices",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "stripe-key-best-practices",
+      "url": "https://docs.stripe.com/keys-best-practices",
+      "expectedUrl": "https://docs.stripe.com/keys-best-practices",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/keys-best-practices",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "989815b8bce8d123de536309b5a0420456d1a65ed6e7e7b435e937dd5f34d27b",
+        "byteLength": 1051370,
+        "evidence": [
+          {
+            "label": "Stripe secret API key best practices",
+            "matched": true
+          },
+          {
+            "label": "do not store keys in source code",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "live_proof_run:pci-dss-v4-0-1",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "pci-dss-v4-0-1",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "expectedUrl": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "4f674d08b5d799155a921800a836c41463ea86daab3930b39a1a0b5d5a921fbb",
+        "byteLength": 84183,
+        "evidence": [
+          {
+            "label": "PCI DSS v4.0.1 publication title",
+            "matched": true
+          },
+          {
+            "label": "PCI DSS active-version boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "live_proof_run:supabase-edge-function-secrets",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "supabase-edge-function-secrets",
+      "url": "https://supabase.com/docs/guides/functions/secrets",
+      "expectedUrl": "https://supabase.com/docs/guides/functions/secrets",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://supabase.com/docs/guides/functions/secrets",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "119e7e72d3c9ce9a6026814ffd0ccfc4b92bb4a1845780f758f77030a7d621be",
+        "byteLength": 231595,
+        "evidence": [
+          {
+            "label": "Supabase Edge Function environment variables",
+            "matched": true
+          },
+          {
+            "label": "Supabase local env files are not checked into git",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "live_proof_run:github-actions-secrets",
+      "packetType": "live_proof_run",
+      "packetLabel": "Live proof run packet",
+      "id": "github-actions-secrets",
+      "url": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "expectedUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "b6f88c7cbc808cbe9277f10d8651f44d380576bad652cb3d46f79d7aed4cb1d4",
+        "byteLength": 273394,
+        "evidence": [
+          {
+            "label": "GitHub Actions secrets concept",
+            "matched": true
+          },
+          {
+            "label": "GitHub Actions secret access and permissions",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "commercial_evidence_intake:ftc-consumer-reviews-rule-questions",
+      "packetType": "commercial_evidence_intake",
+      "packetLabel": "Commercial evidence intake packet",
+      "id": "ftc-consumer-reviews-rule-questions",
+      "url": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "1ac6467abb0906679390c45946a536334d6753fa577c83d8dc73e69ad512413e",
+        "byteLength": 1020802,
+        "evidence": [
+          {
+            "label": "FTC Consumer Reviews and Testimonials Rule Q&A",
+            "matched": true
+          },
+          {
+            "label": "fake or deceptive reviews/testimonials boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "commercial_evidence_intake:ftc-endorsements-reviews",
+      "packetType": "commercial_evidence_intake",
+      "packetLabel": "Commercial evidence intake packet",
+      "id": "ftc-endorsements-reviews",
+      "url": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "241e9b76a07c7a233ffc534a5f28270d8e5561d8a3b4b4da03e44473c183223d",
+        "byteLength": 1093335,
+        "evidence": [
+          {
+            "label": "FTC endorsements and reviews hub",
+            "matched": true
+          },
+          {
+            "label": "Endorsement Guides and Consumer Reviews Rule coverage",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "commercial_evidence_intake:ftc-endorsement-guides-faq",
+      "packetType": "commercial_evidence_intake",
+      "packetLabel": "Commercial evidence intake packet",
+      "id": "ftc-endorsement-guides-faq",
+      "url": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "c41ac2a3ecc6607e800b129ec3c9023ab56f23beb7ff21ce0519f90bf97cdc55",
+        "byteLength": 1082146,
+        "evidence": [
+          {
+            "label": "FTC Endorsement Guides FAQ",
+            "matched": true
+          },
+          {
+            "label": "material connection disclosure guidance",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "commercial_evidence_intake:ftc-review-solicitation-guide",
+      "packetType": "commercial_evidence_intake",
+      "packetLabel": "Commercial evidence intake packet",
+      "id": "ftc-review-solicitation-guide",
+      "url": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "ad17f4811a95f64d0ad1f2c79949050634bca52bee45b33bc81791171762f1e8",
+        "byteLength": 994377,
+        "evidence": [
+          {
+            "label": "FTC soliciting and paying for online reviews guide",
+            "matched": true
+          },
+          {
+            "label": "review solicitation integrity guidance",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wcag22",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wcag22",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "expectedUrl": "https://www.w3.org/TR/WCAG22/",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/WCAG22/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "6e3c5fe397257cae509a2fb4752b73062cf8cbeb92c2cec618989b17e4cf7057",
+        "byteLength": 512457,
+        "evidence": [
+          {
+            "label": "WCAG 2.2 recommendation title",
+            "matched": true
+          },
+          {
+            "label": "WCAG 2.2 conformance and testable criteria",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wcag-em-overview",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wcag-em-overview",
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "expectedUrl": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "24d3685e499334ea2cf8bfb48149536d8f96969a9a1020911f636855fdb52be2",
+        "byteLength": 49007,
+        "evidence": [
+          {
+            "label": "WCAG-EM overview title",
+            "matched": true
+          },
+          {
+            "label": "WCAG-EM evaluation process",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wcag-em-2",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wcag-em-2",
+      "url": "https://www.w3.org/TR/wcag-em-2/",
+      "expectedUrl": "https://www.w3.org/TR/wcag-em-2/",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/wcag-em-2/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "242060b46891f1ad4dc7b4a7fc90fe6ddab9b6201c6955c6132b30da49598255",
+        "byteLength": 144958,
+        "evidence": [
+          {
+            "label": "WCAG-EM 2.0 title",
+            "matched": true
+          },
+          {
+            "label": "WCAG-EM 2.0 evaluation methodology",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wcag-em-report-tool",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wcag-em-report-tool",
+      "url": "https://www.w3.org/WAI/eval/report-tool/",
+      "expectedUrl": "https://www.w3.org/WAI/eval/report-tool/",
+      "expectedEvidenceCount": 3,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/eval/report-tool/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "3e4db9a91727625892c1e3859ad3befc03be4563949f36cccf853229550a42d1",
+        "byteLength": 8021,
+        "evidence": [
+          {
+            "label": "WCAG-EM Report Tool title",
+            "matched": true
+          },
+          {
+            "label": "W3C WAI tool stewardship evidence",
+            "matched": true
+          },
+          {
+            "label": "current report tool version evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wai-easy-checks",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wai-easy-checks",
+      "url": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+      "expectedUrl": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "42e1ae8a6aed8bed5299c2980fe58f02300a09a97086ab5e379e6e699aaab1ca",
+        "byteLength": 129840,
+        "evidence": [
+          {
+            "label": "WAI Easy Checks first review",
+            "matched": true
+          },
+          {
+            "label": "preliminary accessibility checks boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wai-aria-apg",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wai-aria-apg",
+      "url": "https://www.w3.org/WAI/ARIA/apg/",
+      "expectedUrl": "https://www.w3.org/WAI/ARIA/apg/",
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/ARIA/apg/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "1ec259002cde0290fd95b7d83398d2569173d9ab7152a30776f4988fe8694c3a",
+        "byteLength": 39382,
+        "evidence": [
+          {
+            "label": "ARIA Authoring Practices Guide",
+            "matched": true
+          },
+          {
+            "label": "ARIA patterns and keyboard support",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "key": "manual_wcag_review:wcag2ict-22",
+      "packetType": "manual_wcag_review",
+      "packetLabel": "Manual WCAG review packet",
+      "id": "wcag2ict-22",
+      "url": "https://www.w3.org/TR/wcag2ict-22/",
+      "expectedUrl": "https://www.w3.org/TR/wcag2ict-22/",
+      "expectedEvidenceCount": 3,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/wcag2ict-22/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "265077c096b19d21d9f6b29ce60604d1cf88f8cf4a8663312ee46490a2c9b2e7",
+        "byteLength": 536627,
+        "evidence": [
+          {
+            "label": "WCAG2ICT Group Note title",
+            "matched": true
+          },
+          {
+            "label": "non-web documents and software guidance",
+            "matched": true
+          },
+          {
+            "label": "informative guidance boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

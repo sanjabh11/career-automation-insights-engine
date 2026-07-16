@@ -1,0 +1,438 @@
+{
+  "schemaVersion": "2026-06-04.apo-manual-wcag-evidence.v1",
+  "asOf": "2026-06-04",
+  "sourceBoundary": "Redacted manual WCAG evidence metadata only. Raw notes, screenshots, recordings, reviewer identity, reviewer profile URLs, meeting/calendar links, assistive-technology transcripts, issue tracker details, and private user data remain owner-held outside the repository.",
+  "targetStandard": "WCAG 2.2 A/AA",
+  "methodology": "WCAG-EM",
+  "officialReferenceCount": 7,
+  "officialReferences": [
+    {
+      "id": "wcag22",
+      "label": "WCAG 2.2 Recommendation",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wcag-em-overview",
+      "label": "WCAG-EM overview",
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wcag-em-2",
+      "label": "WCAG-EM 2.0",
+      "url": "https://www.w3.org/TR/wcag-em-2/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wcag-em-report-tool",
+      "label": "WCAG-EM Report Tool",
+      "url": "https://www.w3.org/WAI/eval/report-tool/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wai-easy-checks",
+      "label": "WAI Easy Checks",
+      "url": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wai-aria-apg",
+      "label": "WAI-ARIA Authoring Practices",
+      "url": "https://www.w3.org/WAI/ARIA/apg/",
+      "accessedAt": "2026-06-04"
+    },
+    {
+      "id": "wcag2ict-22",
+      "label": "WCAG2ICT 2.2",
+      "url": "https://www.w3.org/TR/wcag2ict-22/",
+      "accessedAt": "2026-06-09"
+    }
+  ],
+  "evaluator": {
+    "reviewerIdHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "role": "accessibility_reviewer",
+    "reviewType": "internal_self_assessment_or_third_party_review",
+    "independenceBoundary": "state whether this is internal self-assessment, third-party review, or mixed review team",
+    "expertiseConfirmed": true,
+    "conflictOfInterestDisclosed": true
+  },
+  "evaluationScope": {
+    "productScope": "APO Dashboard commercial launch review surfaces covering public trust pages, proof-pack downloads, report generation, account/payment access, and buyer evidence workflows.",
+    "sampleSelectionRationale": "Route sample covers the highest-risk commercial launch surfaces: privacy and trust claims, coach/counselor report creation, resume proof artifacts, enterprise dashboard review, proof-pack exports, and SEO buyer entry.",
+    "sampleSetSelectionMethod": "structured commercial-route sample plus required complete processes",
+    "technologiesReliedUpon": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "WAI-ARIA"
+    ],
+    "routesReviewed": [
+      "/privacy",
+      "/trust-center",
+      "/for-coaches",
+      "/sample-report",
+      "/tools/resume-analyzer",
+      "/tools/counselor-reports",
+      "/enterprise-dashboard",
+      "/proof-pack-gallery",
+      "/automation-risk/accountant"
+    ],
+    "completeProcessesReviewed": [
+      "public-trust-navigation",
+      "resume-analysis-proof-report",
+      "counselor-report-generation",
+      "proof-pack-downloads",
+      "payment-and-account-access"
+    ],
+    "browsers": [
+      "Chrome current",
+      "Safari current"
+    ],
+    "assistiveTechnologies": [
+      "VoiceOver macOS",
+      "NVDA Windows"
+    ],
+    "viewports": [
+      "mobile",
+      "tablet",
+      "desktop"
+    ],
+    "accessibilitySupportBaseline": [
+      {
+        "id": "macos-safari-voiceover",
+        "operatingSystem": "macOS current",
+        "browser": "Safari current",
+        "assistiveTechnology": "VoiceOver macOS",
+        "inputModalities": [
+          "keyboard",
+          "screen_reader"
+        ],
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      {
+        "id": "windows-chrome-nvda",
+        "operatingSystem": "Windows current",
+        "browser": "Chrome current",
+        "assistiveTechnology": "NVDA Windows",
+        "inputModalities": [
+          "keyboard",
+          "screen_reader"
+        ],
+        "viewports": [
+          "desktop"
+        ]
+      }
+    ],
+    "conformanceTarget": "WCAG 2.2 A/AA"
+  },
+  "reviewRecordArchive": {
+    "samplesArchivedOwnerHeld": true,
+    "evaluationToolsRecorded": true,
+    "wcagEmReportToolExportOwnerHeld": true,
+    "browserAssistiveTechnologyVersionsRecorded": true,
+    "navigationPathsRecorded": true,
+    "issueLogOwnerHeld": true,
+    "rawEvidenceSecurityReviewed": true,
+    "reEvaluationRequiredAfterMaterialChange": true
+  },
+  "ownerEvidenceArchive": {
+    "rawReviewerNotesOwnerHeldOutsideGit": true,
+    "screenshotsRecordingsOwnerHeldOutsideGit": true,
+    "assistiveTechnologyTranscriptsOwnerHeldOutsideGit": true,
+    "reviewerIdentityOwnerHeldOutsideGit": true,
+    "issueDetailsOwnerHeldOutsideGit": true,
+    "evaluationToolOutputOwnerHeldOutsideGit": true,
+    "sampleArchivesOwnerHeldOutsideGit": true,
+    "artifactHashSourceMapOwnerHeld": true,
+    "reReviewRequiredAfterMaterialChange": true
+  },
+  "reviewerAttestation": {
+    "manualReviewCompleted": true,
+    "assistiveTechnologyReviewCompleted": true,
+    "noWcagConformanceClaim": true,
+    "noProcurementApprovalClaim": true,
+    "ownerHeldRawNotes": true
+  },
+  "checkpointResults": [
+    {
+      "checkpointId": "wcag-em-scope",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag-em-overview",
+        "wcag-em-2",
+        "wcag-em-report-tool"
+      ],
+      "evidenceSummary": {
+        "scopeDefined": true,
+        "conformanceTarget": "WCAG 2.2 A/AA",
+        "productScopeDefined": true,
+        "sampleSelectionRationaleDocumented": true,
+        "completeProcessesReviewed": true,
+        "accessibilitySupportBaselineDefined": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "WCAG conformance statement",
+        "Legal compliance"
+      ]
+    },
+    {
+      "checkpointId": "keyboard-focus-not-obscured",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22"
+      ],
+      "evidenceSummary": {
+        "keyboardTraversalCompleted": true,
+        "focusNotObscuredChecked": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "Future focus behavior after code changes"
+      ]
+    },
+    {
+      "checkpointId": "target-size",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22"
+      ],
+      "evidenceSummary": {
+        "pointerTargetReviewCompleted": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "All future interactive elements meet target-size requirements"
+      ]
+    },
+    {
+      "checkpointId": "form-errors-and-redundant-entry",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "evidenceSummary": {
+        "errorStateReviewCompleted": true,
+        "redundantEntryReviewCompleted": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "All future form states are accessible"
+      ]
+    },
+    {
+      "checkpointId": "accessible-authentication",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22"
+      ],
+      "evidenceSummary": {
+        "authFlowReviewed": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "Authentication provider compliance"
+      ]
+    },
+    {
+      "checkpointId": "screen-reader-name-role-value",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22",
+        "wai-aria-apg"
+      ],
+      "evidenceSummary": {
+        "assistiveTechnologies": [
+          "VoiceOver macOS",
+          "NVDA Windows"
+        ],
+        "nameRoleValueReviewCompleted": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "Coverage for every assistive-technology/browser combination"
+      ]
+    },
+    {
+      "checkpointId": "contrast-reflow-text-spacing",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks"
+      ],
+      "evidenceSummary": {
+        "contrastReviewCompleted": true,
+        "reflowAndTextSpacingReviewCompleted": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "Future color or layout changes remain accessible"
+      ]
+    },
+    {
+      "checkpointId": "downloadable-artifacts",
+      "status": "passed",
+      "observedAt": "2026-06-04",
+      "reviewedByHuman": true,
+      "routesReviewed": [
+        "/privacy",
+        "/trust-center",
+        "/for-coaches",
+        "/sample-report",
+        "/tools/resume-analyzer",
+        "/tools/counselor-reports",
+        "/enterprise-dashboard",
+        "/proof-pack-gallery",
+        "/automation-risk/accountant"
+      ],
+      "artifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "standardRefs": [
+        "wcag22",
+        "wai-easy-checks",
+        "wai-aria-apg",
+        "wcag2ict-22"
+      ],
+      "evidenceSummary": {
+        "artifactsReviewed": [
+          "trust packet HTML",
+          "risk CSV",
+          "sample report HTML",
+          "pilot validation CSV"
+        ],
+        "downloadedArtifactReviewCompleted": true
+      },
+      "unresolvedIssueCount": 0,
+      "remediatedIssueCount": 0,
+      "doesNotProve": [
+        "Third-party PDF conversion accessibility",
+        "Future downloadable artifacts"
+      ]
+    }
+  ]
+}

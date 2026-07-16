@@ -1,0 +1,1166 @@
+{
+  "schemaVersion": "2026-06-04.apo-launch-evidence-source-audit.v1",
+  "generatedAt": "2026-06-08T21:35:10.443Z",
+  "launchEvidencePath": "docs/commercialization/launch-evidence-latest.json",
+  "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "This audit proves the launch evidence source URLs were reachable and matched expected source-page text at verification time. It does not prove buyer willingness to pay, customer outcomes, legal compliance, WCAG conformance, live revenue, partner commitments, or production runtime behavior.",
+  "allPassed": true,
+  "sourceCount": 24,
+  "passedCount": 24,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "failedSourceUrls": [],
+  "sources": [
+    {
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "painPointRanks": [
+        7
+      ],
+      "painPointLabels": [
+        "Payment, subscription, and fulfillment proof must be separated from UI checkout readiness."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:7"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "pci-dss-v4-0-1",
+        "label": "PCI DSS v4.0.1 publication notice",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "4f674d08b5d799155a921800a836c41463ea86daab3930b39a1a0b5d5a921fbb",
+        "byteLength": 84183,
+        "evidence": [
+          {
+            "label": "PCI DSS v4.0.1 publication title",
+            "matched": true
+          },
+          {
+            "label": "PCI DSS active-version boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "painPointRanks": [
+        8
+      ],
+      "painPointLabels": [
+        "Secure API and file-upload boundaries matter because resume and proof-pack workflows handle sensitive user context."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "nist-ssdf",
+        "label": "NIST Secure Software Development Framework",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "310a7437e48195917f655c192f9e752146045867df6539305b4716312959bf84",
+        "byteLength": 48666,
+        "evidence": [
+          {
+            "label": "NIST SSDF title",
+            "matched": true
+          },
+          {
+            "label": "secure development practices evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://docs.stripe.com/api/checkout/sessions",
+      "painPointRanks": [
+        7
+      ],
+      "painPointLabels": [
+        "Payment, subscription, and fulfillment proof must be separated from UI checkout readiness."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:7"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "2c528f6d1337c85e5da979138807c15ece9f0f870eb1d27b16e3a0424e64342a",
+        "byteLength": 2520973,
+        "evidence": [
+          {
+            "label": "Stripe Checkout Sessions API reference",
+            "matched": true
+          },
+          {
+            "label": "checkout session object or create endpoint",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "painPointRanks": [
+        8
+      ],
+      "painPointLabels": [
+        "Secure API and file-upload boundaries matter because resume and proof-pack workflows handle sensitive user context."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "owasp-llm-top-10-2025",
+        "label": "OWASP Top 10 for LLM Applications 2025",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "47dcd3cecc2186082420ab805378a18b2f2cc071d7dce1618b8c8f75c575e791",
+        "byteLength": 345768,
+        "evidence": [
+          {
+            "label": "OWASP LLM Top 10 2025 title",
+            "matched": true
+          },
+          {
+            "label": "AI application risk evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://github.com/CareerOneStop/API-Overview",
+      "painPointRanks": [],
+      "painPointLabels": [],
+      "competitorRanks": [
+        3
+      ],
+      "competitorLabels": [
+        "CareerOneStop and public career tools"
+      ],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "competitor_substitute:3"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "careeronestop-api",
+        "label": "CareerOneStop Web API Services",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "379e303b7e1cbee0f80323081035f9d0a8b2cc14a57fa59c7e22f20910e049e3",
+        "byteLength": 234362,
+        "evidence": [
+          {
+            "label": "CareerOneStop API overview",
+            "matched": true
+          },
+          {
+            "label": "web API services evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://lightcast.io/open-skills",
+      "painPointRanks": [],
+      "painPointLabels": [],
+      "competitorRanks": [
+        2
+      ],
+      "competitorLabels": [
+        "Lightcast Skills Taxonomy and labor-market data"
+      ],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "competitor_substitute:2"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "d561d05da84c3470b145915f11cf37dcf24a00bde2d0a05799bd5217e536762e",
+        "byteLength": 429767,
+        "evidence": [
+          {
+            "label": "Lightcast Skills Taxonomy",
+            "matched": true
+          },
+          {
+            "label": "skills taxonomy evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://owasp.org/API-Security/editions/2023/en/0x11-t10/",
+      "painPointRanks": [
+        8
+      ],
+      "painPointLabels": [
+        "Secure API and file-upload boundaries matter because resume and proof-pack workflows handle sensitive user context."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "ac00589e1bb28f4977b3c82dfb61713b7aac0cbd07b15bd40d8516ef86379524",
+        "byteLength": 34156,
+        "evidence": [
+          {
+            "label": "OWASP API Security Top 10 2023",
+            "matched": true
+          },
+          {
+            "label": "unsafe consumption API risk evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://owasp.org/www-project-application-security-verification-standard/",
+      "painPointRanks": [
+        8
+      ],
+      "painPointLabels": [
+        "Secure API and file-upload boundaries matter because resume and proof-pack workflows handle sensitive user context."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "owasp-asvs-5",
+        "label": "OWASP Application Security Verification Standard",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "49c846083ff55721de42dc1988be68a25de453082920cff27eb8de00f73ce14f",
+        "byteLength": 67905,
+        "evidence": [
+          {
+            "label": "OWASP ASVS title",
+            "matched": true
+          },
+          {
+            "label": "ASVS 5.0.0 current stable evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.cisa.gov/news-events/news/applying-secure-design-thinking-events-news",
+      "painPointRanks": [
+        8
+      ],
+      "painPointLabels": [
+        "Secure API and file-upload boundaries matter because resume and proof-pack workflows handle sensitive user context."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "cisa-secure-by-design",
+        "label": "CISA Secure by Design principles",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "40b3ef80c52a6dd3627c565d1d9680821ed9bd3bf787d9a030c28a34ba9fc382",
+        "byteLength": 59973,
+        "evidence": [
+          {
+            "label": "CISA Secure by Design guide reference",
+            "matched": true
+          },
+          {
+            "label": "Secure by Design principles evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.dol.gov/index.php/newsroom/releases/osec/osec20241016",
+      "painPointRanks": [
+        9
+      ],
+      "painPointLabels": [
+        "Employment-decision boundaries must be explicit to avoid misuse of individual reports or worker scores."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:9"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "dol-ai-worker-wellbeing-best-practices",
+        "label": "DOL AI Worker Well-being best practices",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "7bbbe08c5833662262dceb6c79b9fe6416c21f2075aacb4be68284f1df9c6f05",
+        "byteLength": 74595,
+        "evidence": [
+          {
+            "label": "DOL AI Best Practices roadmap",
+            "matched": true
+          },
+          {
+            "label": "worker-centered AI governance evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.eeoc.gov/laws/guidance/employment-tests-and-selection-procedures",
+      "painPointRanks": [
+        9
+      ],
+      "painPointLabels": [
+        "Employment-decision boundaries must be explicit to avoid misuse of individual reports or worker scores."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [
+        8
+      ],
+      "crmRowLabels": [
+        "HR consultants advising smaller employers"
+      ],
+      "usageContexts": [
+        "pain_point:9",
+        "crm_export:8"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "eeoc-employment-selection-procedures",
+        "label": "EEOC employment tests and selection procedures",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "c844e5c17bb8c9ce24f95518c70118f6b42cc2a9ea5829c5d56698b340c4e156",
+        "byteLength": 83620,
+        "evidence": [
+          {
+            "label": "EEOC employment tests and selection procedures",
+            "matched": true
+          },
+          {
+            "label": "selection procedure adverse-impact boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "painPointRanks": [
+        10
+      ],
+      "painPointLabels": [
+        "Founder-led market validation needs exportable evidence, not only UI demos or anecdotal feedback."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:10"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "ftc-consumer-reviews-rule-questions",
+        "label": "FTC Consumer Reviews and Testimonials Rule questions",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "20014e78d49ef2a532605eacddc4cc54c44be89287402730d08aa029c863ae69",
+        "byteLength": 1020981,
+        "evidence": [
+          {
+            "label": "FTC Consumer Reviews and Testimonials Rule Q&A",
+            "matched": true
+          },
+          {
+            "label": "fake or deceptive reviews/testimonials boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "painPointRanks": [
+        10
+      ],
+      "painPointLabels": [
+        "Founder-led market validation needs exportable evidence, not only UI demos or anecdotal feedback."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:10"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "ftc-endorsement-guides-faq",
+        "label": "FTC Endorsement Guides: What People Are Asking",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "c77a546dc62c47c090190d88fb9077b45351c110c3fe3271a7701cff0cf1818a",
+        "byteLength": 1082146,
+        "evidence": [
+          {
+            "label": "FTC Endorsement Guides FAQ",
+            "matched": true
+          },
+          {
+            "label": "material connection disclosure guidance",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
+      "painPointRanks": [
+        2
+      ],
+      "painPointLabels": [
+        "Career centers need aggregate AI-work-transition workshop artifacts that avoid student-level employment decisions."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [
+        2,
+        6
+      ],
+      "crmRowLabels": [
+        "University career centers",
+        "Bootcamps and continuing education providers"
+      ],
+      "usageContexts": [
+        "pain_point:2",
+        "crm_export:2",
+        "crm_export:6"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "nace-career-readiness",
+        "label": "NACE Career Readiness Competencies",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "5e3098921069484f6824c02ea8d0df5e4e5229dbf7b1a89178d50e9c04ba0803",
+        "byteLength": 75349,
+        "evidence": [
+          {
+            "label": "NACE career readiness definition",
+            "matched": true
+          },
+          {
+            "label": "lifelong career management evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "painPointRanks": [
+        4
+      ],
+      "painPointLabels": [
+        "Institutional buyers need AI governance artifacts before piloting career decision-support tools."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:4"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "llm-output",
+        "label": "NIST AI RMF grounding for LLM-output caveats",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "a9f99c55ea3919dafae7a1f482e6fe9ed1a7bf23cba31f78830750cb5ffacd3f",
+        "byteLength": 91472,
+        "evidence": [
+          {
+            "label": "NIST AI Risk Management Framework",
+            "matched": true
+          },
+          {
+            "label": "NIST source evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+      "painPointRanks": [
+        4
+      ],
+      "painPointLabels": [
+        "Institutional buyers need AI governance artifacts before piloting career decision-support tools."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:4"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "nist-ai-genai-profile",
+        "label": "NIST AI RMF Generative Artificial Intelligence Profile",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "27882a2d695b75696255f849e7080a3681a0f00dc732c49e47ba863812cbedfb",
+        "byteLength": 81772,
+        "evidence": [
+          {
+            "label": "NIST AI RMF Generative AI Profile",
+            "matched": true
+          },
+          {
+            "label": "NIST AI 600-1 evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.onetcenter.org/database.html",
+      "painPointRanks": [
+        6
+      ],
+      "painPointLabels": [
+        "Buyers need source freshness and data provenance before trusting automation-risk reports."
+      ],
+      "competitorRanks": [
+        4
+      ],
+      "competitorLabels": [
+        "O*NET Database and O*NET OnLine-style manual workflows"
+      ],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:6",
+        "competitor_substitute:4"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "67432c8fca9f3de85ab1227fbbd877885ac2bb08661571b5bf7ef10b95afad56",
+        "byteLength": 394478,
+        "evidence": [
+          {
+            "label": "O*NET Database page",
+            "matched": true
+          },
+          {
+            "label": "occupation descriptor evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.w3.org/TR/wcag-em-2/",
+      "painPointRanks": [
+        5
+      ],
+      "painPointLabels": [
+        "Accessibility evidence must be reviewable before institutional pilots or procurement conversations."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:5"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "wcag-em-2",
+        "label": "WCAG-EM 2.0 digital-product evaluation draft",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "242060b46891f1ad4dc7b4a7fc90fe6ddab9b6201c6955c6132b30da49598255",
+        "byteLength": 144958,
+        "evidence": [
+          {
+            "label": "WCAG-EM 2.0 title",
+            "matched": true
+          },
+          {
+            "label": "digital product evaluation evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "painPointRanks": [
+        5
+      ],
+      "painPointLabels": [
+        "Accessibility evidence must be reviewable before institutional pilots or procurement conversations."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [
+        7
+      ],
+      "crmRowLabels": [
+        "Public libraries and community workforce programs"
+      ],
+      "usageContexts": [
+        "pain_point:5",
+        "crm_export:7"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "wcag-22",
+        "label": "WCAG 2.2 accessibility standard",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "6e3c5fe397257cae509a2fb4752b73062cf8cbeb92c2cec618989b17e4cf7057",
+        "byteLength": 512457,
+        "evidence": [
+          {
+            "label": "WCAG 2.2 title",
+            "matched": true
+          },
+          {
+            "label": "conformance levels evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "painPointRanks": [
+        5
+      ],
+      "painPointLabels": [
+        "Accessibility evidence must be reviewable before institutional pilots or procurement conversations."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "pain_point:5"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "wcag-em-overview",
+        "label": "WCAG-EM conformance evaluation overview",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "24d3685e499334ea2cf8bfb48149536d8f96969a9a1020911f636855fdb52be2",
+        "byteLength": 49007,
+        "evidence": [
+          {
+            "label": "WCAG-EM overview title",
+            "matched": true
+          },
+          {
+            "label": "WCAG-EM evaluation process",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+      "painPointRanks": [
+        1
+      ],
+      "painPointLabels": [
+        "Career coaches need credible AI-exposure explanations without overclaiming validated assessment status."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [
+        1,
+        5
+      ],
+      "crmRowLabels": [
+        "Independent career coaches and resume writers serving knowledge workers",
+        "Outplacement and career-transition providers"
+      ],
+      "usageContexts": [
+        "pain_point:1",
+        "crm_export:1",
+        "crm_export:5"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "wef-foj-2025",
+        "label": "World Economic Forum Future of Jobs Report 2025",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "49f2ee7acca09005d54c4afef6b97864243a1d5f1ca463e71ac80ab72e5550a3",
+        "byteLength": 304115,
+        "evidence": [
+          {
+            "label": "Future of Jobs Report 2025 title",
+            "matched": true
+          },
+          {
+            "label": "World Economic Forum source",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/in-full/2-jobs-outlook/",
+      "painPointRanks": [
+        3
+      ],
+      "painPointLabels": [
+        "Workforce teams need role-level automation-risk review without ranking employees or making employment decisions."
+      ],
+      "competitorRanks": [],
+      "competitorLabels": [],
+      "crmRowRanks": [
+        3,
+        4
+      ],
+      "crmRowLabels": [
+        "Workforce boards running role-transition programs",
+        "L&D teams at mid-market professional-services firms"
+      ],
+      "usageContexts": [
+        "pain_point:3",
+        "crm_export:3",
+        "crm_export:4"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "9377686e088e69b69253a833b5f047f05740948e562732ea92e94c8596515a9c",
+        "byteLength": 337305,
+        "evidence": [
+          {
+            "label": "Future of Jobs 2025 jobs outlook chapter",
+            "matched": true
+          },
+          {
+            "label": "World Economic Forum source",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/in-full/4-workforce-strategies/",
+      "painPointRanks": [
+        10
+      ],
+      "painPointLabels": [
+        "Founder-led market validation needs exportable evidence, not only UI demos or anecdotal feedback."
+      ],
+      "competitorRanks": [
+        5
+      ],
+      "competitorLabels": [
+        "Manual consulting, spreadsheets, and AI-literacy workshop substitutes"
+      ],
+      "crmRowRanks": [
+        9,
+        10
+      ],
+      "crmRowLabels": [
+        "Economic-development organizations",
+        "AI literacy training providers"
+      ],
+      "usageContexts": [
+        "pain_point:10",
+        "competitor_substitute:5",
+        "crm_export:9",
+        "crm_export:10"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": false,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": null,
+        "label": null,
+        "passed": null
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "70997a7d8a839b08ce4de7006e49eda5a723cfdeebf143ce05fd55a36ea30a08",
+        "byteLength": 359213,
+        "evidence": [
+          {
+            "label": "Future of Jobs 2025 workforce strategies chapter",
+            "matched": true
+          },
+          {
+            "label": "World Economic Forum source",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "url": "https://www.workera.ai/product-overview",
+      "painPointRanks": [],
+      "painPointLabels": [],
+      "competitorRanks": [
+        1
+      ],
+      "competitorLabels": [
+        "Workera"
+      ],
+      "crmRowRanks": [],
+      "crmRowLabels": [],
+      "usageContexts": [
+        "competitor_substitute:1"
+      ],
+      "expectedEvidenceCount": 2,
+      "sourceVerification": {
+        "covered": true,
+        "allPassed": true,
+        "generatedAt": "2026-06-08T21:33:55.057Z",
+        "id": "workera-positioning",
+        "label": "Workera skills intelligence positioning",
+        "passed": true,
+        "status": 200
+      },
+      "fetch": {
+        "attempted": true,
+        "status": 200,
+        "ok": true,
+        "contentSha256": "a4cb624c65a03273548a4459f62dddc705454a288726bbe613441e4123a84086",
+        "byteLength": 200861,
+        "evidence": [
+          {
+            "label": "Workera product overview",
+            "matched": true
+          },
+          {
+            "label": "verified skills or workforce capability evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

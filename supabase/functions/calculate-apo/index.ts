@@ -285,13 +285,15 @@ serve(async (req) => {
       throw new Error('Gemini API key is not configured');
     }
 
-    // Optional API key enforcement (run before rate limiting to avoid leaking rate-limit behavior to unauthenticated callers)
+    // Required API key enforcement (SEC-2 fix: was optional, now mandatory)
     const requiredApiKey = Deno.env.get('APO_FUNCTION_API_KEY');
-    if (requiredApiKey) {
-      const providedKey = req.headers.get('x-api-key');
-      if (providedKey !== requiredApiKey) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...baseHeaders, 'Content-Type': 'application/json' } });
-      }
+    if (!requiredApiKey) {
+      console.error('APO_FUNCTION_API_KEY env var not set — rejecting all requests');
+      return new Response(JSON.stringify({ error: 'Server misconfigured' }), { status: 503, headers: { ...baseHeaders, 'Content-Type': 'application/json' } });
+    }
+    const providedKey = req.headers.get('x-api-key');
+    if (providedKey !== requiredApiKey) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...baseHeaders, 'Content-Type': 'application/json' } });
     }
 
     // Lightweight rate limiting (per-minute)
@@ -327,18 +329,14 @@ serve(async (req) => {
 
     console.log(`Calculating enhanced APO for occupation: ${occupation.title} (${occupation.code})`);
 
-    // Create service client (used for config and telemetry)
-    // Fallback to header-provided service key and derive URL from request when env is missing.
+    // Create service client using env vars only (SEC-3 fix: removed header fallback)
     const rawUrl = new URL(req.url);
     const host = rawUrl.hostname;
     const derivedBaseUrl = host.endsWith('.functions.supabase.co')
       ? `https://${host.replace('.functions.supabase.co', '.supabase.co')}`
       : `${rawUrl.protocol}//${host}`;
-    const headerApiKey = (req.headers.get('x-service-key') || '').trim()
-      || ((req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim())
-      || (req.headers.get('apikey') || '').trim();
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('PROJECT_URL') || derivedBaseUrl;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY') || headerApiKey || '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY') || '';
     const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
     if (!supabase) console.warn('Supabase service client not available; using DEFAULT_* config');
 

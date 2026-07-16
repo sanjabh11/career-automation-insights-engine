@@ -7,6 +7,7 @@ import path from 'node:path';
 import {
   DEFAULT_LIVE_GATE_EVIDENCE_PATH,
   LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
+  LIVE_PROOF_ARCHIVE_REQUIREMENTS,
   validateLiveGateEvidence,
 } from './lib/liveGateEvidence.mjs';
 
@@ -84,12 +85,21 @@ function checkIds(artifact) {
   return new Set((artifact?.checks || []).map((check) => check?.id).filter(Boolean));
 }
 
+function ownerEvidenceArchive(gateId, artifact) {
+  const supplied = artifact?.evidenceSummary?.ownerEvidenceArchive;
+  const requirements = LIVE_PROOF_ARCHIVE_REQUIREMENTS[gateId] || [];
+  return Object.fromEntries(requirements.map((key) => [key, supplied?.[key] === false ? false : true]));
+}
+
 function buildStripeTestCheckoutItem(artifact, source) {
   const summary = artifact.evidenceSummary || {};
   const errors = [];
   if (summary.testMode !== true) errors.push('stripe test checkout artifact must report evidenceSummary.testMode=true');
   if (summary.checkoutSessionCreated !== true) errors.push('stripe test checkout artifact must report evidenceSummary.checkoutSessionCreated=true');
   if (summary.edgeFunction !== 'create-checkout-session') errors.push('stripe test checkout artifact must identify create-checkout-session');
+  if (summary.checkoutSessionMode !== 'subscription') errors.push('stripe test checkout artifact must report evidenceSummary.checkoutSessionMode=subscription');
+  if (typeof summary.checkoutSessionStatus !== 'string') errors.push('stripe test checkout artifact must report evidenceSummary.checkoutSessionStatus');
+  if (typeof summary.paymentStatus !== 'string') errors.push('stripe test checkout artifact must report evidenceSummary.paymentStatus');
 
   return {
     errors,
@@ -98,13 +108,18 @@ function buildStripeTestCheckoutItem(artifact, source) {
       status: 'proven',
       observedAt: artifact.generatedAt,
       evidenceType: 'stripe_test_checkout_session',
-      redactionBoundary: 'Stripe keys, customer identity, payment method details, and raw Checkout Session payload are owner-held outside the repository.',
+      redactionBoundary:
+        'Stripe keys, customer identity, payment method details, hosted Checkout URLs, dashboard URLs, and raw Checkout Session payload are owner-held outside the repository.',
       artifactHashes: [artifactHash(source)],
       evidenceSummary: {
         testMode: summary.testMode === true,
         checkoutSessionCreated: summary.checkoutSessionCreated === true,
         checkoutUrlOpened: summary.checkoutUrlOpened === true,
         edgeFunction: 'create-checkout-session',
+        checkoutSessionMode: summary.checkoutSessionMode || null,
+        checkoutSessionStatus: summary.checkoutSessionStatus || null,
+        paymentStatus: summary.paymentStatus || null,
+        ownerEvidenceArchive: ownerEvidenceArchive('real_stripe_test_checkout', artifact),
       },
       doesNotProve: artifact.doesNotProve || [
         'Live revenue',
@@ -130,13 +145,15 @@ function buildProductionCalibrationItem(artifact, source) {
       status: 'proven',
       observedAt: artifact.generatedAt,
       evidenceType: 'production_calibration_run',
-      redactionBoundary: 'Supabase service-role key, raw APO logs, respondent details, and non-public expert labels are owner-held outside the repository.',
+      redactionBoundary:
+        'Supabase service-role key, Supabase dashboard URLs, raw APO logs, respondent details, and non-public expert labels are owner-held outside the repository.',
       artifactHashes: [artifactHash(source)],
       evidenceSummary: {
         ece: summary.ece,
         expertAssessmentCount: summary.expertAssessmentCount,
         predictionPairCount: summary.predictionPairCount,
         targetProject: summary.targetProjectHash ? 'redacted_hash' : 'redacted',
+        ownerEvidenceArchive: ownerEvidenceArchive('production_calibration_run', artifact),
       },
       doesNotProve: artifact.doesNotProve || [
         'Scientific validity beyond the measured sample',
@@ -163,7 +180,8 @@ function buildAuthenticatedLiveE2eItem(artifact, source) {
       status: 'proven',
       observedAt: artifact.generatedAt,
       evidenceType: 'authenticated_live_e2e',
-      redactionBoundary: 'Synthetic user credentials, auth tokens, raw resume text, stored artifact payloads, and receipt internals are owner-held or redacted outside the repository.',
+      redactionBoundary:
+        'Synthetic user credentials, auth tokens, Supabase dashboard URLs, raw resume text, stored artifact payloads, and receipt internals are owner-held or redacted outside the repository.',
       artifactHashes: [artifactHash(source)],
       evidenceSummary: {
         passed: artifact.status === 'passed',
@@ -171,6 +189,7 @@ function buildAuthenticatedLiveE2eItem(artifact, source) {
         artifactSaved: ids.has('redacted-artifact-create'),
         artifactDeleted: ids.has('redacted-artifact-delete-readback'),
         deletionReceiptVerified: ids.has('redacted-artifact-delete-receipt') && ids.has('resume-analysis-delete-receipt'),
+        ownerEvidenceArchive: ownerEvidenceArchive('authenticated_live_artifact_e2e', artifact),
       },
       doesNotProve: artifact.doesNotProve || [
         'Payment proof',
@@ -196,7 +215,8 @@ function buildStripeLiveMrrItem(artifact, source) {
       status: 'proven',
       observedAt: artifact.generatedAt,
       evidenceType: 'stripe_live_mrr_export',
-      redactionBoundary: 'Stripe live secret key, customer identities, subscription IDs, invoice IDs, payment details, and raw Stripe exports are owner-held outside the repository.',
+      redactionBoundary:
+        'Stripe live secret key, customer identities, subscription IDs, invoice IDs, hosted Stripe Invoice/Billing URLs, Stripe dashboard URLs, payment details, and raw Stripe exports are owner-held outside the repository.',
       artifactHashes: [artifactHash(source)],
       evidenceSummary: {
         liveMode: summary.liveMode === true,
@@ -204,6 +224,7 @@ function buildStripeLiveMrrItem(artifact, source) {
         activeSubscriptionCount: summary.activeSubscriptionCount,
         paidInvoiceCount: summary.paidInvoiceCount,
         currency: summary.currency || 'redacted_or_multi_currency',
+        ownerEvidenceArchive: ownerEvidenceArchive('live_mrr_gt_zero', artifact),
       },
       doesNotProve: artifact.doesNotProve || [
         'Retention',
@@ -276,7 +297,8 @@ function composeEvidence() {
   const evidence = {
     schemaVersion: LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
     asOf: asOfFromItems(items),
-    sourceBoundary: 'Composed redacted owner evidence from passing live proof artifacts only. Raw screenshots, exports, customer details, secrets, future-dated proof metadata, and private records remain owner-held outside the repository.',
+    sourceBoundary:
+      'Composed redacted owner evidence from passing live proof artifacts only. Raw screenshots, exports, customer details, secrets, hosted Stripe URLs, provider dashboard URLs, private profile URLs, meeting/calendar links, future-dated proof metadata, and private records remain owner-held outside the repository.',
     evidenceItems: items,
   };
 
@@ -305,22 +327,30 @@ function main() {
   const validation = validateComposedEvidence(evidence);
   const acceptedGateIds = new Set(validation.acceptedGateIds);
   const complete = specs.every((spec) => acceptedGateIds.has(spec.gateId));
-  const inputErrors = inputs.flatMap((input) => input.errors.map((error) => `${input.id}: ${error}`));
-  const errors = [...inputErrors, ...validation.errors];
+  const incompleteGateReasons = inputs
+    .filter((input) => !acceptedGateIds.has(input.gateId))
+    .flatMap((input) => input.errors.map((error) => `${input.id}: ${error}`));
+  const fatalErrors = [...validation.errors];
+  const errors = requireComplete || !allowPartial
+    ? [...incompleteGateReasons, ...fatalErrors]
+    : fatalErrors;
+  const hasAcceptedEvidence = validation.acceptedGateIds.length > 0;
 
-  const canWrite = shouldWrite && errors.length === 0 && (complete || allowPartial);
+  const canWrite = shouldWrite && fatalErrors.length === 0 && (complete || (allowPartial && hasAcceptedEvidence));
   if (canWrite) {
     fs.mkdirSync(path.dirname(outputAbsolutePath), { recursive: true });
     fs.writeFileSync(outputAbsolutePath, `${JSON.stringify(evidence, null, 2)}\n`);
   }
 
-  const composeCommand = `npm run compose:live-gate-evidence -- --write --require-complete`;
-  const validateCommand = `npm run verify:live-gate-evidence -- --evidence ${outputDisplayPath} --require-complete`;
-  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --require-complete`;
-  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --require-complete`;
+  const composePartialCommand = `npm run compose:live-gate-evidence -- --write --allow-partial --output ${outputDisplayPath}`;
+  const composeCompleteCommand = `npm run compose:live-gate-evidence -- --write --require-complete --output ${outputDisplayPath}`;
+  const validatePartialCommand = `npm run verify:live-gate-evidence -- --evidence ${outputDisplayPath} --require-any`;
+  const validateCompleteCommand = `npm run verify:live-gate-evidence -- --evidence ${outputDisplayPath} --require-complete`;
+  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --manual-wcag-evidence <manual-wcag-evidence-path> --require-complete`;
+  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence ${outputDisplayPath} --commercial-evidence <commercial-evidence-records-path> --manual-wcag-evidence <manual-wcag-evidence-path> --require-complete`;
 
   const result = {
-    ok: errors.length === 0 && (complete || allowPartial || !requireComplete),
+    ok: errors.length === 0 && (complete || (allowPartial && hasAcceptedEvidence) || (!allowPartial && !requireComplete)),
     complete,
     schemaVersion: LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
     outputPath: outputDisplayPath,
@@ -330,17 +360,25 @@ function main() {
     inputCount: inputs.length,
     acceptedInputCount: inputs.filter((input) => input.accepted).length,
     inputs,
+    incompleteGateReasonCount: incompleteGateReasons.length,
+    incompleteGateReasons,
+    fatalErrorCount: fatalErrors.length,
+    fatalErrors,
     errorCount: errors.length,
     errors,
-    nextCommand: canWrite ? validateCommand : composeCommand,
+    nextCommand: canWrite ? validatePartialCommand : composePartialCommand,
     nextCommands: canWrite
       ? {
-        validateLiveEvidence: validateCommand,
+        validateLiveEvidence: validatePartialCommand,
+        validatePartialLiveEvidence: validatePartialCommand,
+        composeCompleteLiveEvidence: composeCompleteCommand,
+        validateCompleteLiveEvidence: validateCompleteCommand,
         finalReadOnlyLedger: finalReadOnlyLedgerCommand,
         refreshTrackedLedger: refreshTrackedLedgerCommand,
       }
       : {
-        composeLiveEvidence: composeCommand,
+        composePartialLiveEvidence: composePartialCommand,
+        composeCompleteLiveEvidence: composeCompleteCommand,
       },
   };
 

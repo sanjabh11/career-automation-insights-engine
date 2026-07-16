@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "name": "commercial-full-local-gate-2026-06-05",
+  "goal": "Plan-only phase for career-automation-insights-engine commercial launch readiness: prove optional non-secret local gates before any full-local execution. Scope: accessibility smoke, browser journey, official source URL refresh, launch evidence source URL fetch, live closeout access source URL fetch, npm production audit, and final npm run verify:commercial-full summary. Constraints: no production deploys, no live credentials, no payment changes, no customer outreach, no destructive actions, no worker execution/export without approval. Evidence required: exact commands, expected artifacts, stop conditions, pass/fail criteria, and launch-decision boundary stays pilot-only until owner evidence gates close.",
+  "sourceTask": "Plan-only phase for career-automation-insights-engine commercial launch readiness: prove optional non-secret local gates before any full-local execution. Scope: accessibility smoke, browser journey, official source URL refresh, launch evidence source URL fetch, live closeout access source URL fetch, npm production audit, and final npm run verify:commercial-full summary. Constraints: no production deploys, no live credentials, no payment changes, no customer outreach, no destructive actions, no worker execution/export without approval. Evidence required: exact commands, expected artifacts, stop conditions, pass/fail criteria, and launch-decision boundary stays pilot-only until owner evidence gates close.",
+  "repoRoot": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+  "mode": "plan-only",
+  "executionApproved": false,
+  "classification": {
+    "launch": true,
+    "mode": "plan-only",
+    "tier": 2,
+    "score": 6,
+    "primarySkill": "dynamic-workflow-backlog",
+    "reasons": [
+      "large multi-surface task",
+      "multi-phase or long-running execution",
+      "risk level benefits from explicit verification gates"
+    ],
+    "cautions": [
+      "requires stop-and-ask before execution; use plan-only backlog until approved"
+    ],
+    "maxConcurrency": 4,
+    "maxAgents": 64,
+    "recommendedTasks": [
+      "map|mapper|Map UI surface|Identify routes, components, tokens, and current runtime proof",
+      "design|designer|Propose visual direction|Define the design thesis and reusable component changes",
+      "verify|browser-reviewer|Verify runtime UI|Check browser rendering, console errors, responsiveness, and proof artifacts",
+      "verify|adversary|Challenge design claims|Find regressions, accessibility risks, or unsupported visual claims"
+    ]
+  },
+  "automode": null,
+  "maxConcurrency": 4,
+  "maxAgents": 64,
+  "tokenWarning": {
+    "risk": "low",
+    "estimatedAgentRuns": 4,
+    "estimatedReviewRuns": 2,
+    "estimatedTotalRuns": 6,
+    "warning": "Scoped run; still verify before exporting worker plans."
+  },
+  "createdAt": "2026-06-05T05:38:04.789Z",
+  "updatedAt": "2026-06-05T06:03:07.744Z"
+}

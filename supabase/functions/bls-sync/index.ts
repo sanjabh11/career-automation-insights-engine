@@ -17,13 +17,27 @@ const corsHeaders = {
 // }
 
 type JsonRecord = Record<string, unknown>;
-type BlsMode = 'fetch' | 'upsert' | 'fetch_oews' | 'upsert_oews_batch';
+type BlsMode = 'fetch' | 'upsert' | 'fetch_oews' | 'upsert_oews_batch' | 'auto_refresh' | 'check_freshness';
 
 interface SupabaseTableClient {
   upsert(
-    payload: BlsEmploymentDataRow,
+    payload: BlsEmploymentDataRow | Record<string, unknown>,
     options?: { onConflict: string },
   ): Promise<{ error?: unknown }>;
+  insert(payload: Record<string, unknown> | Record<string, unknown>[]): Promise<{ error?: unknown }>;
+  select(columns?: string): SupabaseQueryClient;
+}
+
+interface SupabaseQueryClient {
+  eq(column: string, value: unknown): SupabaseQueryClient;
+  gte(column: string, value: unknown): SupabaseQueryClient;
+  in(column: string, values: unknown[]): SupabaseQueryClient;
+  order(column: string, opts?: { ascending?: boolean }): SupabaseQueryClient;
+  limit(n: number): SupabaseQueryClient;
+  single(): Promise<{ data: unknown; error: unknown }>;
+  head(): SupabaseQueryClient;
+  count(): SupabaseQueryClient;
+  then<T>(onfulfilled: (value: { data: unknown[]; error: unknown; count?: number }) => T): Promise<T>;
 }
 
 interface SupabaseClientLike {
@@ -83,7 +97,7 @@ const asNumber = (value: unknown): number | null => {
 
 const parseMode = (value: unknown): BlsMode => {
   const mode = asString(value);
-  if (mode === 'fetch' || mode === 'upsert' || mode === 'fetch_oews' || mode === 'upsert_oews_batch') {
+  if (mode === 'fetch' || mode === 'upsert' || mode === 'fetch_oews' || mode === 'upsert_oews_batch' || mode === 'auto_refresh' || mode === 'check_freshness') {
     return mode;
   }
   return 'upsert';
@@ -156,6 +170,26 @@ async function upsertBlsRows(
     await supabase.from('bls_employment_data')
       .upsert(payload, { onConflict: 'occupation_code_6,year,region' });
   }
+}
+
+async function upsertProjectionRow(
+  supabase: SupabaseClientLike,
+  soc6: string,
+  projectionYear: number,
+  employmentLevel: number | null,
+  projectedGrowth10y: number | null,
+  medianWageAnnual: number | null,
+) {
+  const payload = {
+    occupation_code_6: soc6,
+    projection_year: projectionYear,
+    employment_level: employmentLevel,
+    projected_growth_10y: projectedGrowth10y,
+    median_wage_annual: medianWageAnnual,
+    updated_at: new Date().toISOString(),
+  };
+  await supabase.from('bls_employment_projections')
+    .upsert(payload, { onConflict: 'occupation_code_6,projection_year' });
 }
 
 export async function handler(req: Request) {
@@ -322,6 +356,213 @@ export async function handler(req: Request) {
         if (!found) continue;
       }
       return new Response(JSON.stringify({ ok: true, totalUpserted, source: 'bls' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // --- auto_refresh mode: scheduled weekly ETL for employment projections + OEWS ---
+    if (mode === 'auto_refresh') {
+      const currentYear = new Date().getFullYear();
+      const startYearAuto = String(currentYear - 5);
+      const endYearAuto = String(currentYear);
+      const defaultSoc6 = ['15-1252', '29-1141', '41-2011', '43-4051', '53-3032', '11-1021'];
+      const list = parseStringList(body.soc6List, defaultSoc6);
+      const results: { employmentData: number; projections: number; oews: number } = { employmentData: 0, projections: 0, oews: 0 };
+
+      // 1. Fetch employment timeseries data
+      try {
+        const seriesMap: Record<string, string> = {
+          '15-1252': 'OEUM000000151252',
+          '29-1141': 'OEUM000000291141',
+          '41-2011': 'OEUM000000412011',
+          '43-4051': 'OEUM000000434051',
+          '53-3032': 'OEUM000000533032',
+          '11-1021': 'OEUM000000111021',
+        };
+        const autoSeries = list.map((soc6) => ({ soc6, seriesId: seriesMap[soc6] || '' })).filter(s => s.seriesId);
+        if (autoSeries.length) {
+          const blsBody: BlsTimeseriesRequest = { seriesid: autoSeries.map(s => s.seriesId), startyear: startYearAuto, endyear: endYearAuto };
+          if (registrationkey) blsBody.registrationkey = registrationkey;
+          const res = await fetch(timeseriesUrl, { method: 'POST', headers, body: JSON.stringify(blsBody) });
+          if (res.ok) {
+            const data = await res.json() as unknown;
+            const seriesArr = parseBlsSeriesResponse(data);
+            for (let i = 0; i < seriesArr.length; i++) {
+              const s = seriesArr[i];
+              const meta = autoSeries[i];
+              if (!meta) continue;
+              const yearsMap: Record<number, { employment: number | null }> = {};
+              for (const pt of (s.data || [])) {
+                const year = Number(pt.year);
+                const val = Number(pt.value);
+                if (!Number.isFinite(year)) continue;
+                const isAnnual = pt.period === 'A01';
+                const prev = yearsMap[year]?.employment ?? null;
+                if (isAnnual || prev == null) yearsMap[year] = { employment: Number.isFinite(val) ? val : null };
+              }
+              const rows = Object.entries(yearsMap)
+                .map(([y, v]) => ({ year: Number(y), employment: v.employment }))
+                .sort((a, b) => a.year - b.year);
+              await upsertBlsRows(supabase, meta.soc6, null, rows);
+              results.employmentData += rows.length;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('auto_refresh: employment timeseries fetch failed:', e);
+      }
+
+      // 2. Fetch BLS employment projections ( Employment Projections program)
+      try {
+        const projUrl = `https://www.bls.gov/emp/tables/employment-by-major-industry-sector.htm`;
+        const projRes = await fetch(projUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'text/html,application/json' },
+        });
+        if (projRes.ok) {
+          // Try the BLS data API for projections
+          const projApiUrl = 'https://data.bls.gov/cgi-bin/surveymost?ep';
+          // Instead, use the JSON endpoint for employment projections
+          const projJsonUrl = 'https://www.bls.gov/emp/ep_table_data.json';
+          const projJsonRes = await fetch(projJsonUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' },
+          });
+          if (projJsonRes.ok) {
+            const projData = await projJsonRes.json() as unknown;
+            // Parse and upsert projections into bls_employment_projections
+            if (isRecord(projData) && Array.isArray(projData['EP Table Data'])) {
+              for (const row of projData['EP Table Data'] as unknown[]) {
+                if (!isRecord(row)) continue;
+                const occCode = asString(row['occupation_code']) || asString(row['occ_code']);
+                if (!occCode) continue;
+                const soc6 = toSoc6(occCode);
+                const projYear = asNumber(row['projection_year']) ?? currentYear + 10;
+                const empLevel = asNumber(row['employment_level']) ?? asNumber(row['projected_employment']);
+                const growthRate = asNumber(row['projected_growth_10y']) ?? asNumber(row['growth_rate']);
+                const medianWage = asNumber(row['median_wage_annual']) ?? asNumber(row['median_wage']);
+
+                await upsertProjectionRow(supabase, soc6, projYear, empLevel, growthRate, medianWage);
+                results.projections++;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('auto_refresh: projections fetch failed (non-fatal):', e);
+      }
+
+      // 3. Fetch OEWS wage data for current year
+      try {
+        const yy = String(currentYear - 1).slice(-2);
+        const zipUrl = `https://www.bls.gov/oes/special-requests/oesm${yy}nat.zip`;
+        const fetchHeaders: Record<string, string> = {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'text/csv,application/zip,application/octet-stream,*/*',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Cache-Control': 'no-cache',
+          'Referer': 'https://www.bls.gov/oes/tables.htm',
+        };
+        const res = await fetch(zipUrl, { headers: fetchHeaders });
+        if (res.ok) {
+          const { unzipSync } = await import('https://esm.sh/fflate@0.8.2');
+          const zipBytes = new Uint8Array(await res.arrayBuffer());
+          const files = unzipSync(zipBytes);
+          const decoder = new TextDecoder();
+          for (const name of Object.keys(files)) {
+            if (name.toLowerCase().endsWith('.csv')) {
+              const csvText = decoder.decode(files[name]);
+              results.oews = await processOEWSCSVText(supabase, list, csvText, currentYear - 1, null);
+              break;
+            }
+          }
+        } else {
+          // Try CSV fallback
+          const csvUrl = `https://www.bls.gov/oes/special-requests/oesm${yy}nat.csv`;
+          const rcsv = await fetch(csvUrl, { headers: fetchHeaders });
+          if (rcsv.ok) {
+            const csvText = await rcsv.text();
+            results.oews = await processOEWSCSVText(supabase, list, csvText, currentYear - 1, null);
+          }
+        }
+      } catch (e) {
+        console.warn('auto_refresh: OEWS fetch failed (non-fatal):', e);
+      }
+
+      // Record refresh timestamp
+      try {
+        await supabase.from('bls_sync_log').insert({
+          mode: 'auto_refresh',
+          employment_rows: results.employmentData,
+          projection_rows: results.projections,
+          oews_rows: results.oews,
+          refreshed_at: new Date().toISOString(),
+        });
+      } catch (e) {
+        // bls_sync_log table may not exist yet; non-fatal
+        console.warn('auto_refresh: sync log insert failed (non-fatal):', e);
+      }
+
+      return new Response(JSON.stringify({
+        ok: true,
+        mode: 'auto_refresh',
+        ...results,
+        refreshed_at: new Date().toISOString(),
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // --- check_freshness mode: verify data is <= 7 days old ---
+    if (mode === 'check_freshness') {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      // Check bls_employment_data freshness
+      const empResult = await supabase
+        .from('bls_employment_data')
+        .select('year, data_source')
+        .order('year', { ascending: false })
+        .limit(1) as { data: unknown[]; error: unknown };
+      const empFreshYear = empResult.data && empResult.data.length ? (empResult.data[0] as { year: number }).year : null;
+
+      // Check bls_employment_projections freshness
+      let projFresh = false;
+      let projCount = 0;
+      try {
+        const projResult = await supabase
+          .from('bls_employment_projections')
+          .select('id, updated_at')
+          .gte('updated_at', sevenDaysAgo)
+          .limit(1) as { data: unknown[]; error: unknown };
+        projFresh = !!(projResult.data && projResult.data.length);
+        const countResult = await supabase
+          .from('bls_employment_projections')
+          .select('*') as unknown as { count?: number };
+        projCount = countResult.count ?? 0;
+      } catch (e) {
+        // Table may not exist yet
+        console.warn('check_freshness: projections table check failed:', e);
+      }
+
+      // Check bls_sync_log for last refresh
+      let lastRefresh: string | null = null;
+      try {
+        const logResult = await supabase
+          .from('bls_sync_log')
+          .select('refreshed_at')
+          .order('refreshed_at', { ascending: false })
+          .limit(1) as { data: unknown[]; error: unknown };
+        lastRefresh = logResult.data && logResult.data.length ? (logResult.data[0] as { refreshed_at: string }).refreshed_at : null;
+      } catch (e) {
+        // Non-fatal
+      }
+
+      const isFresh = projFresh || (lastRefresh !== null && new Date(lastRefresh) > new Date(sevenDaysAgo));
+
+      return new Response(JSON.stringify({
+        ok: true,
+        mode: 'check_freshness',
+        is_fresh: !!isFresh,
+        last_refresh: lastRefresh,
+        employment_data_latest_year: empFreshYear,
+        projections_count: projCount,
+        projections_fresh: projFresh,
+        threshold_days: 7,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // Batch the series into chunks of up to 20 per BLS API

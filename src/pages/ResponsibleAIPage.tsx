@@ -23,6 +23,8 @@ import {
 } from "@/lib/commercialLaunchGate";
 import {
   commercialLaunchReadinessMilestones,
+  ownerEvidenceHandoffSummary,
+  ownerEvidencePrepReadinessSummary,
   paymentFulfillmentStatusItems,
 } from "@/lib/commercialLaunchReadiness";
 import {
@@ -53,7 +55,8 @@ function scoreLabel(value: number): string {
 
 export default function ResponsibleAIPage() {
   const packet = buildInstitutionalReadinessPacket();
-  const blockedGateCount = commercialLaunchGateItems.filter((item) => item.owner !== "codex-implemented").length;
+  const blockedGateCount = ownerEvidenceHandoffSummary.ownerActionQueueCount;
+  const readinessRiskCount = ownerEvidencePrepReadinessSummary.ownerActionNeededCount;
 
   const handleDownloadTrustPacket = () => {
     downloadTextFile(
@@ -80,7 +83,7 @@ export default function ResponsibleAIPage() {
   };
 
   return (
-    <main className="container mx-auto min-h-screen space-y-8 px-4 py-8" data-commercial-trust-center="true">
+    <main className="container mx-auto min-h-screen space-y-8 overflow-x-hidden px-4 py-8" data-commercial-trust-center="true">
       <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
@@ -151,7 +154,7 @@ export default function ResponsibleAIPage() {
             <AlertTriangle className="h-4 w-4 text-amber-600" />
           </div>
           <div className="mt-2 text-2xl font-semibold">{blockedGateCount}</div>
-          <p className="mt-1 text-xs text-muted-foreground">Owner, platform, provider, or staff-review actions.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Remaining owner-evidence closeout gates.</p>
         </Card>
         <Card className="p-4">
           <div className="flex items-center justify-between gap-3">
@@ -166,8 +169,8 @@ export default function ResponsibleAIPage() {
             <span className="text-sm text-muted-foreground">Readiness risks</span>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </div>
-          <div className="mt-2 text-2xl font-semibold">{packet.riskRows.length}</div>
-          <p className="mt-1 text-xs text-muted-foreground">Each row has sources, caveats, and does-not-prove text.</p>
+          <div className="mt-2 text-2xl font-semibold">{readinessRiskCount}</div>
+          <p className="mt-1 text-xs text-muted-foreground">Owner-prep actions with sources, caveats, and proof boundaries.</p>
         </Card>
       </section>
 

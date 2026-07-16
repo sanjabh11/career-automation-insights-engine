@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "name": "commercial-post-toctou-next-gap-2026-06-08",
+  "goal": "Audit the current commercial launch readiness repo state after owner-evidence hasher TOCTOU hardening. Find the next unblocked repo-local proof-boundary, evidence-alignment, source, verifier, security, accessibility, or owner-handoff gap that moves launch readiness without synthesizing owner-held proof. Preserve pilot-only launch decision until manual WCAG evidence, real Stripe test checkout, live MRR, three committed partners, documented outcomes, and Supabase owner access are proven. No production deploys, credentials, payment changes, live outreach, destructive commands, or worker execution without explicit approval.",
+  "sourceTask": "Audit the current commercial launch readiness repo state after owner-evidence hasher TOCTOU hardening. Find the next unblocked repo-local proof-boundary, evidence-alignment, source, verifier, security, accessibility, or owner-handoff gap that moves launch readiness without synthesizing owner-held proof. Preserve pilot-only launch decision until manual WCAG evidence, real Stripe test checkout, live MRR, three committed partners, documented outcomes, and Supabase owner access are proven. No production deploys, credentials, payment changes, live outreach, destructive commands, or worker execution without explicit approval.",
+  "repoRoot": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+  "mode": "normal-phase-loop",
+  "classification": {
+    "launch": false,
+    "mode": "normal-phase-loop",
+    "tier": 1,
+    "score": 3,
+    "primarySkill": "agent-phase-ratchet",
+    "reasons": [
+      "multi-phase or long-running execution",
+      "risk level benefits from explicit verification gates"
+    ],
+    "cautions": [],
+    "maxConcurrency": 1,
+    "maxAgents": 1,
+    "recommendedTasks": []
+  },
+  "automode": null,
+  "maxConcurrency": 1,
+  "maxAgents": 1,
+  "tokenWarning": {
+    "risk": "low",
+    "estimatedAgentRuns": 1,
+    "estimatedReviewRuns": 1,
+    "estimatedTotalRuns": 2,
+    "warning": "Scoped run; still verify before exporting worker plans."
+  },
+  "createdAt": "2026-06-08T21:00:23.000Z",
+  "updatedAt": "2026-06-08T21:00:23.002Z"
+}

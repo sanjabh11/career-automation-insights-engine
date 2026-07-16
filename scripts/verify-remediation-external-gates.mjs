@@ -13,6 +13,11 @@ import {
   SCHEMA_VERSION as COMMERCIAL_EVIDENCE_RECORDS_SCHEMA_VERSION,
   validateCommercialEvidence,
 } from './verify-commercial-evidence-records.mjs';
+import {
+  DEFAULT_INPUT_PATH as DEFAULT_MANUAL_WCAG_EVIDENCE_PATH,
+  SCHEMA_VERSION as MANUAL_WCAG_EVIDENCE_SCHEMA_VERSION,
+  validateManualWcagEvidence,
+} from './verify-manual-wcag-evidence.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +26,8 @@ const root = path.resolve(__dirname, '..');
 const OUTPUT_JSON = 'docs/commercialization/remediation-external-gates-latest.json';
 const OUTPUT_MD = 'docs/commercialization/remediation-external-gates-latest.md';
 const ENV_FILES = ['.env.local', '.env'];
+const LIVE_PROOF_OWNER_PREP_COMMAND =
+  'npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a';
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -150,8 +157,45 @@ function gate(id, label, status, evidence, neededEvidence, options = {}) {
     evidence,
     neededEvidence,
     sourceBoundary: options.sourceBoundary || 'local verifier',
+    ownerAction: options.ownerAction || null,
+    ownerPrepCommand: options.ownerPrepCommand || null,
+    nextCommand: options.nextCommand || null,
+    riskIfSkipped: options.riskIfSkipped || null,
     doesNotProve: options.doesNotProve || [],
   };
+}
+
+const COMPLETE_GATE_STATUSES = [
+  'locally_proven',
+  'locally_proven_with_scope_limit',
+  'satisfied_by_mapping_and_us_basis_disclosure',
+  'satisfied_by_mapping_adapter_and_us_basis_disclosure',
+  'externally_proven_redacted_evidence_attached',
+  'manual_wcag_evidence_attached',
+];
+
+function escapeCell(value) {
+  return String(value ?? 'n/a').replace(/\|/g, '\\|').replace(/\n/g, '<br/>');
+}
+
+function renderCommandCell(command) {
+  return command ? `\`${escapeCell(command)}\`` : 'n/a';
+}
+
+function ownerActionQueueFor(gates) {
+  return gates
+    .filter((item) => !COMPLETE_GATE_STATUSES.includes(item.status))
+    .map((item) => ({
+      id: item.id,
+      label: item.label,
+      status: item.status,
+      ownerAction: item.ownerAction || item.neededEvidence,
+      ownerPrepCommand: item.ownerPrepCommand || null,
+      nextCommand: item.nextCommand || null,
+      riskIfSkipped: item.riskIfSkipped || 'The launch gate remains incomplete and must not be represented as commercially proven.',
+      sourceBoundary: item.sourceBoundary,
+      doesNotProve: item.doesNotProve,
+    }));
 }
 
 function statusForExternalGate(missing, localReady) {
@@ -161,7 +205,10 @@ function statusForExternalGate(missing, localReady) {
 
 function renderMarkdown(artifact) {
   const rows = artifact.gates
-    .map((item) => `| ${item.label} | ${item.status} | ${item.evidence} | ${item.neededEvidence} |`)
+    .map((item) => `| ${escapeCell(item.label)} | ${escapeCell(item.status)} | ${escapeCell(item.evidence)} | ${escapeCell(item.neededEvidence)} | ${escapeCell(item.ownerAction || 'n/a')} | ${renderCommandCell(item.ownerPrepCommand)} | ${renderCommandCell(item.nextCommand)} |`)
+    .join('\n');
+  const ownerActionRows = artifact.ownerActionQueue
+    .map((item) => `| ${escapeCell(item.label)} | ${escapeCell(item.status)} | ${escapeCell(item.ownerAction)} | ${renderCommandCell(item.ownerPrepCommand)} | ${renderCommandCell(item.nextCommand)} | ${escapeCell(item.riskIfSkipped)} |`)
     .join('\n');
 
   return `# Remediation External Gates
@@ -172,9 +219,17 @@ Goal complete: ${artifact.goalComplete ? 'yes' : 'no'}
 
 This artifact is a non-mutating readiness ledger for the remaining APO Dashboard remediation gates. It records secret presence by variable name only and never stores secret values. It does not apply migrations, deploy functions, create Stripe sessions, query live customer data, or claim commercial validation.
 
-| Gate | Status | Current evidence | Needed evidence |
-| --- | --- | --- | --- |
+| Gate | Status | Current evidence | Needed evidence | Owner action | Owner prep command | Next command |
+| --- | --- | --- | --- | --- | --- | --- |
 ${rows}
+
+## Owner Action Queue
+
+This queue is generated from incomplete gates only. It is safe to share as an action list because it stores commands, metadata, and proof boundaries, not secrets or private customer details.
+
+| Gate | Status | Owner action | Owner prep command | Next command | Risk if skipped |
+| --- | --- | --- | --- | --- | --- |
+${ownerActionRows || '| None | complete | No owner action remains. | n/a | n/a | n/a |'}
 
 ## Remaining Manual Evidence
 
@@ -206,16 +261,42 @@ Partner gate satisfied: ${artifact.commercialEvidenceRecords.partnerGateSatisfie
 Outcome gate satisfied: ${artifact.commercialEvidenceRecords.outcomeGateSatisfied ? 'yes' : 'no'}
 Validation errors: ${artifact.commercialEvidenceRecords.errorCount}
 
-The commercial evidence verifier accepts only redacted metadata and owner-held artifact hashes. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, customer data, or revenue amounts.
+The commercial evidence verifier accepts only redacted metadata, owner-held proof artifact hashes/types, and raw-evidence owner-held attestation. Partner and outcome hashes must be unique. It rejects high-confidence secret and private-contact patterns and does not store partner names, contacts, contracts, private notes, raw quotes, raw proof artifacts, customer data, or revenue amounts.
+
+## Manual WCAG Evidence
+
+Schema: \`${artifact.manualWcagEvidence.schemaVersion}\`
+Template: \`${artifact.manualWcagEvidence.templatePath}\`
+Default local file: \`${artifact.manualWcagEvidence.defaultPath}\`
+Current file found: ${artifact.manualWcagEvidence.found ? 'yes' : 'no'}
+Required checkpoints: ${artifact.manualWcagEvidence.requiredCheckpointCount}
+Checkpoint result records attached: ${artifact.manualWcagEvidence.checkpointResultCount}
+Accepted checkpoint count: ${artifact.manualWcagEvidence.acceptedCheckpointCount}
+Required route sample count: ${artifact.manualWcagEvidence.requiredRouteCount}
+Routes reviewed in evidence: ${artifact.manualWcagEvidence.routeReviewedCount}
+Required complete process count: ${artifact.manualWcagEvidence.requiredCompleteProcessCount}
+Complete processes reviewed in evidence: ${artifact.manualWcagEvidence.completeProcessReviewedCount}
+Required accessibility-support baseline count: ${artifact.manualWcagEvidence.requiredAccessibilitySupportBaselineCount}
+Accessibility-support baseline combinations attached: ${artifact.manualWcagEvidence.accessibilitySupportBaselineCount}
+Required official reference count: ${artifact.manualWcagEvidence.requiredOfficialReferenceCount}
+Official references attached: ${artifact.manualWcagEvidence.officialReferenceCount}
+Required owner-evidence archive policy field count: ${artifact.manualWcagEvidence.requiredOwnerEvidenceArchiveRequirementCount}
+Accepted checkpoints: ${artifact.manualWcagEvidence.acceptedCheckpointIds.length ? artifact.manualWcagEvidence.acceptedCheckpointIds.map((id) => `\`${id}\``).join(', ') : 'none'}
+Rejected checkpoints: ${artifact.manualWcagEvidence.rejectedCheckpointIds.length ? artifact.manualWcagEvidence.rejectedCheckpointIds.map((id) => `\`${id}\``).join(', ') : 'none'}
+Complete: ${artifact.manualWcagEvidence.manualWcagGateSatisfied ? 'yes' : 'no'}
+Validation errors: ${artifact.manualWcagEvidence.errorCount}
+
+The manual WCAG evidence verifier accepts only redacted metadata. Raw reviewer notes, screenshots, recordings, assistive-technology transcripts, reviewer identities, issue details, evaluation-tool output, sample archives, artifact hash source maps, and owner-held archive records remain owner-held. This is still not a WCAG conformance claim unless a qualified reviewer separately makes that statement.
 
 ## Commands
 
 \`\`\`bash
+npm run verify:manual-wcag-evidence
 npm run verify:remediation-gates
 npm run verify:remediation-gates:write
 \`\`\`
 
-Use \`npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete\` only when all external evidence has been attached and you want the read-only command to fail closed until every gate is proven. Use \`npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete\` when you also want to refresh this tracked artifact.
+Use \`npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --manual-wcag-evidence <path> --require-complete\` only when all external evidence has been attached and you want the read-only command to fail closed until every gate is proven. Use \`npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --manual-wcag-evidence <path> --require-complete\` when you also want to refresh this tracked artifact.
 `;
 }
 
@@ -225,12 +306,15 @@ function main() {
   const shouldWrite = hasFlag('--write');
   const liveEvidencePath = readFlagValue('--live-evidence') || readFlagValue('--live-gate-evidence');
   const commercialEvidencePath = readFlagValue('--commercial-evidence') || readFlagValue('--commercial-records');
+  const manualWcagEvidencePath = readFlagValue('--manual-wcag-evidence') || readFlagValue('--accessibility-evidence');
   const envAssignments = loadEnvAssignments();
   const presentEnvNames = new Set(envAssignments.keys());
   const packageJson = JSON.parse(read('package.json'));
   const packageScripts = packageJson.scripts || {};
   const commercialEvidenceRecordsVerifier = readOptional('scripts/verify-commercial-evidence-records.mjs');
   const commercialEvidenceRecordsTemplate = readOptional('docs/commercialization/commercial-evidence-records-template.json');
+  const manualWcagEvidenceVerifier = readOptional('scripts/verify-manual-wcag-evidence.mjs');
+  const manualWcagEvidenceTemplate = readOptional('docs/commercialization/manual-wcag-evidence-template.json');
   const stripeRuntime = readOptional('src/lib/stripe.ts');
   const stripeTestCheckoutVerifier = readOptional('scripts/verify-stripe-test-checkout.mjs');
   const stripeLiveMrrVerifier = readOptional('scripts/verify-stripe-live-mrr.mjs');
@@ -242,6 +326,7 @@ function main() {
   const readinessModel = readOptional('src/lib/commercialLaunchReadiness.ts');
   const liveGateEvidence = validateLiveGateEvidence({ root, evidencePath: liveEvidencePath });
   const commercialEvidenceRecords = validateCommercialEvidence({ root, inputPath: commercialEvidencePath });
+  const manualWcagEvidence = validateManualWcagEvidence({ root, inputPath: manualWcagEvidencePath });
   const acceptedLiveGateEvidence = new Set(liveGateEvidence.acceptedGateIds);
 
   function externalGate(id, label, status, evidence, neededEvidence, options = {}) {
@@ -287,6 +372,37 @@ function main() {
           : 'missing_local_verifier',
       commercialEvidenceRecords.errors.length
         ? `Redacted commercial evidence records are invalid with ${commercialEvidenceRecords.errors.length} verifier error(s).`
+        : evidence,
+      neededEvidence,
+      options
+    );
+  }
+
+  function manualWcagEvidenceGate(id, label, localReady, evidence, neededEvidence, options = {}) {
+    if (manualWcagEvidence.manualWcagGateSatisfied) {
+      return gate(
+        id,
+        label,
+        'manual_wcag_evidence_attached',
+        `Manual WCAG evidence metadata is accepted by \`verify:manual-wcag-evidence\` (${manualWcagEvidence.acceptedCheckpointIds.length} accepted checkpoint(s)); raw notes, screenshots, recordings, reviewer details, evaluation-tool output, issue logs, sample archives, artifact hash source maps, and owner-held archive records remain owner-held.`,
+        'Keep manual WCAG evidence current after UI changes and preserve owner-held raw review notes for audit.',
+        {
+          ...options,
+          sourceBoundary: 'redacted manual WCAG evidence metadata',
+        }
+      );
+    }
+
+    return gate(
+      id,
+      label,
+      manualWcagEvidence.errors.length
+        ? 'invalid_manual_wcag_evidence'
+        : localReady
+          ? 'blocked_missing_manual_wcag_evidence'
+          : 'missing_local_verifier',
+      manualWcagEvidence.errors.length
+        ? `Manual WCAG evidence metadata is invalid with ${manualWcagEvidence.errors.length} verifier error(s).`
         : evidence,
       neededEvidence,
       options
@@ -351,16 +467,57 @@ function main() {
       'doesNotProve',
     ]);
 
+  const manualWcagEvidenceReady =
+    packageScripts['verify:manual-wcag-evidence'] === 'node scripts/verify-manual-wcag-evidence.mjs' &&
+    packageScripts['verify:manual-wcag-evidence:write'] === 'node scripts/verify-manual-wcag-evidence.mjs --write' &&
+    exists('scripts/verify-manual-wcag-evidence.mjs') &&
+    exists('docs/commercialization/manual-wcag-evidence-template.json') &&
+    containsAll(manualWcagEvidenceVerifier, [
+      'manual_wcag_evidence',
+      'REQUIRED_CHECKPOINT_IDS',
+      'WCAG-EM',
+      'screen-reader-name-role-value',
+      'contrast-reflow-text-spacing',
+      'downloadable-artifacts',
+      'REVIEW_RECORD_ARCHIVE_ATTESTATIONS',
+      'reviewRecordArchive',
+      'technologiesReliedUpon',
+      'sampleSetSelectionMethod',
+      'manual-wcag-evidence.local.json',
+    ]) &&
+    containsAll(manualWcagEvidenceTemplate, [
+      '2026-06-04.apo-manual-wcag-evidence.v1',
+      'WCAG 2.2 A/AA',
+      'reviewerAttestation',
+      'reviewRecordArchive',
+      'technologiesReliedUpon',
+      'sampleSetSelectionMethod',
+      'checkpointResults',
+      'downloadable-artifacts',
+      'doesNotProve',
+    ]);
+
   const liveGateEvidenceIntakeReady =
     packageScripts['verify:live-gate-evidence'] === 'node scripts/verify-live-gate-evidence.mjs' &&
     exists('scripts/verify-live-gate-evidence.mjs') &&
     exists('scripts/lib/liveGateEvidence.mjs') &&
+    containsAll(readOptional('scripts/lib/liveGateEvidence.mjs'), [
+      'LIVE_PROOF_ARCHIVE_REQUIREMENTS',
+      'ownerEvidenceArchive',
+      'rawCheckoutSessionPayloadOwnerHeld',
+      'rawSubscriptionExportOwnerHeld',
+    ]) &&
+    containsAll(readOptional('docs/commercialization/live-gate-evidence-template.json'), [
+      'ownerEvidenceArchive',
+      'rawCheckoutSessionPayloadOwnerHeld',
+      'rawSubscriptionExportOwnerHeld',
+    ]) &&
     exists('docs/commercialization/live-gate-evidence-template.json');
 
   const stripeMissing = missingGroups(presentEnvNames, [
     {
-      label: 'STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY or STRIPE_SECRET_KEY',
-      aliases: ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'],
+      label: 'STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY',
+      aliases: ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY'],
     },
     { label: 'STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID', aliases: ['STRIPE_TEST_PRICE_ID', 'APO_STRIPE_TEST_PRICE_ID'] },
     { label: 'SUPABASE_URL or VITE_SUPABASE_URL', aliases: ['SUPABASE_URL', 'VITE_SUPABASE_URL'] },
@@ -377,9 +534,7 @@ function main() {
       aliases: ['LIVE_SUPABASE_TEST_USER_PASSWORD', 'STRIPE_TEST_USER_PASSWORD'],
     },
   ]);
-  const stripeTestKeyMode = stripeKeyMode(
-    resolveEnvValue(envAssignments, ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY', 'STRIPE_SECRET_KEY'])
-  );
+  const stripeTestKeyMode = stripeKeyMode(resolveEnvValue(envAssignments, ['STRIPE_TEST_SECRET_KEY', 'STRIPE_TEST_RESTRICTED_KEY']));
   const stripeTestKeyModeReady = stripeTestKeyMode === 'test';
   const stripeLocalReady =
     packageScripts['verify:stripe-test-checkout'] === 'node scripts/verify-stripe-test-checkout.mjs --write' &&
@@ -390,6 +545,9 @@ function main() {
       'STRIPE_TEST_SECRET_KEY',
       'STRIPE_TEST_PRICE_ID',
       'LIVE_SUPABASE_TEST_USER_EMAIL',
+      'checkoutSessionMode',
+      'paymentStatus',
+      'ownerEvidenceArchive',
     ]) &&
     exists('supabase/functions/create-checkout-session/index.ts') &&
     containsAll(stripeRuntime, ['checkoutStatus: \'hidden_pending_live_price\'', 'stripePriceId: undefined']);
@@ -409,6 +567,8 @@ function main() {
       'activeSubscriptionCount',
       'paidInvoiceCount',
       'failed_non_live_stripe_key',
+      'ownerEvidenceArchive',
+      'rawSubscriptionExportOwnerHeld',
       'status',
       'active',
     ]);
@@ -517,6 +677,23 @@ function main() {
         doesNotProve: ['Live proof until a valid evidence file is attached', 'Raw evidence authenticity without owner-held artifacts'],
       }
     ),
+    manualWcagEvidenceGate(
+      'manual_wcag_evidence',
+      'Manual WCAG accessibility evidence',
+      manualWcagEvidenceReady,
+      manualWcagEvidenceReady
+        ? `Manual WCAG evidence verifier is ready; ${manualWcagEvidence.acceptedCheckpointIds.length} accepted checkpoint(s) are attached.`
+        : 'Manual WCAG evidence verifier is missing or miswired.',
+      `Completed redacted manual WCAG 2.2 A/AA evidence metadata validated by \`npm run verify:manual-wcag-evidence -- --evidence ${DEFAULT_MANUAL_WCAG_EVIDENCE_PATH} --require-complete\`, including WCAG-EM product scope, route-sample rationale, sample-selection method, technologies relied upon, complete-process review, accessibility-support baseline combinations, reviewer type and conflict disclosure, review-record archive attestations, ownerEvidenceArchive policy metadata, keyboard/focus, target-size, form error, accessible-authentication, screen-reader, contrast/reflow/text-spacing, and downloadable-artifact review. Use \`npm run generate:manual-wcag-review-packet\`, \`docs/commercialization/manual-wcag-review-packet-latest.md\`, and \`docs/commercialization/manual-wcag-review-matrix-latest.csv\` as the reviewer worksheet before hashing owner-held proof artifacts.`,
+      {
+        sourceBoundary: 'owner-held manual accessibility review',
+        ownerAction: 'Generate the manual WCAG review packet, complete the owner-held WCAG-EM review from the route/checkpoint matrix, document product scope, sample rationale, sample-selection method, technologies relied upon, complete processes, support-baseline combinations, reviewer type/conflict boundary, review-record archive attestations, and ownerEvidenceArchive policy metadata, hash local WCAG review proof files, replace placeholder hashes in the ignored local evidence file, and keep raw reviewer notes/screenshots/AT transcripts/tool output/sample archives/hash source maps outside git.',
+        ownerPrepCommand: 'npm run generate:manual-wcag-review-packet && npm run hash:owner-evidence-artifacts -- <local WCAG review proof files>',
+        nextCommand: `npm run verify:manual-wcag-evidence -- --evidence ${DEFAULT_MANUAL_WCAG_EVIDENCE_PATH} --require-complete`,
+        riskIfSkipped: 'The product can keep automated accessibility smoke evidence, but it must not claim WCAG conformance or procurement-ready accessibility evidence.',
+        doesNotProve: ['WCAG conformance statement', 'legal compliance', 'institutional procurement approval', 'future accessibility after code changes'],
+      }
+    ),
     externalGate(
       'real_stripe_test_checkout',
       'Real Stripe test-mode checkout',
@@ -526,15 +703,19 @@ function main() {
           ? 'blocked_missing_owner_secret_or_live_evidence'
           : stripeTestKeyModeReady
             ? 'ready_for_owner_live_run'
-            : 'blocked_non_test_stripe_key',
+            : 'blocked_missing_explicit_test_stripe_key',
       stripeMissing.length
         ? `Local checkout code and owner-run verifier are ready, but required secret/env names are absent: ${stripeMissing.join(', ')}.`
         : stripeTestKeyModeReady
           ? 'Required test-mode secret/env names are present; run `npm run verify:stripe-test-checkout` to create and retrieve a test-mode Checkout Session without printing secrets.'
-          : 'Required secret/env names are present, but the resolved Stripe checkout key is not test-mode. Add `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`, or temporarily use a test-mode `STRIPE_SECRET_KEY` for this proof run.',
-      'Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact.',
+          : 'Required checkout inputs are present, but no explicit test-mode Stripe key is available. Add `STRIPE_TEST_SECRET_KEY` or `STRIPE_TEST_RESTRICTED_KEY`; generic `STRIPE_SECRET_KEY` is intentionally ignored for this test proof.',
+      'Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.',
       {
         sourceBoundary: 'owner credential gate',
+        ownerAction: 'Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.',
+        ownerPrepCommand: LIVE_PROOF_OWNER_PREP_COMMAND,
+        nextCommand: 'npm run verify:stripe-test-checkout',
+        riskIfSkipped: 'Checkout remains source-ready only; no real Stripe test-mode session can be cited in buyer or launch evidence.',
         doesNotProve: ['Live revenue', 'MRR', 'payment fulfillment in live mode'],
       }
     ),
@@ -548,6 +729,9 @@ function main() {
       'Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.',
       {
         sourceBoundary: 'owner credential and deployment-precondition gate',
+        ownerAction: 'Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.',
+        nextCommand: 'npm run verify:production-calibration',
+        riskIfSkipped: 'Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.',
         doesNotProve: ['Scientific validation before live labels exist', 'Migrations or deployments were applied by this verifier'],
       }
     ),
@@ -563,6 +747,9 @@ function main() {
       'Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.',
       {
         sourceBoundary: 'owner credential gate',
+        ownerAction: 'Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.',
+        nextCommand: 'npm run verify:commercial-live-auth-e2e',
+        riskIfSkipped: 'Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.',
         doesNotProve: ['Payment proof', 'malware scanning', 'legal compliance'],
       }
     ),
@@ -573,9 +760,13 @@ function main() {
       liveMrrMissing.length
         ? `Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: ${liveMrrMissing.join(', ')}.`
         : 'Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.',
-      'Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, and redacted `total_mrr > 0` evidence.',
+      'Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.',
       {
         sourceBoundary: 'owner live Stripe credential gate',
+        ownerAction: 'Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.',
+        ownerPrepCommand: LIVE_PROOF_OWNER_PREP_COMMAND,
+        nextCommand: 'npm run verify:stripe-live-mrr',
+        riskIfSkipped: 'Revenue must stay unclaimed; test checkout, configured prices, and UI conversion events do not prove live MRR.',
         doesNotProve: ['Retention', 'Product-market fit', 'Future revenue', 'Accounting-recognized revenue'],
       }
     ),
@@ -587,10 +778,14 @@ function main() {
       commercialEvidenceRecordsReady
         ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.uniqueDesignPartnerCount} unique accepted owner-held partner commitment hash(es) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
-      'At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, and contact permission.',
+      `At least three unique permissioned partner records validated by \`npm run verify:commercial-evidence-records -- --evidence ${DEFAULT_COMMERCIAL_EVIDENCE_RECORDS_PATH} --require-partners\`, with pilot scope, planning-only use, artifact reviewed, next step, contact permission, proof artifact hashes/types, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and owner worksheet coverage from \`npm run generate:commercial-evidence-intake-packet\`.`,
       {
         sourceBoundary: 'owner redacted commercial-evidence records',
-        doesNotProve: ['Revenue', 'Successful outcomes', 'Market-wide demand'],
+        ownerAction: 'Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held partner proof artifacts, then fill the ignored commercial evidence intake with three permissioned design-partner commitments, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and an owner-held salt; preserve raw names/contracts/proof artifacts outside git.',
+        ownerPrepCommand: 'npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>',
+        nextCommand: 'COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all',
+        riskIfSkipped: 'Pilot traction remains a worksheet or lead-ops capability, not committed partner evidence.',
+        doesNotProve: ['Revenue', 'Successful outcomes', 'Market-wide demand', 'Legal compliance', 'Testimonial compliance'],
       }
     ),
     commercialEvidenceRecordsGate(
@@ -601,23 +796,22 @@ function main() {
       commercialEvidenceRecordsReady
         ? `Redacted commercial-evidence record verifier is ready; ${commercialEvidenceRecords.uniqueOutcomeCount} unique accepted owner-held documented outcome hash(es) are attached.`
         : 'Commercial-evidence record verifier is missing or miswired.',
-      'At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --require-outcomes`, with baseline workflow, artifact reviewed, measured change, quote approval, and does-not-prove text.',
+      `At least one permissioned outcome record validated by \`npm run verify:commercial-evidence-records -- --evidence ${DEFAULT_COMMERCIAL_EVIDENCE_RECORDS_PATH} --require-outcomes\`, with baseline workflow, artifact reviewed, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, proof artifact hashes/types, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, does-not-prove text, and owner worksheet coverage from \`npm run generate:commercial-evidence-intake-packet\`.`,
       {
         sourceBoundary: 'owner redacted commercial-evidence records',
-        doesNotProve: ['Guaranteed career outcomes', 'Causal impact', 'Generalizable demand'],
+        ownerAction: 'Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held outcome proof artifacts, then fill the ignored commercial evidence intake with at least one permissioned documented outcome, including baseline workflow, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and caveats.',
+        ownerPrepCommand: 'npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>',
+        nextCommand: 'COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all',
+        riskIfSkipped: 'Outcome claims must remain absent or anecdote-bounded; no case-study evidence can be cited as launch proof.',
+        doesNotProve: ['Guaranteed career outcomes', 'Causal impact', 'Generalizable demand', 'Legal compliance', 'Testimonial compliance'],
       }
     ),
   ];
 
   const remainingManualEvidence = gates
-    .filter((item) => ![
-      'locally_proven',
-      'locally_proven_with_scope_limit',
-      'satisfied_by_mapping_and_us_basis_disclosure',
-      'satisfied_by_mapping_adapter_and_us_basis_disclosure',
-      'externally_proven_redacted_evidence_attached',
-    ].includes(item.status))
+    .filter((item) => !COMPLETE_GATE_STATUSES.includes(item.status))
     .map((item) => `${item.label}: ${item.neededEvidence}`);
+  const ownerActionQueue = ownerActionQueueFor(gates);
 
   const goalComplete = remainingManualEvidence.length === 0;
   const artifact = {
@@ -626,6 +820,7 @@ function main() {
     goalComplete,
     requireComplete,
     gates,
+    ownerActionQueue,
     remainingManualEvidence,
     liveGateEvidence: {
       schemaVersion: LIVE_GATE_EVIDENCE_SCHEMA_VERSION,
@@ -653,6 +848,33 @@ function main() {
       errorCount: commercialEvidenceRecords.errors.length,
       errors: commercialEvidenceRecords.errors,
     },
+    manualWcagEvidence: {
+      schemaVersion: MANUAL_WCAG_EVIDENCE_SCHEMA_VERSION,
+      templatePath: 'docs/commercialization/manual-wcag-evidence-template.json',
+      reviewPacketPath: 'docs/commercialization/manual-wcag-review-packet-latest.md',
+      reviewMatrixPath: 'docs/commercialization/manual-wcag-review-matrix-latest.csv',
+      defaultPath: DEFAULT_MANUAL_WCAG_EVIDENCE_PATH,
+      found: manualWcagEvidence.found,
+      inputPath: manualWcagEvidence.inputPath,
+      requiredCheckpointCount: manualWcagEvidence.requiredCheckpointCount,
+      requiredRouteCount: manualWcagEvidence.requiredRouteCount,
+      requiredCompleteProcessCount: manualWcagEvidence.requiredCompleteProcessCount,
+      requiredAccessibilitySupportBaselineCount: manualWcagEvidence.requiredAccessibilitySupportBaselineCount,
+      requiredOfficialReferenceCount: manualWcagEvidence.requiredOfficialReferenceCount,
+      requiredOwnerEvidenceArchiveRequirementCount: manualWcagEvidence.requiredOwnerEvidenceArchiveRequirementCount,
+      acceptedCheckpointIds: manualWcagEvidence.acceptedCheckpointIds,
+      acceptedCheckpointCount: manualWcagEvidence.acceptedCheckpointCount || 0,
+      rejectedCheckpointIds: manualWcagEvidence.rejectedCheckpointIds,
+      checkpointResultCount: manualWcagEvidence.checkpointResultCount || 0,
+      routeReviewedCount: manualWcagEvidence.routeReviewedCount || 0,
+      completeProcessReviewedCount: manualWcagEvidence.completeProcessReviewedCount || 0,
+      accessibilitySupportBaselineCount: manualWcagEvidence.accessibilitySupportBaselineCount || 0,
+      officialReferenceCount: manualWcagEvidence.officialReferenceCount || 0,
+      complete: manualWcagEvidence.complete,
+      manualWcagGateSatisfied: manualWcagEvidence.manualWcagGateSatisfied,
+      errorCount: manualWcagEvidence.errors.length,
+      errors: manualWcagEvidence.errors,
+    },
   };
 
   if (shouldWrite) {
@@ -661,12 +883,34 @@ function main() {
     fs.writeFileSync(path.join(root, OUTPUT_MD), renderMarkdown(artifact));
   }
 
+  const evidenceInputsValid =
+    liveGateEvidence.errors.length === 0 &&
+    commercialEvidenceRecords.errors.length === 0 &&
+    manualWcagEvidence.errors.length === 0;
+  const requirementsSatisfied = !requireComplete || goalComplete;
+
   console.log(JSON.stringify({
-    ok: liveGateEvidence.errors.length === 0 && commercialEvidenceRecords.errors.length === 0,
+    ok: evidenceInputsValid && requirementsSatisfied,
     goalComplete,
     liveGateEvidence: artifact.liveGateEvidence,
     commercialEvidenceRecords: artifact.commercialEvidenceRecords,
-    gates: gates.map((item) => ({ id: item.id, status: item.status })),
+    manualWcagEvidence: artifact.manualWcagEvidence,
+    gates: gates.map((item) => ({
+      id: item.id,
+      label: item.label,
+      status: item.status,
+      evidence: item.evidence,
+      neededEvidence: item.neededEvidence,
+      sourceBoundary: item.sourceBoundary,
+      ownerAction: item.ownerAction,
+      ownerPrepCommand: item.ownerPrepCommand,
+      nextCommand: item.nextCommand,
+      riskIfSkipped: item.riskIfSkipped,
+      doesNotProve: item.doesNotProve,
+    })),
+    ownerActionQueue,
+    remainingManualEvidence,
+    ownerActionQueueCount: ownerActionQueue.length,
     wrote: shouldWrite ? [OUTPUT_JSON, OUTPUT_MD] : null,
   }, null, 2));
 
@@ -678,6 +922,12 @@ function main() {
 
   if (commercialEvidenceRecords.errors.length > 0) {
     console.error('Redacted commercial evidence records are invalid. See generated artifact for verifier-safe error details.');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (manualWcagEvidence.errors.length > 0) {
+    console.error('Manual WCAG evidence metadata is invalid. See generated artifact for verifier-safe error details.');
     process.exitCode = 1;
     return;
   }

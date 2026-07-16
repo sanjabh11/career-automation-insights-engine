@@ -46,11 +46,22 @@ for (const token of methodologyRequired) {
 }
 
 const sourceRequired = [
-  "SOURCE_MANIFEST_LAST_VERIFIED_AT = '2026-06-01'",
+  "SOURCE_MANIFEST_LAST_VERIFIED_AT = '2026-06-08'",
   "id: 'ilo-genai-jobs-2025'",
   "id: 'openai-eloundou-gpts-are-gpts'",
   "id: 'anthropic-economic-index-2026'",
   "id: 'abs-osca-2024'",
+  "id: 'nist-ai-genai-profile'",
+  "id: 'nist-ssdf'",
+  "id: 'cisa-secure-by-design'",
+  "id: 'owasp-asvs-5'",
+  "id: 'owasp-llm-top-10-2025'",
+  "id: 'pci-dss-v4-0-1'",
+  "id: 'wcag-em-overview'",
+  "id: 'wcag-em-2'",
+  "id: 'dol-ai-worker-wellbeing-best-practices'",
+  "id: 'ftc-consumer-reviews-rule-questions'",
+  "id: 'ftc-endorsement-guides-faq'",
 ];
 
 for (const token of sourceRequired) {

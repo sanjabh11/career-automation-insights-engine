@@ -6,13 +6,36 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   DEFAULT_INPUT_PATH,
+  MIN_ACCEPTED_DESIGN_PARTNERS,
+  MIN_ACCEPTED_DOCUMENTED_OUTCOMES,
+  OUTCOME_OWNER_EVIDENCE_ARCHIVE_REQUIREMENTS,
+  OUTCOME_INTEGRITY_ATTESTATIONS,
   SCHEMA_VERSION as COMMERCIAL_EVIDENCE_SCHEMA_VERSION,
+  PARTNER_OWNER_EVIDENCE_ARCHIVE_REQUIREMENTS,
+  PARTNER_INTEGRITY_ATTESTATIONS,
   validateCommercialEvidence,
 } from './verify-commercial-evidence-records.mjs';
 
 const root = process.cwd();
 const INTAKE_SCHEMA_VERSION = '2026-06-01.apo-commercial-evidence-intake.v1';
 const DEFAULT_INTAKE_PATH = 'docs/commercialization/commercial-evidence-intake.local.json';
+const PARTNER_PROOF_ARTIFACT_TYPES = new Set([
+  'permissioned_email',
+  'signed_pilot_scope',
+  'artifact_review_log',
+  'crm_stage_snapshot',
+  'calendar_hold',
+  'call_note',
+]);
+const OUTCOME_PROOF_ARTIFACT_TYPES = new Set([
+  'baseline_workflow_note',
+  'artifact_review_log',
+  'measured_change_summary',
+  'quote_approval',
+  'outcome_review_note',
+]);
+const PARTNER_PERMISSION_PROOF_TYPES = ['permissioned_email', 'signed_pilot_scope'];
+const OUTCOME_REQUIRED_PROOF_TYPES = ['baseline_workflow_note', 'measured_change_summary', 'quote_approval'];
 
 function hasFlag(name) {
   return process.argv.includes(name);
@@ -98,6 +121,72 @@ function addBooleanTrue(errors, item, key, pathName) {
   if (item?.[key] !== true) errors.push(`${pathName}.${key} must be true`);
 }
 
+function addIntegrityAttestations(errors, item, pathName, attestations) {
+  if (!isPlainObject(item?.integrityAttestations)) {
+    errors.push(`${pathName}.integrityAttestations must be an object`);
+    return;
+  }
+
+  attestations.forEach((key) => {
+    if (item.integrityAttestations[key] !== true) {
+      errors.push(`${pathName}.integrityAttestations.${key} must be true`);
+    }
+  });
+}
+
+function addOwnerEvidenceArchive(errors, item, pathName, requirements) {
+  if (!isPlainObject(item?.ownerEvidenceArchive)) {
+    errors.push(`${pathName}.ownerEvidenceArchive must be an object`);
+    return;
+  }
+
+  requirements.forEach((key) => {
+    if (item.ownerEvidenceArchive[key] !== true) {
+      errors.push(`${pathName}.ownerEvidenceArchive.${key} must be true`);
+    }
+  });
+}
+
+function addProofArtifactHashes(errors, item, pathName) {
+  if (!Array.isArray(item?.proofArtifactHashes) || item.proofArtifactHashes.length === 0) {
+    errors.push(`${pathName}.proofArtifactHashes must contain at least one non-placeholder sha256 hash`);
+    return;
+  }
+
+  const seen = new Set();
+  item.proofArtifactHashes.forEach((value, index) => {
+    if (typeof value !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(value) || /^sha256:0{64}$/.test(value) || isPlaceholder(value)) {
+      errors.push(`${pathName}.proofArtifactHashes[${index}] must be a non-placeholder sha256 hash`);
+    }
+    if (seen.has(value)) errors.push(`${pathName}.proofArtifactHashes[${index}] must be unique within the record`);
+    seen.add(value);
+  });
+}
+
+function addProofArtifactTypes(errors, item, pathName, allowedTypes, requiredTypes = [], oneOfTypes = []) {
+  if (!Array.isArray(item?.proofArtifactTypes) || item.proofArtifactTypes.length === 0) {
+    errors.push(`${pathName}.proofArtifactTypes must contain at least one supported proof artifact type`);
+    return;
+  }
+
+  const seen = new Set();
+  item.proofArtifactTypes.forEach((value, index) => {
+    if (typeof value !== 'string' || !allowedTypes.has(value)) {
+      errors.push(`${pathName}.proofArtifactTypes[${index}] must be one of ${[...allowedTypes].join(', ')}`);
+    }
+    if (seen.has(value)) errors.push(`${pathName}.proofArtifactTypes[${index}] must be unique within the record`);
+    seen.add(value);
+  });
+
+  requiredTypes.forEach((requiredType) => {
+    if (!seen.has(requiredType)) errors.push(`${pathName}.proofArtifactTypes must include ${requiredType}`);
+  });
+
+  if (oneOfTypes.length > 0 && !oneOfTypes.some((requiredType) => seen.has(requiredType))) {
+    errors.push(`${pathName}.proofArtifactTypes must include at least one of ${oneOfTypes.join(', ')}`);
+  }
+}
+
 function addDoesNotProve(errors, item, pathName) {
   if (!Array.isArray(item?.doesNotProve) || item.doesNotProve.length === 0 || item.doesNotProve.some((value) => typeof value !== 'string' || value.trim().length < 3)) {
     errors.push(`${pathName}.doesNotProve must contain explicit claim boundaries`);
@@ -136,7 +225,12 @@ function validatePartnerInput(item, index, errors) {
   addBooleanTrue(errors, item, 'planningOnlyUseConfirmed', pathName);
   addString(errors, item, 'artifactReviewed', pathName);
   addBooleanTrue(errors, item, 'nextStepRecorded', pathName);
+  addProofArtifactHashes(errors, item, pathName);
+  addProofArtifactTypes(errors, item, pathName, PARTNER_PROOF_ARTIFACT_TYPES, ['artifact_review_log'], PARTNER_PERMISSION_PROOF_TYPES);
+  addBooleanTrue(errors, item, 'rawEvidenceOwnerHeld', pathName);
   addString(errors, item, 'redactionLevel', pathName, 6);
+  addIntegrityAttestations(errors, item, pathName, PARTNER_INTEGRITY_ATTESTATIONS);
+  addOwnerEvidenceArchive(errors, item, pathName, PARTNER_OWNER_EVIDENCE_ARCHIVE_REQUIREMENTS);
   addDoesNotProve(errors, item, pathName);
 }
 
@@ -155,7 +249,16 @@ function validateOutcomeInput(item, index, errors) {
   addBooleanTrue(errors, item, 'measuredChangeCaptured', pathName);
   addBooleanTrue(errors, item, 'approvedQuoteCaptured', pathName);
   addBooleanTrue(errors, item, 'quoteApprovalCaptured', pathName);
+  addString(errors, item, 'measuredChangeUnit', pathName);
+  addString(errors, item, 'measurementWindow', pathName, 6);
+  addString(errors, item, 'outcomeClaimScope', pathName, 12);
+  addString(errors, item, 'typicalityBoundary', pathName, 12);
+  addProofArtifactHashes(errors, item, pathName);
+  addProofArtifactTypes(errors, item, pathName, OUTCOME_PROOF_ARTIFACT_TYPES, OUTCOME_REQUIRED_PROOF_TYPES);
+  addBooleanTrue(errors, item, 'rawEvidenceOwnerHeld', pathName);
   addString(errors, item, 'redactionLevel', pathName, 6);
+  addIntegrityAttestations(errors, item, pathName, OUTCOME_INTEGRITY_ATTESTATIONS);
+  addOwnerEvidenceArchive(errors, item, pathName, OUTCOME_OWNER_EVIDENCE_ARCHIVE_REQUIREMENTS);
   addDoesNotProve(errors, item, pathName);
 }
 
@@ -170,7 +273,12 @@ function buildPartnerRecord(item, salt) {
     planningOnlyUseConfirmed: item.planningOnlyUseConfirmed,
     artifactReviewed: item.artifactReviewed,
     nextStepRecorded: item.nextStepRecorded,
+    proofArtifactHashes: item.proofArtifactHashes,
+    proofArtifactTypes: item.proofArtifactTypes,
+    rawEvidenceOwnerHeld: item.rawEvidenceOwnerHeld,
     redactionLevel: item.redactionLevel,
+    integrityAttestations: item.integrityAttestations,
+    ownerEvidenceArchive: item.ownerEvidenceArchive,
     doesNotProve: item.doesNotProve,
   };
 }
@@ -185,7 +293,16 @@ function buildOutcomeRecord(item, salt) {
     measuredChangeCaptured: item.measuredChangeCaptured,
     approvedQuoteCaptured: item.approvedQuoteCaptured,
     quoteApprovalCaptured: item.quoteApprovalCaptured,
+    measuredChangeUnit: item.measuredChangeUnit,
+    measurementWindow: item.measurementWindow,
+    outcomeClaimScope: item.outcomeClaimScope,
+    typicalityBoundary: item.typicalityBoundary,
+    proofArtifactHashes: item.proofArtifactHashes,
+    proofArtifactTypes: item.proofArtifactTypes,
+    rawEvidenceOwnerHeld: item.rawEvidenceOwnerHeld,
     redactionLevel: item.redactionLevel,
+    integrityAttestations: item.integrityAttestations,
+    ownerEvidenceArchive: item.ownerEvidenceArchive,
     doesNotProve: item.doesNotProve,
   };
 }
@@ -228,7 +345,7 @@ function composeRecords() {
   const records = {
     schemaVersion: COMMERCIAL_EVIDENCE_SCHEMA_VERSION,
     asOf: intake?.asOf || new Date().toISOString().slice(0, 10),
-    sourceBoundary: 'Redacted founder-held commercial evidence records composed from local owner intake. Partner and outcome hashes use an owner-held salt; raw names, contacts, contracts, notes, quotes, customer data, and the salt remain outside the repository.',
+    sourceBoundary: 'Redacted founder-held commercial evidence records composed from local owner intake. Partner, outcome, and proof artifact hashes use owner-held source material; raw names, contacts, profile URLs, meeting/calendar links, Stripe checkout URLs, contracts, notes, quotes, customer data, proof artifacts, and the salt remain outside the repository.',
     designPartnerCommitments: errors.length === 0 ? partnerInputs.map((item) => buildPartnerRecord(item, salt)) : [],
     documentedOutcomes: errors.length === 0 ? outcomeInputs.map((item) => buildOutcomeRecord(item, salt)) : [],
   };
@@ -262,8 +379,12 @@ function main() {
   const { records, inputDisplayPath, outputPath, errors, outputValidation } = composeRecords();
   const outputAbsolutePath = resolvePath(outputPath);
   const outputDisplayPath = displayPath(outputAbsolutePath);
-  const partnerGateSatisfied = outputValidation.partnerGateSatisfied === true;
-  const outcomeGateSatisfied = outputValidation.outcomeGateSatisfied === true;
+  const partnerGateSatisfied =
+    outputValidation.partnerGateSatisfied === true &&
+    outputValidation.uniqueDesignPartnerCount >= MIN_ACCEPTED_DESIGN_PARTNERS;
+  const outcomeGateSatisfied =
+    outputValidation.outcomeGateSatisfied === true &&
+    outputValidation.uniqueOutcomeCount >= MIN_ACCEPTED_DOCUMENTED_OUTCOMES;
   const gateRequirementsSatisfied = (!requirePartners || partnerGateSatisfied) && (!requireOutcomes || outcomeGateSatisfied);
   const canWrite = shouldWrite && errors.length === 0 && (allowPartial || gateRequirementsSatisfied);
 
@@ -272,10 +393,10 @@ function main() {
     fs.writeFileSync(outputAbsolutePath, `${JSON.stringify(records, null, 2)}\n`);
   }
 
-  const composeCommand = `npm run compose:commercial-evidence-records -- --write --require-all`;
+  const composeCommand = `COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all`;
   const validateCommand = `npm run verify:commercial-evidence-records -- --evidence ${outputDisplayPath} --require-all`;
-  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --require-complete`;
-  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --require-complete`;
+  const finalReadOnlyLedgerCommand = `npm run verify:remediation-gates -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --manual-wcag-evidence <manual-wcag-evidence-path> --require-complete`;
+  const refreshTrackedLedgerCommand = `npm run verify:remediation-gates:write -- --live-evidence <live-gate-evidence-path> --commercial-evidence ${outputDisplayPath} --manual-wcag-evidence <manual-wcag-evidence-path> --require-complete`;
 
   const result = {
     ok: errors.length === 0 && gateRequirementsSatisfied,
@@ -285,6 +406,8 @@ function main() {
     wrote: canWrite ? outputDisplayPath : null,
     acceptedDesignPartnerCount: outputValidation.acceptedDesignPartnerCount,
     acceptedOutcomeCount: outputValidation.acceptedOutcomeCount,
+    requiredDesignPartnerCount: MIN_ACCEPTED_DESIGN_PARTNERS,
+    requiredOutcomeCount: MIN_ACCEPTED_DOCUMENTED_OUTCOMES,
     uniqueDesignPartnerCount: outputValidation.uniqueDesignPartnerCount,
     uniqueOutcomeCount: outputValidation.uniqueOutcomeCount,
     partnerGateSatisfied,

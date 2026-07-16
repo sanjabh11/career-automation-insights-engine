@@ -16,6 +16,7 @@
     "Successful migration or deployment",
     "Raw label provenance"
   ],
+  "doesNotProveCount": 5,
   "manualInterventionIfSkipped": [
     "Confirm calibration migrations and the deployed calibrate-ece function are already approved for the target Supabase project.",
     "Provide SUPABASE_URL or VITE_SUPABASE_URL and SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY for the target project.",

@@ -1,0 +1,86 @@
+{
+  "schema_version": "v8",
+  "audit_id": "caie-niche-positioning-2026-07-16",
+  "experiments": [
+    {
+      "experiment_id": "EXP-001",
+      "hypothesis_id": "H-001",
+      "name": "Coach Cold Outreach — Free Report Offer",
+      "description": "Contact 20 career coaches via LinkedIn or email with a personalized offer: 'I'll generate a free white-label automation defense report for one of your clients. You keep it, branded with your logo. No strings attached.' Measure response rate, acceptance rate, and willingness to pay for more.",
+      "metrics": {
+        "primary": "Response rate (target: >20%)",
+        "secondary": "Acceptance rate of free report (target: >30% of responses)",
+        "tertiary": "Willingness to pay for more reports (target: >25% of those who receive free report)"
+      },
+      "sample_size": "20 coaches",
+      "duration": "2 weeks",
+      "stop_conditions": [
+        "If 0 responses after 50 outreach messages → STOP, reposition",
+        "If >50% respond but 0 accept free report → product-market messaging gap, not product gap",
+        "If >50% accept free report but 0 willing to pay → pricing or proof gap"
+      ],
+      "status": "designed",
+      "executed": false,
+      "results": null
+    },
+    {
+      "experiment_id": "EXP-002",
+      "hypothesis_id": "H-001",
+      "name": "Coach Demo Video — LinkedIn Content Test",
+      "description": "Create a 3-minute demo video showing: (1) searching an occupation, (2) generating a white-label report with custom branding, (3) showing O*NET source citations in the report. Post on LinkedIn with hashtag #careercoaching. Measure views, engagement, and inbound inquiries from coaches.",
+      "metrics": {
+        "primary": "Inbound inquiries from coaches (target: >3)",
+        "secondary": "LinkedIn post engagement (target: >500 views, >20 reactions)",
+        "tertiary": "Demo video completion rate (target: >40%)"
+      },
+      "sample_size": "1 LinkedIn post + 1 video",
+      "duration": "1 week post-publication",
+      "stop_conditions": [
+        "If 0 inbound inquiries after 1000 views → messaging or product-market fit issue",
+        "If high views but 0 engagement → content quality issue, not product issue"
+      ],
+      "status": "designed",
+      "executed": false,
+      "results": null
+    },
+    {
+      "experiment_id": "EXP-003",
+      "hypothesis_id": "H-002",
+      "name": "O*NET Source Citation A/B Test",
+      "description": "In the coach cold outreach (EXP-001), A/B test two versions of the outreach message: Version A emphasizes 'O*NET 30.3 government data grounding' and Version B emphasizes 'AI-powered analysis'. Measure which version gets higher response and acceptance rates.",
+      "metrics": {
+        "primary": "Response rate difference between A and B (target: A > B by >10%)",
+        "secondary": "Acceptance rate difference (target: A > B)"
+      },
+      "sample_size": "20 coaches (10 per variant)",
+      "duration": "2 weeks (parallel with EXP-001)",
+      "stop_conditions": [
+        "If no difference between A and B → O*NET grounding may not be a perceived differentiator by coaches",
+        "If B > A → coaches may not value government data sourcing as expected"
+      ],
+      "status": "designed",
+      "executed": false,
+      "results": null
+    },
+    {
+      "experiment_id": "EXP-004",
+      "hypothesis_id": "H-004",
+      "name": "SEO Organic Traffic Baseline",
+      "description": "Submit sitemap to Google Search Console. Track organic impressions and clicks for /automation-risk/:slug pages over 30 days. Measure which occupation pages get impressions and what queries drive them.",
+      "metrics": {
+        "primary": "Organic impressions (target: >100 in 30 days)",
+        "secondary": "Organic clicks (target: >10 in 30 days)",
+        "tertiary": "Click-through rate (target: >2%)"
+      },
+      "sample_size": "50+ SEO pages",
+      "duration": "30 days",
+      "stop_conditions": [
+        "If 0 impressions after 30 days → sitemap indexing issue or domain authority too low",
+        "If impressions but 0 clicks → title/meta description optimization needed"
+      ],
+      "status": "designed",
+      "executed": false,
+      "results": null
+    }
+  ]
+}

@@ -103,7 +103,6 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
   const { toast } = useToast();
   const { addSearch } = useSearchHistoryUnified();
   const { user, loading } = useSession();
-  const apoFunctionApiKey = import.meta.env.VITE_APO_FUNCTION_API_KEY as string | undefined;
   const isGuest = !user;
   const navigate = useNavigate();
   const { requestFeature } = useSubscriptionWithPrompts();
@@ -271,23 +270,12 @@ export const SearchInterface = ({ onOccupationSelect }: SearchInterfaceProps) =>
       return;
     }
 
-    if (!apoFunctionApiKey) {
-      toast({
-        variant: 'destructive',
-        title: 'APO Configuration Missing',
-        description: 'APO security credentials are not configured',
-      });
-      return;
-    }
-
     setIsCalculatingAPO(true);
     const start = performance.now();
     try {
       // Get the current session to include Authorization header
       const { data: { session } } = await supabase.auth.getSession();
-      const headers: Record<string, string> = {
-        'x-api-key': apoFunctionApiKey,
-      };
+      const headers: Record<string, string> = {};
       if (session?.access_token) {
         headers['Authorization'] = `Bearer ${session.access_token}`;
       }

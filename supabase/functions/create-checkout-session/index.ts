@@ -6,14 +6,64 @@ import Stripe from 'https://esm.sh/stripe@14.5.0?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+const DEFAULT_APP_ORIGIN = 'https://automationinsights.app';
+const LOCAL_DEV_PREFIXES = ['http://localhost:', 'http://127.0.0.1:', 'https://localhost:', 'https://127.0.0.1:'];
+
+function normalizeOrigin(value?: string | null): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+function allowedOrigins(): string[] {
+  const configured = [
+    Deno.env.get('APP_URL'),
+    ...(Deno.env.get('CHECKOUT_ALLOWED_ORIGINS') || '').split(','),
+    DEFAULT_APP_ORIGIN,
+  ];
+
+  return configured
+    .map((value) => normalizeOrigin(value?.trim()))
+    .filter((value): value is string => Boolean(value));
+}
+
+function isOriginAllowed(origin: string): boolean {
+  if (LOCAL_DEV_PREFIXES.some((prefix) => origin.startsWith(prefix))) return true;
+  return allowedOrigins().includes(origin);
+}
+
+function resolveReturnOrigin(req: Request): string {
+  const requestOrigin = normalizeOrigin(req.headers.get('origin'));
+  if (requestOrigin) {
+    if (!isOriginAllowed(requestOrigin)) {
+      throw new Error('Origin not allowed for checkout redirect');
+    }
+    return requestOrigin;
+  }
+
+  return normalizeOrigin(Deno.env.get('APP_URL')) || DEFAULT_APP_ORIGIN;
+}
+
+function buildCorsHeaders(req: Request): Record<string, string> {
+  const requestOrigin = normalizeOrigin(req.headers.get('origin'));
+  const allowOrigin = requestOrigin && isOriginAllowed(requestOrigin) ? requestOrigin : 'null';
+  return { ...corsHeaders, 'Access-Control-Allow-Origin': allowOrigin };
+}
+
 serve(async (req) => {
+  const responseHeaders = buildCorsHeaders(req);
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    if (responseHeaders['Access-Control-Allow-Origin'] === 'null' && req.headers.get('origin')) {
+      return new Response(null, { status: 403, headers: responseHeaders });
+    }
+    return new Response(null, { headers: responseHeaders });
   }
 
   try {
@@ -91,8 +141,8 @@ serve(async (req) => {
       customerId = customer.id;
     }
 
-    // Determine success/cancel URLs
-    const origin = req.headers.get('origin') || Deno.env.get('APP_URL') || 'https://automationinsights.app';
+    // Determine success/cancel URLs from an allowlisted browser origin or APP_URL.
+    const origin = resolveReturnOrigin(req);
 
     if (isCreditPurchase) {
       const session = await stripe.checkout.sessions.create({
@@ -119,7 +169,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ sessionId: session.id, url: session.url }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...responseHeaders, 'Content-Type': 'application/json' },
           status: 200,
         }
       );
@@ -152,7 +202,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ sessionId: session.id, url: session.url }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...responseHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
     );
@@ -161,7 +211,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ error: error.message }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...responseHeaders, 'Content-Type': 'application/json' },
         status: 400,
       }
     );

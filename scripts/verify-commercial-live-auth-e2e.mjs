@@ -6,6 +6,15 @@ import { createClient } from '@supabase/supabase-js';
 
 const OUTPUT_PATH = 'docs/commercialization/live-auth-e2e-proof-latest.json';
 const ENV_FILES = ['.env.local', '.env'];
+const DOES_NOT_PROVE = [
+  'Production PDF/DOCX extraction',
+  'Malware scanning',
+  'External model-provider log deletion',
+  'Browser downloads or exports deletion',
+  'Backups deletion',
+  'Employment-decision validity',
+  'Buyer-specific EEOC/ADA/FCRA review',
+];
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -155,15 +164,8 @@ async function main() {
     confidence: 'bounded_authenticated_live_e2e',
     caveat:
       'This verifier signs in with a dedicated synthetic test user and exercises user-owned rows/RPCs. It proves the redacted artifact save/delete and saved-analysis deletion receipt path for that test user only; it does not prove malware scanning, PDF/DOCX extraction, provider-log deletion, backups, legal compliance, employment-selection validity, or buyer-specific governance.',
-    doesNotProve: [
-      'Production PDF/DOCX extraction',
-      'Malware scanning',
-      'External model-provider log deletion',
-      'Browser downloads or exports deletion',
-      'Backups deletion',
-      'Employment-decision validity',
-      'Buyer-specific EEOC/ADA/FCRA review',
-    ],
+    doesNotProve: DOES_NOT_PROVE,
+    doesNotProveCount: DOES_NOT_PROVE.length,
     manualInterventionIfSkipped: [
       'Create a dedicated Supabase Auth test user that contains no real resume or client data.',
       'Add LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD as local env values or GitHub Actions secrets.',

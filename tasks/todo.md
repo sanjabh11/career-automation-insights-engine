@@ -1,5 +1,31 @@
 # Task Plan
 
+## Active Continuation - Live Auth E2E Proof Boundary Count
+- [x] Add `doesNotProveCount` to the live-auth e2e proof generator and current redacted artifact without invoking live auth or loading credentials
+- [x] Extend live-proof packet source-summary alignment and fixtures to reject stale live-auth proof boundary counts
+- [x] Update launch evidence and trust sentinels for the Code Optimization Gate delta
+- [x] Run focused checks, canonical commercial verification, and record the PhaseLoop ledger
+
+## Active Continuation - Production Calibration Proof Boundary Count
+- [x] Add `doesNotProveCount` to the production-calibration proof generator and current redacted artifact without invoking the deployed calibration function
+- [x] Extend live-proof packet source-summary alignment and fixtures to reject stale production-calibration proof boundary counts
+- [x] Update launch evidence and trust sentinels for the Code Optimization Gate delta
+- [x] Run focused checks, canonical commercial verification, and record the PhaseLoop ledger
+
+## Active Continuation - Owner Evidence Closeout Handoff
+- [x] Re-baseline canonical launch evidence and owner/live closeout status
+- [x] Confirm ECC automode route for this bounded closeout slice
+- [x] Add the generated owner-env load step to the closeout handoff command sequence
+- [x] Verify handoff alignment, launch evidence, and commercial gate after regeneration
+- [x] Add explicit `compose:live-gate-evidence` command to the closeout handoff sequence after live proof collection
+- [x] Guard generated handoff alignment against missing live-gate evidence composition
+- [x] Add standalone live-gate and commercial-record validation commands to the owner closeout handoff sequence
+- [x] Guard handoff alignment against missing post-composition validation commands
+- [x] Align owner-facing closeout runbooks with the generated 15-command owner evidence handoff sequence
+- [x] Guard owner-facing runbooks against drift from the generated handoff sequence
+- [x] Align per-gate owner next commands with explicit local evidence paths and owner-held salt commands
+- [x] Guard owner action queue against stale shorthand next commands
+
 ## Active Work
 - [x] Phase A: Remove unsupported `/docs/**` proof links from user-facing pages
 - [x] Phase A: Rewrite README as an evidence-scoped project ledger
@@ -59,10 +85,10 @@
 - Phase E `PLAYWRIGHT_CHANNEL=chrome npm run e2e:smoke` passed 6 browser tests and `npm run verify:commercial` passed including remediation-gate ledger, build, and commercial route smoke.
 - Phase E `npm run lint` now passes with 0 errors and 0 warnings after inactive backups/archives, mechanical non-`any` errors, the active explicit-`any` backlog, active hook-dependency warnings, and provider/page/UI Fast Refresh export warnings were cleared across frontend components/hooks/pages/services plus Supabase Edge Function, shared library, and test boundaries.
 - Follow-up proof-boundary cleanup replaced hard-coded `/impact` outcome metrics/testimonials and static `/outcomes` correlation claims with evidence-gate and telemetry-boundary copy. `tests/e2e/proof-boundary-copy.spec.ts` verifies those legacy overclaims do not render.
-- Follow-up Stripe handoff cleanup added `npm run verify:stripe-test-checkout`, which signs in a synthetic Supabase user, calls `create-checkout-session`, retrieves the Stripe Checkout Session, and requires `livemode=false` when owner test credentials are present. Current local run is `skipped_missing_env`.
-- Follow-up live-MRR handoff cleanup added `npm run verify:stripe-live-mrr`, which reads Stripe live active subscriptions and paid invoices, rejects test-mode keys, and writes redacted proof metadata when owner live Stripe credentials are present. Current local run is `skipped_missing_env`.
-- Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. Current local run is `skipped_missing_env`.
+- Follow-up Stripe handoff cleanup added `npm run verify:stripe-test-checkout`, which signs in a synthetic Supabase user, calls `create-checkout-session`, retrieves the Stripe Checkout Session, and requires `livemode=false` when owner test credentials are present. Current redacted proof artifact is `skipped_missing_env` because an explicit test-mode Stripe key is still missing.
+- Follow-up live-MRR handoff cleanup added `npm run verify:stripe-live-mrr`, which reads Stripe live active subscriptions and paid invoices, rejects test-mode keys, and writes redacted proof metadata when owner live Stripe credentials are present. Current redacted proof artifact is `failed`; revenue remains unclaimed until a real paid recurring subscription and owner-held live Stripe proof pass.
+- Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. Current redacted proof artifact is `passed` and is accepted in `owner-evidence-closeout-status-latest.json`.
 - Follow-up commercial evidence cleanup added `npm run verify:commercial-evidence-records`, which validates redacted founder-held design-partner commitments and permissioned documented outcomes without storing names, contacts, contracts, notes, quotes, or customer data. The remediation gate ledger now consumes those records and can mark the partner/outcome gates as externally proven when accepted unique partner/outcome hashes satisfy the gate. The verifier rejects future-dated evidence metadata and record dates later than `asOf`. Current local run is `no_local_evidence`.
-- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because credential-gated live proof and commercial partner/outcome evidence are still missing.
-- `npm run verify:live-gate-evidence` passes with no attached local evidence file; the adversarial check against `docs/commercialization/live-gate-evidence-template.json` fails as intended because placeholder hashes cannot count as proof, and the verifier now rejects private-contact patterns, future-dated evidence metadata, and item dates later than `asOf`.
-- Phase E cannot locally satisfy live MRR > $0, >=3 committed partners, or documented outcomes; those remain external/manual acceptance gates.
+- `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because manual WCAG evidence, Stripe test checkout, live MRR, committed partner, and documented outcome gates remain open.
+- `npm run verify:live-gate-evidence` passes for partial redacted evidence with accepted `production_calibration_run` and `authenticated_live_artifact_e2e` metadata; the complete live evidence gate still fails until Stripe test checkout and live MRR proof artifacts pass.
+- Phase E cannot locally satisfy manual WCAG evidence, real Stripe test checkout, live MRR > $0, >=3 committed partners, or documented outcomes; those remain owner-held external/manual acceptance gates.

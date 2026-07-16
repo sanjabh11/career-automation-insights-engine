@@ -1,0 +1,24 @@
+{"type":"cancel","taskId":"T001","killActive":false,"createdAt":"2026-06-05T05:39:24.383Z"}
+{"type":"cancel","taskId":"T002","killActive":false,"createdAt":"2026-06-05T05:39:24.934Z"}
+{"type":"cancel","taskId":"T003","killActive":false,"createdAt":"2026-06-05T05:39:25.885Z"}
+{"type":"cancel","taskId":"T004","killActive":false,"createdAt":"2026-06-05T05:39:26.519Z"}
+{"type":"evidence","taskId":"T005","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#current-baseline; package.json verify:commercial-full; scripts/verify-commercial-release.mjs releaseGateCoverage","createdAt":"2026-06-05T05:56:58.286Z"}
+{"type":"evidence","taskId":"T006","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-2-accessibility-smoke; scripts/verify-commercial-accessibility.mjs; package.json verify:commercial-a11y","createdAt":"2026-06-05T05:57:07.554Z"}
+{"type":"evidence","taskId":"T010","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-3-browser-journey; scripts/verify-commercial-browser.mjs; package.json verify:commercial-browser","createdAt":"2026-06-05T05:57:17.092Z"}
+{"type":"evidence","taskId":"T009","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-4-network-source-refresh; scripts/verify-source-manifest.mjs; scripts/verify-launch-evidence-sources.mjs; scripts/verify-live-closeout-access-sources.mjs; scripts/generate-launch-evidence-manifest.mjs","createdAt":"2026-06-05T05:57:25.212Z"}
+{"type":"evidence","taskId":"T008","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-5-production-dependency-audit; package-lock.json; package.json","createdAt":"2026-06-05T05:57:34.097Z"}
+{"type":"evidence","taskId":"T007","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#stop-conditions; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#evidence-boundary; scripts/verify-commercial-release.mjs commercialReadinessState","createdAt":"2026-06-05T05:57:42.207Z"}
+{"type":"evidence","taskId":"T011","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-6-full-local-commercial-gate; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-7-final-readbacks; package.json verify:commercial-full","createdAt":"2026-06-05T05:57:51.067Z"}
+{"type":"review-task-added","taskId":"T012","reviewOf":"T005","createdAt":"2026-06-05T06:00:37.320Z"}
+{"type":"review-task-added","taskId":"T013","reviewOf":"T006","createdAt":"2026-06-05T06:01:08.214Z"}
+{"type":"review-task-added","taskId":"T014","reviewOf":"T010","createdAt":"2026-06-05T06:01:17.383Z"}
+{"type":"review-task-added","taskId":"T015","reviewOf":"T009","createdAt":"2026-06-05T06:01:29.178Z"}
+{"type":"review-task-added","taskId":"T016","reviewOf":"T008","createdAt":"2026-06-05T06:01:39.545Z"}
+{"type":"review-task-added","taskId":"T017","reviewOf":"T007","createdAt":"2026-06-05T06:01:49.145Z"}
+{"type":"evidence","taskId":"T012","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#current-baseline; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#approval-gate","createdAt":"2026-06-05T06:02:03.416Z"}
+{"type":"evidence","taskId":"T013","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-2-accessibility-smoke; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#evidence-boundary","createdAt":"2026-06-05T06:02:17.213Z"}
+{"type":"evidence","taskId":"T014","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-3-browser-journey; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#evidence-boundary","createdAt":"2026-06-05T06:02:30.993Z"}
+{"type":"evidence","taskId":"T015","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-4-network-source-refresh","createdAt":"2026-06-05T06:02:44.386Z"}
+{"type":"evidence","taskId":"T016","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#step-5-production-dependency-audit","createdAt":"2026-06-05T06:02:56.654Z"}
+{"type":"evidence","taskId":"T017","evidence":"docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#stop-conditions; docs/commercialization/full-local-gate-execution-plan-2026-06-05.md#evidence-boundary","createdAt":"2026-06-05T06:03:07.744Z"}
+{"type":"synthesis-check","ready":true,"blockers":[],"createdAt":"2026-06-05T06:03:31.460Z"}

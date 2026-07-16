@@ -327,13 +327,12 @@ async function handleCreditPurchaseCheckout(session: Stripe.Checkout.Session, us
 function getTierFromPrice(subscription: Stripe.Subscription): string {
   const priceId = subscription.items.data[0]?.price.id;
 
-  // Map Stripe price IDs to tiers
-  // Update these when real Stripe price IDs are created in the Stripe Dashboard
+  // Map real Stripe price IDs to tiers (PRICE-3 fix: was using placeholders)
   const priceToTierMap: Record<string, string> = {
-    'price_defender_monthly': 'defender',
-    'price_defender_annual': 'defender',
-    'price_coach_monthly': 'coach',
-    'price_coach_annual': 'coach',
+    'price_1SzAwBCDRnHqUTRJY78xxjKY': 'defender',
+    'price_1SzAwBCDRnHqUTRJ7vMvAN28': 'defender',
+    'price_1SzAwCCDRnHqUTRJdPZaLEGn': 'coach',
+    'price_1SzAwCCDRnHqUTRJIbQ7YlJe': 'coach',
     // Legacy mappings for backward compatibility
     'price_explorer': 'free',
     'price_navigator': 'defender',

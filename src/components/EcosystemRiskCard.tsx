@@ -131,14 +131,8 @@ export function EcosystemRiskCard({ occupationCode, occupationTitle }: Ecosystem
         return;
       }
 
-      const apoKey = import.meta.env.VITE_APO_FUNCTION_API_KEY as string | undefined;
-      if (!apoKey) {
-        setError('APO configuration missing.');
-        setLoading(false);
-        return;
-      }
       const { data: { session } } = await supabase.auth.getSession();
-      const headers: Record<string,string> = { 'x-api-key': apoKey };
+      const headers: Record<string,string> = {};
       if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
 
       const upstream: { occupation_code: string; title: string; weight: number; automation_prob: number }[] = [];

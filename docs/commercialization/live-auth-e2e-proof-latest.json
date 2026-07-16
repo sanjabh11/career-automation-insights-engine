@@ -13,6 +13,7 @@
     "Employment-decision validity",
     "Buyer-specific EEOC/ADA/FCRA review"
   ],
+  "doesNotProveCount": 7,
   "manualInterventionIfSkipped": [
     "Create a dedicated Supabase Auth test user that contains no real resume or client data.",
     "Add LIVE_SUPABASE_TEST_USER_EMAIL and LIVE_SUPABASE_TEST_USER_PASSWORD as local env values or GitHub Actions secrets.",

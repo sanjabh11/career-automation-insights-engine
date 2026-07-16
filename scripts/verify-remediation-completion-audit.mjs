@@ -54,7 +54,11 @@ function renderMarkdown(audit) {
     .map((phase) => `| ${phase.phase} | ${renderCommands(phase.commandsRun)} | ${escapeCell(phase.filesChanged.join('<br/>'))} |`)
     .join('\n');
   const blockerRows = audit.remainingExternalGates
-    .map((gate) => `| ${escapeCell(gate.label)} | ${gate.status} | ${escapeCell(gate.neededEvidence)} |`)
+    .map((gate) => {
+      const ownerPrepCommand = gate.ownerPrepCommand ? `\`${escapeCell(gate.ownerPrepCommand)}\`` : 'n/a';
+      const nextCommand = gate.nextCommand ? `\`${escapeCell(gate.nextCommand)}\`` : 'n/a';
+      return `| ${escapeCell(gate.label)} | ${gate.status} | ${escapeCell(gate.neededEvidence)} | ${escapeCell(gate.ownerAction || gate.neededEvidence)} | ${ownerPrepCommand} | ${nextCommand} |`;
+    })
     .join('\n');
 
   return `# Remediation Completion Audit
@@ -64,7 +68,7 @@ Branch: \`${audit.branch}\`
 Source head at generation: \`${audit.sourceHeadAtGeneration}\`
 Goal complete: ${audit.goalComplete ? 'yes' : 'no'}
 
-This generated audit is the current phase-by-phase closeout ledger for the APO Dashboard remediation plan. It is evidence-bound: local implementation and verifier coverage are separated from owner-held live proof, payment proof, partner commitments, and outcome evidence.
+This generated audit is the current phase-by-phase closeout ledger for the APO Dashboard remediation plan. It is evidence-bound: local implementation and verifier coverage are separated from owner-held live proof, payment proof, partner commitments, outcome evidence, and manual accessibility evidence.
 
 ## Phase Deliverables
 
@@ -80,9 +84,9 @@ ${commandRows}
 
 ## Remaining External Gates
 
-| Gate | Status | Needed evidence |
-| --- | --- | --- |
-${blockerRows || '| None | complete | No remaining evidence gate. |'}
+| Gate | Status | Needed evidence | Owner action | Owner prep command | Next command |
+| --- | --- | --- | --- | --- | --- |
+${blockerRows || '| None | complete | No remaining evidence gate. | n/a | n/a | n/a |'}
 
 ## Decision
 
@@ -159,14 +163,16 @@ function buildAudit() {
         'scripts/verify-commercial-release.mjs',
         'scripts/verify-remediation-external-gates.mjs',
         'scripts/verify-owner-evidence-fixture-path.mjs',
+        'scripts/verify-manual-wcag-evidence.mjs',
         'scripts/verify-remediation-completion-audit.mjs',
+        'docs/commercialization/manual-wcag-evidence-template.json',
         'docs/commercialization/phase-e-commercial-validation-playbook.md',
         'docs/commercialization/remediation-external-gates-latest.md',
         'docs/commercialization/remediation-completion-audit-latest.md',
       ],
       commandsRun: ['npm run verify:commercial-validation', 'npm run verify:owner-evidence-fixtures', 'npm run verify:commercial', 'gh pr checks 9 --watch --interval 10'],
-      acceptanceEvidence: 'Instrumentation, commercial evidence schemas, fail-closed owner gates, and hosted commercial/runtime checks are present; live MRR/partners/outcomes are still external.',
-      confidenceDelta: 'Commercial readiness improved from planned evidence collection to enforced local gates and redacted proof intake, but commercial validation remains unearned.',
+      acceptanceEvidence: 'Instrumentation, commercial/manual evidence schemas, fail-closed owner gates, and hosted commercial/runtime checks are present; live MRR/partners/outcomes/manual WCAG evidence are still external.',
+      confidenceDelta: 'Commercial readiness improved from planned evidence collection to enforced local gates and redacted proof intake, but commercial validation and accessibility conformance remain unearned.',
     },
   ].map((phase) => ({
     ...phase,
@@ -178,12 +184,14 @@ function buildAudit() {
     'locally_proven_with_scope_limit',
     'satisfied_by_mapping_adapter_and_us_basis_disclosure',
     'externally_proven_redacted_evidence_attached',
+    'manual_wcag_evidence_attached',
   ].includes(gate.status));
 
   const errors = [];
   const requiredScripts = [
     'verify:remediation-gates',
     'verify:owner-evidence-fixtures',
+    'verify:manual-wcag-evidence',
     'verify:commercial-validation',
     'verify:commercial',
     'verify:repo-presentation',
@@ -210,6 +218,10 @@ function buildAudit() {
       label: gate.label,
       status: gate.status,
       neededEvidence: gate.neededEvidence,
+      ownerAction: gate.ownerAction || gate.neededEvidence,
+      ownerPrepCommand: gate.ownerPrepCommand || null,
+      nextCommand: gate.nextCommand || null,
+      riskIfSkipped: gate.riskIfSkipped || null,
     })),
     decision: gates.goalComplete
       ? 'All remediation gates are proven by current evidence.'
@@ -217,6 +229,7 @@ function buildAudit() {
     nonProofBoundaries: [
       'Synthetic fixtures prove schema compatibility only.',
       'Local verifier success does not prove live Stripe checkout, live MRR, production calibration, or partner/outcome authenticity.',
+      'Manual WCAG evidence metadata does not create a WCAG conformance statement, legal compliance claim, or procurement approval.',
       'Hosted CI proves this branch behavior, not target production data state.',
       'UK/Canada/Australia wage/outlook values remain adapter-gated unless source-dated joins are imported and validated.',
     ],

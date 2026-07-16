@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "2026-06-05.apo-live-proof-run-packet-source-audit.v1",
+  "generatedAt": "2026-06-08T20:16:01.419Z",
+  "packetPath": "docs/commercialization/live-proof-run-packet-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "Live proof run packet source audit proves only that the owner live-proof worksheet official Stripe, PCI SSC, Supabase, and GitHub reference URLs were present and matched expected page text at verification time. It does not prove live checkout, live MRR, production calibration, authenticated live artifact persistence, credential validity, PCI DSS compliance, owner-held evidence completeness, production deployment, or commercial readiness.",
+  "allPassed": true,
+  "sourceCount": 6,
+  "passedCount": 6,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "unexpectedReferenceCount": 0,
+  "failedSourceIds": [],
+  "unexpectedReferences": [],
+  "sources": [
+    {
+      "id": "stripe-test-mode",
+      "label": "Stripe testing environments and test mode",
+      "url": "https://docs.stripe.com/test-mode",
+      "expectedUrl": "https://docs.stripe.com/test-mode",
+      "appliesTo": [
+        "test checkout proof",
+        "test keys",
+        "no real charges in test proof"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/testing-use-cases",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "151018b465e01cbe6b55e3c613c6d0aa50656af3e4545d8462608e0a569f7583",
+        "byteLength": 1089056,
+        "evidence": [
+          {
+            "label": "Stripe testing use cases and sandboxes",
+            "matched": true
+          },
+          {
+            "label": "sandbox does not affect live payments",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "stripe-api-keys",
+      "label": "Stripe API keys",
+      "url": "https://docs.stripe.com/keys",
+      "expectedUrl": "https://docs.stripe.com/keys",
+      "appliesTo": [
+        "test/live key prefixes",
+        "restricted keys",
+        "live key handling"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/keys",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "62fe9c3aaa7f37543761675f9ce9b2751cf68096fa352d7f6843bf0287a936d8",
+        "byteLength": 1038627,
+        "evidence": [
+          {
+            "label": "Stripe API keys reference",
+            "matched": true
+          },
+          {
+            "label": "test and live key mode boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "stripe-key-best-practices",
+      "label": "Stripe secret key best practices",
+      "url": "https://docs.stripe.com/keys-best-practices",
+      "expectedUrl": "https://docs.stripe.com/keys-best-practices",
+      "appliesTo": [
+        "prefer restricted keys",
+        "avoid live keys in testing",
+        "rotation if exposed"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.stripe.com/keys-best-practices",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "30cb9d5d5f34d085342fd0b97391e89d0ae961493d7dcfbf3d033fc3c1d5b5d9",
+        "byteLength": 1051680,
+        "evidence": [
+          {
+            "label": "Stripe secret API key best practices",
+            "matched": true
+          },
+          {
+            "label": "do not store keys in source code",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "pci-dss-v4-0-1",
+      "label": "PCI DSS v4.0.1 publication notice",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "expectedUrl": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "appliesTo": [
+        "payment-data security boundary",
+        "cardholder-data compliance is owner-held",
+        "no PCI compliance claim"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "4f674d08b5d799155a921800a836c41463ea86daab3930b39a1a0b5d5a921fbb",
+        "byteLength": 84183,
+        "evidence": [
+          {
+            "label": "PCI DSS v4.0.1 publication title",
+            "matched": true
+          },
+          {
+            "label": "PCI DSS active-version boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "supabase-edge-function-secrets",
+      "label": "Supabase Edge Function environment variables and secrets",
+      "url": "https://supabase.com/docs/guides/functions/secrets",
+      "expectedUrl": "https://supabase.com/docs/guides/functions/secrets",
+      "appliesTo": [
+        "function secrets",
+        "local env files",
+        "do not check env files into git"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://supabase.com/docs/guides/functions/secrets",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "119e7e72d3c9ce9a6026814ffd0ccfc4b92bb4a1845780f758f77030a7d621be",
+        "byteLength": 231595,
+        "evidence": [
+          {
+            "label": "Supabase Edge Function environment variables",
+            "matched": true
+          },
+          {
+            "label": "Supabase local env files are not checked into git",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "github-actions-secrets",
+      "label": "GitHub Actions secrets",
+      "url": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "expectedUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "appliesTo": [
+        "CI secret names",
+        "masked secret storage",
+        "owner-held credentials"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "b6f88c7cbc808cbe9277f10d8651f44d380576bad652cb3d46f79d7aed4cb1d4",
+        "byteLength": 273394,
+        "evidence": [
+          {
+            "label": "GitHub Actions secrets concept",
+            "matched": true
+          },
+          {
+            "label": "GitHub Actions secret access and permissions",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

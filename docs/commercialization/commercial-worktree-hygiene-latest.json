@@ -1,0 +1,789 @@
+{
+  "schemaVersion": "2026-06-05.apo-commercial-worktree-hygiene.v1",
+  "generatedAt": "2026-06-08T23:22:20.323Z",
+  "ok": true,
+  "status": "passed",
+  "trackedDirtyPathCount": 80,
+  "stagedPathCount": 0,
+  "modifiedPathCount": 80,
+  "deletedPathCount": 0,
+  "untrackedPathCount": 147,
+  "untrackedAllowedPathCount": 147,
+  "unexpectedUntrackedPathCount": 0,
+  "sensitiveUntrackedPathCount": 0,
+  "allowedUntrackedPathPatternCount": 4,
+  "sensitiveUntrackedPathPatternCount": 4,
+  "untrackedPathCheckCount": 147,
+  "untrackedCountsByCategory": {
+    "dynamic-workflow-artifact": 48,
+    "phase-loop-trace-artifact": 1,
+    "generated-commercialization-artifact": 42,
+    "commercialization-helper-script": 56
+  },
+  "trackedDirtyStatusCounts": {
+    " M": 80
+  },
+  "allowedUntrackedPathPatterns": [
+    "generated-commercialization-artifact",
+    "commercialization-helper-script",
+    "dynamic-workflow-artifact",
+    "phase-loop-trace-artifact"
+  ],
+  "sensitiveUntrackedPathPatterns": [
+    "local-env-file",
+    "owner-local-evidence-json",
+    "private-key-or-certificate",
+    "local-secret-or-token-file"
+  ],
+  "untrackedPathChecks": [
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-local-gate-2026-06-05/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-full-verification-2026-06-05/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-next-proof-boundary-2026-06-06/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-closeout-current-audit-2026-06-08/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-owner-evidence-next-slice-2026-06-05/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-full-local-approval-state-2026-06-06/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/commercial-post-toctou-next-gap-2026-06-08/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/backlog.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/claims.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/README.md",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/results.jsonl",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/workflow.js",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".dynamic-workflows/live-closeout-owner-access-recovery/workflow.json",
+      "category": "dynamic-workflow-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": ".phase-loop/trace-spans.jsonl",
+      "category": "phase-loop-trace-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-artifact-redaction-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-artifact-redaction-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-intake-matrix-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-intake-packet-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-intake-packet-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-intake-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-verification-summary-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-verification-summary-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-worktree-hygiene-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/commercial-worktree-hygiene-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/full-local-gate-execution-plan-2026-06-05.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/full-local-gate-progress-digest-2026-06-05.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-evidence-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-evidence-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-evidence-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-outreach-crm-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-outreach-crm-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/launch-readiness-deep-research-plan-2026-06-04.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-closeout-access-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-closeout-readiness-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-closeout-readiness-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-proof-run-matrix-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-proof-run-packet-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-proof-run-packet-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/live-proof-run-packet-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-evidence-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-evidence-template.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-review-matrix-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-review-packet-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-review-packet-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-review-packet-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-closeout-status-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-closeout-status-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-completion-drill-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-completion-drill-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-completion-drill-source-audit-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-completion-matrix-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-handoff-latest.csv",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-handoff-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-handoff-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-local-safety-latest.json",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "docs/commercialization/owner-evidence-local-safety-latest.md",
+      "category": "generated-commercialization-artifact",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-commercial-evidence-intake-packet.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-launch-evidence-manifest.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-live-proof-run-packet.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-manual-wcag-review-packet.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-owner-evidence-completion-drill.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/generate-owner-evidence-handoff.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/hash-owner-evidence-artifacts.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-artifact-redaction.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-evidence-intake-packet-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-evidence-intake-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-evidence-intake-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-evidence-records-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-full-local-approval-package-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-full-local-approval-package.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-summary-launch-readiness-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-summary-redaction-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-summary-redaction-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-worktree-hygiene-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-commercial-worktree-hygiene.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-launch-evidence-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-launch-evidence-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-launch-evidence-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-launch-evidence-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-closeout-access-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-closeout-access-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-closeout-command-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-run-packet-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-run-packet-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-run-packet-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-live-proof-run-packet-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-evidence-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-evidence.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-review-packet-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-manual-wcag-review-packet-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-action-queue-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-action-queue-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-command-checklist-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-completion-drill-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-completion-drill-sources.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-handoff-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-local-safety-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-local-safety.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-prep-readiness-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    },
+    {
+      "path": "scripts/verify-owner-evidence-runbook-alignment.mjs",
+      "category": "commercialization-helper-script",
+      "sensitiveCategory": null
+    }
+  ],
+  "errorCount": 0,
+  "errors": [],
+  "outputs": {
+    "json": "docs/commercialization/commercial-worktree-hygiene-latest.json",
+    "markdown": "docs/commercialization/commercial-worktree-hygiene-latest.md"
+  },
+  "evidenceBoundary": "This verifier inventories git worktree paths only. It fails on untracked sensitive owner-local paths and untracked files outside approved commercialization/generated workflow categories. It does not read owner-held ignored evidence contents and does not prove untracked file contents are secret-free beyond the separate secret-hygiene scanner.",
+  "doesNotProve": [
+    "owner-held Stripe, Supabase, customer, partner, outcome, or manual WCAG evidence",
+    "absence of secrets in git history, ignored local files, screenshots, logs, browser caches, cloud dashboards, or external systems",
+    "that every modified tracked file is ready to commit, reviewed, or production-safe",
+    "commercial-ready status, legal compliance, WCAG conformance, procurement approval, or production uptime"
+  ],
+  "doesNotProveCount": 4
+}

@@ -176,6 +176,42 @@ const checks = [
     ],
   },
   {
+    id: 'ftc-consumer-reviews-rule-questions',
+    label: 'FTC Consumer Reviews and Testimonials Rule questions',
+    url: 'https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers',
+    expected: [
+      { label: 'FTC Consumer Reviews and Testimonials Rule Q&A', pattern: /Consumer Reviews and Testimonials Rule/i },
+      { label: 'fake or deceptive reviews/testimonials boundary', pattern: /fake, false, or otherwise deceptive reviews and testimonials|fake or false consumer reviews/i },
+    ],
+  },
+  {
+    id: 'ftc-endorsements-reviews',
+    label: 'FTC Endorsements, Influencers, and Reviews hub',
+    url: 'https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews',
+    expected: [
+      { label: 'FTC endorsements and reviews hub title', pattern: /Endorsements, Influencers, and Reviews/i },
+      { label: 'commercial evidence guidance collection', pattern: /Consumer Reviews and Testimonials Rule|Soliciting and Paying for Online Reviews|Endorsement Guides/i },
+    ],
+  },
+  {
+    id: 'ftc-endorsement-guides-faq',
+    label: "FTC Endorsement Guides: What People Are Asking",
+    url: 'https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking',
+    expected: [
+      { label: 'FTC Endorsement Guides FAQ', pattern: /Endorsement Guides: What People Are Asking|Endorsement Guides/i },
+      { label: 'material connection disclosure guidance', pattern: /material connection|clear and conspicuous/i },
+    ],
+  },
+  {
+    id: 'ftc-soliciting-paying-online-reviews',
+    label: 'FTC Soliciting and Paying for Online Reviews guide',
+    url: 'https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers',
+    expected: [
+      { label: 'FTC soliciting and paying reviews guide title', pattern: /Soliciting and Paying for Online Reviews/i },
+      { label: 'fake reviews and paid rankings warning', pattern: /fake reviews|paying supposedly independent websites|deception and manipulation/i },
+    ],
+  },
+  {
     id: 'ferpa-student-privacy',
     label: 'FERPA student privacy guidance',
     url: 'https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records',
@@ -188,24 +224,35 @@ const checks = [
     id: 'dol-ai-literacy-framework',
     label: 'DOL AI Literacy Framework',
     url: 'https://www.dol.gov/agencies/eta/advisories/ten-07-25',
+    timeoutMs: 60_000,
     expected: [
       { label: 'DOL AI Literacy Framework title', pattern: /AI Literacy Framework/i },
       { label: 'workforce and education stakeholder evidence', pattern: /public workforce and education systems|state and local workforce board/i },
     ],
   },
   {
+    id: 'dol-ai-worker-wellbeing-best-practices',
+    label: 'DOL AI Worker Well-being best practices',
+    url: 'https://www.dol.gov/index.php/newsroom/releases/osec/osec20241016',
+    expected: [
+      { label: 'DOL AI Best Practices roadmap title', pattern: /AI Best Practices roadmap|AI Best Practices/i },
+      { label: 'worker rights and oversight evidence', pattern: /meaningful human oversight|Protecting workers.*rights|Securing and protecting worker data/i },
+    ],
+  },
+  {
     id: 'anthropic-economic-index',
     label: 'Anthropic Economic Index',
-    url: 'https://www.anthropic.com/research/the-anthropic-economic-index',
+    url: 'https://www.anthropic.com/research/economic-index-march-2026-report',
     expected: [
-      { label: 'Anthropic Economic Index title', pattern: /Anthropic Economic Index/i },
-      { label: 'O*NET task mapping evidence', pattern: /O\*NET|Occupational Information Network/i },
+      { label: 'March 2026 Economic Index title', pattern: /Anthropic Economic Index report: Learning curves|Economic Index/i },
+      { label: 'O*NET task mapping evidence', pattern: /O\*NET tasks|O\*NET framework|O\*NET task/i },
     ],
   },
   {
     id: 'anthropic-economic-index-2026',
     label: 'Anthropic Economic Index January 2026',
     url: 'https://www.anthropic.com/research/anthropic-economic-index-january-2026-report',
+    timeoutMs: 60_000,
     expected: [
       { label: 'January 2026 Economic Index title', pattern: /Economic Index|Economic primitives/i },
       { label: 'automation and augmentation evidence', pattern: /automation|augmentation|Claude/i },
@@ -248,6 +295,98 @@ const checks = [
     ],
   },
   {
+    id: 'wcag-em-overview',
+    label: 'WCAG-EM conformance evaluation overview',
+    url: 'https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/',
+    expected: [
+      { label: 'WCAG-EM overview title', pattern: /WCAG-EM Overview|Website Accessibility Conformance Evaluation Methodology/i },
+      { label: 'WCAG-EM scope and process evidence', pattern: /define the scope|select a representative sample|report your evaluation findings/i },
+    ],
+  },
+  {
+    id: 'wcag-em-2',
+    label: 'WCAG-EM 2.0 digital-product evaluation draft',
+    url: 'https://www.w3.org/TR/wcag-em-2/',
+    expected: [
+      { label: 'WCAG-EM 2.0 title', pattern: /W3C Accessibility Guidelines Evaluation Methodology \(WCAG-EM\) 2\.0|WCAG-EM 2\.0/i },
+      { label: 'digital product evaluation evidence', pattern: /digital products|sample set|accessibility support baseline/i },
+    ],
+  },
+  {
+    id: 'wcag-em-report-tool',
+    label: 'WCAG-EM Report Tool',
+    url: 'https://www.w3.org/WAI/eval/report-tool/',
+    expected: [
+      { label: 'WCAG-EM Report Tool title', pattern: /WCAG-EM[-\s]Report[-\s]Tool/i },
+      { label: 'W3C WAI tool stewardship evidence', pattern: /W3C\/WAI \(Project Lead\)|Accessibility Education and Outreach Working Group|EOWG/i },
+      { label: 'current report tool version evidence', pattern: /Updated 12 May 2026|Version 3\.0\.3/i },
+    ],
+  },
+  {
+    id: 'wcag2ict-22',
+    label: 'WCAG2ICT 2.2 non-web ICT guidance',
+    url: 'https://www.w3.org/TR/wcag2ict-22/',
+    expected: [
+      { label: 'WCAG2ICT Group Note title', pattern: /Guidance on Applying WCAG 2 to Non-Web Information and Communications Technologies \(WCAG2ICT\)/i },
+      { label: 'WCAG 2.2 non-web documents and software evidence', pattern: /WCAG22.*non-web Information and Communications Technologies|non-web documents and software/i },
+      { label: 'informative non-normative guidance boundary', pattern: /informative guidance|not normative|does not set requirements/i },
+    ],
+  },
+  {
+    id: 'nist-ai-genai-profile',
+    label: 'NIST AI RMF Generative Artificial Intelligence Profile',
+    url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence',
+    expected: [
+      { label: 'Generative AI Profile title', pattern: /Generative Artificial Intelligence Profile/i },
+      { label: 'NIST AI 600-1 publication evidence', pattern: /NIST Trustworthy and Responsible AI\s*-\s*600-1|Report Number\s+600-1|NIST\.AI\.600-1/i },
+    ],
+  },
+  {
+    id: 'nist-ssdf',
+    label: 'NIST Secure Software Development Framework',
+    url: 'https://csrc.nist.gov/pubs/sp/800/218/final',
+    expected: [
+      { label: 'NIST SSDF title', pattern: /Secure Software Development Framework \(SSDF\) Version 1\.1/i },
+      { label: 'secure development practices evidence', pattern: /secure software development practices|software purchasers and consumers|supplier/i },
+    ],
+  },
+  {
+    id: 'cisa-secure-by-design',
+    label: 'CISA Secure by Design principles',
+    url: 'https://www.cisa.gov/news-events/news/applying-secure-design-thinking-events-news',
+    expected: [
+      { label: 'CISA Secure by Design guide reference', pattern: /Shifting the Balance of Cybersecurity Risk|Secure by Design Software/i },
+      { label: 'Secure by Design principles evidence', pattern: /Take Ownership of Customer Security Outcomes|Embrace Radical Transparency and Accountability|Lead From the Top/i },
+    ],
+  },
+  {
+    id: 'owasp-asvs-5',
+    label: 'OWASP Application Security Verification Standard',
+    url: 'https://owasp.org/www-project-application-security-verification-standard/',
+    expected: [
+      { label: 'OWASP ASVS title', pattern: /Application Security Verification Standard \(ASVS\)/i },
+      { label: 'ASVS 5.0.0 current stable evidence', pattern: /latest stable version of the ASVS \(5\.0\.0\)|ASVS Version 5\.0\.0 is released/i },
+    ],
+  },
+  {
+    id: 'owasp-llm-top-10-2025',
+    label: 'OWASP Top 10 for LLM Applications 2025',
+    url: 'https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/',
+    expected: [
+      { label: 'OWASP LLM Top 10 2025 title', pattern: /OWASP Top 10 for LLM Applications 2025/i },
+      { label: 'AI application risk evidence', pattern: /security issues specific to AI applications|associated risks|LLMs are embedded/i },
+    ],
+  },
+  {
+    id: 'pci-dss-v4-0-1',
+    label: 'PCI DSS v4.0.1 publication notice',
+    url: 'https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1',
+    expected: [
+      { label: 'PCI DSS v4.0.1 publication title', pattern: /Just Published: PCI DSS v4\.0\.1|PCI DSS v4\.0\.1/i },
+      { label: 'PCI SSC current-version evidence', pattern: /only active version of the standard|31 December 2024|31 March 2025 effective date/i },
+    ],
+  },
+  {
     id: 'ada-ai-hiring-guidance',
     label: 'ADA algorithmic hiring guidance',
     url: 'https://www.ada.gov/resources/ai-guidance/',
@@ -272,6 +411,17 @@ const checks = [
     expected: [
       { label: 'CFPB circular title', pattern: /Consumer Financial Protection Circular 2024-06|Background Dossiers and Algorithmic Scores/i },
       { label: 'employment FCRA purpose evidence', pattern: /permission to procure a consumer report|provide notices before and upon taking adverse actions|hiring, promotion, reassignment, or retention/i },
+    ],
+  },
+  {
+    id: 'eu-ai-act-annex-iii-high-risk',
+    label: 'EU AI Act Annex III high-risk AI systems',
+    url: 'https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3',
+    expected: [
+      { label: 'AI Act Annex III title', pattern: /Annex III|High-risk AI systems pursuant to Article/i },
+      { label: 'employment and self-employment high-risk evidence', pattern: /Employment, workers[’'] management and access to self-employment/i },
+      { label: 'candidate filtering boundary evidence', pattern: /analyse and filter job applications|evaluate candidates/i },
+      { label: 'education and vocational training high-risk evidence', pattern: /Education and vocational training/i },
     ],
   },
   {
@@ -326,6 +476,26 @@ const checks = [
     expected: [
       { label: 'OWASP file upload title', pattern: /File Upload Cheat Sheet|File Upload Protection/i },
       { label: 'file validation controls', pattern: /Extension Validation|Content-Type Validation|File Signature Validation|Upload and Download Limits/i },
+    ],
+  },
+  {
+    id: 'cwe-59-link-following',
+    label: 'CWE-59 link-following weakness',
+    url: 'https://cwe.mitre.org/data/definitions/59.html',
+    expected: [
+      { label: 'CWE-59 link-following title', pattern: /CWE-59:\s*Improper Link Resolution Before File Access/i },
+      { label: 'link or shortcut unintended-resource definition', pattern: /link or shortcut that resolves to an unintended resource/i },
+      { label: 'symlink and hard-link relationship evidence', pattern: /Symbolic Link.*Hard Link|Hard Link.*Symbolic Link/i },
+    ],
+  },
+  {
+    id: 'cwe-367-toctou',
+    label: 'CWE-367 TOCTOU race-condition weakness',
+    url: 'https://cwe.mitre.org/data/definitions/367.html',
+    expected: [
+      { label: 'CWE-367 TOCTOU title', pattern: /CWE-367:\s*Time-of-check Time-of-use \(TOCTOU\) Race Condition/i },
+      { label: 'check-use resource state definition', pattern: /resource(?:'|&#39;)s state can change between the check and the use/i },
+      { label: 'filename handle race example', pattern: /access\(\).*fopen\(\)|no guarantee that the file variable still refers to the same file/i },
     ],
   },
   {

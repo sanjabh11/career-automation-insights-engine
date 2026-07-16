@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T18:38:22.598Z",
+  "generatedAt": "2026-06-08T20:15:23.192Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -41,6 +41,7 @@
       "label": "occupation SEO report"
     }
   ],
+  "routeCount": 9,
   "viewports": [
     {
       "name": "mobile",
@@ -58,6 +59,7 @@
       "height": 1100
     }
   ],
+  "viewportCount": 3,
   "routeResults": [
     {
       "path": "/privacy",
@@ -66,52 +68,64 @@
       "heading": "Privacy Policy",
       "bodyLength": 2559,
       "interactiveCount": 1,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 1,
-      "keyboardTabStopsChecked": 1
+      "keyboardTabStopsChecked": 1,
+      "focusReview": "first 1 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/trust-center",
       "label": "commercial trust center",
       "viewport": "mobile",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17117,
-      "interactiveCount": 5,
+      "bodyLength": 79577,
+      "interactiveCount": 30,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 5,
-      "keyboardTabStopsChecked": 5
+      "focusableCount": 30,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "mobile",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 3182,
+      "bodyLength": 4842,
       "interactiveCount": 10,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 10,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/sample-report",
@@ -120,16 +134,20 @@
       "heading": "Generate a Free AI Career Report",
       "bodyLength": 1568,
       "interactiveCount": 27,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 27,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/resume-analyzer",
@@ -138,16 +156,20 @@
       "heading": "Resume Automation Risk Analyzer",
       "bodyLength": 884,
       "interactiveCount": 4,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 4,
-      "keyboardTabStopsChecked": 4
+      "keyboardTabStopsChecked": 4,
+      "focusReview": "first 4 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/counselor-reports",
@@ -156,70 +178,86 @@
       "heading": "Counselor Report Generator",
       "bodyLength": 1518,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 24,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/enterprise-dashboard",
       "label": "workforce dashboard",
       "viewport": "mobile",
       "heading": "Workforce Planning Dashboard",
-      "bodyLength": 482,
+      "bodyLength": 690,
       "interactiveCount": 10,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 12,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/proof-pack-gallery",
       "label": "proof-pack gallery",
       "viewport": "mobile",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 59917,
+      "bodyLength": 61824,
       "interactiveCount": 29,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 29,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "mobile",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2416,
+      "bodyLength": 2401,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
       "focusableCount": 25,
-      "keyboardTabStopsChecked": 5
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/privacy",
@@ -228,46 +266,64 @@
       "heading": "Privacy Policy",
       "bodyLength": 2559,
       "interactiveCount": 1,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 1,
+      "keyboardTabStopsChecked": 1,
+      "focusReview": "first 1 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/trust-center",
       "label": "commercial trust center",
       "viewport": "tablet",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17117,
-      "interactiveCount": 5,
+      "bodyLength": 79577,
+      "interactiveCount": 30,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 30,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "tablet",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 3182,
+      "bodyLength": 4842,
       "interactiveCount": 10,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 10,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/sample-report",
@@ -276,14 +332,20 @@
       "heading": "Generate a Free AI Career Report",
       "bodyLength": 1568,
       "interactiveCount": 27,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 27,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/resume-analyzer",
@@ -292,14 +354,20 @@
       "heading": "Resume Automation Risk Analyzer",
       "bodyLength": 884,
       "interactiveCount": 4,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 4,
+      "keyboardTabStopsChecked": 4,
+      "focusReview": "first 4 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/counselor-reports",
@@ -308,62 +376,86 @@
       "heading": "Counselor Report Generator",
       "bodyLength": 1518,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 24,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/enterprise-dashboard",
       "label": "workforce dashboard",
       "viewport": "tablet",
       "heading": "Workforce Planning Dashboard",
-      "bodyLength": 482,
+      "bodyLength": 690,
       "interactiveCount": 10,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 12,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/proof-pack-gallery",
       "label": "proof-pack gallery",
       "viewport": "tablet",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 59917,
+      "bodyLength": 61824,
       "interactiveCount": 29,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 29,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "tablet",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2432,
+      "bodyLength": 2397,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 25,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/privacy",
@@ -372,46 +464,64 @@
       "heading": "Privacy Policy",
       "bodyLength": 2559,
       "interactiveCount": 1,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 1,
+      "keyboardTabStopsChecked": 1,
+      "focusReview": "first 1 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/trust-center",
       "label": "commercial trust center",
       "viewport": "desktop",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 17117,
-      "interactiveCount": 5,
+      "bodyLength": 79577,
+      "interactiveCount": 30,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 30,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/for-coaches",
       "label": "coach landing page",
       "viewport": "desktop",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 3239,
+      "bodyLength": 4899,
       "interactiveCount": 16,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 16,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/sample-report",
@@ -420,14 +530,20 @@
       "heading": "Generate a Free AI Career Report",
       "bodyLength": 1568,
       "interactiveCount": 27,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 27,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/resume-analyzer",
@@ -436,14 +552,20 @@
       "heading": "Resume Automation Risk Analyzer",
       "bodyLength": 884,
       "interactiveCount": 4,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 4,
+      "keyboardTabStopsChecked": 4,
+      "focusReview": "first 4 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/tools/counselor-reports",
@@ -452,64 +574,89 @@
       "heading": "Counselor Report Generator",
       "bodyLength": 1518,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 24,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/enterprise-dashboard",
       "label": "workforce dashboard",
       "viewport": "desktop",
       "heading": "Workforce Planning Dashboard",
-      "bodyLength": 482,
+      "bodyLength": 690,
       "interactiveCount": 10,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 12,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/proof-pack-gallery",
       "label": "proof-pack gallery",
       "viewport": "desktop",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 59974,
+      "bodyLength": 61881,
       "interactiveCount": 35,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 35,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     },
     {
       "path": "/automation-risk/accountant",
       "label": "occupation SEO report",
       "viewport": "desktop",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2430,
+      "bodyLength": 2464,
       "interactiveCount": 25,
+      "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
         "main landmark present",
         "visible body text present",
         "no horizontal overflow above tolerance",
-        "interactive controls have accessible names"
+        "interactive controls have accessible names",
+        "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
-      "result": "pass"
+      "result": "pass",
+      "focusableCount": 25,
+      "keyboardTabStopsChecked": 10,
+      "focusReview": "first 10 tab stops visible and not obscured",
+      "textSpacingReview": "text-spacing stress passed"
     }
   ],
+  "routeResultCount": 27,
   "manualReviewChecklist": [
     {
       "id": "wcag-em-scope",
@@ -589,6 +736,7 @@
       "evidenceNeeded": "Run color contrast and text-spacing checks on commercial cards, badges, alerts, charts, downloadable HTML, and dark-theme surfaces."
     }
   ],
+  "manualReviewChecklistCount": 7,
   "officialReferences": [
     {
       "label": "WCAG 2.2 Recommendation",
@@ -615,5 +763,6 @@
       "url": "https://www.w3.org/WAI/ARIA/apg/",
       "use": "Manual interaction-pattern review for dynamic widgets, names, roles, states, and keyboard behavior."
     }
-  ]
+  ],
+  "officialReferenceCount": 5
 }

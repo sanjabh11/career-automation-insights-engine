@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "commercial-owner-evidence-next-slice-2026-06-05",
+  "goal": "Continue career-automation-insights-engine commercial launch readiness by selecting and implementing one bounded repo-side owner-evidence preparation slice. Constraints: no production deploys, no live credentials, no payment changes, no customer outreach, no destructive actions, no owner-held evidence fabrication, and launch decision must remain pilot-only while gates remain open.",
+  "repoRoot": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+  "mode": "manual",
+  "maxConcurrency": 4,
+  "maxAgents": 64,
+  "tokenWarning": {
+    "risk": "low",
+    "estimatedAgentRuns": 4,
+    "estimatedReviewRuns": 2,
+    "estimatedTotalRuns": 6,
+    "warning": "Scoped run; still verify before exporting worker plans."
+  },
+  "createdAt": "2026-06-05T21:25:53.271Z",
+  "updatedAt": "2026-06-05T22:28:02.888Z"
+}

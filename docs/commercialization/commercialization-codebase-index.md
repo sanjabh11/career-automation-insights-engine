@@ -1,14 +1,14 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-03T08:52:22.996Z
-Branch: `phase-e-commercial-validation`
+Generated: 2026-06-08T23:22:19.406Z
+Branch: `main`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
 ## Indexed Commercial Routes
 
 | Route | Component | Import |
 | --- | --- | --- |
-| `/` | `Index` | eager import or inline component |
+| `/` | `Index` | ./pages/Index |
 | `/automation-risk/:occupation` | `AutomationRiskLandingPage` | ./pages/AutomationRiskLandingPage |
 | `/enterprise-dashboard` | `EnterpriseTeamDashboard` | ./pages/EnterpriseTeamDashboard |
 | `/for-coaches` | `ForCoachesPage` | ./pages/ForCoachesPage |
@@ -25,14 +25,14 @@ Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, p
 
 | Feature | Buyer | Routes | Current Proof | Primary Files |
 | --- | --- | --- | --- | --- |
-| Pilot proof-pack gallery and outreach assets | Coaches, career centers, workforce boards, L&D pilot sponsors | `/proof-pack-gallery`, `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, and pilot validation worksheet CSV. | `src/pages/ProofPackGalleryPage.tsx`<br/>`src/lib/commercialLaunchGate.ts`<br/>`src/lib/commercialLaunchReadiness.ts`<br/>`src/lib/supabaseFunctionGovernance.ts`<br/>`src/lib/institutionalReadinessPacket.ts`<br/>`docs/commercialization/pilot-outreach-pack.md`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-trust-boundaries.mjs`<br/>`scripts/verify-supabase-function-governance.mjs` |
-| Institutional readiness and governance packet | Career centers, workforce boards, L&D teams, institutional pilot reviewers | `/proof-pack-gallery` | Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review. | `src/lib/institutionalReadinessPacket.ts`<br/>`src/pages/ProofPackGalleryPage.tsx`<br/>`scripts/verify-report-evidence.mjs`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-accessibility.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/commercial-accessibility-audit-latest.md`<br/>`docs/commercialization/commercial-accessibility-audit-latest.json` |
-| Commercial proof-pack CI workflow | Founder, maintainer, pilot reviewers |  | GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks. | `.github/workflows/commercial-proof-pack.yml`<br/>`docs/commercialization/commercial-proof-pack.workflow.yml`<br/>`docs/commercialization/live-supabase-deployment-runbook.md`<br/>`scripts/verify-commercial-release.mjs`<br/>`scripts/generate-commercial-supabase-deployment-packet.mjs`<br/>`scripts/verify-commercial-live-auth-e2e.mjs`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-accessibility.mjs`<br/>`docs/commercialization/commercial-accessibility-audit-latest.md` |
+| Pilot proof-pack gallery and outreach assets | Coaches, career centers, workforce boards, L&D pilot sponsors | `/proof-pack-gallery`, `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, generated partner/outcome owner-evidence intake worksheet, generated owner-evidence completion drill with Trust Center alignment verifier, and pilot validation worksheet CSV. | `src/pages/ProofPackGalleryPage.tsx`<br/>`src/lib/commercialLaunchGate.ts`<br/>`src/lib/commercialLaunchReadiness.ts`<br/>`src/lib/supabaseFunctionGovernance.ts`<br/>`src/lib/institutionalReadinessPacket.ts`<br/>`docs/commercialization/pilot-outreach-pack.md`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-trust-boundaries.mjs`<br/>`scripts/verify-supabase-function-governance.mjs`<br/>`scripts/generate-commercial-evidence-intake-packet.mjs`<br/>`scripts/generate-owner-evidence-completion-drill.mjs`<br/>`scripts/verify-owner-evidence-completion-drill-alignment.mjs` |
+| Institutional readiness and governance packet | Career centers, workforce boards, L&D teams, institutional pilot reviewers | `/proof-pack-gallery` | Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, generated manual WCAG route/checkpoint review packet and CSV matrix, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review. | `src/lib/institutionalReadinessPacket.ts`<br/>`src/pages/ProofPackGalleryPage.tsx`<br/>`scripts/verify-report-evidence.mjs`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-accessibility.mjs`<br/>`scripts/generate-manual-wcag-review-packet.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/commercial-accessibility-audit-latest.md`<br/>`docs/commercialization/commercial-accessibility-audit-latest.json`<br/>`docs/commercialization/manual-wcag-review-packet-latest.md`<br/>`docs/commercialization/manual-wcag-review-matrix-latest.csv` |
+| Commercial proof-pack CI workflow | Founder, maintainer, pilot reviewers |  | GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, generated live-proof owner run packet, generated partner/outcome owner-evidence intake packet, generated owner-evidence completion drill with UI/model/CSV alignment verification, a generated WCAG 2.2 audit packet with manual review boundary, a generated manual WCAG owner review packet, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks. | `.github/workflows/commercial-proof-pack.yml`<br/>`docs/commercialization/commercial-proof-pack.workflow.yml`<br/>`docs/commercialization/live-supabase-deployment-runbook.md`<br/>`scripts/verify-commercial-release.mjs`<br/>`scripts/generate-commercial-supabase-deployment-packet.mjs`<br/>`scripts/generate-live-proof-run-packet.mjs`<br/>`scripts/generate-commercial-evidence-intake-packet.mjs`<br/>`scripts/generate-owner-evidence-completion-drill.mjs`<br/>`scripts/verify-owner-evidence-completion-drill-alignment.mjs`<br/>`scripts/verify-commercial-live-auth-e2e.mjs`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-commercial-accessibility.mjs`<br/>`scripts/generate-manual-wcag-review-packet.mjs`<br/>`docs/commercialization/commercial-accessibility-audit-latest.md`<br/>`docs/commercialization/manual-wcag-review-packet-latest.md` |
 | SEO report lead capture | Individuals, coaches, inbound SEO visitors | `/automation-risk/:occupation` | Consent-gated report download, artifact persistence, deduping RPC, offline retry queue, provenance in report HTML. | `src/components/SEOReportDownload.tsx`<br/>`src/lib/commercialLeads.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | White-label coach sample reports | Career coaches, resume writers, education counselors | `/for-coaches`, `/sample-report` | Brand colors, contact details, consent-gated artifact capture, source/caveat block, sample watermark. | `src/pages/ForCoachesPage.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/commercialLeads.ts`<br/>`src/lib/reportProvenance.ts` |
 | Workforce CSV exposure audit | HR, L&D, workforce boards, AI transformation consultants | `/enterprise-dashboard` | CSV parsing, role exposure rollup, saved audits, review queue, broader local SOC suggestions, staff mapping boundary, downloadable executive HTML report. | `src/pages/EnterpriseTeamDashboard.tsx`<br/>`src/lib/commercialWorkforceAudits.ts`<br/>`src/lib/socSuggestions.ts`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql` |
 | Commercial lead operations | Founder, sales, support, pilot operations | `/operations/leads` | Staff-gated lead list, status updates, outreach stage/channel/priority/sequence/follow-up tracking, response metrics, notes, standard CSV export, unsubscribe-safe campaign CSV with tracked proof-pack links, provider suppression handoff CSV, A/B campaign variants, analytics event names, conversion goals, suppression reasons, variant-level response reporting, artifact open/download event logging, section-level review/client-ready event logging, final artifact client-ready approval, and downloadable human-review attestation. | `src/pages/CommercialLeadOpsPage.tsx`<br/>`src/lib/commercialLeadOps.ts`<br/>`src/lib/commercialReportArtifacts.ts`<br/>`supabase/migrations/20260523000100_create_commercial_leads.sql`<br/>`supabase/migrations/20260524000200_add_commercial_artifact_review_events.sql`<br/>`supabase/migrations/20260525172048_add_commercial_outreach_pipeline.sql`<br/>`supabase/migrations/20260526000100_add_commercial_outreach_response_metrics.sql` |
-| Commercial launch gate and payment fulfillment boundary | Founder, pilot operations, paid proof-pack buyers | `/proof-pack-gallery`, `/pricing`, `/for-coaches`, `/operations/leads` | Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof. | `src/lib/commercialLaunchGate.ts`<br/>`src/lib/commercialLaunchReadiness.ts`<br/>`src/lib/supabaseFunctionGovernance.ts`<br/>`src/lib/stripe.ts`<br/>`supabase/functions/create-checkout-session/index.ts`<br/>`supabase/functions/stripe-webhook/index.ts`<br/>`scripts/verify-report-evidence.mjs`<br/>`scripts/verify-commercial-trust-boundaries.mjs`<br/>`scripts/verify-supabase-function-governance.mjs`<br/>`scripts/prepare-owner-evidence-workspace.mjs` |
+| Commercial launch gate and payment fulfillment boundary | Founder, pilot operations, paid proof-pack buyers | `/proof-pack-gallery`, `/pricing`, `/for-coaches`, `/operations/leads` | Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, generated live-proof run packet, generated partner/outcome intake packet, generated owner WCAG review packet, generated owner-evidence completion drill with Trust Center alignment verification, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof. | `src/lib/commercialLaunchGate.ts`<br/>`src/lib/commercialLaunchReadiness.ts`<br/>`src/lib/supabaseFunctionGovernance.ts`<br/>`src/lib/stripe.ts`<br/>`supabase/functions/create-checkout-session/index.ts`<br/>`supabase/functions/stripe-webhook/index.ts`<br/>`scripts/verify-report-evidence.mjs`<br/>`scripts/verify-commercial-trust-boundaries.mjs`<br/>`scripts/verify-supabase-function-governance.mjs`<br/>`scripts/prepare-owner-evidence-workspace.mjs`<br/>`scripts/generate-live-proof-run-packet.mjs`<br/>`scripts/generate-commercial-evidence-intake-packet.mjs`<br/>`scripts/generate-manual-wcag-review-packet.mjs`<br/>`scripts/generate-owner-evidence-completion-drill.mjs`<br/>`scripts/verify-owner-evidence-completion-drill-alignment.mjs` |
 | Source provenance and claim boundaries | All buyers, especially institutional and workforce pilots | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Versioned source registry, confidence/caveats, report HTML provenance block, official source verification artifact, local data checksum manifest. | `src/lib/sourceManifest.ts`<br/>`src/lib/reportProvenance.ts`<br/>`scripts/verify-source-manifest.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs`<br/>`docs/commercialization/source-refresh-manifest.md`<br/>`docs/commercialization/data-provenance-checksums.md` |
 | Local labor-market snapshot packet | Career centers, workforce boards, L&D teams, institutional pilot reviewers | `/proof-pack-gallery` | Proof-pack gallery now exports a local labor-market snapshot HTML/CSV packet that lists required geography, source vintage, query metadata, reviewer notes, source IDs, caveats, and does-not-prove boundaries before any local-demand, wage, training, posting, or provider-backed claim becomes client-ready. | `src/lib/localLaborMarketSnapshot.ts`<br/>`src/pages/ProofPackGalleryPage.tsx`<br/>`scripts/verify-commercial-browser.mjs`<br/>`scripts/verify-report-evidence.mjs`<br/>`scripts/verify-commercial-data-provenance.mjs` |
 | AI Work Transition Proof Pack | Individuals, coaches, career centers, workforce boards, L&D teams | `/sample-report`, `/automation-risk/:occupation`, `/enterprise-dashboard` | Downloadable reports now include source-labeled evidence cards, task exposure split with proxy weight basis, skill-change ledger with all five states plus per-row confidence/review/caveats, AI-era role radar with role-level review/taxonomy/posting-validation boundaries, learning/provider recommendation boundaries, local labor-market proof appendix boundaries, "does not prove" boundaries, generated timestamps, confidence, section-level review workflow, persisted review metadata, staff review/client-ready event logging, final artifact approval, and human-review attestation. O*NET 30.3 Task Ratings migration, ingest boundary, runtime helper, and verifier are implemented before replacing proxy weights. | `src/lib/reportEvidenceCards.ts`<br/>`src/lib/workTransitionProofPack.ts`<br/>`src/components/SEOReportDownload.tsx`<br/>`src/pages/SampleReportPage.tsx`<br/>`src/lib/workforceExecutiveReport.ts`<br/>`supabase/lib/scripts/ingest_onet_metadata.ts`<br/>`supabase/migrations/20260524000300_add_onet_task_rating_metadata.sql`<br/>`scripts/verify-onet-task-ratings-ingest.mjs`<br/>`scripts/verify-report-evidence.mjs` |
@@ -99,17 +99,28 @@ Policies:
 - `careeronestop-api`
 - `census-acs-api`
 - `cfpb-employment-algorithmic-scores`
+- `cisa-secure-by-design`
+- `cwe-367-toctou`
+- `cwe-59-link-following`
 - `dol-ai-literacy-framework`
+- `dol-ai-worker-wellbeing-best-practices`
 - `eeoc-employment-selection-procedures`
 - `esco`
+- `eu-ai-act-annex-iii-high-risk`
 - `ferpa-student-privacy`
+- `ftc-consumer-reviews-rule-questions`
+- `ftc-endorsement-guides-faq`
+- `ftc-endorsements-reviews`
+- `ftc-soliciting-paying-online-reviews`
 - `ilo-genai-jobs-2025`
 - `iso-42001`
 - `lightcast`
 - `llm-output`
 - `nace-career-readiness`
 - `nace-first-destination`
+- `nist-ai-genai-profile`
 - `nist-ai-rmf`
+- `nist-ssdf`
 - `oecd-skills-outlook-2025`
 - `onet`
 - `onet-scales-reference`
@@ -118,10 +129,17 @@ Policies:
 - `onet-task-statements`
 - `openai-eloundou-gpts-are-gpts`
 - `openai-gdpval`
+- `owasp-asvs-5`
 - `owasp-file-upload`
+- `owasp-llm-top-10-2025`
+- `pci-dss-v4-0-1`
 - `serpapi`
 - `supabase-edge-functions`
 - `wcag-22`
+- `wcag-em-2`
+- `wcag-em-overview`
+- `wcag-em-report-tool`
+- `wcag2ict-22`
 - `wef-foj-2025`
 - `workera-positioning`
 
@@ -142,26 +160,85 @@ Policies:
 | `verify:claim-boundaries` | `node scripts/verify-claim-boundaries.mjs` |
 | `verify:commercial` | `node scripts/verify-commercial-release.mjs` |
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
+| `verify:commercial-artifact-redaction` | `node scripts/verify-commercial-artifact-redaction.mjs --write` |
 | `verify:commercial-browser` | `node scripts/verify-commercial-browser.mjs` |
 | `verify:commercial-deployment` | `node scripts/generate-commercial-supabase-deployment-packet.mjs` |
+| `verify:commercial-evidence-intake-packet` | `node scripts/generate-commercial-evidence-intake-packet.mjs --write` |
+| `verify:commercial-evidence-intake-packet-alignment` | `node scripts/verify-commercial-evidence-intake-packet-alignment.mjs` |
+| `verify:commercial-evidence-intake-packet-alignment-fixtures` | `node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs` |
+| `verify:commercial-evidence-intake-sources` | `node scripts/verify-commercial-evidence-intake-sources.mjs --fetch --write` |
+| `verify:commercial-evidence-intake-sources-fixtures` | `node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs` |
 | `verify:commercial-evidence-records` | `node scripts/verify-commercial-evidence-records.mjs` |
+| `verify:commercial-evidence-records-fixtures` | `node scripts/verify-commercial-evidence-records-fixtures.mjs` |
 | `verify:commercial-evidence-records:write` | `node scripts/verify-commercial-evidence-records.mjs --write` |
 | `verify:commercial-full` | `node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey` |
+| `verify:commercial-full-local-approval-package` | `node scripts/verify-commercial-full-local-approval-package.mjs` |
+| `verify:commercial-full-local-approval-package-fixtures` | `node scripts/verify-commercial-full-local-approval-package-fixtures.mjs` |
 | `verify:commercial-live-auth-e2e` | `node scripts/verify-commercial-live-auth-e2e.mjs --write` |
 | `verify:commercial-live-supabase` | `node scripts/verify-commercial-live-supabase.mjs --write` |
 | `verify:commercial-network` | `node scripts/verify-commercial-release.mjs --with-network` |
+| `verify:commercial-summary-launch-readiness` | `node scripts/verify-commercial-summary-launch-readiness-alignment.mjs` |
+| `verify:commercial-summary-launch-readiness-fixtures` | `node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs` |
+| `verify:commercial-summary-redaction` | `node scripts/verify-commercial-summary-redaction-alignment.mjs` |
+| `verify:commercial-summary-redaction-fixtures` | `node scripts/verify-commercial-summary-redaction-alignment-fixtures.mjs` |
 | `verify:commercial-trust` | `node scripts/verify-commercial-trust-boundaries.mjs` |
 | `verify:commercial-validation` | `node scripts/verify-phase-e-commercial-validation.mjs` |
+| `verify:commercial-worktree-hygiene` | `node scripts/verify-commercial-worktree-hygiene.mjs --write` |
+| `verify:commercial-worktree-hygiene-fixtures` | `node scripts/verify-commercial-worktree-hygiene-fixtures.mjs` |
 | `verify:data-provenance` | `node scripts/verify-commercial-data-provenance.mjs --write` |
 | `verify:global-english` | `node scripts/verify-global-english-localization.mjs` |
 | `verify:global-english-sources` | `node scripts/verify-global-english-localization.mjs --with-source-fetch` |
+| `verify:launch-evidence` | `node scripts/generate-launch-evidence-manifest.mjs --write --validate` |
+| `verify:launch-evidence-alignment` | `node scripts/verify-launch-evidence-alignment.mjs` |
+| `verify:launch-evidence-alignment-fixtures` | `node scripts/verify-launch-evidence-alignment-fixtures.mjs` |
+| `verify:launch-evidence-sources` | `node scripts/verify-launch-evidence-sources.mjs --fetch --write` |
+| `verify:launch-evidence-sources-fixtures` | `node scripts/verify-launch-evidence-sources-fixtures.mjs` |
+| `verify:live-closeout-access-sources` | `node scripts/verify-live-closeout-access-sources.mjs --fetch --write` |
+| `verify:live-closeout-access-sources-fixtures` | `node scripts/verify-live-closeout-access-sources-fixtures.mjs` |
 | `verify:live-closeout-readiness` | `node scripts/verify-live-closeout-readiness.mjs` |
+| `verify:live-closeout-readiness-status` | `node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write` |
 | `verify:live-gate-evidence` | `node scripts/verify-live-gate-evidence.mjs` |
+| `verify:live-proof-closeout-command-alignment` | `node scripts/verify-live-proof-closeout-command-alignment.mjs` |
+| `verify:live-proof-closeout-command-alignment-fixtures` | `node scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs` |
+| `verify:live-proof-run-packet` | `node scripts/generate-live-proof-run-packet.mjs --write` |
+| `verify:live-proof-run-packet-alignment` | `node scripts/verify-live-proof-run-packet-alignment.mjs` |
+| `verify:live-proof-run-packet-alignment-fixtures` | `node scripts/verify-live-proof-run-packet-alignment-fixtures.mjs` |
+| `verify:live-proof-run-packet-sources` | `node scripts/verify-live-proof-run-packet-sources.mjs --fetch --write` |
+| `verify:live-proof-run-packet-sources-fixtures` | `node scripts/verify-live-proof-run-packet-sources-fixtures.mjs` |
+| `verify:manual-wcag-evidence` | `node scripts/verify-manual-wcag-evidence.mjs` |
+| `verify:manual-wcag-evidence-fixtures` | `node scripts/verify-manual-wcag-evidence-fixtures.mjs` |
+| `verify:manual-wcag-evidence:write` | `node scripts/verify-manual-wcag-evidence.mjs --write` |
+| `verify:manual-wcag-review-packet` | `node scripts/generate-manual-wcag-review-packet.mjs --write` |
+| `verify:manual-wcag-review-packet-alignment` | `node scripts/verify-manual-wcag-review-packet-alignment.mjs` |
+| `verify:manual-wcag-review-packet-alignment-fixtures` | `node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs` |
+| `verify:manual-wcag-review-packet-sources` | `node scripts/verify-manual-wcag-review-packet-sources.mjs --fetch --write` |
+| `verify:manual-wcag-review-packet-sources-fixtures` | `node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs` |
 | `verify:onet-task-ratings` | `node scripts/verify-onet-task-ratings-ingest.mjs` |
 | `verify:onet-task-ratings-live` | `node scripts/verify-onet-task-ratings-live.mjs --write` |
+| `verify:owner-action-queue` | `node scripts/verify-owner-action-queue-alignment.mjs` |
+| `verify:owner-action-queue-alignment` | `node scripts/verify-owner-action-queue-alignment.mjs` |
+| `verify:owner-action-queue-alignment-fixtures` | `node scripts/verify-owner-action-queue-alignment-fixtures.mjs` |
+| `verify:owner-evidence-artifact-hasher-fixtures` | `node scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs` |
 | `verify:owner-evidence-closeout` | `node scripts/closeout-owner-evidence.mjs --allow-incomplete` |
+| `verify:owner-evidence-closeout-status` | `node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status` |
+| `verify:owner-evidence-command-checklist-alignment` | `node scripts/verify-owner-evidence-command-checklist-alignment.mjs` |
+| `verify:owner-evidence-command-checklist-alignment-fixtures` | `node scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs` |
+| `verify:owner-evidence-completion-drill` | `node scripts/generate-owner-evidence-completion-drill.mjs --write` |
+| `verify:owner-evidence-completion-drill-alignment` | `node scripts/verify-owner-evidence-completion-drill-alignment.mjs` |
+| `verify:owner-evidence-completion-drill-alignment-fixtures` | `node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs` |
+| `verify:owner-evidence-completion-drill-sources` | `node scripts/verify-owner-evidence-completion-drill-sources.mjs --fetch --write` |
+| `verify:owner-evidence-completion-drill-sources-fixtures` | `node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs` |
 | `verify:owner-evidence-fixtures` | `node scripts/verify-owner-evidence-fixture-path.mjs` |
+| `verify:owner-evidence-handoff` | `node scripts/generate-owner-evidence-handoff.mjs --write` |
+| `verify:owner-evidence-handoff-alignment` | `node scripts/verify-owner-evidence-handoff-alignment.mjs` |
+| `verify:owner-evidence-handoff-alignment-fixtures` | `node scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs` |
+| `verify:owner-evidence-local-safety` | `node scripts/verify-owner-evidence-local-safety.mjs --write` |
+| `verify:owner-evidence-local-safety-fixtures` | `node scripts/verify-owner-evidence-local-safety-fixtures.mjs` |
 | `verify:owner-evidence-prep` | `node scripts/prepare-owner-evidence-workspace.mjs` |
+| `verify:owner-evidence-prep-alignment` | `node scripts/verify-owner-evidence-prep-readiness-alignment.mjs` |
+| `verify:owner-evidence-prep-alignment-fixtures` | `node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs` |
+| `verify:owner-evidence-runbook-alignment` | `node scripts/verify-owner-evidence-runbook-alignment.mjs` |
+| `verify:owner-evidence-runbook-alignment-fixtures` | `node scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs` |
 | `verify:part-ii` | `node scripts/verify-part-ii-release-gates.mjs` |
 | `verify:production-calibration` | `node scripts/verify-production-calibration-run.mjs --write` |
 | `verify:proof-visibility-ui` | `node scripts/verify-proof-visibility-ui.mjs` |
@@ -183,7 +260,7 @@ Policies:
 Required commercial pre-demo gate:
 
 1. `npm run verify:commercial` to regenerate the codebase index, trust-boundary checks, data-provenance checksums, owner-evidence fixture smoke, remediation external-gate ledger, remediation completion audit, commercial lint/build checks, and route smoke proof
-2. `npm run verify:owner-evidence-closeout` to run the non-writing ordered owner-evidence closeout status bundle; after owner proof exists, run `npm run closeout:owner-evidence -- --write --refresh-tracked`
+2. `npm run verify:owner-evidence-closeout` to run the non-writing ordered owner-evidence closeout status bundle; use `npm run generate:commercial-evidence-intake-packet` before partner/outcome proof hashing and `npm run generate:manual-wcag-review-packet` before owner-held manual WCAG review/hashing, and after owner proof and manual WCAG evidence exists, run `npm run closeout:owner-evidence -- --write --refresh-tracked --manual-wcag-evidence docs/commercialization/manual-wcag-evidence.local.json`
 3. `npm run verify:commercial-a11y` or `npm run verify:commercial -- --with-a11y` when Chromium startup is stable; this writes `docs/commercialization/commercial-accessibility-audit-latest.md` and `.json`
 4. `npm run verify:sources` when DNS/network access is available
 5. `npm audit --omit=dev --audit-level=high` when registry access is available
@@ -195,7 +272,7 @@ CI boundary:
 
 ## Remaining Index Gaps
 
-- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus a generated WCAG 2.2 audit packet, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
+- Browser QA now has committed commercial Playwright journey and responsive/accessibility smoke harnesses plus generated WCAG 2.2 audit and manual owner-review packets, but full visual snapshots and completed manual WCAG conformance evidence still need expansion.
 - `npm run verify:commercial-full` includes accessibility, network, and full browser journey gates, but these remain environment-dependent until DNS, npm registry access, and Chromium startup are stable.
 - Proof-pack output now has static and route-smoke verification plus section-level review metadata, proxy task-weight basis, per-row skill caveats, and role-level review/taxonomy/posting-validation boundaries; O*NET Task Ratings schema/import/runtime boundaries exist, but richer scoring still needs target Supabase ingest/export checksums, local labor-market validation, and licensed job-posting adapters before Lightcast-level market claims.
 - Human-review state is preserved in generated report HTML and artifact/audit metadata; staff UI transitions, final artifact approval, non-legal review attestation, resume deletion receipts, the server-side resume parser boundary, the live parser receipt verifier, and the optional signed-in synthetic artifact/deletion e2e verifier are implemented. Live Supabase commercial schema/RPC proof now passes, while paid PDF/DOCX parser adapters, malware scanning, completed authenticated e2e run evidence, and formal e-signature/PDF storage remain Phase 5 hardening work.

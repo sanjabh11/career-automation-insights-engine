@@ -12,12 +12,60 @@ export const LIVE_GATE_EVIDENCE_GATE_IDS = [
 ];
 export const LIVE_GATE_EVIDENCE_REQUIRED_COUNT = LIVE_GATE_EVIDENCE_GATE_IDS.length;
 
+export const LIVE_PROOF_ARCHIVE_REQUIREMENTS = {
+  real_stripe_test_checkout: [
+    'rawCheckoutSessionPayloadOwnerHeld',
+    'supabaseFunctionInvocationMetadataOwnerHeld',
+    'secretValuesNotPersisted',
+    'customerIdentifiersRedacted',
+    'paymentMethodDetailsExcluded',
+    'reRunRequiredAfterCheckoutConfigChange',
+  ],
+  production_calibration_run: [
+    'rawCalibrationRunOutputOwnerHeld',
+    'serviceRoleSecretNotPersisted',
+    'respondentIdentifiersRedacted',
+    'expertLabelsOwnerHeld',
+    'reRunRequiredAfterModelOrDataChange',
+  ],
+  authenticated_live_artifact_e2e: [
+    'syntheticUserOnly',
+    'credentialsNotPersisted',
+    'authTokensNotPersisted',
+    'rawArtifactPayloadsRedacted',
+    'deletionReceiptsOwnerHeld',
+    'reRunRequiredAfterPersistenceChange',
+  ],
+  live_mrr_gt_zero: [
+    'rawSubscriptionExportOwnerHeld',
+    'rawInvoiceExportOwnerHeld',
+    'secretValuesNotPersisted',
+    'customerIdentifiersRedacted',
+    'subscriptionAndInvoiceIdsHashed',
+    'paymentMethodDetailsExcluded',
+    'reRunRequiredAfterRevenueChange',
+  ],
+};
+
 const REQUIRED_GATE_IDS = new Set(LIVE_GATE_EVIDENCE_GATE_IDS);
 
 const SECRET_OR_PRIVATE_PATTERNS = [
   { id: 'email_address', pattern: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/ },
   { id: 'stripe_secret_key', pattern: /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\b/ },
   { id: 'stripe_webhook_secret', pattern: /\bwhsec_[A-Za-z0-9]{16,}\b/ },
+  { id: 'stripe_hosted_payment_url', pattern: /https?:\/\/(?:checkout|billing|invoice)\.stripe\.com\/[^\s"'<>)]+/i },
+  { id: 'stripe_dashboard_url', pattern: /https?:\/\/dashboard\.stripe\.com\/[^\s"'<>)]+/i },
+  { id: 'supabase_dashboard_url', pattern: /https?:\/\/supabase\.com\/dashboard\/project\/[a-z0-9]{20,}[^\s"'<>)]+/i },
+  {
+    id: 'private_profile_url',
+    pattern:
+      /https?:\/\/(?:www\.)?(?:linkedin\.com\/(?:in|pub|company)\/[^\s"'<>)]+|(?:x\.com|twitter\.com)\/(?!share\b|intent\b|home\b|search\b)[A-Za-z0-9_]{1,15}(?:[/?#][^\s"'<>)]*)?)/i,
+  },
+  {
+    id: 'meeting_or_calendar_link',
+    pattern:
+      /https?:\/\/(?:calendly\.com\/[^\s"'<>)]+|cal\.com\/[^\s"'<>)]+|(?:[\w.-]+\.)?zoom\.us\/j\/[^\s"'<>)]+|meet\.google\.com\/[a-z0-9-]+|teams\.microsoft\.com\/l\/meetup-join\/[^\s"'<>)]+)/i,
+  },
   { id: 'google_api_key', pattern: /\bAIza[A-Za-z0-9_-]{25,}\b/ },
   { id: 'jwt_like_token', pattern: /\beyJ[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\b/ },
 ];
@@ -107,6 +155,24 @@ function gateRequirementError(item) {
   }
 }
 
+function addOwnerEvidenceArchiveErrors(errors, item, prefix) {
+  const summary = isPlainObject(item.evidenceSummary) ? item.evidenceSummary : {};
+  const requirements = LIVE_PROOF_ARCHIVE_REQUIREMENTS[item.gateId] || [];
+  const archive = isPlainObject(summary.ownerEvidenceArchive) ? summary.ownerEvidenceArchive : null;
+
+  if (requirements.length === 0) return;
+  if (!archive) {
+    errors.push(`${prefix}.evidenceSummary.ownerEvidenceArchive must be an object`);
+    return;
+  }
+
+  for (const requirement of requirements) {
+    if (archive[requirement] !== true) {
+      errors.push(`${prefix}.evidenceSummary.ownerEvidenceArchive.${requirement} must be true`);
+    }
+  }
+}
+
 function validateItem(item, index, asOfBounds) {
   const errors = [];
   const prefix = `evidenceItems[${index}]`;
@@ -128,6 +194,7 @@ function validateItem(item, index, asOfBounds) {
 
   const requirementError = gateRequirementError(item);
   if (requirementError) errors.push(`${prefix} ${requirementError}`);
+  addOwnerEvidenceArchiveErrors(errors, item, prefix);
 
   return {
     gateId: item.gateId || null,

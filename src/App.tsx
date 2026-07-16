@@ -8,13 +8,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UpgradePromptProvider } from "@/contexts/UpgradePromptContext";
 import { WhopAppProvider } from "@/contexts/WhopAppContext";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-// Eagerly loaded (critical path)
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import GlobalShortcuts from "./components/GlobalShortcuts";
-import { AIAssistant } from "./components/assistant/AIAssistant";
 
 // Lazy-loaded pages (code-split)
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const AIAssistant = lazy(() => import("./components/assistant/AIAssistant").then((module) => ({ default: module.AIAssistant })));
 const GapAnalysis = lazy(() => import("./pages/GapAnalysis"));
 const UserDashboardPage = lazy(() => import("./pages/UserDashboardPage"));
 const SharedAnalysisPage = lazy(() => import("./pages/SharedAnalysisPage"));
@@ -120,7 +119,9 @@ function App() {
           <WhopAppProvider>
             <UpgradePromptProvider>
               <GlobalShortcuts />
-              <AIAssistant />
+              <Suspense fallback={null}>
+                <AIAssistant />
+              </Suspense>
               <Suspense fallback={<PageFallback />}>
               <Routes>
                 <Route path="/" element={<Index />} />

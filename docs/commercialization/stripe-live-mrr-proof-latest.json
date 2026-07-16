@@ -19,6 +19,7 @@
     "Webhook fulfillment",
     "Commercial outcomes"
   ],
+  "doesNotProveCount": 6,
   "manualInterventionIfSkipped": [
     "Provide a live-mode Stripe restricted or secret key via STRIPE_LIVE_SECRET_KEY, STRIPE_LIVE_RESTRICTED_KEY, or STRIPE_SECRET_KEY; test-mode keys are rejected.",
     "Prefer a restricted read-only key with read access for subscriptions and invoices.",

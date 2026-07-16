@@ -1,8 +1,18 @@
 # Commercial WCAG 2.2 Accessibility Audit Packet
 
-Generated: 2026-06-01T18:38:22.598Z
+Generated: 2026-06-08T20:15:23.192Z
 Target: http://127.0.0.1:5176
 Status: **automated_smoke_passed_manual_wcag_required**
+Official reference count: 5
+
+## Proof Basis Counts
+
+| Basis | Count |
+|---|---:|
+| Routes | 9 |
+| Viewports | 3 |
+| Route results | 27 |
+| Manual review checklist | 7 |
 
 ## Boundary
 
@@ -10,35 +20,41 @@ This packet proves automated responsive/accessibility smoke for the scoped comme
 
 ## Automated Smoke Results
 
-| Route | Label | Viewport | H1 | Controls | Visible Text Length | Keyboard Tab Stops Checked | Result |
-|---|---|---|---|---:|---:|---:|---|
-| `/privacy` | privacy policy | mobile | Privacy Policy | 1 | 2559 | 1 | pass |
-| `/trust-center` | commercial trust center | mobile | Responsible AI and institutional trust boundaries | 5 | 17117 | 5 | pass |
-| `/for-coaches` | coach landing page | mobile | Build Source-Labeled Automation Defense Audits | 10 | 3182 | 5 | pass |
-| `/sample-report` | coach sample report | mobile | Generate a Free AI Career Report | 27 | 1568 | 5 | pass |
-| `/tools/resume-analyzer` | resume analyzer | mobile | Resume Automation Risk Analyzer | 4 | 884 | 4 | pass |
-| `/tools/counselor-reports` | counselor reports | mobile | Counselor Report Generator | 25 | 1518 | 5 | pass |
-| `/enterprise-dashboard` | workforce dashboard | mobile | Workforce Planning Dashboard | 10 | 482 | 5 | pass |
-| `/proof-pack-gallery` | proof-pack gallery | mobile | Proof-pack gallery for coach, career-center, and workforce pilots | 29 | 59917 | 5 | pass |
-| `/automation-risk/accountant` | occupation SEO report | mobile | Accountant Automation Defense Estimate | 25 | 2416 | 5 | pass |
-| `/privacy` | privacy policy | tablet | Privacy Policy | 1 | 2559 | n/a | pass |
-| `/trust-center` | commercial trust center | tablet | Responsible AI and institutional trust boundaries | 5 | 17117 | n/a | pass |
-| `/for-coaches` | coach landing page | tablet | Build Source-Labeled Automation Defense Audits | 10 | 3182 | n/a | pass |
-| `/sample-report` | coach sample report | tablet | Generate a Free AI Career Report | 27 | 1568 | n/a | pass |
-| `/tools/resume-analyzer` | resume analyzer | tablet | Resume Automation Risk Analyzer | 4 | 884 | n/a | pass |
-| `/tools/counselor-reports` | counselor reports | tablet | Counselor Report Generator | 25 | 1518 | n/a | pass |
-| `/enterprise-dashboard` | workforce dashboard | tablet | Workforce Planning Dashboard | 10 | 482 | n/a | pass |
-| `/proof-pack-gallery` | proof-pack gallery | tablet | Proof-pack gallery for coach, career-center, and workforce pilots | 29 | 59917 | n/a | pass |
-| `/automation-risk/accountant` | occupation SEO report | tablet | Accountant Automation Defense Estimate | 25 | 2432 | n/a | pass |
-| `/privacy` | privacy policy | desktop | Privacy Policy | 1 | 2559 | n/a | pass |
-| `/trust-center` | commercial trust center | desktop | Responsible AI and institutional trust boundaries | 5 | 17117 | n/a | pass |
-| `/for-coaches` | coach landing page | desktop | Build Source-Labeled Automation Defense Audits | 16 | 3239 | n/a | pass |
-| `/sample-report` | coach sample report | desktop | Generate a Free AI Career Report | 27 | 1568 | n/a | pass |
-| `/tools/resume-analyzer` | resume analyzer | desktop | Resume Automation Risk Analyzer | 4 | 884 | n/a | pass |
-| `/tools/counselor-reports` | counselor reports | desktop | Counselor Report Generator | 25 | 1518 | n/a | pass |
-| `/enterprise-dashboard` | workforce dashboard | desktop | Workforce Planning Dashboard | 10 | 482 | n/a | pass |
-| `/proof-pack-gallery` | proof-pack gallery | desktop | Proof-pack gallery for coach, career-center, and workforce pilots | 35 | 59974 | n/a | pass |
-| `/automation-risk/accountant` | occupation SEO report | desktop | Accountant Automation Defense Estimate | 25 | 2430 | n/a | pass |
+| Route | Label | Viewport | H1 | Controls | Visible Text Length | Keyboard Tab Stops Checked | Focus Review | Target Size Review | Text Spacing Review | Result |
+|---|---|---|---|---:|---:|---:|---|---|---|---|
+| `/privacy` | privacy policy | mobile | Privacy Policy | 1 | 2559 | 1 | first 1 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/trust-center` | commercial trust center | mobile | Responsible AI and institutional trust boundaries | 30 | 79577 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/for-coaches` | coach landing page | mobile | Build Source-Labeled Automation Defense Audits | 10 | 4842 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/sample-report` | coach sample report | mobile | Generate a Free AI Career Report | 27 | 1568 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/resume-analyzer` | resume analyzer | mobile | Resume Automation Risk Analyzer | 4 | 884 | 4 | first 4 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/counselor-reports` | counselor reports | mobile | Counselor Report Generator | 25 | 1518 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/enterprise-dashboard` | workforce dashboard | mobile | Workforce Planning Dashboard | 10 | 690 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/proof-pack-gallery` | proof-pack gallery | mobile | Proof-pack gallery for coach, career-center, and workforce pilots | 29 | 61824 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/automation-risk/accountant` | occupation SEO report | mobile | Accountant Automation Defense Estimate | 25 | 2401 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/privacy` | privacy policy | tablet | Privacy Policy | 1 | 2559 | 1 | first 1 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/trust-center` | commercial trust center | tablet | Responsible AI and institutional trust boundaries | 30 | 79577 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/for-coaches` | coach landing page | tablet | Build Source-Labeled Automation Defense Audits | 10 | 4842 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/sample-report` | coach sample report | tablet | Generate a Free AI Career Report | 27 | 1568 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/resume-analyzer` | resume analyzer | tablet | Resume Automation Risk Analyzer | 4 | 884 | 4 | first 4 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/counselor-reports` | counselor reports | tablet | Counselor Report Generator | 25 | 1518 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/enterprise-dashboard` | workforce dashboard | tablet | Workforce Planning Dashboard | 10 | 690 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/proof-pack-gallery` | proof-pack gallery | tablet | Proof-pack gallery for coach, career-center, and workforce pilots | 29 | 61824 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/automation-risk/accountant` | occupation SEO report | tablet | Accountant Automation Defense Estimate | 25 | 2397 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/privacy` | privacy policy | desktop | Privacy Policy | 1 | 2559 | 1 | first 1 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/trust-center` | commercial trust center | desktop | Responsible AI and institutional trust boundaries | 30 | 79577 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/for-coaches` | coach landing page | desktop | Build Source-Labeled Automation Defense Audits | 16 | 4899 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/sample-report` | coach sample report | desktop | Generate a Free AI Career Report | 27 | 1568 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/resume-analyzer` | resume analyzer | desktop | Resume Automation Risk Analyzer | 4 | 884 | 4 | first 4 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/tools/counselor-reports` | counselor reports | desktop | Counselor Report Generator | 25 | 1518 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/enterprise-dashboard` | workforce dashboard | desktop | Workforce Planning Dashboard | 10 | 690 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/proof-pack-gallery` | proof-pack gallery | desktop | Proof-pack gallery for coach, career-center, and workforce pilots | 35 | 61881 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+| `/automation-risk/accountant` | occupation SEO report | desktop | Accountant Automation Defense Estimate | 25 | 2464 | 10 | first 10 tab stops visible and not obscured | no obvious non-inline target below 24px | text-spacing stress passed | pass |
+
+## Browser-Assisted WCAG Evidence
+
+This run checked each scoped route at mobile, tablet, and desktop widths for a main landmark, a single visible H1, visible content, horizontal overflow, accessible names on visible controls, keyboard focus landing on visible controls, browser-visible focus indicators, approximate focus-not-obscured hit testing, pointer target size review flags, and text-spacing/reflow stress behavior.
+
+This is still **not a WCAG conformance claim**. Screen-reader review, contrast measurement, full form-error exercises, downloadable artifact review, and assistive-technology evidence remain manual gates before institutional delivery.
 
 ## Manual WCAG 2.2 Review Checklist
 

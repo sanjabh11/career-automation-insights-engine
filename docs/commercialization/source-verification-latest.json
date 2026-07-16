@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T18:32:57.633Z",
+  "generatedAt": "2026-06-08T22:56:12.323Z",
   "manifestSource": "src/lib/sourceManifest.ts",
   "allPassed": true,
   "results": [
@@ -109,8 +109,8 @@
       "url": "https://www.bls.gov/emp/",
       "status": 200,
       "ok": true,
-      "contentSha256": "3f03288789b7cd90f383c582d84acc54e18b4e9dc144358bb4599f177d10f275",
-      "byteLength": 73804,
+      "contentSha256": "41628e6abc23475e1564ae1b3d645d296c6d2b44cafbc1ea639732df595fe11c",
+      "byteLength": 74040,
       "evidence": [
         {
           "label": "2024-34 projections",
@@ -189,8 +189,8 @@
       "url": "https://github.com/CareerOneStop/API-Overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "2935aa7fd821bf3c4689986584b25fdb2360a6b3e357f278e4d9e59799013aa5",
-      "byteLength": 234696,
+      "contentSha256": "b9e2a86103ffb2c26e6c2967a21f67ddba8f1922637cbebc8c5f0f55baea87e6",
+      "byteLength": 234363,
       "evidence": [
         {
           "label": "CareerOneStop API services evidence",
@@ -209,7 +209,7 @@
       "url": "https://www.census.gov/programs-surveys/acs/data/data-via-api.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "ed0d329d41569eacb103c6a8a5387bbbde0f7b05126521a05586e61e9718beb4",
+      "contentSha256": "05b35e0187750a03ed231415d8256a0df2d824d2245bba6a32932a5a670738ed",
       "byteLength": 316096,
       "evidence": [
         {
@@ -229,7 +229,7 @@
       "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
       "status": 200,
       "ok": true,
-      "contentSha256": "209c266c3e07923648932646922677b60aa4e38903a787652ef6ec392e47ddc3",
+      "contentSha256": "9a088aa9357c20e5ba82d8f2c26996f3578ae6b519df174541004ab9dee9e124",
       "byteLength": 304115,
       "evidence": [
         {
@@ -249,7 +249,7 @@
       "url": "https://www.ilo.org/publications/generative-ai-and-jobs-2025-update",
       "status": 200,
       "ok": true,
-      "contentSha256": "9a2fcdaace9a14adac73999caa7900a952ffd3f4a4ac14ebdeca568ec93082ca",
+      "contentSha256": "22196070f01477ec6a807ed2631e0def32d6719af33f1ef3ffa0032aaca59745",
       "byteLength": 65232,
       "evidence": [
         {
@@ -329,8 +329,8 @@
       "url": "https://www.naceweb.org/career-readiness/competencies/career-readiness-defined",
       "status": 200,
       "ok": true,
-      "contentSha256": "e1953810b8bf4309077a83d9443a94e28924721f5b15558eff29e8fbe886c1b9",
-      "byteLength": 74690,
+      "contentSha256": "c133c9a86d6b277d3392e33e983c0313d4b56a0af165729e79b22b74503e5f9a",
+      "byteLength": 75349,
       "evidence": [
         {
           "label": "NACE career readiness definition",
@@ -349,8 +349,8 @@
       "url": "https://www.naceweb.org/job-market/graduate-outcomes/first-destination/standards-and-protocols/",
       "status": 200,
       "ok": true,
-      "contentSha256": "2323c285650eb35eddd889f2a9a52344083372aa2e78ea07a5df2eca34356991",
-      "byteLength": 41890,
+      "contentSha256": "85f62e5953766893f2adebb243bdfbc326e718692b380b933d153aff6d369adb",
+      "byteLength": 42549,
       "evidence": [
         {
           "label": "first-destination standards title",
@@ -364,12 +364,92 @@
       "passed": true
     },
     {
+      "id": "ftc-consumer-reviews-rule-questions",
+      "label": "FTC Consumer Reviews and Testimonials Rule questions",
+      "url": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "dc89a1116394fe843e8f17f206148a8c048bc3b3458ad93ee955a763a49a56c8",
+      "byteLength": 1020981,
+      "evidence": [
+        {
+          "label": "FTC Consumer Reviews and Testimonials Rule Q&A",
+          "matched": true
+        },
+        {
+          "label": "fake or deceptive reviews/testimonials boundary",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ftc-endorsements-reviews",
+      "label": "FTC Endorsements, Influencers, and Reviews hub",
+      "url": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "0f8f4aed276b6cc30b9e8f306cfcb35080a682f0422c0f471250a1d3b30620a0",
+      "byteLength": 1093156,
+      "evidence": [
+        {
+          "label": "FTC endorsements and reviews hub title",
+          "matched": true
+        },
+        {
+          "label": "commercial evidence guidance collection",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ftc-endorsement-guides-faq",
+      "label": "FTC Endorsement Guides: What People Are Asking",
+      "url": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "5cd5e3b903246c5d6076cac52a487952167dfd28068c676b6252cba05e2d6436",
+      "byteLength": 1082325,
+      "evidence": [
+        {
+          "label": "FTC Endorsement Guides FAQ",
+          "matched": true
+        },
+        {
+          "label": "material connection disclosure guidance",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "ftc-soliciting-paying-online-reviews",
+      "label": "FTC Soliciting and Paying for Online Reviews guide",
+      "url": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "2ec2bc61fd2f7725a3a6aec5f213537f6b2763e39133081740bc1372abb9f734",
+      "byteLength": 994377,
+      "evidence": [
+        {
+          "label": "FTC soliciting and paying reviews guide title",
+          "matched": true
+        },
+        {
+          "label": "fake reviews and paid rankings warning",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "ferpa-student-privacy",
       "label": "FERPA student privacy guidance",
       "url": "https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records",
       "status": 200,
       "ok": true,
-      "contentSha256": "3d0941259d458d4643dabe5d094839d5396366967b0345b2ff3d629dd9a46bb6",
+      "contentSha256": "034b1e6426abe9cf9bd6f5e0a15582d77e1a15b94e26fb18b7bc39b80bed0855",
       "byteLength": 34695,
       "evidence": [
         {
@@ -389,7 +469,7 @@
       "url": "https://www.dol.gov/agencies/eta/advisories/ten-07-25",
       "status": 200,
       "ok": true,
-      "contentSha256": "4b8bc99497377c1be2f673fdb7c53fcb6878c68c6dc903abbf63199944742fb8",
+      "contentSha256": "e38f0e65143748a3c10e7d9b1f623ce613f1e5374c4e494ff181b831668a6edd",
       "byteLength": 73088,
       "evidence": [
         {
@@ -404,16 +484,36 @@
       "passed": true
     },
     {
-      "id": "anthropic-economic-index",
-      "label": "Anthropic Economic Index",
-      "url": "https://www.anthropic.com/research/the-anthropic-economic-index",
+      "id": "dol-ai-worker-wellbeing-best-practices",
+      "label": "DOL AI Worker Well-being best practices",
+      "url": "https://www.dol.gov/index.php/newsroom/releases/osec/osec20241016",
       "status": 200,
       "ok": true,
-      "contentSha256": "fdf662dace8068a597504e1141594fa6986c59d56cab7b7172348ca1dd49f9bc",
-      "byteLength": 165714,
+      "contentSha256": "708b855dfb8d3881c59fbbaa12f282330ea03b0a7b58598270af2374c7756c48",
+      "byteLength": 74595,
       "evidence": [
         {
-          "label": "Anthropic Economic Index title",
+          "label": "DOL AI Best Practices roadmap title",
+          "matched": true
+        },
+        {
+          "label": "worker rights and oversight evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "anthropic-economic-index",
+      "label": "Anthropic Economic Index",
+      "url": "https://www.anthropic.com/research/economic-index-march-2026-report",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "101a06809102933c31cc45eebc571d5059a60faee6c4d5999c4f383827c8d347",
+      "byteLength": 215561,
+      "evidence": [
+        {
+          "label": "March 2026 Economic Index title",
           "matched": true
         },
         {
@@ -429,8 +529,8 @@
       "url": "https://www.anthropic.com/research/anthropic-economic-index-january-2026-report",
       "status": 200,
       "ok": true,
-      "contentSha256": "a51ba5936638437df311f088bd67e26201fdc4f112dd087b9ec79376b4c14802",
-      "byteLength": 437476,
+      "contentSha256": "f079a6fb1a3032f4d081434871261ce7704d968b30115f51ee10b06d1db66d58",
+      "byteLength": 437972,
       "evidence": [
         {
           "label": "January 2026 Economic Index title",
@@ -449,8 +549,8 @@
       "url": "https://www.anthropic.com/research/labor-market-impacts",
       "status": 200,
       "ok": true,
-      "contentSha256": "2ce672f22c3221b4f83383ef60f0a1f02b4973d5ae70511983719b604a3bc6eb",
-      "byteLength": 212998,
+      "contentSha256": "4eebfc92b3f083b6a32da67e8a8d1f888d6c81512d52d8b92d6f7ff35e3e010a",
+      "byteLength": 213001,
       "evidence": [
         {
           "label": "observed exposure methodology",
@@ -489,8 +589,8 @@
       "url": "https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm",
       "status": 200,
       "ok": true,
-      "contentSha256": "87233b2c1a2bf8f09beebf7c5317bff397a1ab3de104838f2a2b8b05aecd6364",
-      "byteLength": 134431,
+      "contentSha256": "7c03657116ac7908b9a0b2c791ac66006758f29fbeb62d1498747095831d1108",
+      "byteLength": 134328,
       "evidence": [
         {
           "label": "AI impacts article title",
@@ -524,6 +624,214 @@
       "passed": true
     },
     {
+      "id": "wcag-em-overview",
+      "label": "WCAG-EM conformance evaluation overview",
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "24d3685e499334ea2cf8bfb48149536d8f96969a9a1020911f636855fdb52be2",
+      "byteLength": 49007,
+      "evidence": [
+        {
+          "label": "WCAG-EM overview title",
+          "matched": true
+        },
+        {
+          "label": "WCAG-EM scope and process evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "wcag-em-2",
+      "label": "WCAG-EM 2.0 digital-product evaluation draft",
+      "url": "https://www.w3.org/TR/wcag-em-2/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "242060b46891f1ad4dc7b4a7fc90fe6ddab9b6201c6955c6132b30da49598255",
+      "byteLength": 144958,
+      "evidence": [
+        {
+          "label": "WCAG-EM 2.0 title",
+          "matched": true
+        },
+        {
+          "label": "digital product evaluation evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "wcag-em-report-tool",
+      "label": "WCAG-EM Report Tool",
+      "url": "https://www.w3.org/WAI/eval/report-tool/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "3e4db9a91727625892c1e3859ad3befc03be4563949f36cccf853229550a42d1",
+      "byteLength": 8021,
+      "evidence": [
+        {
+          "label": "WCAG-EM Report Tool title",
+          "matched": true
+        },
+        {
+          "label": "W3C WAI tool stewardship evidence",
+          "matched": true
+        },
+        {
+          "label": "current report tool version evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "wcag2ict-22",
+      "label": "WCAG2ICT 2.2 non-web ICT guidance",
+      "url": "https://www.w3.org/TR/wcag2ict-22/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "265077c096b19d21d9f6b29ce60604d1cf88f8cf4a8663312ee46490a2c9b2e7",
+      "byteLength": 536627,
+      "evidence": [
+        {
+          "label": "WCAG2ICT Group Note title",
+          "matched": true
+        },
+        {
+          "label": "WCAG 2.2 non-web documents and software evidence",
+          "matched": true
+        },
+        {
+          "label": "informative non-normative guidance boundary",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "nist-ai-genai-profile",
+      "label": "NIST AI RMF Generative Artificial Intelligence Profile",
+      "url": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ac994a9763ee3affdf6f083b863a77f03b0d8eb6f4bba76642512b2f5336b439",
+      "byteLength": 81773,
+      "evidence": [
+        {
+          "label": "Generative AI Profile title",
+          "matched": true
+        },
+        {
+          "label": "NIST AI 600-1 publication evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "nist-ssdf",
+      "label": "NIST Secure Software Development Framework",
+      "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "81104fb2db2597766148876febfc3e0eebbb72fda9ef4bb5f3f073dcf3c4f617",
+      "byteLength": 48666,
+      "evidence": [
+        {
+          "label": "NIST SSDF title",
+          "matched": true
+        },
+        {
+          "label": "secure development practices evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "cisa-secure-by-design",
+      "label": "CISA Secure by Design principles",
+      "url": "https://www.cisa.gov/news-events/news/applying-secure-design-thinking-events-news",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ec1b3427f17f4a721b64edc38e1e945f7bbd824e78490a1497c76ce624885bf3",
+      "byteLength": 59973,
+      "evidence": [
+        {
+          "label": "CISA Secure by Design guide reference",
+          "matched": true
+        },
+        {
+          "label": "Secure by Design principles evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "owasp-asvs-5",
+      "label": "OWASP Application Security Verification Standard",
+      "url": "https://owasp.org/www-project-application-security-verification-standard/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "ae1aaa3880f406802084e7c2856bf1219bfbcd59cb2aec606d6b3187f85b35d1",
+      "byteLength": 67905,
+      "evidence": [
+        {
+          "label": "OWASP ASVS title",
+          "matched": true
+        },
+        {
+          "label": "ASVS 5.0.0 current stable evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "owasp-llm-top-10-2025",
+      "label": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "47dcd3cecc2186082420ab805378a18b2f2cc071d7dce1618b8c8f75c575e791",
+      "byteLength": 345768,
+      "evidence": [
+        {
+          "label": "OWASP LLM Top 10 2025 title",
+          "matched": true
+        },
+        {
+          "label": "AI application risk evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "pci-dss-v4-0-1",
+      "label": "PCI DSS v4.0.1 publication notice",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "4f674d08b5d799155a921800a836c41463ea86daab3930b39a1a0b5d5a921fbb",
+      "byteLength": 84183,
+      "evidence": [
+        {
+          "label": "PCI DSS v4.0.1 publication title",
+          "matched": true
+        },
+        {
+          "label": "PCI SSC current-version evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "ada-ai-hiring-guidance",
       "label": "ADA algorithmic hiring guidance",
       "url": "https://www.ada.gov/resources/ai-guidance/",
@@ -549,8 +857,8 @@
       "url": "https://www.eeoc.gov/laws/guidance/employment-tests-and-selection-procedures",
       "status": 200,
       "ok": true,
-      "contentSha256": "6f5ccb7b5396f2263c99c27c4a9c8c0b5e731fcca2fcd76ed3b522bc2ea1f273",
-      "byteLength": 83674,
+      "contentSha256": "c844e5c17bb8c9ce24f95518c70118f6b42cc2a9ea5829c5d56698b340c4e156",
+      "byteLength": 83620,
       "evidence": [
         {
           "label": "EEOC employment tests title",
@@ -569,8 +877,8 @@
       "url": "https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2024-06-background-dossiers-and-algorithmic-scores-for-hiring-promotion-and-other-employment-decisions/",
       "status": 200,
       "ok": true,
-      "contentSha256": "432353a0d57c08dfa5552e006885219658cbb83a4531020b42fdddfff91c0f3c",
-      "byteLength": 181283,
+      "contentSha256": "efc72dae03276aad3cc3c72fcd7832aaafb04e63933c0b783adedf7ad3dd83f6",
+      "byteLength": 180249,
       "evidence": [
         {
           "label": "CFPB circular title",
@@ -584,13 +892,41 @@
       "passed": true
     },
     {
+      "id": "eu-ai-act-annex-iii-high-risk",
+      "label": "EU AI Act Annex III high-risk AI systems",
+      "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "e0174f1a6e12aabf8f4d7c49d522499d62a4260ba81e81c055fe75a22c3a26ce",
+      "byteLength": 102876,
+      "evidence": [
+        {
+          "label": "AI Act Annex III title",
+          "matched": true
+        },
+        {
+          "label": "employment and self-employment high-risk evidence",
+          "matched": true
+        },
+        {
+          "label": "candidate filtering boundary evidence",
+          "matched": true
+        },
+        {
+          "label": "education and vocational training high-risk evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "iso-42001",
       "label": "ISO/IEC 42001 AI management system",
       "url": "https://www.iso.org/standard/42001",
       "status": 200,
       "ok": true,
-      "contentSha256": "b8e6caa5485e34a6b31da3b465ee9b57c2cf44e4533dfcfd79d4f93b8a18ba47",
-      "byteLength": 121777,
+      "contentSha256": "d085ad8a9866ab1f9ab56d9e8b619f78f78a049c6c00b5a24dcfd611727a404b",
+      "byteLength": 121782,
       "evidence": [
         {
           "label": "ISO/IEC 42001 title",
@@ -609,8 +945,8 @@
       "url": "https://esco.ec.europa.eu/en/use-esco/use-esco-services-api",
       "status": 200,
       "ok": true,
-      "contentSha256": "ffb852e28627fb2a7621966c0f67ecd545f97e5cd42f0307fa55eb03ee95804c",
-      "byteLength": 53582,
+      "contentSha256": "b8ea693da7de39388badf3a8e10eb107bcb705651cd035ce2a3a79c88fa6381e",
+      "byteLength": 53570,
       "evidence": [
         {
           "label": "ESCO v1.2.1 title",
@@ -629,8 +965,8 @@
       "url": "https://www.abs.gov.au/about/key-priorities/about-osca/osca-2024",
       "status": 200,
       "ok": true,
-      "contentSha256": "dcdb16c31b08e8a35cc9cff9e14224d7bf4ba0cd830cf15e65afde8a71c136a1",
-      "byteLength": 91695,
+      "contentSha256": "874218407c77910ce8c6dd519b3a75629474604b0cebe66559d3cbf2c7537b15",
+      "byteLength": 91574,
       "evidence": [
         {
           "label": "OSCA 2024 title",
@@ -649,8 +985,8 @@
       "url": "https://www.workera.ai/product-overview",
       "status": 200,
       "ok": true,
-      "contentSha256": "e29c01c2273033e6ab0eda59bec66cfcaee4b382fda998e877d217c8b9184b16",
-      "byteLength": 199217,
+      "contentSha256": "a4cb624c65a03273548a4459f62dddc705454a288726bbe613441e4123a84086",
+      "byteLength": 200861,
       "evidence": [
         {
           "label": "Workera product page",
@@ -669,8 +1005,8 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "status": 200,
       "ok": true,
-      "contentSha256": "954f59b9003d7c50be9283062d3b9ea4786d994a6ae3f488b7ba3eba68e2bdf7",
-      "byteLength": 91339,
+      "contentSha256": "9c3b3f1381a5c9ae2c32f283090d8fe83357c19ce5a3839f34cb9b24d181a6ae",
+      "byteLength": 91471,
       "evidence": [
         {
           "label": "AI Risk Management Framework title",
@@ -689,8 +1025,8 @@
       "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
       "status": 200,
       "ok": true,
-      "contentSha256": "82e9c0306219105db14ecd8180ede240ed698d169682ee550437f3c0456e1317",
-      "byteLength": 76523,
+      "contentSha256": "418b5757ab08aa3d3c0c189e7c5d840f49a982b22aea33aa5712a99c7f0af2f7",
+      "byteLength": 77181,
       "evidence": [
         {
           "label": "OWASP file upload title",
@@ -704,13 +1040,61 @@
       "passed": true
     },
     {
+      "id": "cwe-59-link-following",
+      "label": "CWE-59 link-following weakness",
+      "url": "https://cwe.mitre.org/data/definitions/59.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "0f9254af6e9a3a5fcf2044b16116a8b500e0453d03e77a009c21dcd2148edef5",
+      "byteLength": 192486,
+      "evidence": [
+        {
+          "label": "CWE-59 link-following title",
+          "matched": true
+        },
+        {
+          "label": "link or shortcut unintended-resource definition",
+          "matched": true
+        },
+        {
+          "label": "symlink and hard-link relationship evidence",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "cwe-367-toctou",
+      "label": "CWE-367 TOCTOU race-condition weakness",
+      "url": "https://cwe.mitre.org/data/definitions/367.html",
+      "status": 200,
+      "ok": true,
+      "contentSha256": "2c3863363755bafe5427a0fdfe5c34ebfb794aba3f6b5f6fc9278085a0878a46",
+      "byteLength": 161956,
+      "evidence": [
+        {
+          "label": "CWE-367 TOCTOU title",
+          "matched": true
+        },
+        {
+          "label": "check-use resource state definition",
+          "matched": true
+        },
+        {
+          "label": "filename handle race example",
+          "matched": true
+        }
+      ],
+      "passed": true
+    },
+    {
       "id": "supabase-edge-functions",
       "label": "Supabase Edge Functions",
       "url": "https://supabase.com/docs/guides/functions",
       "status": 200,
       "ok": true,
-      "contentSha256": "f07975879a1d559d9298d79a1b52a34031e7ac66a84226ea58ee05b98efa4c96",
-      "byteLength": 180517,
+      "contentSha256": "fa1f788347eda67ca3b57a72a0dfb978b4a3505fbe70cb341029d5fb16e9c2f3",
+      "byteLength": 180471,
       "evidence": [
         {
           "label": "Supabase Edge Functions title",

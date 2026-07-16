@@ -506,7 +506,7 @@ export default function ProofPackGalleryPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <NavigationPremium />
-      <main data-proof-pack-gallery="phase-6-outreach" className="mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
+      <main data-proof-pack-gallery="phase-6-outreach" className="mx-auto max-w-7xl overflow-x-hidden px-4 pb-16 pt-24 sm:px-6 lg:px-8">
         <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <Badge className="mb-5 border-emerald-400/30 bg-emerald-400/10 text-emerald-200">

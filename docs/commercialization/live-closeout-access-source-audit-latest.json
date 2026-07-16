@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "2026-06-05.apo-live-closeout-access-source-audit.v1",
+  "generatedAt": "2026-06-08T20:16:02.694Z",
+  "readinessPath": "docs/commercialization/live-closeout-readiness-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "Live closeout access source audit proves only that the live closeout readiness artifact contains reviewed Supabase and GitHub official reference URLs and, when network fetch is enabled, that those pages matched expected access/secret-management text at verification time. It does not prove Supabase account access, functions API access, secret value validity, deployment completion, O*NET ingest completion, parse-resume deployment completion, live closeout, or commercial readiness.",
+  "allPassed": true,
+  "sourceCount": 4,
+  "passedCount": 4,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "unexpectedReferenceCount": 0,
+  "failedSourceIds": [],
+  "unexpectedReferences": [],
+  "sources": [
+    {
+      "id": "supabase-access-control",
+      "label": "Supabase access control",
+      "url": "https://supabase.com/docs/guides/platform/access-control",
+      "expectedUrl": "https://supabase.com/docs/guides/platform/access-control",
+      "appliesTo": [
+        "supabase-target-project-visible",
+        "supabase-functions-api-accessible"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://supabase.com/docs/guides/platform/access-control",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "5a881f1d2e6a57760503b54a11417866c69ec4b0ddfcc110be47d92b3d39b9db",
+        "byteLength": 727027,
+        "evidence": [
+          {
+            "label": "Supabase access control reference",
+            "matched": true
+          },
+          {
+            "label": "Supabase roles and permissions",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "supabase-cli-login",
+      "label": "Supabase CLI login",
+      "url": "https://supabase.com/docs/reference/cli/supabase-login",
+      "expectedUrl": "https://supabase.com/docs/reference/cli/supabase-login",
+      "appliesTo": [
+        "supabase-target-project-visible",
+        "supabase-functions-api-accessible"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://supabase.com/docs/reference/cli/supabase-login",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "ec0d7debb5c2ba29c8da441ef1fc45a4b05acdc920aa9f6051a9e0e4dd76a120",
+        "byteLength": 1666489,
+        "evidence": [
+          {
+            "label": "Supabase CLI login command",
+            "matched": true
+          },
+          {
+            "label": "Supabase personal access token",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "supabase-functions-list",
+      "label": "Supabase functions list",
+      "url": "https://supabase.com/docs/reference/cli/supabase-functions-list",
+      "expectedUrl": "https://supabase.com/docs/reference/cli/supabase-functions-list",
+      "appliesTo": [
+        "supabase-functions-api-accessible"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://supabase.com/docs/reference/cli/supabase-functions-list",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "ec0d7debb5c2ba29c8da441ef1fc45a4b05acdc920aa9f6051a9e0e4dd76a120",
+        "byteLength": 1666489,
+        "evidence": [
+          {
+            "label": "Supabase functions list command",
+            "matched": true
+          },
+          {
+            "label": "Supabase project ref flag",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "github-actions-secrets",
+      "label": "GitHub Actions secrets",
+      "url": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "expectedUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+      "appliesTo": [
+        "github-secrets-visible",
+        "github-live-closeout-secrets-present"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://docs.github.com/en/actions/concepts/security/secrets",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "b6f88c7cbc808cbe9277f10d8651f44d380576bad652cb3d46f79d7aed4cb1d4",
+        "byteLength": 273394,
+        "evidence": [
+          {
+            "label": "GitHub Actions secrets concept",
+            "matched": true
+          },
+          {
+            "label": "GitHub secret redaction or access boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

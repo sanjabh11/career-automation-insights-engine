@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-03T08:52:22.996Z",
-  "branch": "phase-e-commercial-validation",
+  "generatedAt": "2026-06-08T23:22:19.406Z",
+  "branch": "main",
   "routes": [
     {
       "path": "/",
@@ -353,6 +353,10 @@
       "importPath": "./pages/AIImpactPlannerPage"
     },
     {
+      "symbol": "Auth",
+      "importPath": "./pages/Auth"
+    },
+    {
       "symbol": "AutomationRiskLandingPage",
       "importPath": "./pages/AutomationRiskLandingPage"
     },
@@ -427,6 +431,10 @@
     {
       "symbol": "ImpactDashboard",
       "importPath": "./pages/ImpactDashboard"
+    },
+    {
+      "symbol": "Index",
+      "importPath": "./pages/Index"
     },
     {
       "symbol": "IndustryDashboardPage",
@@ -595,8 +603,44 @@
       "command": "playwright test"
     },
     {
+      "name": "generate:commercial-evidence-intake-packet",
+      "command": "node scripts/generate-commercial-evidence-intake-packet.mjs --write"
+    },
+    {
+      "name": "generate:launch-evidence",
+      "command": "node scripts/generate-launch-evidence-manifest.mjs --write"
+    },
+    {
+      "name": "generate:live-closeout-readiness",
+      "command": "node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write"
+    },
+    {
+      "name": "generate:live-proof-run-packet",
+      "command": "node scripts/generate-live-proof-run-packet.mjs --write"
+    },
+    {
+      "name": "generate:manual-wcag-review-packet",
+      "command": "node scripts/generate-manual-wcag-review-packet.mjs --write"
+    },
+    {
+      "name": "generate:owner-evidence-closeout-status",
+      "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status"
+    },
+    {
+      "name": "generate:owner-evidence-completion-drill",
+      "command": "node scripts/generate-owner-evidence-completion-drill.mjs --write"
+    },
+    {
+      "name": "generate:owner-evidence-handoff",
+      "command": "node scripts/generate-owner-evidence-handoff.mjs --write"
+    },
+    {
       "name": "generate:phase-b-validation",
       "command": "node scripts/generate-phase-b-validation-artifacts.mjs"
+    },
+    {
+      "name": "hash:owner-evidence-artifacts",
+      "command": "node scripts/hash-owner-evidence-artifacts.mjs"
     },
     {
       "name": "index:commercial",
@@ -643,6 +687,10 @@
       "command": "node scripts/verify-commercial-accessibility.mjs"
     },
     {
+      "name": "verify:commercial-artifact-redaction",
+      "command": "node scripts/verify-commercial-artifact-redaction.mjs --write"
+    },
+    {
       "name": "verify:commercial-browser",
       "command": "node scripts/verify-commercial-browser.mjs"
     },
@@ -651,8 +699,32 @@
       "command": "node scripts/generate-commercial-supabase-deployment-packet.mjs"
     },
     {
+      "name": "verify:commercial-evidence-intake-packet",
+      "command": "node scripts/generate-commercial-evidence-intake-packet.mjs --write"
+    },
+    {
+      "name": "verify:commercial-evidence-intake-packet-alignment",
+      "command": "node scripts/verify-commercial-evidence-intake-packet-alignment.mjs"
+    },
+    {
+      "name": "verify:commercial-evidence-intake-packet-alignment-fixtures",
+      "command": "node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:commercial-evidence-intake-sources",
+      "command": "node scripts/verify-commercial-evidence-intake-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:commercial-evidence-intake-sources-fixtures",
+      "command": "node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs"
+    },
+    {
       "name": "verify:commercial-evidence-records",
       "command": "node scripts/verify-commercial-evidence-records.mjs"
+    },
+    {
+      "name": "verify:commercial-evidence-records-fixtures",
+      "command": "node scripts/verify-commercial-evidence-records-fixtures.mjs"
     },
     {
       "name": "verify:commercial-evidence-records:write",
@@ -661,6 +733,14 @@
     {
       "name": "verify:commercial-full",
       "command": "node scripts/verify-commercial-release.mjs --with-a11y --with-network --with-journey"
+    },
+    {
+      "name": "verify:commercial-full-local-approval-package",
+      "command": "node scripts/verify-commercial-full-local-approval-package.mjs"
+    },
+    {
+      "name": "verify:commercial-full-local-approval-package-fixtures",
+      "command": "node scripts/verify-commercial-full-local-approval-package-fixtures.mjs"
     },
     {
       "name": "verify:commercial-live-auth-e2e",
@@ -675,12 +755,36 @@
       "command": "node scripts/verify-commercial-release.mjs --with-network"
     },
     {
+      "name": "verify:commercial-summary-launch-readiness",
+      "command": "node scripts/verify-commercial-summary-launch-readiness-alignment.mjs"
+    },
+    {
+      "name": "verify:commercial-summary-launch-readiness-fixtures",
+      "command": "node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:commercial-summary-redaction",
+      "command": "node scripts/verify-commercial-summary-redaction-alignment.mjs"
+    },
+    {
+      "name": "verify:commercial-summary-redaction-fixtures",
+      "command": "node scripts/verify-commercial-summary-redaction-alignment-fixtures.mjs"
+    },
+    {
       "name": "verify:commercial-trust",
       "command": "node scripts/verify-commercial-trust-boundaries.mjs"
     },
     {
       "name": "verify:commercial-validation",
       "command": "node scripts/verify-phase-e-commercial-validation.mjs"
+    },
+    {
+      "name": "verify:commercial-worktree-hygiene",
+      "command": "node scripts/verify-commercial-worktree-hygiene.mjs --write"
+    },
+    {
+      "name": "verify:commercial-worktree-hygiene-fixtures",
+      "command": "node scripts/verify-commercial-worktree-hygiene-fixtures.mjs"
     },
     {
       "name": "verify:data-provenance",
@@ -695,12 +799,104 @@
       "command": "node scripts/verify-global-english-localization.mjs --with-source-fetch"
     },
     {
+      "name": "verify:launch-evidence",
+      "command": "node scripts/generate-launch-evidence-manifest.mjs --write --validate"
+    },
+    {
+      "name": "verify:launch-evidence-alignment",
+      "command": "node scripts/verify-launch-evidence-alignment.mjs"
+    },
+    {
+      "name": "verify:launch-evidence-alignment-fixtures",
+      "command": "node scripts/verify-launch-evidence-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:launch-evidence-sources",
+      "command": "node scripts/verify-launch-evidence-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:launch-evidence-sources-fixtures",
+      "command": "node scripts/verify-launch-evidence-sources-fixtures.mjs"
+    },
+    {
+      "name": "verify:live-closeout-access-sources",
+      "command": "node scripts/verify-live-closeout-access-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:live-closeout-access-sources-fixtures",
+      "command": "node scripts/verify-live-closeout-access-sources-fixtures.mjs"
+    },
+    {
       "name": "verify:live-closeout-readiness",
       "command": "node scripts/verify-live-closeout-readiness.mjs"
     },
     {
+      "name": "verify:live-closeout-readiness-status",
+      "command": "node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write"
+    },
+    {
       "name": "verify:live-gate-evidence",
       "command": "node scripts/verify-live-gate-evidence.mjs"
+    },
+    {
+      "name": "verify:live-proof-closeout-command-alignment",
+      "command": "node scripts/verify-live-proof-closeout-command-alignment.mjs"
+    },
+    {
+      "name": "verify:live-proof-closeout-command-alignment-fixtures",
+      "command": "node scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:live-proof-run-packet",
+      "command": "node scripts/generate-live-proof-run-packet.mjs --write"
+    },
+    {
+      "name": "verify:live-proof-run-packet-alignment",
+      "command": "node scripts/verify-live-proof-run-packet-alignment.mjs"
+    },
+    {
+      "name": "verify:live-proof-run-packet-alignment-fixtures",
+      "command": "node scripts/verify-live-proof-run-packet-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:live-proof-run-packet-sources",
+      "command": "node scripts/verify-live-proof-run-packet-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:live-proof-run-packet-sources-fixtures",
+      "command": "node scripts/verify-live-proof-run-packet-sources-fixtures.mjs"
+    },
+    {
+      "name": "verify:manual-wcag-evidence",
+      "command": "node scripts/verify-manual-wcag-evidence.mjs"
+    },
+    {
+      "name": "verify:manual-wcag-evidence-fixtures",
+      "command": "node scripts/verify-manual-wcag-evidence-fixtures.mjs"
+    },
+    {
+      "name": "verify:manual-wcag-evidence:write",
+      "command": "node scripts/verify-manual-wcag-evidence.mjs --write"
+    },
+    {
+      "name": "verify:manual-wcag-review-packet",
+      "command": "node scripts/generate-manual-wcag-review-packet.mjs --write"
+    },
+    {
+      "name": "verify:manual-wcag-review-packet-alignment",
+      "command": "node scripts/verify-manual-wcag-review-packet-alignment.mjs"
+    },
+    {
+      "name": "verify:manual-wcag-review-packet-alignment-fixtures",
+      "command": "node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:manual-wcag-review-packet-sources",
+      "command": "node scripts/verify-manual-wcag-review-packet-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:manual-wcag-review-packet-sources-fixtures",
+      "command": "node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs"
     },
     {
       "name": "verify:onet-task-ratings",
@@ -711,16 +907,100 @@
       "command": "node scripts/verify-onet-task-ratings-live.mjs --write"
     },
     {
+      "name": "verify:owner-action-queue",
+      "command": "node scripts/verify-owner-action-queue-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-action-queue-alignment",
+      "command": "node scripts/verify-owner-action-queue-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-action-queue-alignment-fixtures",
+      "command": "node scripts/verify-owner-action-queue-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-artifact-hasher-fixtures",
+      "command": "node scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs"
+    },
+    {
       "name": "verify:owner-evidence-closeout",
       "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete"
+    },
+    {
+      "name": "verify:owner-evidence-closeout-status",
+      "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status"
+    },
+    {
+      "name": "verify:owner-evidence-command-checklist-alignment",
+      "command": "node scripts/verify-owner-evidence-command-checklist-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-command-checklist-alignment-fixtures",
+      "command": "node scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-completion-drill",
+      "command": "node scripts/generate-owner-evidence-completion-drill.mjs --write"
+    },
+    {
+      "name": "verify:owner-evidence-completion-drill-alignment",
+      "command": "node scripts/verify-owner-evidence-completion-drill-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-completion-drill-alignment-fixtures",
+      "command": "node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-completion-drill-sources",
+      "command": "node scripts/verify-owner-evidence-completion-drill-sources.mjs --fetch --write"
+    },
+    {
+      "name": "verify:owner-evidence-completion-drill-sources-fixtures",
+      "command": "node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs"
     },
     {
       "name": "verify:owner-evidence-fixtures",
       "command": "node scripts/verify-owner-evidence-fixture-path.mjs"
     },
     {
+      "name": "verify:owner-evidence-handoff",
+      "command": "node scripts/generate-owner-evidence-handoff.mjs --write"
+    },
+    {
+      "name": "verify:owner-evidence-handoff-alignment",
+      "command": "node scripts/verify-owner-evidence-handoff-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-handoff-alignment-fixtures",
+      "command": "node scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-local-safety",
+      "command": "node scripts/verify-owner-evidence-local-safety.mjs --write"
+    },
+    {
+      "name": "verify:owner-evidence-local-safety-fixtures",
+      "command": "node scripts/verify-owner-evidence-local-safety-fixtures.mjs"
+    },
+    {
       "name": "verify:owner-evidence-prep",
       "command": "node scripts/prepare-owner-evidence-workspace.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-prep-alignment",
+      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-prep-alignment-fixtures",
+      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-runbook-alignment",
+      "command": "node scripts/verify-owner-evidence-runbook-alignment.mjs"
+    },
+    {
+      "name": "verify:owner-evidence-runbook-alignment-fixtures",
+      "command": "node scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs"
     },
     {
       "name": "verify:part-ii",
@@ -806,17 +1086,28 @@
     "careeronestop-api",
     "census-acs-api",
     "cfpb-employment-algorithmic-scores",
+    "cisa-secure-by-design",
+    "cwe-367-toctou",
+    "cwe-59-link-following",
     "dol-ai-literacy-framework",
+    "dol-ai-worker-wellbeing-best-practices",
     "eeoc-employment-selection-procedures",
     "esco",
+    "eu-ai-act-annex-iii-high-risk",
     "ferpa-student-privacy",
+    "ftc-consumer-reviews-rule-questions",
+    "ftc-endorsement-guides-faq",
+    "ftc-endorsements-reviews",
+    "ftc-soliciting-paying-online-reviews",
     "ilo-genai-jobs-2025",
     "iso-42001",
     "lightcast",
     "llm-output",
     "nace-career-readiness",
     "nace-first-destination",
+    "nist-ai-genai-profile",
     "nist-ai-rmf",
+    "nist-ssdf",
     "oecd-skills-outlook-2025",
     "onet",
     "onet-scales-reference",
@@ -825,10 +1116,17 @@
     "onet-task-statements",
     "openai-eloundou-gpts-are-gpts",
     "openai-gdpval",
+    "owasp-asvs-5",
     "owasp-file-upload",
+    "owasp-llm-top-10-2025",
+    "pci-dss-v4-0-1",
     "serpapi",
     "supabase-edge-functions",
     "wcag-22",
+    "wcag-em-2",
+    "wcag-em-overview",
+    "wcag-em-report-tool",
+    "wcag2ict-22",
     "wef-foj-2025",
     "workera-positioning"
   ],
@@ -915,9 +1213,12 @@
         "docs/commercialization/pilot-outreach-pack.md",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-trust-boundaries.mjs",
-        "scripts/verify-supabase-function-governance.mjs"
+        "scripts/verify-supabase-function-governance.mjs",
+        "scripts/generate-commercial-evidence-intake-packet.mjs",
+        "scripts/generate-owner-evidence-completion-drill.mjs",
+        "scripts/verify-owner-evidence-completion-drill-alignment.mjs"
       ],
-      "proof": "Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, and pilot validation worksheet CSV."
+      "proof": "Public proof-pack gallery, launch readiness command center, function governance dashboard, buyer-specific sample routes, occupation sample shelf, bounded pilot caveats, downloadable institutional readiness packet, downloadable CRM-import outreach CSV, generated partner/outcome owner-evidence intake worksheet, generated owner-evidence completion drill with Trust Center alignment verifier, and pilot validation worksheet CSV."
     },
     {
       "feature": "Institutional readiness and governance packet",
@@ -931,11 +1232,14 @@
         "scripts/verify-report-evidence.mjs",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-accessibility.mjs",
+        "scripts/generate-manual-wcag-review-packet.mjs",
         "scripts/verify-commercial-data-provenance.mjs",
         "docs/commercialization/commercial-accessibility-audit-latest.md",
-        "docs/commercialization/commercial-accessibility-audit-latest.json"
+        "docs/commercialization/commercial-accessibility-audit-latest.json",
+        "docs/commercialization/manual-wcag-review-packet-latest.md",
+        "docs/commercialization/manual-wcag-review-matrix-latest.csv"
       ],
-      "proof": "Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review."
+      "proof": "Downloadable trust packet now includes an institutional risk register, AI RMF Govern/Map/Measure/Manage controls, WCAG 2.2 accessibility gate, manual WCAG evidence worksheet, buyer acceptable-use signoff checklist, generated accessibility audit packet with manual WCAG checklist, generated manual WCAG route/checkpoint review packet and CSV matrix, employment-decision boundary, live proof blockers, evidence cards, CSV risk register, and acceptance checklist CSV for buyer review."
     },
     {
       "feature": "Commercial proof-pack CI workflow",
@@ -947,12 +1251,18 @@
         "docs/commercialization/live-supabase-deployment-runbook.md",
         "scripts/verify-commercial-release.mjs",
         "scripts/generate-commercial-supabase-deployment-packet.mjs",
+        "scripts/generate-live-proof-run-packet.mjs",
+        "scripts/generate-commercial-evidence-intake-packet.mjs",
+        "scripts/generate-owner-evidence-completion-drill.mjs",
+        "scripts/verify-owner-evidence-completion-drill-alignment.mjs",
         "scripts/verify-commercial-live-auth-e2e.mjs",
         "scripts/verify-commercial-browser.mjs",
         "scripts/verify-commercial-accessibility.mjs",
-        "docs/commercialization/commercial-accessibility-audit-latest.md"
+        "scripts/generate-manual-wcag-review-packet.mjs",
+        "docs/commercialization/commercial-accessibility-audit-latest.md",
+        "docs/commercialization/manual-wcag-review-packet-latest.md"
       ],
-      "proof": "GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, a generated WCAG 2.2 audit packet with manual review boundary, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks."
+      "proof": "GitHub Actions workflow is installed with read-only permissions, commercial build/route/evidence checks, Playwright a11y/browser journey checks, generated live-proof owner run packet, generated partner/outcome owner-evidence intake packet, generated owner-evidence completion drill with UI/model/CSV alignment verification, a generated WCAG 2.2 audit packet with manual review boundary, a generated manual WCAG owner review packet, optional authenticated live e2e for a synthetic Supabase Auth test user, plus manual/scheduled source and production audit checks."
     },
     {
       "feature": "SEO report lead capture",
@@ -1034,9 +1344,14 @@
         "scripts/verify-report-evidence.mjs",
         "scripts/verify-commercial-trust-boundaries.mjs",
         "scripts/verify-supabase-function-governance.mjs",
-        "scripts/prepare-owner-evidence-workspace.mjs"
+        "scripts/prepare-owner-evidence-workspace.mjs",
+        "scripts/generate-live-proof-run-packet.mjs",
+        "scripts/generate-commercial-evidence-intake-packet.mjs",
+        "scripts/generate-manual-wcag-review-packet.mjs",
+        "scripts/generate-owner-evidence-completion-drill.mjs",
+        "scripts/verify-owner-evidence-completion-drill-alignment.mjs"
       ],
-      "proof": "Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof."
+      "proof": "Launch gate now separates owner-held secrets, public function review, legacy function sprawl, outreach automation, provider data, accessibility, and payment fulfillment. The proof-pack gallery includes a launch readiness command center, payment fulfillment status, function governance dashboard, public/no-JWT launch decisions, required evidence checklists, source freshness view, manual WCAG checklist, generated live-proof run packet, generated partner/outcome intake packet, generated owner WCAG review packet, generated owner-evidence completion drill with Trust Center alignment verification, and pilot feedback capture plan. Checkout helpers pass authenticated Supabase JWTs, the deployed checkout Edge Function verifies callers for subscription and credit checkout, and Stripe webhook credit purchases add report credits plus transaction records. Owner evidence prep can create ignored local env/intake scaffolding without making placeholders count as proof."
     },
     {
       "feature": "Source provenance and claim boundaries",

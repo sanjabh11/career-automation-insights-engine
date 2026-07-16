@@ -1,17 +1,20 @@
 {
-  "generatedAt": "2026-06-03T08:52:26.797Z",
+  "generatedAt": "2026-06-08T23:23:24.477Z",
   "schemaVersion": "2026-06-01.apo-commercial-evidence-records.v1",
   "gateIds": [
     "three_committed_partners",
     "documented_outcomes"
   ],
+  "gateIdCount": 2,
   "inputPath": "docs/commercialization/commercial-evidence-records.local.json",
   "found": false,
   "status": "no_local_evidence",
   "confidence": "bounded_redacted_commercial_evidence_records",
-  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. Partner and outcome hashes must be unique. It does not store partner names, contact details, contracts, raw notes, private quotes, customer data, or prove revenue, retention, causality, market-wide demand, or career outcomes.",
+  "caveat": "This verifier validates redacted founder-held commercial evidence metadata only. Partner, outcome, and proof artifact hashes must be unique within their required boundaries, proof artifact types must be present, integrity attestations and ownerEvidenceArchive policy fields must be explicit, measured outcome scope must be bounded, and raw evidence must remain owner-held. It does not store partner names, contact details, profile URLs, meeting/calendar links, Stripe checkout URLs, contracts, raw notes, private quotes, customer data, proof artifacts, or prove revenue, retention, causality, market-wide demand, career outcomes, legal compliance, or testimonial compliance.",
   "acceptedDesignPartnerCount": 0,
   "acceptedOutcomeCount": 0,
+  "requiredDesignPartnerCount": 3,
+  "requiredOutcomeCount": 1,
   "uniqueDesignPartnerCount": 0,
   "uniqueOutcomeCount": 0,
   "partnerGateSatisfied": false,
@@ -22,22 +25,28 @@
     "Retention",
     "Causal product impact",
     "Market-wide demand",
-    "Guaranteed career outcomes"
+    "Guaranteed career outcomes",
+    "Legal compliance",
+    "Testimonial compliance"
   ],
+  "doesNotProveCount": 7,
   "manualInterventionIfMissing": [
-    "Collect at least three permissioned design-partner commitments with pilot scope, planning-only use confirmation, artifact reviewed, contact permission, and next step recorded.",
-    "Collect at least one permissioned documented outcome with baseline workflow, artifact reviewed, measured change, approved quote, quote approval, and explicit does-not-prove boundaries.",
-    "Option A: place owner-held intake in docs/commercialization/commercial-evidence-intake.local.json with an owner-held hash salt, then run npm run compose:commercial-evidence-records -- --write --require-all.",
-    "Option B: store only redacted metadata in docs/commercialization/commercial-evidence-records.local.json or pass --evidence <path>; keep raw names, contacts, contracts, notes, quotes, and salts owner-held.",
-    "Validate the redacted records with npm run verify:commercial-evidence-records -- --require-all.",
+    "Collect at least three permissioned design-partner commitments with pilot scope, planning-only use confirmation, artifact reviewed, contact permission, next step recorded, owner-held proof artifact hashes/types, rawEvidenceOwnerHeld=true, and partner ownerEvidenceArchive policy metadata.",
+    "For partner and outcome records, include owner-held marketing/testimonial integrity attestations: marketing-use review, material-connection review, incentive/compensation review, no fake/synthetic testimonial, and no review gating or suppression.",
+    "Collect at least one permissioned documented outcome with baseline workflow, artifact reviewed, measured change, approved quote, quote approval, measured-change unit, measurement window, outcome claim scope, typicality boundary, no-causality/no-guarantee attestations, owner-held proof artifact hashes/types, outcome ownerEvidenceArchive policy metadata, and explicit does-not-prove boundaries.",
+    "Option A: place owner-held intake in docs/commercialization/commercial-evidence-intake.local.json with an owner-held hash salt, then run COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all.",
+    "Option B: store only redacted metadata in docs/commercialization/commercial-evidence-records.local.json or pass --evidence <path>; keep raw names, contacts, profile URLs, meeting/calendar links, Stripe checkout URLs, contracts, notes, quotes, material-connection reviews, incentive reviews, typicality substantiation, proof artifacts, archive records, and salts owner-held.",
+    "Validate the redacted records with npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-all.",
     "Run npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete as the read-only final gate.",
     "Run npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete only when refreshing tracked closeout artifacts."
   ],
+  "manualInterventionIfMissingCount": 8,
   "nextCommands": {
-    "composeFromOwnerIntake": "npm run compose:commercial-evidence-records -- --write --require-all",
-    "validateCommercialEvidence": "npm run verify:commercial-evidence-records -- --require-all",
+    "composeFromOwnerIntake": "COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all",
+    "validateCommercialEvidence": "npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-all",
     "finalReadOnlyLedger": "npm run verify:remediation-gates -- --live-evidence <path> --commercial-evidence <path> --require-complete",
     "refreshTrackedLedger": "npm run verify:remediation-gates:write -- --live-evidence <path> --commercial-evidence <path> --require-complete"
   },
+  "errorCount": 0,
   "errors": []
 }

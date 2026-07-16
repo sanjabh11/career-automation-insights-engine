@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "2026-06-05.apo-manual-wcag-review-packet-source-audit.v1",
+  "generatedAt": "2026-06-08T23:01:04.534Z",
+  "packetPath": "docs/commercialization/manual-wcag-review-packet-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "Manual WCAG review packet source audit proves only W3C/WAI official reference URL presence and expected page text at verification time. It does not prove manual review completion, WCAG conformance, legal compliance, procurement approval, assistive-technology coverage, or commercial readiness.",
+  "allPassed": true,
+  "sourceCount": 7,
+  "passedCount": 7,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "unexpectedReferenceCount": 0,
+  "failedSourceIds": [],
+  "unexpectedReferences": [],
+  "sources": [
+    {
+      "id": "wcag22",
+      "label": "WCAG 2.2 Recommendation",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "expectedUrl": "https://www.w3.org/TR/WCAG22/",
+      "checkpointIds": [
+        "keyboard-focus-not-obscured",
+        "target-size",
+        "form-errors-and-redundant-entry",
+        "accessible-authentication",
+        "screen-reader-name-role-value",
+        "contrast-reflow-text-spacing",
+        "downloadable-artifacts"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/WCAG22/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "6e3c5fe397257cae509a2fb4752b73062cf8cbeb92c2cec618989b17e4cf7057",
+        "byteLength": 512457,
+        "evidence": [
+          {
+            "label": "WCAG 2.2 recommendation title",
+            "matched": true
+          },
+          {
+            "label": "WCAG 2.2 conformance and testable criteria",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wcag-em-overview",
+      "label": "WCAG-EM overview",
+      "url": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "expectedUrl": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+      "checkpointIds": [
+        "wcag-em-scope"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "24d3685e499334ea2cf8bfb48149536d8f96969a9a1020911f636855fdb52be2",
+        "byteLength": 49007,
+        "evidence": [
+          {
+            "label": "WCAG-EM overview title",
+            "matched": true
+          },
+          {
+            "label": "WCAG-EM evaluation process",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wcag-em-2",
+      "label": "WCAG-EM 2.0",
+      "url": "https://www.w3.org/TR/wcag-em-2/",
+      "expectedUrl": "https://www.w3.org/TR/wcag-em-2/",
+      "checkpointIds": [
+        "wcag-em-scope"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/wcag-em-2/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "242060b46891f1ad4dc7b4a7fc90fe6ddab9b6201c6955c6132b30da49598255",
+        "byteLength": 144958,
+        "evidence": [
+          {
+            "label": "WCAG-EM 2.0 title",
+            "matched": true
+          },
+          {
+            "label": "WCAG-EM 2.0 evaluation methodology",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wcag-em-report-tool",
+      "label": "WCAG-EM Report Tool",
+      "url": "https://www.w3.org/WAI/eval/report-tool/",
+      "expectedUrl": "https://www.w3.org/WAI/eval/report-tool/",
+      "checkpointIds": [
+        "wcag-em-scope"
+      ],
+      "expectedEvidenceCount": 3,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/eval/report-tool/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "3e4db9a91727625892c1e3859ad3befc03be4563949f36cccf853229550a42d1",
+        "byteLength": 8021,
+        "evidence": [
+          {
+            "label": "WCAG-EM Report Tool title",
+            "matched": true
+          },
+          {
+            "label": "W3C WAI tool stewardship evidence",
+            "matched": true
+          },
+          {
+            "label": "current report tool version evidence",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wai-easy-checks",
+      "label": "WAI Easy Checks",
+      "url": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+      "expectedUrl": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+      "checkpointIds": [
+        "form-errors-and-redundant-entry",
+        "contrast-reflow-text-spacing",
+        "downloadable-artifacts"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/test-evaluate/preliminary/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "42e1ae8a6aed8bed5299c2980fe58f02300a09a97086ab5e379e6e699aaab1ca",
+        "byteLength": 129840,
+        "evidence": [
+          {
+            "label": "WAI Easy Checks first review",
+            "matched": true
+          },
+          {
+            "label": "preliminary accessibility checks boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wai-aria-apg",
+      "label": "WAI-ARIA Authoring Practices",
+      "url": "https://www.w3.org/WAI/ARIA/apg/",
+      "expectedUrl": "https://www.w3.org/WAI/ARIA/apg/",
+      "checkpointIds": [
+        "screen-reader-name-role-value",
+        "downloadable-artifacts"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/WAI/ARIA/apg/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "1ec259002cde0290fd95b7d83398d2569173d9ab7152a30776f4988fe8694c3a",
+        "byteLength": 39382,
+        "evidence": [
+          {
+            "label": "ARIA Authoring Practices Guide",
+            "matched": true
+          },
+          {
+            "label": "ARIA patterns and keyboard support",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "wcag2ict-22",
+      "label": "WCAG2ICT 2.2",
+      "url": "https://www.w3.org/TR/wcag2ict-22/",
+      "expectedUrl": "https://www.w3.org/TR/wcag2ict-22/",
+      "checkpointIds": [
+        "downloadable-artifacts"
+      ],
+      "expectedEvidenceCount": 3,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.w3.org/TR/wcag2ict-22/",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "265077c096b19d21d9f6b29ce60604d1cf88f8cf4a8663312ee46490a2c9b2e7",
+        "byteLength": 536627,
+        "evidence": [
+          {
+            "label": "WCAG2ICT Group Note title",
+            "matched": true
+          },
+          {
+            "label": "non-web documents and software guidance",
+            "matched": true
+          },
+          {
+            "label": "informative guidance boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "2026-06-05.apo-owner-evidence-local-safety.v1",
+  "generatedAt": "2026-06-08T23:24:34.221Z",
+  "ok": true,
+  "protectedPathCount": 10,
+  "protectedPathChecks": [
+    {
+      "path": ".env",
+      "kind": "owner_environment",
+      "reason": "Base local environment files can contain Supabase, Stripe, API, and owner proof credentials.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 18,
+        "pattern": ".env"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": ".env.local",
+      "kind": "owner_environment",
+      "reason": "Owner-held local environment file for live proof commands.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 19,
+        "pattern": ".env.*"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": ".env.production",
+      "kind": "owner_environment",
+      "reason": "Production environment files must never become tracked proof artifacts.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 19,
+        "pattern": ".env.*"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": ".env.production.local",
+      "kind": "owner_environment",
+      "reason": "Production local override files can contain live credentials.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 19,
+        "pattern": ".env.*"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": ".env.test.local",
+      "kind": "owner_environment",
+      "reason": "Test local override files can contain payment or synthetic-user credentials.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 19,
+        "pattern": ".env.*"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": "docs/commercialization/live-gate-evidence.local.json",
+      "kind": "owner_live_evidence",
+      "reason": "Redacted live-gate evidence intake may still map to owner-held Stripe/Supabase proof archives.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 44,
+        "pattern": "docs/commercialization/*.local.json"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-intake.local.json",
+      "kind": "owner_commercial_intake",
+      "reason": "Partner/outcome intake can reference owner-held contracts, quotes, contacts, salts, and proof hashes.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 44,
+        "pattern": "docs/commercialization/*.local.json"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": "docs/commercialization/commercial-evidence-records.local.json",
+      "kind": "owner_commercial_records",
+      "reason": "Composed local commercial evidence records are owner-reviewed before tracked redacted ledgers are refreshed.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 44,
+        "pattern": "docs/commercialization/*.local.json"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": "docs/commercialization/manual-wcag-evidence.local.json",
+      "kind": "owner_manual_wcag_evidence",
+      "reason": "Manual WCAG metadata maps to owner-held notes, screenshots, reviewer evidence, and archive records.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 44,
+        "pattern": "docs/commercialization/*.local.json"
+      },
+      "tracked": false,
+      "staged": false
+    },
+    {
+      "path": "docs/commercialization/__owner-evidence-local-safety-probe__.local.json",
+      "kind": "future_owner_local_json",
+      "reason": "Future commercialization owner-evidence local JSON files should inherit the same ignore policy.",
+      "ignored": true,
+      "ignoreSource": {
+        "file": ".gitignore",
+        "line": 44,
+        "pattern": "docs/commercialization/*.local.json"
+      },
+      "tracked": false,
+      "staged": false
+    }
+  ],
+  "ignoredProtectedPathCount": 10,
+  "trackedSensitiveFileViolations": [],
+  "trackedSensitiveFileViolationCount": 0,
+  "stagedSensitivePathViolations": [],
+  "stagedSensitivePathViolationCount": 0,
+  "errorCount": 0,
+  "errors": [],
+  "outputs": {
+    "json": "docs/commercialization/owner-evidence-local-safety-latest.json",
+    "markdown": "docs/commercialization/owner-evidence-local-safety-latest.md"
+  },
+  "evidenceBoundary": "This preflight proves only git ignore/tracking/staging policy for owner-held local evidence paths. It does not inspect file contents, validate redacted evidence completeness, prove live payment or revenue, prove partner commitments, prove documented outcomes, prove manual WCAG conformance, or replace host-level secret scanning/push protection.",
+  "doesNotProve": [
+    "absence of secrets in git history, logs, screenshots, local machines, cloud dashboards, browser caches, or third-party systems",
+    "validity or completeness of local owner evidence files",
+    "commercial-ready status, legal compliance, WCAG conformance, or procurement approval"
+  ],
+  "doesNotProveCount": 3,
+  "referencePractices": [
+    {
+      "source": "OWASP Secrets Management Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+      "localMapping": "Owner-held secrets and proof archives stay outside tracked files; the repo stores templates, redacted hashes, and policy metadata only."
+    },
+    {
+      "source": "GitHub push protection",
+      "url": "https://docs.github.com/en/code-security/concepts/secret-security/about-push-protection",
+      "localMapping": "This preflight is a repo-local preventative check before staging/commit; hosted push protection should still be enabled by the owner."
+    }
+  ],
+  "referencePracticeCount": 2
+}

@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "2026-06-05.apo-commercial-evidence-intake-source-audit.v1",
+  "generatedAt": "2026-06-08T22:07:59.315Z",
+  "packetPath": "docs/commercialization/commercial-evidence-intake-packet-latest.json",
+  "networkFetch": true,
+  "sourceBoundary": "This audit proves only that the commercial evidence intake packet official FTC reference URLs were present and matched expected page text at verification time. It does not prove partner commitments, documented outcomes, testimonial compliance, legal compliance, revenue, retention, causality, market-wide demand, or permission to cite.",
+  "allPassed": true,
+  "sourceCount": 4,
+  "passedCount": 4,
+  "failedCount": 0,
+  "missingExpectationCount": 0,
+  "unexpectedReferenceCount": 0,
+  "failedSourceIds": [],
+  "unexpectedReferences": [],
+  "sources": [
+    {
+      "id": "ftc-consumer-reviews-rule-questions",
+      "label": "FTC Consumer Reviews and Testimonials Rule questions",
+      "url": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+      "appliesTo": [
+        "fake or false review/testimonial boundary",
+        "review/testimonial rule awareness"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "3f574d91530e37056fc7da027dbd5e496d3856c8a2f05463131867540162ca35",
+        "byteLength": 1020981,
+        "evidence": [
+          {
+            "label": "FTC Consumer Reviews and Testimonials Rule Q&A",
+            "matched": true
+          },
+          {
+            "label": "fake or deceptive reviews/testimonials boundary",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "ftc-endorsements-reviews",
+      "label": "FTC endorsements, influencers, and reviews",
+      "url": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+      "appliesTo": [
+        "quote approval",
+        "review/testimonial boundaries",
+        "material connection awareness"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/advertising-marketing/endorsements-influencers-reviews",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "99f054376caa7df57202955a53399e714b832c0f480249403fa0ba896c739e78",
+        "byteLength": 1093335,
+        "evidence": [
+          {
+            "label": "FTC endorsements and reviews hub",
+            "matched": true
+          },
+          {
+            "label": "Endorsement Guides and Consumer Reviews Rule coverage",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "ftc-endorsement-guides-faq",
+      "label": "FTC Endorsement Guides: What People Are Asking",
+      "url": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+      "appliesTo": [
+        "honest endorsement handling",
+        "material connection disclosure review"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "00e6b5f637258a66f83436020c3bbb4862482c0e5e12aa2a33976cb83ab2f2f6",
+        "byteLength": 1082146,
+        "evidence": [
+          {
+            "label": "FTC Endorsement Guides FAQ",
+            "matched": true
+          },
+          {
+            "label": "material connection disclosure guidance",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    },
+    {
+      "id": "ftc-review-solicitation-guide",
+      "label": "FTC soliciting and paying for online reviews guide",
+      "url": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+      "expectedUrl": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+      "appliesTo": [
+        "review solicitation integrity",
+        "anti-fake-review boundary"
+      ],
+      "expectedEvidenceCount": 2,
+      "fetch": {
+        "attempted": true,
+        "finalUrl": "https://www.ftc.gov/business-guidance/resources/soliciting-paying-online-reviews-guide-marketers",
+        "status": 200,
+        "ok": true,
+        "contentSha256": "7bd4f8fe945ae7b437aa3bff4f47d8fb5378fe6768357a6abb3d887dbf928395",
+        "byteLength": 994556,
+        "evidence": [
+          {
+            "label": "FTC soliciting and paying for online reviews guide",
+            "matched": true
+          },
+          {
+            "label": "review solicitation integrity guidance",
+            "matched": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "passed",
+      "passed": true
+    }
+  ]
+}

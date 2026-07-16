@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-06-01.apo-commercial-evidence-intake.v1",
   "asOf": "2026-06-01",
-  "sourceBoundary": "Owner-held intake used only to compose redacted commercial evidence records. Keep this as a local file outside git or at docs/commercialization/commercial-evidence-intake.local.json. Do not commit partner names, emails, phone numbers, contracts, raw notes, private quotes, customer data, or the hash salt.",
+  "sourceBoundary": "Owner-held intake used only to compose redacted commercial evidence records. Keep this as a local file outside git or at docs/commercialization/commercial-evidence-intake.local.json. Do not commit partner names, emails, phone numbers, profile URLs, meeting/calendar links, contracts, raw notes, private quotes, Stripe checkout URLs, customer data, or the hash salt.",
   "hashSalt": "replace-with-owner-held-random-salt-at-least-16-chars",
   "designPartnerCommitments": [
     {
@@ -14,7 +14,116 @@
       "planningOnlyUseConfirmed": true,
       "artifactReviewed": "sample_report",
       "nextStepRecorded": true,
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "permissioned_email",
+        "artifact_review_log"
+      ],
+      "rawEvidenceOwnerHeld": true,
       "redactionLevel": "public_segment_only",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true
+      },
+      "ownerEvidenceArchive": {
+        "permissionTrailOwnerHeld": true,
+        "pilotScopeRecordOwnerHeld": true,
+        "artifactReviewLogOwnerHeld": true,
+        "contactDetailsOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "reviewSolicitationNotConditionedOnSentiment": true,
+        "reReviewRequiredBeforePublicUse": true
+      },
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
+    },
+    {
+      "partnerRef": "replace-with-owner-stable-partner-reference-2",
+      "segment": "career_center",
+      "committedAt": "2026-06-01",
+      "permissioned": true,
+      "contactPermission": true,
+      "pilotScopeAccepted": true,
+      "planningOnlyUseConfirmed": true,
+      "artifactReviewed": "trust_center",
+      "nextStepRecorded": true,
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "signed_pilot_scope",
+        "artifact_review_log"
+      ],
+      "rawEvidenceOwnerHeld": true,
+      "redactionLevel": "public_segment_only",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true
+      },
+      "ownerEvidenceArchive": {
+        "permissionTrailOwnerHeld": true,
+        "pilotScopeRecordOwnerHeld": true,
+        "artifactReviewLogOwnerHeld": true,
+        "contactDetailsOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "reviewSolicitationNotConditionedOnSentiment": true,
+        "reReviewRequiredBeforePublicUse": true
+      },
+      "doesNotProve": [
+        "Revenue",
+        "Successful outcomes",
+        "Market-wide demand"
+      ]
+    },
+    {
+      "partnerRef": "replace-with-owner-stable-partner-reference-3",
+      "segment": "workforce_board",
+      "committedAt": "2026-06-01",
+      "permissioned": true,
+      "contactPermission": true,
+      "pilotScopeAccepted": true,
+      "planningOnlyUseConfirmed": true,
+      "artifactReviewed": "proof_pack_gallery",
+      "nextStepRecorded": true,
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "permissioned_email",
+        "artifact_review_log"
+      ],
+      "rawEvidenceOwnerHeld": true,
+      "redactionLevel": "public_segment_only",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true
+      },
+      "ownerEvidenceArchive": {
+        "permissionTrailOwnerHeld": true,
+        "pilotScopeRecordOwnerHeld": true,
+        "artifactReviewLogOwnerHeld": true,
+        "contactDetailsOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "reviewSolicitationNotConditionedOnSentiment": true,
+        "reReviewRequiredBeforePublicUse": true
+      },
       "doesNotProve": [
         "Revenue",
         "Successful outcomes",
@@ -32,7 +141,39 @@
       "measuredChangeCaptured": true,
       "approvedQuoteCaptured": true,
       "quoteApprovalCaptured": true,
+      "measuredChangeUnit": "minutes_saved_per_report",
+      "measurementWindow": "single reviewed workflow during owner-held pilot evidence window",
+      "outcomeClaimScope": "single permissioned observed workflow only; not generalized beyond the reviewed artifact",
+      "typicalityBoundary": "not represented as typical or expected for other users without additional evidence",
+      "proofArtifactHashes": [
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "proofArtifactTypes": [
+        "baseline_workflow_note",
+        "measured_change_summary",
+        "quote_approval"
+      ],
+      "rawEvidenceOwnerHeld": true,
       "redactionLevel": "public_quote_approved",
+      "integrityAttestations": {
+        "marketingUseReviewed": true,
+        "materialConnectionReviewed": true,
+        "incentiveOrCompensationReviewed": true,
+        "noFakeOrSyntheticTestimonial": true,
+        "noReviewGatingOrSuppression": true,
+        "counterfactualNotClaimed": true,
+        "guaranteedOutcomeNotClaimed": true
+      },
+      "ownerEvidenceArchive": {
+        "baselineWorkflowEvidenceOwnerHeld": true,
+        "measuredChangeEvidenceOwnerHeld": true,
+        "quoteApprovalRecordOwnerHeld": true,
+        "privateQuoteTextOwnerHeldOutsideGit": true,
+        "materialConnectionReviewOwnerHeld": true,
+        "incentiveOrCompensationReviewOwnerHeld": true,
+        "typicalitySubstantiationOwnerHeld": true,
+        "reReviewRequiredBeforePublicCaseStudyUse": true
+      },
       "doesNotProve": [
         "Guaranteed career outcomes",
         "Causal impact",

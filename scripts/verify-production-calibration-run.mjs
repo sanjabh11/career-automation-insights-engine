@@ -8,6 +8,13 @@ const ENV_FILES = ['.env.local', '.env'];
 const DEFAULT_DAYS = 90;
 const DEFAULT_BIN_COUNT = 10;
 const DEFAULT_TIMEOUT_MS = 150000;
+const DOES_NOT_PROVE = [
+  'Scientific validation beyond the measured sample',
+  'Future model performance',
+  'Employment-decision validity',
+  'Successful migration or deployment',
+  'Raw label provenance',
+];
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -242,13 +249,8 @@ async function main() {
       'The deployed calibrate-ece function must have its own SUPABASE_SERVICE_ROLE_KEY configured in Supabase function secrets.',
       'The target database must contain approved expert_assessments rows and APO logs with matching occupation codes.',
     ],
-    doesNotProve: [
-      'Scientific validation beyond the measured sample',
-      'Future model performance',
-      'Employment-decision validity',
-      'Successful migration or deployment',
-      'Raw label provenance',
-    ],
+    doesNotProve: DOES_NOT_PROVE,
+    doesNotProveCount: DOES_NOT_PROVE.length,
     manualInterventionIfSkipped: [
       'Confirm calibration migrations and the deployed calibrate-ece function are already approved for the target Supabase project.',
       'Provide SUPABASE_URL or VITE_SUPABASE_URL and SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY for the target project.',

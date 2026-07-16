@@ -11,7 +11,6 @@
  */
 
 import React, { useEffect, useState, useCallback, ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import {
   WhopAppContext,
   type WhopAppContextValue,
@@ -178,6 +177,7 @@ export function WhopAppProvider({ children, forceWhopMode = false }: WhopAppProv
     if (!whopUser) return;
     
     try {
+      const { supabase } = await import('@/integrations/supabase/client');
       // Check if profile exists for this Whop user using raw query
       // The whop_user_id column exists in DB but types may not be updated
       const { data: existingProfile, error: existingError } = await supabase

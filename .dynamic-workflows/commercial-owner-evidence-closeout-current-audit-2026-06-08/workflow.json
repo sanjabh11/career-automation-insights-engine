@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "commercial-owner-evidence-closeout-current-audit-2026-06-08",
+  "goal": "Audit current commercial launch-readiness closeout state after full local verification passed. Preserve pilot-only launch boundaries, verify current best-practice source coverage, and identify only repo-local gaps that can be fixed without secrets, production mutation, payments, outreach, or owner-held evidence.",
+  "repoRoot": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+  "mode": "manual",
+  "maxConcurrency": 4,
+  "maxAgents": 64,
+  "tokenWarning": {
+    "risk": "low",
+    "estimatedAgentRuns": 3,
+    "estimatedReviewRuns": 2,
+    "estimatedTotalRuns": 5,
+    "warning": "Scoped run; still verify before exporting worker plans."
+  },
+  "createdAt": "2026-06-08T15:00:15.040Z",
+  "updatedAt": "2026-06-08T15:06:14.101Z"
+}
