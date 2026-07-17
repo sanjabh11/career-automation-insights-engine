@@ -7,6 +7,7 @@ const OUTPUT_DIR = 'docs/commercialization';
 const JSON_OUTPUT = `${OUTPUT_DIR}/live-supabase-deployment-packet.json`;
 const MD_OUTPUT = `${OUTPUT_DIR}/live-supabase-deployment-runbook.md`;
 const PROJECT_REF_PATH = 'supabase/.temp/project-ref';
+const CONFIG_PATH = 'supabase/config.toml';
 
 const migrations = [
   {
@@ -179,6 +180,10 @@ function versionFromFile(file) {
   return match?.[1] || '';
 }
 
+function projectRefFromConfig(source) {
+  return source?.match(/^\s*project_id\s*=\s*"([a-z0-9]+)"\s*$/m)?.[1] || null;
+}
+
 function renderMarkdown(packet) {
   const migrationRows = packet.migrations.map((migration) =>
     `| \`${migration.version}\` | ${migration.phase} | \`${migration.file}\` | \`${migration.sha256.slice(0, 16)}...\` | ${migration.status} |`
@@ -194,6 +199,10 @@ function renderMarkdown(packet) {
 Generated: ${packet.generatedAt}
 Target project ref: \`${packet.targetProjectRef || 'not-detected'}\`
 Packet status: **${packet.allPassed ? 'pass' : 'fail'}**
+
+Supabase link state: **${packet.projectRefConflict ? 'conflict — reconcile the local CLI link before any push' : packet.linkState}**
+Configured project ref: \`${packet.configuredProjectRef || 'not-detected'}\`
+CLI link project ref: \`${packet.linkedProjectRef || 'not-detected'}\`
 
 Purpose: apply the commercial proof-pack schema changes in the linked Supabase project without weakening the no-employment-decision, redacted-resume, and source-evidence boundaries.
 
@@ -231,7 +240,23 @@ This packet verifies local migration order, hashes, and guardrails. Remote appli
 }
 
 async function main() {
-  const targetProjectRef = await readOptional(PROJECT_REF_PATH);
+  const linkedProjectRef = await readOptional(PROJECT_REF_PATH);
+  const configSource = await readOptional(CONFIG_PATH);
+  const configuredProjectRef = projectRefFromConfig(configSource);
+  const projectRefConflict = Boolean(
+    linkedProjectRef && configuredProjectRef && linkedProjectRef !== configuredProjectRef,
+  );
+  const targetProjectRef = configuredProjectRef || linkedProjectRef;
+  const commandProjectRef = targetProjectRef || '[target-project-ref]';
+  const linkState = projectRefConflict
+    ? 'conflict'
+    : configuredProjectRef
+      ? linkedProjectRef
+        ? 'aligned'
+        : 'configured_only'
+      : linkedProjectRef
+        ? 'cli_link_only'
+        : 'missing';
   const orderedVersions = migrations.map((migration) => versionFromFile(migration.file));
   const versionsAreSorted = orderedVersions.every((version, index, values) => index === 0 || values[index - 1] < version);
 
@@ -261,7 +286,14 @@ async function main() {
   const packet = {
     generatedAt: new Date().toISOString(),
     targetProjectRef,
-    allPassed: versionsAreSorted && migrationResults.every((migration) => migration.status === 'pass'),
+    configuredProjectRef,
+    linkedProjectRef,
+    linkState,
+    projectRefConflict,
+    allPassed:
+      versionsAreSorted &&
+      migrationResults.every((migration) => migration.status === 'pass') &&
+      !projectRefConflict,
     versionsAreSorted,
     requiredEnvironment,
     combinedSqlSha256: sha256(combinedParts.join('\n\n')),
@@ -286,7 +318,7 @@ async function main() {
       },
       {
         label: 'Deploy record-outcome only after the revealed-transition migration is applied',
-        command: 'supabase functions deploy record-outcome --project-ref kvunnankqgfokeufvsrv',
+        command: `supabase functions deploy record-outcome --project-ref ${commandProjectRef}`,
       },
       {
         label: 'Verify commercial live Supabase boundaries after deployment',
@@ -298,7 +330,7 @@ async function main() {
       },
       {
         label: 'Run official O*NET 30.3 Task Ratings ingest after target service-role key is available',
-        command: 'npm run ingest:onet-task-ratings -- --project-ref kvunnankqgfokeufvsrv',
+        command: `npm run ingest:onet-task-ratings -- --project-ref ${commandProjectRef}`,
       },
       {
         label: 'Verify live O*NET Task Ratings after migration plus ingest',
@@ -316,6 +348,7 @@ async function main() {
     ],
     acceptanceCriteria: [
       'Migration list shows the commercial proof-pack migrations applied to the linked project.',
+      'The Supabase CLI link and `supabase/config.toml` project refs agree before any linked migration push.',
       '`npm run verify:commercial-live-supabase` passes against the linked project.',
       '`record-outcome` is deployed after the `revealed_transition_events` and `partner_artifact_reviews` objects exist remotely.',
       '`npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.',
@@ -337,6 +370,11 @@ async function main() {
       .filter((migration) => migration.status !== 'pass')
       .map((migration) => `${migration.file}: missing=[${migration.missingSnippets.join(', ')}] unsafe=[${migration.unsafeMatches.join(', ')}]`);
     if (!versionsAreSorted) failures.unshift('migration versions are not sorted');
+    if (projectRefConflict) {
+      failures.unshift(
+        `Supabase project-ref conflict: config.toml=${configuredProjectRef}, cli-link=${linkedProjectRef}; reconcile before any linked push`,
+      );
+    }
     console.error(`Commercial Supabase deployment packet failed:\n${failures.map((failure) => `- ${failure}`).join('\n')}`);
     process.exitCode = 1;
   }

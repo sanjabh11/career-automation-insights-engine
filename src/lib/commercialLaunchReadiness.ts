@@ -453,20 +453,22 @@ export const commercialValidationEvidenceGates: CommercialValidationEvidenceGate
 ];
 
 export const ownerEvidenceCloseoutSummary: OwnerEvidenceCloseoutSummary = {
-  asOf: "2026-06-02",
+  asOf: "2026-07-17",
   goalComplete: false,
-  trackedLedger: "docs/commercialization/remediation-completion-audit-latest.json",
-  passedArtifactCount: 2,
+  trackedLedger: "docs/commercialization/remediation-external-gates-latest.json",
+  passedArtifactCount: 0,
   totalGateCount: 7,
-  remainingGateCount: 5,
+  remainingGateCount: 7,
   remainingGateIds: [
     "manual_wcag_evidence",
     "real_stripe_test_checkout",
+    "production_calibration_run",
+    "authenticated_live_artifact_e2e",
     "live_mrr_gt_zero",
     "three_committed_partners",
     "documented_outcomes",
   ],
-  ownerActionNeededCount: 6,
+  ownerActionNeededCount: 10,
   closeoutBoundary:
     "Tracked redacted artifacts are not the same as final closeout. Part I remains incomplete until npm run closeout:owner-evidence -- --write --refresh-tracked accepts every live, commercial, and manual WCAG evidence gate.",
 };
@@ -499,24 +501,24 @@ export const ownerEvidenceCloseoutStatusItems: OwnerEvidenceCloseoutStatusItem[]
   {
     gateId: "production_calibration_run",
     label: "Production calibration",
-    status: "done",
-    artifactState: "redacted_evidence_attached",
+    status: "blocked",
+    artifactState: "failed_artifact",
     currentProof:
-      "Redacted production calibration artifact passed and is accepted by docs/commercialization/live-gate-evidence.local.json.",
+      "Latest redacted production calibration artifact is skipped_missing_env; no deployed calibration run is accepted.",
     remainingAction:
-      "No separate owner prep action remains for this gate; final closeout still requires Stripe test checkout, live MRR, partner/outcome, and manual WCAG evidence.",
+      "Load the owner target Supabase URL and anon key, run npm run verify:production-calibration against the deployed function, and preserve only redacted archive-policy metadata in tracked artifacts.",
     sourceArtifact: "docs/commercialization/production-calibration-proof-latest.json",
     doesNotProve: "Scientific validation beyond the measured sample, future performance, raw label provenance, or employment-decision validity.",
   },
   {
     gateId: "authenticated_live_artifact_e2e",
     label: "Authenticated live artifact e2e",
-    status: "done",
-    artifactState: "redacted_evidence_attached",
+    status: "blocked",
+    artifactState: "failed_artifact",
     currentProof:
-      "Redacted live auth artifact passed for a synthetic user save/delete/deletion-receipt path and is accepted by docs/commercialization/live-gate-evidence.local.json.",
+      "Latest redacted live-auth artifact is skipped_missing_env; no authenticated live artifact run is accepted.",
     remainingAction:
-      "No separate owner prep action remains for this gate; final closeout still requires Stripe test checkout, live MRR, partner/outcome, and manual WCAG evidence.",
+      "Load the owner target Supabase URL/anon key and dedicated synthetic-user credentials, run npm run verify:commercial-live-auth-e2e, and keep raw logs and credentials owner-held.",
     sourceArtifact: "docs/commercialization/live-auth-e2e-proof-latest.json",
     doesNotProve: "Production PDF/DOCX extraction, malware scanning, provider-log deletion, backups deletion, or legal compliance.",
   },
@@ -589,9 +591,35 @@ export const ownerEvidenceActionQueueItems: OwnerEvidenceActionQueueItem[] = [
     doesNotProve: "Live revenue; MRR; payment fulfillment in live mode",
   },
   {
+    gateId: "production_calibration_run",
+    label: "Production calibration run",
+    status: "blocked",
+    ownerAction:
+      "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+    ownerPrepCommand: "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+    nextCommand: "npm run verify:production-calibration",
+    riskIfSkipped:
+      "Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.",
+    sourceBoundary: "owner credential and deployment-precondition gate",
+    doesNotProve: "Scientific validation before live labels exist; Migrations or deployments were applied by this verifier",
+  },
+  {
+    gateId: "authenticated_live_artifact_e2e",
+    label: "Authenticated live artifact e2e",
+    status: "blocked",
+    ownerAction:
+      "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
+    ownerPrepCommand: "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+    nextCommand: "npm run verify:commercial-live-auth-e2e",
+    riskIfSkipped:
+      "Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.",
+    sourceBoundary: "owner credential gate",
+    doesNotProve: "Payment proof; malware scanning; legal compliance",
+  },
+  {
     gateId: "live_mrr_gt_zero",
     label: "Live MRR greater than zero",
-    status: "owner_action",
+    status: "blocked",
     ownerAction:
       "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
     ownerPrepCommand:
@@ -672,6 +700,8 @@ const ownerEvidenceHandoffTrackByGateId: Record<string, OwnerEvidenceHandoffItem
 const ownerEvidenceHandoffCloseoutStepsByGateId: Record<string, string> = {
   manual_wcag_evidence: "verify-manual-wcag-evidence:fail; verify-remediation-gates:fail",
   real_stripe_test_checkout: "compose-live-evidence:fail; verify-live-evidence:fail; verify-remediation-gates:fail",
+  production_calibration_run: "compose-live-evidence:fail; verify-live-evidence:fail; verify-remediation-gates:fail",
+  authenticated_live_artifact_e2e: "compose-live-evidence:fail; verify-live-evidence:fail; verify-remediation-gates:fail",
   live_mrr_gt_zero: "compose-live-evidence:fail; verify-live-evidence:fail; verify-remediation-gates:fail",
   three_committed_partners: "compose-commercial-records:fail; verify-commercial-records:fail; verify-remediation-gates:fail",
   documented_outcomes: "compose-commercial-records:fail; verify-commercial-records:fail; verify-remediation-gates:fail",
@@ -693,6 +723,16 @@ const ownerEvidenceHandoffFailureDetailsByGateId: Record<string, string[]> = {
   ],
   real_stripe_test_checkout: [
     liveEvidenceFailureDetail,
+    "verify-live-evidence: stderr: Not all live-gate evidence items are accepted.",
+    remediationGateFailureDetail,
+  ],
+  production_calibration_run: [
+    "compose-live-evidence: production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+    "verify-live-evidence: stderr: Not all live-gate evidence items are accepted.",
+    remediationGateFailureDetail,
+  ],
+  authenticated_live_artifact_e2e: [
+    "compose-live-evidence: authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
     "verify-live-evidence: stderr: Not all live-gate evidence items are accepted.",
     remediationGateFailureDetail,
   ],
@@ -718,18 +758,24 @@ const ownerEvidenceHandoffBlockingOwnerActionsByGateId: Record<string, string[]>
     "docs/commercialization/manual-wcag-evidence.local.json: run npm run generate:manual-wcag-review-packet and use docs/commercialization/manual-wcag-review-packet-latest.md, docs/commercialization/manual-wcag-review-matrix-latest.csv, and the W3C WCAG-EM Report Tool as the owner-held review worksheet/report export before hashing proof artifacts; create from docs/commercialization/manual-wcag-evidence-template.json after the owner-held WCAG-EM review is complete (template requires 8 checkpoint(s), 9 route(s), and 5 complete process(es), 2 accessibility-support baseline combination(s), and 7 official W3C/WAI reference(s), plus 9 ownerEvidenceArchive policy field(s)), including reviewer disclosure, technologies relied upon, sample-selection method, review-record archive attestations, owner-held WCAG-EM report-tool export, and ownerEvidenceArchive policy metadata, then run npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> before replacing artifactHashes",
   ],
   real_stripe_test_checkout: [
-    "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+    "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
     "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy",
   ],
+  production_calibration_run: [
+    "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+  ],
+  authenticated_live_artifact_e2e: [
+    "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD",
+  ],
   live_mrr_gt_zero: [
-    "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+    "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
     "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy",
   ],
   three_committed_partners: [
-    "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt",
+    "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json",
   ],
   documented_outcomes: [
-    "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt",
+    "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json",
   ],
 };
 
@@ -766,7 +812,7 @@ const ownerEvidenceHandoffRepoDoesNotDoByGateId: Record<string, string> = {
 export const ownerEvidenceHandoffSummary: OwnerEvidenceHandoffSummary = {
   goalComplete: false,
   alignmentStatus: "aligned_with_canonical_ledgers",
-  ownerActionQueueCount: 5,
+  ownerActionQueueCount: 7,
   operationalAccessPrerequisiteCount: 1,
   sourceArtifacts: [
     "docs/commercialization/remediation-external-gates-latest.json",
@@ -873,16 +919,19 @@ export const OWNER_EVIDENCE_COMPLETION_DRILL_FILENAME = "owner-evidence-completi
 export const ownerEvidenceCompletionDrillSummary: OwnerEvidenceCompletionDrillSummary = {
   status: "owner_evidence_required",
   goalComplete: false,
-  requiredGateCount: 5,
-  blockedGateCount: 5,
-  ownerActionNeededCount: 6,
+  requiredGateCount: 7,
+  blockedGateCount: 7,
+  ownerActionNeededCount: 10,
   operationalAccessPrerequisiteCount: 1,
-  matrixRowCount: 5,
+  matrixRowCount: 7,
   sourceArtifacts: [
     "docs/commercialization/owner-evidence-completion-drill-latest.json",
     "docs/commercialization/owner-evidence-handoff-latest.json",
     "docs/commercialization/owner-evidence-closeout-status-latest.json",
     "docs/commercialization/remediation-external-gates-latest.json",
+    "docs/commercialization/live-proof-run-packet-latest.json",
+    "docs/commercialization/commercial-evidence-intake-packet-latest.json",
+    "docs/commercialization/manual-wcag-review-packet-latest.json",
     "docs/commercialization/live-closeout-readiness-latest.json",
     "docs/commercialization/owner-evidence-local-safety-latest.json",
   ],
@@ -1022,7 +1071,9 @@ const ownerEvidenceCompletionPacketByGateId: Record<
 const ownerEvidenceCompletionStateByGateId: Record<string, OwnerEvidenceCompletionDrillItem["completionState"]> = {
   manual_wcag_evidence: "blocked_owner_evidence_required",
   real_stripe_test_checkout: "blocked_owner_evidence_required",
-  live_mrr_gt_zero: "owner_prep_required",
+  production_calibration_run: "blocked_owner_evidence_required",
+  authenticated_live_artifact_e2e: "blocked_owner_evidence_required",
+  live_mrr_gt_zero: "blocked_owner_evidence_required",
   three_committed_partners: "blocked_owner_evidence_required",
   documented_outcomes: "blocked_owner_evidence_required",
 };
@@ -1128,7 +1179,7 @@ export const OWNER_EVIDENCE_PREP_READINESS_FILENAME = "owner-evidence-prep-readi
 
 export const ownerEvidencePrepReadinessSummary: OwnerEvidencePrepReadinessSummary = {
   readyForCloseout: false,
-  ownerActionNeededCount: 6,
+  ownerActionNeededCount: 10,
   sourceArtifact: "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep",
   sourceCommand: "npm run verify:owner-evidence-prep",
   statusVerifier: "npm run verify:owner-evidence-closeout-status",
@@ -1152,6 +1203,24 @@ export const ownerEvidencePrepReadinessGateSummaries: OwnerEvidencePrepReadiness
     status: "owner_prep_required",
     sourceArtifact:
       "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.real_stripe_test_checkout",
+    evidenceBoundary:
+      "Per-gate prep counts mirror redacted closeout metadata only. This does not prove owner-held evidence is complete, valid, or commercially acceptable.",
+  },
+  {
+    gateId: "production_calibration_run",
+    ownerActionNeededCount: 1,
+    status: "owner_prep_required",
+    sourceArtifact:
+      "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.production_calibration_run",
+    evidenceBoundary:
+      "Per-gate prep counts mirror redacted closeout metadata only. This does not prove owner-held evidence is complete, valid, or commercially acceptable.",
+  },
+  {
+    gateId: "authenticated_live_artifact_e2e",
+    ownerActionNeededCount: 1,
+    status: "owner_prep_required",
+    sourceArtifact:
+      "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.authenticated_live_artifact_e2e",
     evidenceBoundary:
       "Per-gate prep counts mirror redacted closeout metadata only. This does not prove owner-held evidence is complete, valid, or commercially acceptable.",
   },
@@ -1192,30 +1261,40 @@ export const ownerEvidencePrepReadinessItems: OwnerEvidencePrepReadinessItem[] =
     ownerAction:
       "Provide explicit STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY with a sk_test_/rk_test_ value and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, and STRIPE_TEST_PRICE_ID.",
     source:
-      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=6; presentGroupCount=5; missingGroupCount=1; loadFromEnvFileCount=5; invalidKeyModeCount=0; requiredStripeKeyMode=test",
+      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=6; presentGroupCount=0; missingGroupCount=6; loadFromEnvFileCount=0; invalidKeyModeCount=0; requiredStripeKeyMode=test",
     nextCommand: "npm run verify:stripe-test-checkout",
     doesNotProve: "Live revenue; MRR; payment fulfillment in live mode",
   },
   {
     itemId: "live_mrr_env",
     track: "payments",
-    status: "env_file_complete_not_loaded",
+    status: "needs_owner_input",
     ownerAction: "Load STRIPE_SECRET_KEY or a live-mode restricted Stripe key only after a real paid subscription exists.",
     source:
-      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=1; presentGroupCount=1; missingGroupCount=0; loadFromEnvFileCount=1; invalidKeyModeCount=0; requiredStripeKeyMode=live",
+      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=1; presentGroupCount=0; missingGroupCount=1; loadFromEnvFileCount=0; invalidKeyModeCount=0; requiredStripeKeyMode=live",
     nextCommand: "npm run verify:stripe-live-mrr",
     doesNotProve: "Retention; product-market fit; future revenue; accounting-recognized revenue",
   },
   {
-    itemId: "commercial_intake_placeholders",
-    track: "commercial-validation",
-    status: "local_placeholder",
-    ownerAction:
-      "Run npm run generate:commercial-evidence-intake-packet, use the generated partner/outcome matrix for the owner-held intake review, then hash owner-held partner/outcome proof artifacts before replacing placeholder partner/outcome references, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and the owner-held hash salt in the ignored commercial evidence intake.",
+    itemId: "production_calibration_env",
+    track: "live-runtime",
+    status: "needs_owner_input",
+    ownerAction: "Provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
     source:
-      "docs/commercialization/commercial-evidence-intake.local.json placeholderCount=5; designPartnerCommitmentCount=3; documentedOutcomeCount=1",
-    nextCommand: "npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>",
-    doesNotProve: "Revenue; successful outcomes; market-wide demand",
+      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=2; presentGroupCount=0; missingGroupCount=2; loadFromEnvFileCount=0; invalidKeyModeCount=0",
+    nextCommand: "npm run verify:production-calibration",
+    doesNotProve: "Scientific validation beyond the measured sample; future performance; raw label provenance",
+  },
+  {
+    itemId: "authenticated_live_artifact_env",
+    track: "live-runtime",
+    status: "needs_owner_input",
+    ownerAction:
+      "Provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD",
+    source:
+      ".env.local readiness check; required key names only, no extra local key names or secret values; requiredGroupCount=4; presentGroupCount=0; missingGroupCount=4; loadFromEnvFileCount=0; invalidKeyModeCount=0",
+    nextCommand: "npm run verify:commercial-live-auth-e2e",
+    doesNotProve: "Production PDF/DOCX extraction; malware scanning; provider-log deletion; legal compliance",
   },
   {
     itemId: "manual_wcag_evidence_missing",
@@ -1243,7 +1322,7 @@ export const ownerEvidencePrepReadinessItems: OwnerEvidencePrepReadinessItem[] =
     status: "failed_artifact",
     ownerAction:
       "Re-run the live MRR verifier only after a real paid recurring subscription exists and a live read-only Stripe key is loaded until the proof artifact status is passed.",
-    source: "docs/commercialization/stripe-live-mrr-proof-latest.json status=failed",
+    source: "docs/commercialization/stripe-live-mrr-proof-latest.json status=skipped_missing_env",
     nextCommand: "npm run verify:stripe-live-mrr",
     doesNotProve: "Retention; product-market fit; future revenue; accounting-recognized revenue",
   },

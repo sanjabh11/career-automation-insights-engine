@@ -3,44 +3,124 @@
   "audit_id": "caie-niche-positioning-2026-07-16",
   "hypotheses": [
     {
-      "hypothesis_id": "H-001",
-      "statement": "Career coaches will pay $149/mo for white-label, O*NET-grounded automation defense reports because ChatGPT lacks data credibility and no coaching platform offers automation-specific white-label reports.",
-      "evidence_bundle": ["E-003", "E-004", "E-005", "E-012", "E-013"],
-      "bundle_satisfied": true,
-      "counter_evidence": "B2C market is saturated, but this hypothesis is B2B. Coach WTP validated at $149/mo by Intry and CoachStackHub.",
-      "state": "unresolved",
-      "segment": "B2B Career Coaches",
-      "gap_ids": ["G-001", "G-002", "G-003"]
+      "id": "H001",
+      "hypothesis": "Global-English independent career-transition coaches may pay for a source-labeled, human-reviewed, U.S.-basis automation-transition planning artifact. This is a hypothesis — not a uniqueness or product-market-fit claim.",
+      "status": "unresolved",
+      "load_bearing_claims": [
+        "Career coaches have a recurring costly workflow researching automation exposure for clients",
+        "The product artifact addresses this workflow with source-labeled O*NET grounding",
+        "Coaches will pay $49 for a 5-report credit pack without a free trial"
+      ],
+      "evidence_support": "Codebase evidence (E-003, E-004, E-005) shows product exists with pilot pricing configured. Web research (E-012) confirms coaching market size. ICF 2025 study (E-017) provides market size reference.",
+      "counter_evidence": "No first-party evidence of WTP. Intry's $149 tier is a pricing reference, not proof that coaches will buy this product (E-018). White-label career/coaching platforms already exist (E-019) — uniqueness must be demonstrated at workflow-and-evidence level. ICF 2025 count (122,974) does not establish demand from career coaches specifically (E-017).",
+      "evidence": ["EV-003", "EV-004", "EV-005", "EV-012", "EV-017", "EV-018"],
+      "evidence_bundle": [
+        {
+          "claim": "Career coaches have a recurring costly workflow researching automation exposure for clients",
+          "evidence_ids": ["EV-003", "EV-005"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        },
+        {
+          "claim": "The product artifact addresses this workflow with source-labeled O*NET grounding",
+          "evidence_ids": ["EV-003", "EV-004", "EV-005"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        },
+        {
+          "claim": "Coaches will pay $49 for a 5-report credit pack without a free trial",
+          "evidence_ids": ["EV-004", "EV-018"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        }
+      ]
     },
     {
-      "hypothesis_id": "H-002",
-      "statement": "O*NET 30.3 data grounding is a defensible differentiator that career coaches value because it provides government-source credibility that ChatGPT and generic AI tools cannot replicate.",
-      "evidence_bundle": ["E-001", "E-005", "E-003"],
-      "bundle_satisfied": true,
-      "counter_evidence": "AIJobImpactCalculator also uses O*NET, but is B2C free, not B2B white-label.",
-      "state": "unresolved",
-      "segment": "B2B Career Coaches",
-      "gap_ids": ["G-002", "G-004"]
+      "id": "H002",
+      "hypothesis": "O*NET data grounding is a defensible differentiator that career coaches value because it provides government-source credibility that ChatGPT and generic AI tools cannot replicate.",
+      "status": "unresolved",
+      "load_bearing_claims": [
+        "O*NET government data sourcing is a perceived differentiator that coaches value over generic AI analysis",
+        "AIJobImpactCalculator also uses O*NET but as a free B2C tool without coach-specific workflow"
+      ],
+      "evidence_support": "Codebase evidence (E-001, E-005) shows O*NET integration in product. ForCoachesPage (E-003) references O*NET grounding in positioning.",
+      "counter_evidence": "AIJobImpactCalculator also uses O*NET (B2C free). White-label as a category is not unique — Coaching.com and RapidDev offer white-label coaching platforms (E-019). Uniqueness must be demonstrated at the workflow-and-evidence level (source labeling, human-review boundary, proof-pack system), not claimed as category-unique. No first-party evidence that coaches value O*NET grounding specifically.",
+      "evidence": ["EV-001", "EV-005", "EV-003"],
+      "evidence_bundle": [
+        {
+          "claim": "O*NET government data sourcing is a perceived differentiator that coaches value over generic AI analysis",
+          "evidence_ids": ["EV-001", "EV-003", "EV-005"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        }
+      ]
     },
     {
-      "hypothesis_id": "H-003",
-      "statement": "Bridge role pathfinding (A* algorithm via skill overlap) is a unique capability that no competitor offers, and coaches will use it to show clients actionable transition paths.",
-      "evidence_bundle": ["E-005", "E-003"],
-      "bundle_satisfied": true,
-      "counter_evidence": "Kairo offers similar adjacent role paths, but is B2C free beta.",
-      "state": "unresolved",
-      "segment": "B2B Career Coaches",
-      "gap_ids": ["G-002"]
+      "id": "H003",
+      "hypothesis": "Bridge role pathfinding (skill overlap to adjacent safer roles) may be a capability that coaches value for showing clients actionable transition paths. Uniqueness must be demonstrated at the workflow-and-evidence level — Kairo offers similar adjacent role paths (B2C free beta). This is a hypothesis, not a uniqueness claim.",
+      "status": "unresolved",
+      "load_bearing_claims": [
+        "Bridge role pathfinding is a capability coaches value for showing clients actionable transition paths",
+        "This capability is differentiated from Kairo's free B2C adjacent role feature"
+      ],
+      "evidence_support": "Codebase evidence (E-005) shows bridge role functionality exists in the product. ForCoachesPage (E-003) references transition pathfinding in positioning.",
+      "counter_evidence": "Kairo offers similar adjacent role paths (B2C free beta). No evidence of coach demand for this specific feature. No first-party data on whether coaches use or value bridge role pathfinding.",
+      "evidence": ["EV-005", "EV-003"],
+      "evidence_bundle": [
+        {
+          "claim": "Bridge role pathfinding is a capability coaches value for showing clients actionable transition paths",
+          "evidence_ids": ["EV-003", "EV-005"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        }
+      ]
     },
     {
-      "hypothesis_id": "H-004",
-      "statement": "The 50+ pre-built SEO occupation pages at /automation-risk/:slug will drive organic traffic that converts to free-tier signups, which funnel to coach outreach via upgrade prompts.",
-      "evidence_bundle": ["E-008", "E-007"],
-      "bundle_satisfied": true,
-      "counter_evidence": "12+ free competitors have SEO head start. WillRobotsTakeMyJob has 8+ years of domain authority.",
-      "state": "unresolved",
-      "segment": "B2C Knowledge Workers (freemium channel)",
-      "gap_ids": ["G-007", "G-008"]
+      "id": "H004",
+      "hypothesis": "The 50+ pre-built SEO occupation pages at /automation-risk/:slug will drive organic traffic that converts to free-tier signups, which funnel to coach outreach via upgrade prompts.",
+      "status": "unresolved",
+      "load_bearing_claims": [
+        "Organic SEO traffic can acquire users at meaningful scale for the automation-risk landing pages",
+        "Free-tier signups from SEO will funnel to coach outreach via upgrade prompts"
+      ],
+      "evidence_support": "Codebase evidence (E-008) shows 50+ SEO landing pages with structured data exist. Analytics infrastructure (E-007) is in place for tracking.",
+      "counter_evidence": "12+ free competitors have SEO head start. WillRobotsTakeMyJob has 8+ years of domain authority. Deferred until coach motion clears paid-pilot gate per Codex 5.6 recommendation.",
+      "evidence": ["EV-008", "EV-007"],
+      "evidence_bundle": [
+        {
+          "claim": "Organic SEO traffic can acquire users at meaningful scale for the automation-risk landing pages",
+          "evidence_ids": ["EV-007", "EV-008"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        }
+      ]
+    },
+    {
+      "id": "H005",
+      "hypothesis": "Coaches will pay $49 for 5 report credits without a free trial, demonstrating willingness-to-pay for the artifact before scaling to Coach Pro at $149/mo.",
+      "status": "unresolved",
+      "load_bearing_claims": [
+        "Career coaches will pay $49 for a 5-report credit pack without a free trial",
+        "This WTP validates the path to Coach Pro at $149/mo"
+      ],
+      "evidence_support": "Stripe pricing (E-004) shows $49/5-credit pack configured with real Stripe price IDs. Pilot-only offering is active.",
+      "counter_evidence": "No first-party evidence. The $49/5-credit pack exists in stripe.ts but has zero sales. Intry's $149 is a price anchor only (E-018), not WTP proof for this product.",
+      "evidence": ["EV-004", "EV-018"],
+      "evidence_bundle": [
+        {
+          "claim": "Career coaches will pay $49 for a 5-report credit pack without a free trial",
+          "evidence_ids": ["EV-004", "EV-018"],
+          "min_high": 1,
+          "min_medium": 2,
+          "satisfied": true
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "superseded_at": "2026-07-16T21:30:00Z",
+  "superseded_by": "v2-audit-repair-26c40a",
+  "reason": "Codex 5.6 recommendation identified: audit prematurely marked P7_TERMINAL, evidence misclassified, unsupported claims (PDF, free trial, no competitor), outdated ICF stat, no executed experiments. Regenerated into VALIDATION_PENDING per current schema requirements.",
+  "original_lifecycle": "P7_TERMINAL",
+  "original_decision": "CONDITIONAL_GO"
+}

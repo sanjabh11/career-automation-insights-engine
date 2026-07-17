@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2026-06-05.apo-live-closeout-readiness.v1",
-  "generatedAt": "2026-06-08T23:23:08.202Z",
+  "generatedAt": "2026-07-17T10:06:42.609Z",
   "ok": false,
   "status": "owner_access_required",
   "allowIncomplete": true,
@@ -11,7 +11,7 @@
     "printsSecretValues": false
   },
   "githubSecrets": {
-    "available": true,
+    "available": false,
     "requiredSecretNames": [
       "SUPABASE_ACCESS_TOKEN",
       "SUPABASE_PROJECT_REF",
@@ -21,7 +21,8 @@
       "LIVE_SUPABASE_TEST_USER_EMAIL",
       "LIVE_SUPABASE_TEST_USER_PASSWORD"
     ],
-    "presentRequiredSecretNames": [
+    "presentRequiredSecretNames": [],
+    "missingRequiredSecretNames": [
       "SUPABASE_ACCESS_TOKEN",
       "SUPABASE_PROJECT_REF",
       "SUPABASE_URL",
@@ -30,46 +31,47 @@
       "LIVE_SUPABASE_TEST_USER_EMAIL",
       "LIVE_SUPABASE_TEST_USER_PASSWORD"
     ],
-    "missingRequiredSecretNames": [],
     "valuesRedacted": true,
     "allRepositorySecretNamesPersisted": false
   },
   "supabaseAccess": {
-    "projectsListAvailable": true,
+    "projectsListAvailable": false,
     "targetProjectVisible": false,
-    "visibleProjectRefCount": 4,
+    "visibleProjectRefCount": 0,
     "visibleProjectRefsPersisted": false,
     "functionsApiAccessible": false,
-    "projectMessage": "Target project kvunnankqgfokeufvsrv is not visible to the current Supabase account.",
-    "functionsMessage": "unexpected list functions status 403: {\"message\":\"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control\"} Try rerunning the command with --debug to troubleshoot the error."
+    "projectMessage": "spawnSync supabase ETIMEDOUT",
+    "functionsMessage": "spawnSync supabase ETIMEDOUT"
   },
   "checkCount": 4,
-  "passedCheckCount": 2,
-  "failedCheckCount": 2,
+  "passedCheckCount": 0,
+  "failedCheckCount": 4,
   "failedCheckIds": [
+    "github-secrets-visible",
+    "github-live-closeout-secrets-present",
     "supabase-target-project-visible",
     "supabase-functions-api-accessible"
   ],
   "checks": [
     {
       "id": "github-secrets-visible",
-      "passed": true,
-      "message": "GitHub secret names are readable."
+      "passed": false,
+      "message": "spawnSync gh ETIMEDOUT"
     },
     {
       "id": "github-live-closeout-secrets-present",
-      "passed": true,
-      "message": "Required GitHub secret names are present."
+      "passed": false,
+      "message": "Missing required GitHub secret name(s): SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF, SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD"
     },
     {
       "id": "supabase-target-project-visible",
       "passed": false,
-      "message": "Target project kvunnankqgfokeufvsrv is not visible to the current Supabase account."
+      "message": "spawnSync supabase ETIMEDOUT"
     },
     {
       "id": "supabase-functions-api-accessible",
       "passed": false,
-      "message": "unexpected list functions status 403: {\"message\":\"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control\"} Try rerunning the command with --debug to troubleshoot the error."
+      "message": "spawnSync supabase ETIMEDOUT"
     }
   ],
   "officialReferences": [

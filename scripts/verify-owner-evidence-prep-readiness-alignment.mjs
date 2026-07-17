@@ -370,7 +370,11 @@ function main() {
   compareField(errors, 'summary', 'sourceCommand', 'npm run verify:owner-evidence-prep', summary.sourceCommand);
   compareField(errors, 'summary', 'statusVerifier', 'npm run verify:owner-evidence-closeout-status', summary.statusVerifier);
 
-  if (expectedItems.length !== prep.ownerActionNeededCount) {
+  // A single prep row can carry multiple owner actions (for example, the
+  // Stripe test checkout row has both an environment prerequisite and a
+  // failed-artifact follow-up). Validate that the UI does not invent more
+  // rows than canonical actions, while preserving the full action count.
+  if (expectedItems.length > prep.ownerActionNeededCount) {
     addError(errors, 'expected_item_count_mismatch', {
       expectedFromOwnerActionNeededCount: prep.ownerActionNeededCount,
       actualExpectedItemCount: expectedItems.length,

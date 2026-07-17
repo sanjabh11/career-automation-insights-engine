@@ -57,6 +57,11 @@ function buildCorsHeaders(req: Request): Record<string, string> {
   return { ...corsHeaders, 'Access-Control-Allow-Origin': allowOrigin };
 }
 
+function isUuid(value: unknown): value is string {
+  return typeof value === 'string'
+    && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 serve(async (req) => {
   const responseHeaders = buildCorsHeaders(req);
   if (req.method === 'OPTIONS') {
@@ -77,21 +82,51 @@ serve(async (req) => {
       httpClient: Stripe.createFetchHttpClient(),
     });
 
-    const {
-      priceId,
-      userId: requestedUserId,
-      tier,
-      billingPeriod,
-      packageId,
-      credits,
-    } = await req.json();
+    const body = await req.json();
+    const packageId = typeof body?.package_id === 'string' ? body.package_id : null;
+    const requestId = body?.request_id;
+    const priceId = typeof body?.priceId === 'string' ? body.priceId : null;
+    const requestedUserId = typeof body?.userId === 'string' ? body.userId : null;
+    const requestedTier = typeof body?.tier === 'string' ? body.tier : null;
+    const requestedBillingPeriod = body?.billingPeriod === 'year' ? 'year' : 'month';
 
-    const isCreditPurchase = Boolean(packageId || credits);
-    if (!priceId || (!isCreditPurchase && !tier)) {
-      throw new Error('priceId and tier are required');
+    const configuredStarterPriceId = Deno.env.get('STRIPE_STARTER_PRICE_ID');
+    const pilotPackage = packageId === 'starter' && configuredStarterPriceId
+      ? {
+        packageId,
+        priceId: configuredStarterPriceId,
+        credits: 5,
+      }
+      : null;
+
+    if (packageId === 'starter' && !configuredStarterPriceId) {
+      throw new Error('STRIPE_STARTER_PRICE_ID is not configured for the coach pilot');
     }
-    if (isCreditPurchase && (!packageId || !credits)) {
-      throw new Error('priceId, packageId, and credits are required');
+
+    if (packageId && !pilotPackage) {
+      throw new Error('Unsupported coach pilot package');
+    }
+    if (packageId && !isUuid(requestId)) {
+      throw new Error('request_id must be a valid UUID');
+    }
+
+    // Subscription price IDs are still supported by the separate legacy route,
+    // but a credit price can no longer be selected by sending a raw priceId.
+    const subscriptionPriceMap: Record<string, { tier: string; billingPeriod: 'month' | 'year' }> = {
+      'price_1SzAwBCDRnHqUTRJY78xxjKY': { tier: 'defender', billingPeriod: 'month' },
+      'price_1SzAwBCDRnHqUTRJ7vMvAN28': { tier: 'defender', billingPeriod: 'year' },
+      'price_1SzAwCCDRnHqUTRJdPZaLEGn': { tier: 'coach', billingPeriod: 'month' },
+      'price_1SzAwCCDRnHqUTRJIbQ7YlJe': { tier: 'coach', billingPeriod: 'year' },
+    };
+
+    if (!pilotPackage) {
+      if (!priceId || !requestedTier) {
+        throw new Error('package_id/request_id or validated subscription fields are required');
+      }
+      const subscriptionMapping = subscriptionPriceMap[priceId];
+      if (!subscriptionMapping || subscriptionMapping.tier !== requestedTier || subscriptionMapping.billingPeriod !== requestedBillingPeriod) {
+        throw new Error('Subscription price is not valid for the requested tier and billing period');
+      }
     }
 
     // Verify the caller from the Supabase JWT. Do not trust client-supplied user ids.
@@ -109,11 +144,50 @@ serve(async (req) => {
       throw new Error('Invalid authentication');
     }
 
-    if (requestedUserId && requestedUserId !== user.id) {
+    if (!packageId && requestedUserId && requestedUserId !== user.id) {
       throw new Error('Checkout user mismatch');
     }
 
     const userId = user.id;
+
+    if (pilotPackage) {
+      const { data: enrollment, error: enrollmentError } = await supabase
+        .from('pilot_participants')
+        .select('active, country, terms_version, terms_hash')
+        .eq('user_id', userId)
+        .single();
+
+      if (enrollmentError || !enrollment?.active || !['US', 'CA'].includes(enrollment.country)) {
+        throw new Error('Active coach pilot enrollment is required before checkout');
+      }
+
+      const { data: terms, error: termsError } = await supabase
+        .from('pilot_terms_versions')
+        .select('status, content_hash')
+        .eq('version', enrollment.terms_version)
+        .single();
+
+      if (
+        termsError
+        || terms?.status !== 'approved'
+        || typeof terms.content_hash !== 'string'
+        || typeof enrollment.terms_hash !== 'string'
+        || terms.content_hash.toLowerCase() !== enrollment.terms_hash.toLowerCase()
+      ) {
+        throw new Error('Coach pilot terms are not approved for checkout');
+      }
+
+      // Fulfillment locks user_profiles, so fail before creating a Stripe
+      // session if the account cannot receive the purchased lot.
+      const { data: creditProfile, error: creditProfileError } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
+      if (creditProfileError || !creditProfile) {
+        throw new Error('Report credit profile is not ready for coach pilot checkout');
+      }
+    }
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -144,27 +218,29 @@ serve(async (req) => {
     // Determine success/cancel URLs from an allowlisted browser origin or APP_URL.
     const origin = resolveReturnOrigin(req);
 
-    if (isCreditPurchase) {
+    if (pilotPackage) {
+      const checkoutOptions = isUuid(requestId)
+        ? { idempotencyKey: `coach-checkout:${userId}:${requestId}` }
+        : undefined;
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         client_reference_id: userId,
         mode: 'payment',
         line_items: [
           {
-            price: priceId,
+            price: pilotPackage.priceId,
             quantity: 1,
           },
         ],
         metadata: {
           type: 'credit_purchase',
-          packageId,
-          credits: String(credits),
+          packageId: pilotPackage.packageId,
           supabase_user_id: userId,
         },
-        success_url: `${origin}/dashboard?checkout=credit_success&credits=${credits}`,
+        success_url: `${origin}/dashboard?checkout=credit_success&package=${pilotPackage.packageId}`,
         cancel_url: `${origin}/for-coaches?checkout=cancelled`,
         allow_promotion_codes: true,
-      });
+      }, checkoutOptions);
 
       return new Response(
         JSON.stringify({ sessionId: session.id, url: session.url }),
@@ -188,11 +264,11 @@ serve(async (req) => {
       ],
       metadata: {
         type: 'subscription',
-        tier,
-        billingPeriod: billingPeriod || 'month',
+        tier: requestedTier,
+        billingPeriod: requestedBillingPeriod,
         supabase_user_id: userId,
       },
-      success_url: `${origin}/dashboard?checkout=success&tier=${tier}`,
+      success_url: `${origin}/dashboard?checkout=success&tier=${requestedTier}`,
       cancel_url: `${origin}/pricing?checkout=cancelled`,
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
@@ -208,8 +284,9 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error creating checkout session:', error);
+    const message = error instanceof Error ? error.message : 'Unable to create checkout session';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       {
         headers: { ...responseHeaders, 'Content-Type': 'application/json' },
         status: 400,

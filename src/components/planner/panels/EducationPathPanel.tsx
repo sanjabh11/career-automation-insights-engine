@@ -10,10 +10,11 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Occupation, Skill, LearningPathData, CIPProgram, CourseResult } from '@/components/planner/types';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface EducationPathPanelProps {
   selectedOccupation: Occupation | null;
   skillRecommendations: Skill[];
-  user: any;
+  user: { id: string; email?: string } | null;
   simHoursPerWeek: number;
   setSimHoursPerWeek: (v: number) => void;
   simRiskTolerance: string;

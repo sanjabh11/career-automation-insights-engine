@@ -1,8 +1,12 @@
 # Live Supabase Deployment Runbook
 
-Generated: 2026-06-08T23:22:57.318Z
+Generated: 2026-07-17T09:54:22.295Z
 Target project ref: `kvunnankqgfokeufvsrv`
-Packet status: **pass**
+Packet status: **fail**
+
+Supabase link state: **conflict — reconcile the local CLI link before any push**
+Configured project ref: `kvunnankqgfokeufvsrv`
+CLI link project ref: `cyjqvqwpdgluivjoxcfl`
 
 Purpose: apply the commercial proof-pack schema changes in the linked Supabase project without weakening the no-employment-decision, redacted-resume, and source-evidence boundaries.
 
@@ -88,6 +92,7 @@ npm run verify:onet-task-ratings-live
 ## Acceptance Criteria
 
 - Migration list shows the commercial proof-pack migrations applied to the linked project.
+- The Supabase CLI link and `supabase/config.toml` project refs agree before any linked migration push.
 - `npm run verify:commercial-live-supabase` passes against the linked project.
 - `record-outcome` is deployed after the `revealed_transition_events` and `partner_artifact_reviews` objects exist remotely.
 - `npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.

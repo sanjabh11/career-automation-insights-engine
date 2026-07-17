@@ -1,6 +1,6 @@
 # Manual WCAG Review Packet
 
-Generated: 2026-06-08T23:23:36.520Z
+Generated: 2026-07-17T09:54:51.569Z
 
 Schema: `2026-06-04.apo-manual-wcag-review-packet.v1`
 
@@ -84,7 +84,7 @@ This source trace maps each generated manual WCAG review packet provenance row t
 | --- | --- | --- | ---: | ---: | --- |
 | /privacy | privacy policy | automated_smoke_passed | 3 | 3 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
 | /trust-center | commercial trust center | automated_smoke_passed | 3 | 30 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
-| /for-coaches | coach landing page | automated_smoke_passed | 3 | 30 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
+| /for-coaches | coach landing page | automated_smoke_passed | 3 | 26 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
 | /sample-report | coach sample report | automated_smoke_passed | 3 | 30 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
 | /tools/resume-analyzer | resume analyzer | automated_smoke_passed | 3 | 12 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |
 | /tools/counselor-reports | counselor reports | automated_smoke_passed | 3 | 30 | Automated smoke context is only a pre-review signal; it does not prove manual WCAG evidence, assistive-technology behavior, legal compliance, procurement approval, or future accessibility. |

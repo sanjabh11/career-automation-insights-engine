@@ -173,9 +173,9 @@ export const CREDIT_PACKAGES: CreditPackage[] = [
     stripePriceId: 'price_1SzAwDCDRnHqUTRJVDblB0VC',
     features: [
       '5 report credits',
-      'White-label branding',
-      'PDF export',
-      '30-day expiry',
+      'Coach-branded print-ready HTML',
+      'Human-review acknowledgement',
+      '30-day credit expiry (pilot)',
     ],
   },
   {
@@ -331,6 +331,10 @@ export const redirectToCreditCheckout = async (
   packageId: CreditPackage['id'],
   userId: string
 ): Promise<void> => {
+  if (packageId !== 'starter') {
+    throw new Error('Only the coach pilot starter pack is currently available');
+  }
+
   const pkg = CREDIT_PACKAGES.find((p) => p.id === packageId);
   if (!pkg || !pkg.stripePriceId) {
     throw new Error('Invalid credit package or price not configured');
@@ -355,10 +359,8 @@ export const redirectToCreditCheckout = async (
       'Authorization': `Bearer ${session.access_token}`,
     },
     body: JSON.stringify({
-      priceId: pkg.stripePriceId,
-      userId,
-      packageId: pkg.id,
-      credits: pkg.credits,
+      package_id: packageId,
+      request_id: crypto.randomUUID(),
     }),
   });
 

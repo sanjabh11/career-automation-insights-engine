@@ -1,4 +1,5 @@
 project_id = "kvunnankqgfokeufvsrv"
+# DB connection: psql -h db.kvunnankqgfokeufvsrv.supabase.co -U postgres -d postgres
 
 [functions.onet-proxy]
 verify_jwt = false
@@ -17,3 +18,18 @@ verify_jwt = false
 
 [functions.search-occupations]
 verify_jwt = false
+
+[functions.generate-counselor-report]
+verify_jwt = true
+
+[functions.enroll-coach-pilot]
+verify_jwt = true
+
+[functions.create-checkout-session]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.cleanup-report-artifacts]
+verify_jwt = true

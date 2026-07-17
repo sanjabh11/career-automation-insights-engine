@@ -132,6 +132,7 @@
     "smoke:commercial": "node scripts/smoke-commercial-routes.mjs",
     "verify:commercial-trust": "node scripts/verify-commercial-trust-boundaries.mjs",
     "verify:claim-boundaries": "node scripts/verify-claim-boundaries.mjs",
+    "verify:coach-pilot-contract": "node scripts/verify-coach-pilot-contract.mjs",
     "verify:sources": "node scripts/verify-source-manifest.mjs --write"
   },
   "dependencies": {

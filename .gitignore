@@ -15,7 +15,7 @@ test-results/
 playwright-report/
 
 # Environment files (keep example checked in)
-#.env
+.env
 .env.*
 !.env.example
 

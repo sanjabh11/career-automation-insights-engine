@@ -10,6 +10,7 @@ import { HelpTrigger } from '@/components/help/HelpTrigger';
 import { SkillFreshnessAlerts } from '@/components/SkillFreshnessAlerts';
 import type { Skill } from '@/components/planner/types';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SkillsRecommendationPanelProps {
   sfSkill: string;
   setSfSkill: (v: string) => void;
@@ -17,8 +18,8 @@ export interface SkillsRecommendationPanelProps {
   setSfAcquiredYear: (v: string) => void;
   estimateFreshness: () => void;
   isLoadingFreshness: boolean;
-  freshnessResult: any;
-  freshnessDerived: any;
+  freshnessResult: Record<string, unknown> | null;
+  freshnessDerived: Record<string, unknown> | null;
   compASkill: string;
   setCompASkill: (v: string) => void;
   compAYear: string;
@@ -33,7 +34,7 @@ export interface SkillsRecommendationPanelProps {
   setCompBHalfLife: (v: string) => void;
   compareLongevity: () => void;
   isComparing: boolean;
-  compResult: any;
+  compResult: { skills?: Array<{ name: string; half_life_years?: number | string }> } | null;
   skillRecommendations: Skill[];
   toggleSkillProgress: (name: string) => void;
 }

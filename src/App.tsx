@@ -65,6 +65,7 @@ const ResumeAnalyzer = lazy(() => import("./components/ResumeAnalyzer"));
 const CounselorReportGenerator = lazy(() => import("./components/CounselorReportGenerator"));
 const AutomationRiskLandingPage = lazy(() => import("./pages/AutomationRiskLandingPage"));
 const ForCoachesPage = lazy(() => import("./pages/ForCoachesPage"));
+const PilotTermsPage = lazy(() => import("./pages/PilotTermsPage"));
 const WhopExperiencePage = lazy(() => import("./pages/whop/ExperiencePage"));
 const WhopDashboardPage = lazy(() => import("./pages/whop/DashboardPage"));
 const WhopDiscoverPage = lazy(() => import("./pages/whop/DiscoverPage"));
@@ -195,6 +196,7 @@ function App() {
 
                 {/* B2B Landing Pages */}
                 <Route path="/for-coaches" element={<ForCoachesPage />} />
+                <Route path="/pilot-terms" element={<PilotTermsPage />} />
 
                 {/* Whop Embedded App Routes */}
 

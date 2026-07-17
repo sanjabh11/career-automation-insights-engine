@@ -536,7 +536,10 @@ const checks = [
       'Authorization header required',
       'Invalid authentication',
       'Checkout user mismatch',
-      'isCreditPurchase',
+      'package_id',
+      'request_id',
+      'pilotPackage',
+      'STRIPE_STARTER_PRICE_ID',
       'metadata',
       'credit_purchase',
       'supabase_user_id',
@@ -548,15 +551,19 @@ const checks = [
     snippets: [
       'stripe.webhooks.constructEvent',
       'handleCreditPurchaseCheckout',
-      'add_report_credits',
+      'claim_stripe_webhook_event',
+      'mark_stripe_webhook_event',
+      'fulfill_report_credit_purchase',
+      'listLineItems',
       'credit_purchase',
+      'one_time',
       'payment_transactions',
       'No subscription id in checkout session',
     ],
   },
   {
     id: 'resume-deletion-receipt-boundary',
-    path: 'src/components/ResumeAnalyzer.tsx',
+    files: ['src/components/ResumeAnalyzer.tsx', 'src/components/resume-panels/RiskScoreCard.tsx'],
     snippets: [
       'deleteResumeAnalysisWithReceipt',
       'data-resume-deletion-receipt="true"',
@@ -568,7 +575,12 @@ const checks = [
   },
   {
     id: 'resume-analysis-proof-boundary-ui',
-    path: 'src/components/ResumeAnalyzer.tsx',
+    files: [
+      'src/components/ResumeAnalyzer.tsx',
+      'src/components/resume-panels/RiskScoreCard.tsx',
+      'src/components/resume-ui.tsx',
+      'src/components/resume-panels/UploadSection.tsx',
+    ],
     snippets: [
       'ResumeProofEvidenceCard',
       'getResumeProofReportHtml',
@@ -897,11 +909,12 @@ const coverageGroups = [
 ];
 
 async function verifySnippetCheck(check) {
-  const source = await readFile(check.path, 'utf8');
+  const paths = check.files || [check.path];
+  const source = (await Promise.all(paths.map((filePath) => readFile(filePath, 'utf8')))).join('\n');
   const missing = check.snippets.filter((snippet) => !source.includes(snippet));
   return {
     id: check.id,
-    path: check.path,
+    path: check.path || paths.join(', '),
     passed: missing.length === 0,
     missing,
   };

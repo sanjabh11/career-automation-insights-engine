@@ -47,6 +47,7 @@ const OFFICIAL_REFERENCES = [
 const args = process.argv.slice(2);
 const writeOutputs = args.includes('--write');
 const allowIncomplete = args.includes('--allow-incomplete');
+const COMMAND_TIMEOUT_MS = Number.parseInt(process.env.COMMERCIAL_READINESS_COMMAND_TIMEOUT_MS || '10000', 10);
 
 const evidenceBoundary =
   'This verifier checks only whether the current local CLI context can see required GitHub secret names and the target Supabase project/functions surface for live closeout. It records secret names only, never secret values, and does not deploy, mutate, ingest, rotate, or prove production behavior.';
@@ -66,6 +67,7 @@ function run(command, commandArgs, options = {}) {
       stdout: execFileSync(command, commandArgs, {
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'pipe'],
+        timeout: Number.isFinite(COMMAND_TIMEOUT_MS) && COMMAND_TIMEOUT_MS > 0 ? COMMAND_TIMEOUT_MS : 10000,
         ...options,
       }),
       stderr: '',

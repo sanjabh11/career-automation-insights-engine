@@ -1,7 +1,7 @@
 # Live Closeout Readiness
 
 Status: `owner_access_required`
-Generated: `2026-06-08T23:23:08.202Z`
+Generated: `2026-07-17T10:06:42.609Z`
 Target project ref: `kvunnankqgfokeufvsrv`
 
 This is a redacted status artifact for the local CLI context. It is not a live deployment or closeout proof.
@@ -11,7 +11,7 @@ This is a redacted status artifact for the local CLI context. It is not a live d
 | Item | Count |
 | --- | ---: |
 | Checks | 4 |
-| Failed checks | 2 |
+| Failed checks | 4 |
 | Official references | 4 |
 | Next actions | 3 |
 | Does-not-prove boundaries | 6 |
@@ -20,15 +20,15 @@ This is a redacted status artifact for the local CLI context. It is not a live d
 
 | Check | Result | Message |
 | --- | --- | --- |
-| github-secrets-visible | pass | GitHub secret names are readable. |
-| github-live-closeout-secrets-present | pass | Required GitHub secret names are present. |
-| supabase-target-project-visible | blocked | Target project kvunnankqgfokeufvsrv is not visible to the current Supabase account. |
-| supabase-functions-api-accessible | blocked | unexpected list functions status 403: {"message":"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control"} Try rerunning the command with --debug to troubleshoot the error. |
+| github-secrets-visible | blocked | spawnSync gh ETIMEDOUT |
+| github-live-closeout-secrets-present | blocked | Missing required GitHub secret name(s): SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF, SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD |
+| supabase-target-project-visible | blocked | spawnSync supabase ETIMEDOUT |
+| supabase-functions-api-accessible | blocked | spawnSync supabase ETIMEDOUT |
 
 ## Secret Name Boundary
 
-- Required GitHub secret names present: 7/7
-- Missing required GitHub secret names: `none`
+- Required GitHub secret names present: 0/7
+- Missing required GitHub secret names: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `LIVE_SUPABASE_TEST_USER_EMAIL`, `LIVE_SUPABASE_TEST_USER_PASSWORD`
 - Secret values persisted: `no`
 - All repository secret names persisted: `no`
 
@@ -36,9 +36,9 @@ This is a redacted status artifact for the local CLI context. It is not a live d
 
 | Field | Value |
 | --- | --- |
-| Projects list available | `yes` |
+| Projects list available | `no` |
 | Target project visible | `no` |
-| Visible project ref count | 4 |
+| Visible project ref count | 0 |
 | Visible project refs persisted | `no` |
 | Functions API accessible | `no` |
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2026-06-04.apo-owner-evidence-closeout-status.v1",
-  "generatedAt": "2026-06-08T23:24:38.035Z",
+  "generatedAt": "2026-07-17T09:55:20.234Z",
   "ok": false,
   "goalComplete": false,
   "writeMode": false,
@@ -17,21 +17,20 @@
   "ownerGateScoreboard": {
     "status": "owner_evidence_required",
     "goalComplete": false,
-    "remainingGateCount": 5,
+    "remainingGateCount": 7,
     "remainingGateIds": [
       "manual_wcag_evidence",
       "real_stripe_test_checkout",
+      "production_calibration_run",
+      "authenticated_live_artifact_e2e",
       "live_mrr_gt_zero",
       "three_committed_partners",
       "documented_outcomes"
     ],
-    "acceptedLiveGateCount": 2,
-    "acceptedLiveGateIds": [
-      "production_calibration_run",
-      "authenticated_live_artifact_e2e"
-    ],
-    "ownerActionQueueCount": 5,
-    "ownerActionNeededCount": 6,
+    "acceptedLiveGateCount": 0,
+    "acceptedLiveGateIds": [],
+    "ownerActionQueueCount": 7,
+    "ownerActionNeededCount": 10,
     "failedStepCount": 6,
     "failedStepIds": [
       "compose-live-evidence",
@@ -43,30 +42,33 @@
     ],
     "evidenceBoundary": "This scoreboard is a machine-readable owner-evidence closeout summary only. It does not prove live checkout, live MRR, partner commitments, documented outcomes, manual WCAG conformance, legal compliance, procurement approval, or commercial readiness."
   },
-  "remainingGateCount": 5,
+  "remainingGateCount": 7,
   "remainingGateIds": [
     "manual_wcag_evidence",
     "real_stripe_test_checkout",
+    "production_calibration_run",
+    "authenticated_live_artifact_e2e",
     "live_mrr_gt_zero",
     "three_committed_partners",
     "documented_outcomes"
   ],
-  "acceptedLiveGateCount": 2,
-  "acceptedLiveGateIds": [
-    "production_calibration_run",
-    "authenticated_live_artifact_e2e"
-  ],
-  "ownerActionNeededCount": 6,
+  "acceptedLiveGateCount": 0,
+  "acceptedLiveGateIds": [],
+  "ownerActionNeededCount": 10,
   "ownerEvidencePrep": {
     "ok": true,
     "readyForCloseout": false,
-    "ownerActionNeededCount": 6,
+    "ownerActionNeededCount": 10,
     "ownerActionNeeded": [
-      "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
-      "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
-      "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt",
+      "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
+      "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+      "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD",
+      "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
+      "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json",
       "docs/commercialization/manual-wcag-evidence.local.json: run npm run generate:manual-wcag-review-packet and use docs/commercialization/manual-wcag-review-packet-latest.md, docs/commercialization/manual-wcag-review-matrix-latest.csv, and the W3C WCAG-EM Report Tool as the owner-held review worksheet/report export before hashing proof artifacts; create from docs/commercialization/manual-wcag-evidence-template.json after the owner-held WCAG-EM review is complete (template requires 8 checkpoint(s), 9 route(s), and 5 complete process(es), 2 accessibility-support baseline combination(s), and 7 official W3C/WAI reference(s), plus 9 ownerEvidenceArchive policy field(s)), including reviewer disclosure, technologies relied upon, sample-selection method, review-record archive attestations, owner-held WCAG-EM report-tool export, and ownerEvidenceArchive policy metadata, then run npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> before replacing artifactHashes",
       "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy",
+      "docs/commercialization/production-calibration-proof-latest.json: run owner proof command until status=passed with redacted owner-held archive policy metadata",
+      "docs/commercialization/live-auth-e2e-proof-latest.json: run owner proof command until status=passed with redacted owner-held archive policy metadata",
       "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
     ],
     "ownerActionNeededByGate": {
@@ -74,32 +76,34 @@
         "docs/commercialization/manual-wcag-evidence.local.json: run npm run generate:manual-wcag-review-packet and use docs/commercialization/manual-wcag-review-packet-latest.md, docs/commercialization/manual-wcag-review-matrix-latest.csv, and the W3C WCAG-EM Report Tool as the owner-held review worksheet/report export before hashing proof artifacts; create from docs/commercialization/manual-wcag-evidence-template.json after the owner-held WCAG-EM review is complete (template requires 8 checkpoint(s), 9 route(s), and 5 complete process(es), 2 accessibility-support baseline combination(s), and 7 official W3C/WAI reference(s), plus 9 ownerEvidenceArchive policy field(s)), including reviewer disclosure, technologies relied upon, sample-selection method, review-record archive attestations, owner-held WCAG-EM report-tool export, and ownerEvidenceArchive policy metadata, then run npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> before replacing artifactHashes"
       ],
       "real_stripe_test_checkout": [
-        "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+        "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
         "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy"
       ],
-      "production_calibration_run": [],
-      "authenticated_live_artifact_e2e": [],
+      "production_calibration_run": [
+        "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+      ],
+      "authenticated_live_artifact_e2e": [
+        "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD"
+      ],
       "live_mrr_gt_zero": [
-        "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+        "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
         "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
       ],
       "three_committed_partners": [
-        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
       ],
       "documented_outcomes": [
-        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
       ]
     },
     "envFile": {
       "path": ".env.local",
-      "exists": true,
+      "exists": false,
       "keyNamesRedacted": true,
       "expectedKeyCount": 16,
-      "presentExpectedKeyCount": 8,
-      "blankOrPlaceholderExpectedKeys": [
-        "STRIPE_LIVE_SECRET_KEY"
-      ],
-      "extraKeyCount": 2,
+      "presentExpectedKeyCount": 0,
+      "blankOrPlaceholderExpectedKeys": [],
+      "extraKeyCount": 0,
       "redactionBoundary": "Only expected owner-proof environment key names are reported. Extra local key names and all values are redacted from repo artifacts and command output."
     },
     "liveProofReadiness": [
@@ -109,15 +113,35 @@
         "ready": false,
         "envFileCompleteButNotLoaded": false,
         "requiredGroupCount": 6,
-        "presentGroupCount": 5,
-        "missingGroupCount": 1,
+        "presentGroupCount": 0,
+        "missingGroupCount": 6,
         "blankOrPlaceholderEnvFileCount": 0,
         "invalidKeyModeCount": 0,
-        "loadFromEnvFileCount": 5,
+        "loadFromEnvFileCount": 0,
         "missingGroups": [
+          [
+            "SUPABASE_URL",
+            "VITE_SUPABASE_URL"
+          ],
+          [
+            "SUPABASE_ANON_KEY",
+            "VITE_SUPABASE_ANON_KEY"
+          ],
+          [
+            "LIVE_SUPABASE_TEST_USER_EMAIL",
+            "STRIPE_TEST_USER_EMAIL"
+          ],
+          [
+            "LIVE_SUPABASE_TEST_USER_PASSWORD",
+            "STRIPE_TEST_USER_PASSWORD"
+          ],
           [
             "STRIPE_TEST_SECRET_KEY",
             "STRIPE_TEST_RESTRICTED_KEY"
+          ],
+          [
+            "STRIPE_TEST_PRICE_ID",
+            "APO_STRIPE_TEST_PRICE_ID"
           ]
         ],
         "blankOrPlaceholderEnvFile": [],
@@ -128,106 +152,111 @@
           "resolvedSource": null,
           "resolvedMode": "missing"
         },
-        "loadFromEnvFile": [
-          "SUPABASE_URL",
-          "SUPABASE_ANON_KEY",
-          "LIVE_SUPABASE_TEST_USER_EMAIL",
-          "LIVE_SUPABASE_TEST_USER_PASSWORD",
-          "STRIPE_TEST_PRICE_ID"
-        ]
+        "loadFromEnvFile": []
       },
       {
         "id": "production_calibration",
         "command": "npm run verify:production-calibration",
         "ready": false,
-        "envFileCompleteButNotLoaded": true,
+        "envFileCompleteButNotLoaded": false,
         "requiredGroupCount": 2,
-        "presentGroupCount": 2,
-        "missingGroupCount": 0,
+        "presentGroupCount": 0,
+        "missingGroupCount": 2,
         "blankOrPlaceholderEnvFileCount": 0,
         "invalidKeyModeCount": 0,
-        "loadFromEnvFileCount": 2,
-        "missingGroups": [],
+        "loadFromEnvFileCount": 0,
+        "missingGroups": [
+          [
+            "SUPABASE_URL",
+            "VITE_SUPABASE_URL"
+          ],
+          [
+            "SUPABASE_ANON_KEY",
+            "VITE_SUPABASE_ANON_KEY"
+          ]
+        ],
         "blankOrPlaceholderEnvFile": [],
         "invalidKeyModeGroups": [],
         "stripeKeyModeRequirement": null,
-        "loadFromEnvFile": [
-          "SUPABASE_URL",
-          "SUPABASE_ANON_KEY"
-        ]
+        "loadFromEnvFile": []
       },
       {
         "id": "authenticated_live_artifact_e2e",
         "command": "npm run verify:commercial-live-auth-e2e",
         "ready": false,
-        "envFileCompleteButNotLoaded": true,
+        "envFileCompleteButNotLoaded": false,
         "requiredGroupCount": 4,
-        "presentGroupCount": 4,
-        "missingGroupCount": 0,
+        "presentGroupCount": 0,
+        "missingGroupCount": 4,
         "blankOrPlaceholderEnvFileCount": 0,
         "invalidKeyModeCount": 0,
-        "loadFromEnvFileCount": 4,
-        "missingGroups": [],
+        "loadFromEnvFileCount": 0,
+        "missingGroups": [
+          [
+            "SUPABASE_URL",
+            "VITE_SUPABASE_URL"
+          ],
+          [
+            "SUPABASE_ANON_KEY",
+            "VITE_SUPABASE_ANON_KEY"
+          ],
+          [
+            "LIVE_SUPABASE_TEST_USER_EMAIL"
+          ],
+          [
+            "LIVE_SUPABASE_TEST_USER_PASSWORD"
+          ]
+        ],
         "blankOrPlaceholderEnvFile": [],
         "invalidKeyModeGroups": [],
         "stripeKeyModeRequirement": null,
-        "loadFromEnvFile": [
-          "SUPABASE_URL",
-          "SUPABASE_ANON_KEY",
-          "LIVE_SUPABASE_TEST_USER_EMAIL",
-          "LIVE_SUPABASE_TEST_USER_PASSWORD"
-        ]
+        "loadFromEnvFile": []
       },
       {
         "id": "live_mrr_gt_zero",
         "command": "npm run verify:stripe-live-mrr",
         "ready": false,
-        "envFileCompleteButNotLoaded": true,
+        "envFileCompleteButNotLoaded": false,
         "requiredGroupCount": 1,
-        "presentGroupCount": 1,
-        "missingGroupCount": 0,
+        "presentGroupCount": 0,
+        "missingGroupCount": 1,
         "blankOrPlaceholderEnvFileCount": 0,
         "invalidKeyModeCount": 0,
-        "loadFromEnvFileCount": 1,
-        "missingGroups": [],
+        "loadFromEnvFileCount": 0,
+        "missingGroups": [
+          [
+            "STRIPE_LIVE_SECRET_KEY",
+            "STRIPE_LIVE_RESTRICTED_KEY",
+            "STRIPE_SECRET_KEY"
+          ]
+        ],
         "blankOrPlaceholderEnvFile": [],
         "invalidKeyModeGroups": [],
         "stripeKeyModeRequirement": {
           "requiredMode": "live",
-          "resolvedKey": "STRIPE_SECRET_KEY",
-          "resolvedSource": "env_file",
-          "resolvedMode": "live"
+          "resolvedKey": null,
+          "resolvedSource": null,
+          "resolvedMode": "missing"
         },
-        "loadFromEnvFile": [
-          "STRIPE_SECRET_KEY"
-        ]
+        "loadFromEnvFile": []
       }
     ],
     "liveGateEvidence": {
       "path": "docs/commercialization/live-gate-evidence.local.json",
-      "exists": true,
-      "validJson": true,
-      "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
-      "placeholderCount": 0,
+      "exists": false,
+      "validJson": false,
+      "placeholderCount": null,
       "complete": false,
-      "acceptedGateIds": [
-        "production_calibration_run",
-        "authenticated_live_artifact_e2e"
-      ],
+      "acceptedGateIds": [],
       "rejectedGateIds": [],
       "errorCount": 0,
       "errors": []
     },
     "commercialIntake": {
       "path": "docs/commercialization/commercial-evidence-intake.local.json",
-      "exists": true,
-      "validJson": true,
-      "schemaVersion": "2026-06-01.apo-commercial-evidence-intake.v1",
-      "placeholderCount": 5,
-      "commercialEvidenceIntakeCounts": {
-        "designPartnerCommitmentCount": 3,
-        "documentedOutcomeCount": 1
-      }
+      "exists": false,
+      "validJson": false,
+      "placeholderCount": null
     },
     "manualWcagEvidence": {
       "path": "docs/commercialization/manual-wcag-evidence.local.json",
@@ -268,8 +297,8 @@
         "command": "npm run verify:production-calibration",
         "exists": true,
         "validJson": true,
-        "artifactStatus": "passed",
-        "acceptedSourceArtifact": true
+        "artifactStatus": "skipped_missing_env",
+        "acceptedSourceArtifact": false
       },
       {
         "path": "docs/commercialization/live-auth-e2e-proof-latest.json",
@@ -278,8 +307,8 @@
         "command": "npm run verify:commercial-live-auth-e2e",
         "exists": true,
         "validJson": true,
-        "artifactStatus": "passed",
-        "acceptedSourceArtifact": true
+        "artifactStatus": "skipped_missing_env",
+        "acceptedSourceArtifact": false
       },
       {
         "path": "docs/commercialization/stripe-live-mrr-proof-latest.json",
@@ -288,7 +317,7 @@
         "command": "npm run verify:stripe-live-mrr",
         "exists": true,
         "validJson": true,
-        "artifactStatus": "failed",
+        "artifactStatus": "skipped_missing_env",
         "acceptedSourceArtifact": false
       }
     ],
@@ -316,7 +345,7 @@
       "finalCloseout": "npm run closeout:owner-evidence -- --write --refresh-tracked --live-evidence docs/commercialization/live-gate-evidence.local.json --commercial-intake docs/commercialization/commercial-evidence-intake.local.json --commercial-evidence docs/commercialization/commercial-evidence-records.local.json --manual-wcag-evidence docs/commercialization/manual-wcag-evidence.local.json"
     }
   },
-  "ownerActionQueueCount": 5,
+  "ownerActionQueueCount": 7,
   "ownerActionQueue": [
     {
       "id": "manual_wcag_evidence",
@@ -350,9 +379,38 @@
       ]
     },
     {
+      "id": "production_calibration_run",
+      "label": "Production calibration run",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "ownerAction": "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:production-calibration",
+      "riskIfSkipped": "Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.",
+      "sourceBoundary": "owner credential and deployment-precondition gate",
+      "doesNotProve": [
+        "Scientific validation before live labels exist",
+        "Migrations or deployments were applied by this verifier"
+      ]
+    },
+    {
+      "id": "authenticated_live_artifact_e2e",
+      "label": "Authenticated live artifact e2e",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "ownerAction": "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:commercial-live-auth-e2e",
+      "riskIfSkipped": "Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.",
+      "sourceBoundary": "owner credential gate",
+      "doesNotProve": [
+        "Payment proof",
+        "malware scanning",
+        "legal compliance"
+      ]
+    },
+    {
       "id": "live_mrr_gt_zero",
       "label": "Live MRR greater than zero",
-      "status": "ready_for_owner_live_run",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
       "ownerAction": "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
       "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
       "nextCommand": "npm run verify:stripe-live-mrr",
@@ -400,7 +458,7 @@
       ]
     }
   ],
-  "ownerGateCloseoutSummaryCount": 5,
+  "ownerGateCloseoutSummaryCount": 7,
   "ownerGateCloseoutSummary": [
     {
       "gateId": "manual_wcag_evidence",
@@ -469,7 +527,7 @@
       "label": "Real Stripe test-mode checkout",
       "status": "blocked_missing_owner_secret_or_live_evidence",
       "sourceBoundary": "owner credential gate",
-      "currentEvidence": "Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY.",
+      "currentEvidence": "Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD.",
       "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.",
       "ownerAction": "Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.",
       "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
@@ -483,7 +541,7 @@
       "ownerPrepReadiness": {
         "blockingOwnerActionCount": 2,
         "blockingOwnerActions": [
-          "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+          "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
           "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy"
         ],
         "kind": "live_proof_readiness",
@@ -492,15 +550,35 @@
           "ready": false,
           "envFileCompleteButNotLoaded": false,
           "requiredGroupCount": 6,
-          "presentGroupCount": 5,
-          "missingGroupCount": 1,
+          "presentGroupCount": 0,
+          "missingGroupCount": 6,
           "blankOrPlaceholderEnvFileCount": 0,
           "invalidKeyModeCount": 0,
-          "loadFromEnvFileCount": 5,
+          "loadFromEnvFileCount": 0,
           "missingGroups": [
+            [
+              "SUPABASE_URL",
+              "VITE_SUPABASE_URL"
+            ],
+            [
+              "SUPABASE_ANON_KEY",
+              "VITE_SUPABASE_ANON_KEY"
+            ],
+            [
+              "LIVE_SUPABASE_TEST_USER_EMAIL",
+              "STRIPE_TEST_USER_EMAIL"
+            ],
+            [
+              "LIVE_SUPABASE_TEST_USER_PASSWORD",
+              "STRIPE_TEST_USER_PASSWORD"
+            ],
             [
               "STRIPE_TEST_SECRET_KEY",
               "STRIPE_TEST_RESTRICTED_KEY"
+            ],
+            [
+              "STRIPE_TEST_PRICE_ID",
+              "APO_STRIPE_TEST_PRICE_ID"
             ]
           ],
           "invalidKeyModeGroups": [],
@@ -518,6 +596,159 @@
           "status": "fail",
           "failureDetails": [
             "stripe-test-checkout: docs/commercialization/stripe-test-checkout-proof-latest.json must have status=passed and all checks passed",
+            "production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+            "authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
+            "stripe-live-mrr: docs/commercialization/stripe-live-mrr-proof-latest.json must have status=passed and all checks passed"
+          ]
+        },
+        {
+          "stepId": "verify-live-evidence",
+          "status": "fail",
+          "failureDetails": [
+            "stderr: Not all live-gate evidence items are accepted."
+          ]
+        },
+        {
+          "stepId": "verify-remediation-gates",
+          "status": "fail",
+          "failureDetails": [
+            "stderr: Remediation external gates are not complete. See generated artifact for remaining evidence."
+          ]
+        }
+      ]
+    },
+    {
+      "gateId": "production_calibration_run",
+      "label": "Production calibration run",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "sourceBoundary": "owner credential and deployment-precondition gate",
+      "currentEvidence": "Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
+      "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+      "ownerAction": "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:production-calibration",
+      "riskIfSkipped": "Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.",
+      "doesNotProve": [
+        "Scientific validation before live labels exist",
+        "Migrations or deployments were applied by this verifier"
+      ],
+      "ownerPrepReadiness": {
+        "blockingOwnerActionCount": 1,
+        "blockingOwnerActions": [
+          "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+        ],
+        "kind": "live_proof_readiness",
+        "liveReadinessId": "production_calibration",
+        "liveProofReadiness": {
+          "ready": false,
+          "envFileCompleteButNotLoaded": false,
+          "requiredGroupCount": 2,
+          "presentGroupCount": 0,
+          "missingGroupCount": 2,
+          "blankOrPlaceholderEnvFileCount": 0,
+          "invalidKeyModeCount": 0,
+          "loadFromEnvFileCount": 0,
+          "missingGroups": [
+            [
+              "SUPABASE_URL",
+              "VITE_SUPABASE_URL"
+            ],
+            [
+              "SUPABASE_ANON_KEY",
+              "VITE_SUPABASE_ANON_KEY"
+            ]
+          ],
+          "invalidKeyModeGroups": [],
+          "stripeKeyModeRequirement": null
+        }
+      },
+      "closeoutStepStatuses": [
+        {
+          "stepId": "compose-live-evidence",
+          "status": "fail",
+          "failureDetails": [
+            "stripe-test-checkout: docs/commercialization/stripe-test-checkout-proof-latest.json must have status=passed and all checks passed",
+            "production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+            "authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
+            "stripe-live-mrr: docs/commercialization/stripe-live-mrr-proof-latest.json must have status=passed and all checks passed"
+          ]
+        },
+        {
+          "stepId": "verify-live-evidence",
+          "status": "fail",
+          "failureDetails": [
+            "stderr: Not all live-gate evidence items are accepted."
+          ]
+        },
+        {
+          "stepId": "verify-remediation-gates",
+          "status": "fail",
+          "failureDetails": [
+            "stderr: Remediation external gates are not complete. See generated artifact for remaining evidence."
+          ]
+        }
+      ]
+    },
+    {
+      "gateId": "authenticated_live_artifact_e2e",
+      "label": "Authenticated live artifact e2e",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
+      "sourceBoundary": "owner credential gate",
+      "currentEvidence": "Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD.",
+      "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
+      "ownerAction": "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
+      "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "nextCommand": "npm run verify:commercial-live-auth-e2e",
+      "riskIfSkipped": "Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.",
+      "doesNotProve": [
+        "Payment proof",
+        "malware scanning",
+        "legal compliance"
+      ],
+      "ownerPrepReadiness": {
+        "blockingOwnerActionCount": 1,
+        "blockingOwnerActions": [
+          "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD"
+        ],
+        "kind": "live_proof_readiness",
+        "liveReadinessId": "authenticated_live_artifact_e2e",
+        "liveProofReadiness": {
+          "ready": false,
+          "envFileCompleteButNotLoaded": false,
+          "requiredGroupCount": 4,
+          "presentGroupCount": 0,
+          "missingGroupCount": 4,
+          "blankOrPlaceholderEnvFileCount": 0,
+          "invalidKeyModeCount": 0,
+          "loadFromEnvFileCount": 0,
+          "missingGroups": [
+            [
+              "SUPABASE_URL",
+              "VITE_SUPABASE_URL"
+            ],
+            [
+              "SUPABASE_ANON_KEY",
+              "VITE_SUPABASE_ANON_KEY"
+            ],
+            [
+              "LIVE_SUPABASE_TEST_USER_EMAIL"
+            ],
+            [
+              "LIVE_SUPABASE_TEST_USER_PASSWORD"
+            ]
+          ],
+          "invalidKeyModeGroups": [],
+          "stripeKeyModeRequirement": null
+        }
+      },
+      "closeoutStepStatuses": [
+        {
+          "stepId": "compose-live-evidence",
+          "status": "fail",
+          "failureDetails": [
+            "stripe-test-checkout: docs/commercialization/stripe-test-checkout-proof-latest.json must have status=passed and all checks passed",
+            "production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+            "authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
             "stripe-live-mrr: docs/commercialization/stripe-live-mrr-proof-latest.json must have status=passed and all checks passed"
           ]
         },
@@ -540,9 +771,9 @@
     {
       "gateId": "live_mrr_gt_zero",
       "label": "Live MRR greater than zero",
-      "status": "ready_for_owner_live_run",
+      "status": "blocked_missing_owner_secret_or_live_evidence",
       "sourceBoundary": "owner live Stripe credential gate",
-      "currentEvidence": "Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.",
+      "currentEvidence": "Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY.",
       "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.",
       "ownerAction": "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
       "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
@@ -557,27 +788,33 @@
       "ownerPrepReadiness": {
         "blockingOwnerActionCount": 2,
         "blockingOwnerActions": [
-          "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+          "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
           "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
         ],
         "kind": "live_proof_readiness",
         "liveReadinessId": "live_mrr_gt_zero",
         "liveProofReadiness": {
           "ready": false,
-          "envFileCompleteButNotLoaded": true,
+          "envFileCompleteButNotLoaded": false,
           "requiredGroupCount": 1,
-          "presentGroupCount": 1,
-          "missingGroupCount": 0,
+          "presentGroupCount": 0,
+          "missingGroupCount": 1,
           "blankOrPlaceholderEnvFileCount": 0,
           "invalidKeyModeCount": 0,
-          "loadFromEnvFileCount": 1,
-          "missingGroups": [],
+          "loadFromEnvFileCount": 0,
+          "missingGroups": [
+            [
+              "STRIPE_LIVE_SECRET_KEY",
+              "STRIPE_LIVE_RESTRICTED_KEY",
+              "STRIPE_SECRET_KEY"
+            ]
+          ],
           "invalidKeyModeGroups": [],
           "stripeKeyModeRequirement": {
             "requiredMode": "live",
-            "resolvedKey": "STRIPE_SECRET_KEY",
-            "resolvedSource": "env_file",
-            "resolvedMode": "live"
+            "resolvedKey": null,
+            "resolvedSource": null,
+            "resolvedMode": "missing"
           }
         }
       },
@@ -587,6 +824,8 @@
           "status": "fail",
           "failureDetails": [
             "stripe-test-checkout: docs/commercialization/stripe-test-checkout-proof-latest.json must have status=passed and all checks passed",
+            "production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+            "authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
             "stripe-live-mrr: docs/commercialization/stripe-live-mrr-proof-latest.json must have status=passed and all checks passed"
           ]
         },
@@ -627,18 +866,15 @@
       "ownerPrepReadiness": {
         "blockingOwnerActionCount": 1,
         "blockingOwnerActions": [
-          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
         ],
         "kind": "commercial_evidence_intake",
         "commercialIntake": {
           "path": "docs/commercialization/commercial-evidence-intake.local.json",
-          "exists": true,
-          "validJson": true,
-          "placeholderCount": 5,
-          "commercialEvidenceIntakeCounts": {
-            "designPartnerCommitmentCount": 3,
-            "documentedOutcomeCount": 1
-          }
+          "exists": false,
+          "validJson": false,
+          "placeholderCount": null,
+          "commercialEvidenceIntakeCounts": null
         }
       },
       "closeoutStepStatuses": [
@@ -646,15 +882,10 @@
           "stepId": "compose-commercial-records",
           "status": "fail",
           "failureDetails": [
+            "docs/commercialization/commercial-evidence-intake.local.json is missing",
             "hashSalt or COMMERCIAL_EVIDENCE_HASH_SALT must be an owner-held non-placeholder string with at least 16 characters",
-            "designPartnerCommitments[0].partnerRef must not be a placeholder",
-            "designPartnerCommitments[0].proofArtifactHashes must contain at least one non-placeholder sha256 hash",
-            "designPartnerCommitments[0].proofArtifactTypes must contain at least one supported proof artifact type",
-            "designPartnerCommitments[0].rawEvidenceOwnerHeld must be true",
-            "designPartnerCommitments[0].integrityAttestations must be an object",
-            "designPartnerCommitments[0].ownerEvidenceArchive must be an object",
-            "designPartnerCommitments[1].partnerRef must not be a placeholder",
-            "21 additional error(s) omitted from this redacted summary"
+            "designPartnerCommitments must be an array",
+            "documentedOutcomes must be an array"
           ]
         },
         {
@@ -694,18 +925,15 @@
       "ownerPrepReadiness": {
         "blockingOwnerActionCount": 1,
         "blockingOwnerActions": [
-          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
         ],
         "kind": "commercial_evidence_intake",
         "commercialIntake": {
           "path": "docs/commercialization/commercial-evidence-intake.local.json",
-          "exists": true,
-          "validJson": true,
-          "placeholderCount": 5,
-          "commercialEvidenceIntakeCounts": {
-            "designPartnerCommitmentCount": 3,
-            "documentedOutcomeCount": 1
-          }
+          "exists": false,
+          "validJson": false,
+          "placeholderCount": null,
+          "commercialEvidenceIntakeCounts": null
         }
       },
       "closeoutStepStatuses": [
@@ -713,15 +941,10 @@
           "stepId": "compose-commercial-records",
           "status": "fail",
           "failureDetails": [
+            "docs/commercialization/commercial-evidence-intake.local.json is missing",
             "hashSalt or COMMERCIAL_EVIDENCE_HASH_SALT must be an owner-held non-placeholder string with at least 16 characters",
-            "designPartnerCommitments[0].partnerRef must not be a placeholder",
-            "designPartnerCommitments[0].proofArtifactHashes must contain at least one non-placeholder sha256 hash",
-            "designPartnerCommitments[0].proofArtifactTypes must contain at least one supported proof artifact type",
-            "designPartnerCommitments[0].rawEvidenceOwnerHeld must be true",
-            "designPartnerCommitments[0].integrityAttestations must be an object",
-            "designPartnerCommitments[0].ownerEvidenceArchive must be an object",
-            "designPartnerCommitments[1].partnerRef must not be a placeholder",
-            "21 additional error(s) omitted from this redacted summary"
+            "designPartnerCommitments must be an array",
+            "documentedOutcomes must be an array"
           ]
         },
         {
@@ -776,13 +999,17 @@
       "summary": {
         "ok": true,
         "readyForCloseout": false,
-        "ownerActionNeededCount": 6,
+        "ownerActionNeededCount": 10,
         "ownerActionNeeded": [
-          "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
-          "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
-          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt",
+          "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
+          "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+          "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD",
+          "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
+          "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json",
           "docs/commercialization/manual-wcag-evidence.local.json: run npm run generate:manual-wcag-review-packet and use docs/commercialization/manual-wcag-review-packet-latest.md, docs/commercialization/manual-wcag-review-matrix-latest.csv, and the W3C WCAG-EM Report Tool as the owner-held review worksheet/report export before hashing proof artifacts; create from docs/commercialization/manual-wcag-evidence-template.json after the owner-held WCAG-EM review is complete (template requires 8 checkpoint(s), 9 route(s), and 5 complete process(es), 2 accessibility-support baseline combination(s), and 7 official W3C/WAI reference(s), plus 9 ownerEvidenceArchive policy field(s)), including reviewer disclosure, technologies relied upon, sample-selection method, review-record archive attestations, owner-held WCAG-EM report-tool export, and ownerEvidenceArchive policy metadata, then run npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> before replacing artifactHashes",
           "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy",
+          "docs/commercialization/production-calibration-proof-latest.json: run owner proof command until status=passed with redacted owner-held archive policy metadata",
+          "docs/commercialization/live-auth-e2e-proof-latest.json: run owner proof command until status=passed with redacted owner-held archive policy metadata",
           "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
         ],
         "ownerActionNeededByGate": {
@@ -790,32 +1017,34 @@
             "docs/commercialization/manual-wcag-evidence.local.json: run npm run generate:manual-wcag-review-packet and use docs/commercialization/manual-wcag-review-packet-latest.md, docs/commercialization/manual-wcag-review-matrix-latest.csv, and the W3C WCAG-EM Report Tool as the owner-held review worksheet/report export before hashing proof artifacts; create from docs/commercialization/manual-wcag-evidence-template.json after the owner-held WCAG-EM review is complete (template requires 8 checkpoint(s), 9 route(s), and 5 complete process(es), 2 accessibility-support baseline combination(s), and 7 official W3C/WAI reference(s), plus 9 ownerEvidenceArchive policy field(s)), including reviewer disclosure, technologies relied upon, sample-selection method, review-record archive attestations, owner-held WCAG-EM report-tool export, and ownerEvidenceArchive policy metadata, then run npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> before replacing artifactHashes"
           ],
           "real_stripe_test_checkout": [
-            "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+            "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
             "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy"
           ],
-          "production_calibration_run": [],
-          "authenticated_live_artifact_e2e": [],
+          "production_calibration_run": [
+            "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+          ],
+          "authenticated_live_artifact_e2e": [
+            "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD"
+          ],
           "live_mrr_gt_zero": [
-            "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+            "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
             "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
           ],
           "three_committed_partners": [
-            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
           ],
           "documented_outcomes": [
-            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
           ]
         },
         "envFile": {
           "path": ".env.local",
-          "exists": true,
+          "exists": false,
           "keyNamesRedacted": true,
           "expectedKeyCount": 16,
-          "presentExpectedKeyCount": 8,
-          "blankOrPlaceholderExpectedKeys": [
-            "STRIPE_LIVE_SECRET_KEY"
-          ],
-          "extraKeyCount": 2,
+          "presentExpectedKeyCount": 0,
+          "blankOrPlaceholderExpectedKeys": [],
+          "extraKeyCount": 0,
           "redactionBoundary": "Only expected owner-proof environment key names are reported. Extra local key names and all values are redacted from repo artifacts and command output."
         },
         "liveProofReadiness": [
@@ -825,15 +1054,35 @@
             "ready": false,
             "envFileCompleteButNotLoaded": false,
             "requiredGroupCount": 6,
-            "presentGroupCount": 5,
-            "missingGroupCount": 1,
+            "presentGroupCount": 0,
+            "missingGroupCount": 6,
             "blankOrPlaceholderEnvFileCount": 0,
             "invalidKeyModeCount": 0,
-            "loadFromEnvFileCount": 5,
+            "loadFromEnvFileCount": 0,
             "missingGroups": [
+              [
+                "SUPABASE_URL",
+                "VITE_SUPABASE_URL"
+              ],
+              [
+                "SUPABASE_ANON_KEY",
+                "VITE_SUPABASE_ANON_KEY"
+              ],
+              [
+                "LIVE_SUPABASE_TEST_USER_EMAIL",
+                "STRIPE_TEST_USER_EMAIL"
+              ],
+              [
+                "LIVE_SUPABASE_TEST_USER_PASSWORD",
+                "STRIPE_TEST_USER_PASSWORD"
+              ],
               [
                 "STRIPE_TEST_SECRET_KEY",
                 "STRIPE_TEST_RESTRICTED_KEY"
+              ],
+              [
+                "STRIPE_TEST_PRICE_ID",
+                "APO_STRIPE_TEST_PRICE_ID"
               ]
             ],
             "blankOrPlaceholderEnvFile": [],
@@ -844,106 +1093,111 @@
               "resolvedSource": null,
               "resolvedMode": "missing"
             },
-            "loadFromEnvFile": [
-              "SUPABASE_URL",
-              "SUPABASE_ANON_KEY",
-              "LIVE_SUPABASE_TEST_USER_EMAIL",
-              "LIVE_SUPABASE_TEST_USER_PASSWORD",
-              "STRIPE_TEST_PRICE_ID"
-            ]
+            "loadFromEnvFile": []
           },
           {
             "id": "production_calibration",
             "command": "npm run verify:production-calibration",
             "ready": false,
-            "envFileCompleteButNotLoaded": true,
+            "envFileCompleteButNotLoaded": false,
             "requiredGroupCount": 2,
-            "presentGroupCount": 2,
-            "missingGroupCount": 0,
+            "presentGroupCount": 0,
+            "missingGroupCount": 2,
             "blankOrPlaceholderEnvFileCount": 0,
             "invalidKeyModeCount": 0,
-            "loadFromEnvFileCount": 2,
-            "missingGroups": [],
+            "loadFromEnvFileCount": 0,
+            "missingGroups": [
+              [
+                "SUPABASE_URL",
+                "VITE_SUPABASE_URL"
+              ],
+              [
+                "SUPABASE_ANON_KEY",
+                "VITE_SUPABASE_ANON_KEY"
+              ]
+            ],
             "blankOrPlaceholderEnvFile": [],
             "invalidKeyModeGroups": [],
             "stripeKeyModeRequirement": null,
-            "loadFromEnvFile": [
-              "SUPABASE_URL",
-              "SUPABASE_ANON_KEY"
-            ]
+            "loadFromEnvFile": []
           },
           {
             "id": "authenticated_live_artifact_e2e",
             "command": "npm run verify:commercial-live-auth-e2e",
             "ready": false,
-            "envFileCompleteButNotLoaded": true,
+            "envFileCompleteButNotLoaded": false,
             "requiredGroupCount": 4,
-            "presentGroupCount": 4,
-            "missingGroupCount": 0,
+            "presentGroupCount": 0,
+            "missingGroupCount": 4,
             "blankOrPlaceholderEnvFileCount": 0,
             "invalidKeyModeCount": 0,
-            "loadFromEnvFileCount": 4,
-            "missingGroups": [],
+            "loadFromEnvFileCount": 0,
+            "missingGroups": [
+              [
+                "SUPABASE_URL",
+                "VITE_SUPABASE_URL"
+              ],
+              [
+                "SUPABASE_ANON_KEY",
+                "VITE_SUPABASE_ANON_KEY"
+              ],
+              [
+                "LIVE_SUPABASE_TEST_USER_EMAIL"
+              ],
+              [
+                "LIVE_SUPABASE_TEST_USER_PASSWORD"
+              ]
+            ],
             "blankOrPlaceholderEnvFile": [],
             "invalidKeyModeGroups": [],
             "stripeKeyModeRequirement": null,
-            "loadFromEnvFile": [
-              "SUPABASE_URL",
-              "SUPABASE_ANON_KEY",
-              "LIVE_SUPABASE_TEST_USER_EMAIL",
-              "LIVE_SUPABASE_TEST_USER_PASSWORD"
-            ]
+            "loadFromEnvFile": []
           },
           {
             "id": "live_mrr_gt_zero",
             "command": "npm run verify:stripe-live-mrr",
             "ready": false,
-            "envFileCompleteButNotLoaded": true,
+            "envFileCompleteButNotLoaded": false,
             "requiredGroupCount": 1,
-            "presentGroupCount": 1,
-            "missingGroupCount": 0,
+            "presentGroupCount": 0,
+            "missingGroupCount": 1,
             "blankOrPlaceholderEnvFileCount": 0,
             "invalidKeyModeCount": 0,
-            "loadFromEnvFileCount": 1,
-            "missingGroups": [],
+            "loadFromEnvFileCount": 0,
+            "missingGroups": [
+              [
+                "STRIPE_LIVE_SECRET_KEY",
+                "STRIPE_LIVE_RESTRICTED_KEY",
+                "STRIPE_SECRET_KEY"
+              ]
+            ],
             "blankOrPlaceholderEnvFile": [],
             "invalidKeyModeGroups": [],
             "stripeKeyModeRequirement": {
               "requiredMode": "live",
-              "resolvedKey": "STRIPE_SECRET_KEY",
-              "resolvedSource": "env_file",
-              "resolvedMode": "live"
+              "resolvedKey": null,
+              "resolvedSource": null,
+              "resolvedMode": "missing"
             },
-            "loadFromEnvFile": [
-              "STRIPE_SECRET_KEY"
-            ]
+            "loadFromEnvFile": []
           }
         ],
         "liveGateEvidence": {
           "path": "docs/commercialization/live-gate-evidence.local.json",
-          "exists": true,
-          "validJson": true,
-          "schemaVersion": "2026-05-31.apo-live-gate-evidence.v1",
-          "placeholderCount": 0,
+          "exists": false,
+          "validJson": false,
+          "placeholderCount": null,
           "complete": false,
-          "acceptedGateIds": [
-            "production_calibration_run",
-            "authenticated_live_artifact_e2e"
-          ],
+          "acceptedGateIds": [],
           "rejectedGateIds": [],
           "errorCount": 0,
           "errors": []
         },
         "commercialIntake": {
           "path": "docs/commercialization/commercial-evidence-intake.local.json",
-          "exists": true,
-          "validJson": true,
-          "schemaVersion": "2026-06-01.apo-commercial-evidence-intake.v1",
-          "placeholderCount": 5,
-          "commercialEvidenceIntakeCounts": {
-            "designPartnerCommitmentCount": 3,
-            "documentedOutcomeCount": 1
-          }
+          "exists": false,
+          "validJson": false,
+          "placeholderCount": null
         },
         "manualWcagEvidence": {
           "path": "docs/commercialization/manual-wcag-evidence.local.json",
@@ -984,8 +1238,8 @@
             "command": "npm run verify:production-calibration",
             "exists": true,
             "validJson": true,
-            "artifactStatus": "passed",
-            "acceptedSourceArtifact": true
+            "artifactStatus": "skipped_missing_env",
+            "acceptedSourceArtifact": false
           },
           {
             "path": "docs/commercialization/live-auth-e2e-proof-latest.json",
@@ -994,8 +1248,8 @@
             "command": "npm run verify:commercial-live-auth-e2e",
             "exists": true,
             "validJson": true,
-            "artifactStatus": "passed",
-            "acceptedSourceArtifact": true
+            "artifactStatus": "skipped_missing_env",
+            "acceptedSourceArtifact": false
           },
           {
             "path": "docs/commercialization/stripe-live-mrr-proof-latest.json",
@@ -1004,7 +1258,7 @@
             "command": "npm run verify:stripe-live-mrr",
             "exists": true,
             "validJson": true,
-            "artifactStatus": "failed",
+            "artifactStatus": "skipped_missing_env",
             "acceptedSourceArtifact": false
           }
         ],
@@ -1045,13 +1299,12 @@
         "ok": false,
         "complete": false,
         "wrote": null,
-        "acceptedGateIds": [
-          "production_calibration_run",
-          "authenticated_live_artifact_e2e"
-        ],
-        "errorCount": 2,
+        "acceptedGateIds": [],
+        "errorCount": 4,
         "errorExcerpts": [
           "stripe-test-checkout: docs/commercialization/stripe-test-checkout-proof-latest.json must have status=passed and all checks passed",
+          "production-calibration: docs/commercialization/production-calibration-proof-latest.json must have status=passed and all checks passed",
+          "authenticated-live-artifact-e2e: docs/commercialization/live-auth-e2e-proof-latest.json must have status=passed and all checks passed",
           "stripe-live-mrr: docs/commercialization/stripe-live-mrr-proof-latest.json must have status=passed and all checks passed"
         ]
       },
@@ -1071,17 +1324,12 @@
         "outcomeGateSatisfied": false,
         "uniqueDesignPartnerCount": 0,
         "uniqueOutcomeCount": 0,
-        "errorCount": 29,
+        "errorCount": 4,
         "errorExcerpts": [
+          "docs/commercialization/commercial-evidence-intake.local.json is missing",
           "hashSalt or COMMERCIAL_EVIDENCE_HASH_SALT must be an owner-held non-placeholder string with at least 16 characters",
-          "designPartnerCommitments[0].partnerRef must not be a placeholder",
-          "designPartnerCommitments[0].proofArtifactHashes must contain at least one non-placeholder sha256 hash",
-          "designPartnerCommitments[0].proofArtifactTypes must contain at least one supported proof artifact type",
-          "designPartnerCommitments[0].rawEvidenceOwnerHeld must be true",
-          "designPartnerCommitments[0].integrityAttestations must be an object",
-          "designPartnerCommitments[0].ownerEvidenceArchive must be an object",
-          "designPartnerCommitments[1].partnerRef must not be a placeholder",
-          "21 additional error(s) omitted from this redacted summary"
+          "designPartnerCommitments must be an array",
+          "documentedOutcomes must be an array"
         ]
       },
       "stderrTail": []
@@ -1095,12 +1343,9 @@
       "signal": null,
       "summary": {
         "ok": false,
-        "found": true,
+        "found": false,
         "complete": false,
-        "acceptedGateIds": [
-          "production_calibration_run",
-          "authenticated_live_artifact_e2e"
-        ],
+        "acceptedGateIds": [],
         "errorCount": 0,
         "errorExcerpts": []
       },
@@ -1170,29 +1415,31 @@
       "summary": {
         "ok": false,
         "goalComplete": false,
-        "acceptedLiveGateIds": [
-          "production_calibration_run",
-          "authenticated_live_artifact_e2e"
-        ],
+        "acceptedLiveGateIds": [],
         "partnerGateSatisfied": false,
         "outcomeGateSatisfied": false,
         "manualWcagGateSatisfied": false,
         "blockedGateIds": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
+          "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
         ],
-        "ownerActionQueueCount": 5,
+        "ownerActionQueueCount": 7,
         "ownerActionGateIds": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
         ],
         "gateCount": 13,
-        "remainingManualEvidenceCount": 5,
+        "remainingManualEvidenceCount": 7,
         "wrote": null,
         "errorExcerpts": []
       },

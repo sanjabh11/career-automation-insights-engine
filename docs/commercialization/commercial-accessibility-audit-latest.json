@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T20:15:23.192Z",
+  "generatedAt": "2026-07-17T06:45:39.024Z",
   "target": "http://127.0.0.1:5176",
   "status": "automated_smoke_passed_manual_wcag_required",
   "boundary": "This packet proves automated responsive/accessibility smoke for the scoped commercial routes. It is not a WCAG conformance claim; manual WCAG 2.2, WCAG-EM, screen-reader, contrast, focus, form-error, target-size, and accessible-authentication evidence remains required before institutional delivery.",
@@ -88,7 +88,7 @@
       "label": "commercial trust center",
       "viewport": "mobile",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 79577,
+      "bodyLength": 79741,
       "interactiveCount": 30,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -110,8 +110,8 @@
       "label": "coach landing page",
       "viewport": "mobile",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 4842,
-      "interactiveCount": 10,
+      "bodyLength": 4676,
+      "interactiveCount": 9,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -122,9 +122,9 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 10,
-      "keyboardTabStopsChecked": 10,
-      "focusReview": "first 10 tab stops visible and not obscured",
+      "focusableCount": 8,
+      "keyboardTabStopsChecked": 8,
+      "focusReview": "first 8 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
     },
     {
@@ -176,8 +176,8 @@
       "label": "counselor reports",
       "viewport": "mobile",
       "heading": "Counselor Report Generator",
-      "bodyLength": 1518,
-      "interactiveCount": 25,
+      "bodyLength": 1672,
+      "interactiveCount": 26,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -188,7 +188,7 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 24,
+      "focusableCount": 25,
       "keyboardTabStopsChecked": 10,
       "focusReview": "first 10 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
@@ -220,7 +220,7 @@
       "label": "proof-pack gallery",
       "viewport": "mobile",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 61824,
+      "bodyLength": 61901,
       "interactiveCount": 29,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -242,7 +242,7 @@
       "label": "occupation SEO report",
       "viewport": "mobile",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2401,
+      "bodyLength": 2440,
       "interactiveCount": 25,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -286,7 +286,7 @@
       "label": "commercial trust center",
       "viewport": "tablet",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 79577,
+      "bodyLength": 79741,
       "interactiveCount": 30,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -308,8 +308,8 @@
       "label": "coach landing page",
       "viewport": "tablet",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 4842,
-      "interactiveCount": 10,
+      "bodyLength": 4676,
+      "interactiveCount": 9,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -320,9 +320,9 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 10,
-      "keyboardTabStopsChecked": 10,
-      "focusReview": "first 10 tab stops visible and not obscured",
+      "focusableCount": 8,
+      "keyboardTabStopsChecked": 8,
+      "focusReview": "first 8 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
     },
     {
@@ -374,8 +374,8 @@
       "label": "counselor reports",
       "viewport": "tablet",
       "heading": "Counselor Report Generator",
-      "bodyLength": 1518,
-      "interactiveCount": 25,
+      "bodyLength": 1672,
+      "interactiveCount": 26,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -386,7 +386,7 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 24,
+      "focusableCount": 25,
       "keyboardTabStopsChecked": 10,
       "focusReview": "first 10 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
@@ -418,7 +418,7 @@
       "label": "proof-pack gallery",
       "viewport": "tablet",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 61824,
+      "bodyLength": 61901,
       "interactiveCount": 29,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -440,7 +440,7 @@
       "label": "occupation SEO report",
       "viewport": "tablet",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2397,
+      "bodyLength": 2415,
       "interactiveCount": 25,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -484,7 +484,7 @@
       "label": "commercial trust center",
       "viewport": "desktop",
       "heading": "Responsible AI and institutional trust boundaries",
-      "bodyLength": 79577,
+      "bodyLength": 79741,
       "interactiveCount": 30,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -506,8 +506,8 @@
       "label": "coach landing page",
       "viewport": "desktop",
       "heading": "Build Source-Labeled\nAutomation Defense Audits",
-      "bodyLength": 4899,
-      "interactiveCount": 16,
+      "bodyLength": 4733,
+      "interactiveCount": 15,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -518,7 +518,7 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 16,
+      "focusableCount": 14,
       "keyboardTabStopsChecked": 10,
       "focusReview": "first 10 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
@@ -572,8 +572,8 @@
       "label": "counselor reports",
       "viewport": "desktop",
       "heading": "Counselor Report Generator",
-      "bodyLength": 1518,
-      "interactiveCount": 25,
+      "bodyLength": 1672,
+      "interactiveCount": 26,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
         "one visible h1",
@@ -584,7 +584,7 @@
         "pointer targets reviewed for obvious non-inline controls below 24px"
       ],
       "result": "pass",
-      "focusableCount": 24,
+      "focusableCount": 25,
       "keyboardTabStopsChecked": 10,
       "focusReview": "first 10 tab stops visible and not obscured",
       "textSpacingReview": "text-spacing stress passed"
@@ -616,7 +616,7 @@
       "label": "proof-pack gallery",
       "viewport": "desktop",
       "heading": "Proof-pack gallery for coach, career-center, and workforce pilots",
-      "bodyLength": 61881,
+      "bodyLength": 61958,
       "interactiveCount": 35,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [
@@ -638,7 +638,7 @@
       "label": "occupation SEO report",
       "viewport": "desktop",
       "heading": "Accountant Automation Defense Estimate",
-      "bodyLength": 2464,
+      "bodyLength": 2460,
       "interactiveCount": 25,
       "targetSizeReview": "no obvious non-inline target below 24px",
       "automatedChecks": [

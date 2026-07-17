@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T23:23:11.442Z",
+  "generatedAt": "2026-07-17T09:54:34.527Z",
   "sourceManifestPath": "src/lib/sourceManifest.ts",
   "sourceVerificationPath": "docs/commercialization/source-verification-latest.json",
   "sourceVerification": {
@@ -532,9 +532,9 @@
         "create-checkout-session"
       ],
       "caveat": "Frontend checkout helpers now pass Supabase auth tokens through the deployed checkout function; live fulfillment still needs Stripe test-mode replay.",
-      "bytes": 14347,
-      "rows": 428,
-      "sha256": "2bc4cc0afb9897157acb33266cedb7b735871ec17aec23e052c33c14f7be4c68",
+      "bytes": 14476,
+      "rows": 429,
+      "sha256": "eab0e90798a9701a66225d5ebfcf6fd16a34666b04c974a5f68f4b0c923e85f5",
       "failures": [],
       "passed": true
     },
@@ -619,9 +619,9 @@
         "model-provider logs, browser files, exports, and backups are outside this receipt"
       ],
       "caveat": "Edge-function proof metadata documents raw-text redaction, parser receipt linkage, receipt availability, source-labeled evidence cards, and employment-decision boundaries; live deployment and provider-log controls must still be verified separately.",
-      "bytes": 15384,
-      "rows": 292,
-      "sha256": "1414ebd82f09f074828e7d4bc3490de3c57d2da26c63493aca659f921230f334",
+      "bytes": 16320,
+      "rows": 309,
+      "sha256": "8dfc09b0381005e5873f40af3963108559e547aac94c9b9ef6b92ba7179d9f9a",
       "failures": [],
       "passed": true
     },
@@ -863,12 +863,15 @@
         "confidenceDelta",
         "remainingExternalGates",
         "Keep the active goal open",
-        "remediation-completion-audit-latest.md"
+        "remediation-completion-audit-latest.md",
+        "resolveComparisonBase",
+        "comparisonBaseStatus",
+        "No known remediation baseline ref is available locally"
       ],
       "caveat": "Generates a phase-by-phase closeout ledger from current gate artifacts and repo evidence; it does not convert local proof into owner-held live or commercial evidence.",
-      "bytes": 12651,
-      "rows": 231,
-      "sha256": "5e93ead4eaefe0e51d2144697a9be773bb42474f1a0c142e088bd3bc6073dd16",
+      "bytes": 13521,
+      "rows": 256,
+      "sha256": "4fac8c914855e5bc5b2dc013210b0e4568311b62f77a013e5b90e50d0417cb76",
       "failures": [],
       "passed": true
     },
@@ -926,21 +929,77 @@
         "Upload blocked by parser boundary",
         "data-resume-proof-report=\"true\"",
         "data-resume-proof-report-redacted",
-        "data-resume-proof-artifact-boundary=\"true\"",
-        "data-resume-server-parser-receipt=\"true\"",
         "data-resume-parser-receipt-boundary=\"true\"",
         "Resume Work Transition Proof Report",
         "Download Proof Report",
-        "Save Redacted Artifact",
         "Copy Rewrite Drafts",
         "coaching draft only",
         "resume-server-parser-boundary",
         "Not a hiring, firing, promotion, compensation, layoff, screening, or eligibility decision tool"
       ],
       "caveat": "Resume proof report download is a client-side coaching artifact; saved resume proof artifacts are redacted and user-owned. Production PDF/DOCX parsing, live parser deployment, external provider retention controls, and employment-decision validation remain separate work.",
-      "bytes": 68473,
-      "rows": 1218,
-      "sha256": "377424c0aba0349c43e5b4e042b6ba715de1d5f0712f506227404eaf49a25e6c",
+      "bytes": 41389,
+      "rows": 772,
+      "sha256": "b1d546842a72c4a36bf72efe5df4200f37497d72f55c7fb62a6261901b78f638",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-upload-section-ui",
+      "label": "Resume upload and server-parser boundary UI",
+      "path": "src/components/resume-panels/UploadSection.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "owasp-file-upload",
+        "supabase-edge-functions",
+        "nist-ai-rmf",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "data-resume-server-parser-receipt=\"true\"",
+        "data-resume-server-parser-evidence-id",
+        "serverParserReceipt",
+        "Upload resume file",
+        "PDF/DOC/DOCX may require paste fallback",
+        "Raw file stored:",
+        "Does not prove:",
+        "REPORT_TRUST_NOTICES"
+      ],
+      "caveat": "Upload UI exposes the server-parser receipt and conservative PDF/DOCX fallback boundary; it does not prove parser deployment, malware scanning, external retention deletion, or production extraction quality.",
+      "bytes": 6739,
+      "rows": 142,
+      "sha256": "7632eee4599bc8fa0644c2d8b31f643d451865bb01b7091fcf601802c7c29bd4",
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "resume-proof-artifact-ui",
+      "label": "Resume redacted proof-artifact controls",
+      "path": "src/components/resume-panels/RiskScoreCard.tsx",
+      "type": "commercial-page",
+      "sourceIds": [
+        "nist-ai-rmf",
+        "ada-ai-hiring-guidance",
+        "eeoc-employment-selection-procedures",
+        "cfpb-employment-algorithmic-scores",
+        "wcag-22",
+        "llm-output"
+      ],
+      "expectedSnippets": [
+        "data-resume-proof-artifact-boundary=\"true\"",
+        "Save Redacted Artifact",
+        "savedProofArtifact",
+        "deleteSavedProofArtifact",
+        "data-resume-proof-artifact-status",
+        "data-resume-proof-artifact-deletion-receipt",
+        "raw resume text, phrase detail rows, and rewrite detail rows are omitted",
+        "isSupabaseConfigured"
+      ],
+      "caveat": "The score-card controls expose authenticated redacted-artifact save/delete affordances and receipts; they do not prove live Supabase schema state or external-provider deletion.",
+      "bytes": 8643,
+      "rows": 187,
+      "sha256": "c0c0aaaf3a45149d6727128b3068ea6355b795d2cb069029a2ff7a779d1a6c72",
       "failures": [],
       "passed": true
     },
@@ -1173,9 +1232,9 @@
         "WAI-ARIA Authoring Practices"
       ],
       "caveat": "Generated responsive/accessibility smoke artifact for scoped commercial routes; manual WCAG 2.2, screen-reader, contrast, form-error, and authentication review remains required before institutional delivery.",
-      "bytes": 28102,
+      "bytes": 28094,
       "rows": 768,
-      "sha256": "11ce554899e8b74e63708a270404b00e164963e71b14e528ae0d47af35cd5697",
+      "sha256": "0fda200f275fe7e454abc09316323aab82056938a3032a83b2e7882a8eab51cb",
       "failures": [],
       "passed": true
     },
@@ -1203,9 +1262,9 @@
         "WCAG-EM"
       ],
       "caveat": "Human-readable audit packet for buyer review; it is not a formal WCAG conformance statement and requires completed manual evidence before institutional delivery.",
-      "bytes": 11104,
+      "bytes": 11098,
       "rows": 64,
-      "sha256": "7baba9d55ff67d0273193171bd246b695b02e80f07eebef60b5f1b6f9f3152a7",
+      "sha256": "d8372174752f8500952a5546a88570c7fd45d5794ccad72124cac18cecb7b306",
       "failures": [],
       "passed": true
     },
@@ -1347,9 +1406,9 @@
         "combinedSqlSha256"
       ],
       "caveat": "Deployment packet proves local migration ordering, hashes, and guardrail checks; it does not apply migrations or prove remote schema state without credentials.",
-      "bytes": 14212,
-      "rows": 310,
-      "sha256": "508262fe0e3309bbed6bf48b9ebebca3bd0a3f064f429e268e1eb03eed9ed732",
+      "bytes": 15739,
+      "rows": 346,
+      "sha256": "8ff2740b2af336e1b45008e93f7810eea908b51611add270db6ad3ca922ad221",
       "failures": [],
       "passed": true
     },
@@ -1375,9 +1434,9 @@
         "npm run verify:onet-task-ratings-live"
       ],
       "caveat": "Runbook gives the credential-gated production deployment and verification sequence; it does not replace live migration proof or authenticated e2e checks.",
-      "bytes": 6105,
-      "rows": 83,
-      "sha256": "51edd257869f5d1b924847d7eb9636cfa5cc8624d440e0e4712b459ce3939983",
+      "bytes": 6385,
+      "rows": 87,
+      "sha256": "f44c972cd389511ebd4e6f3b35b051ea8164e7a73d5ea5e7539a42f9d5d5d213",
       "failures": [],
       "passed": true
     },

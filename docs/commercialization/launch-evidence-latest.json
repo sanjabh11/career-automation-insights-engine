@@ -2,16 +2,16 @@
   "schema_version": 1,
   "repo": {
     "name": "vite_react_shadcn_ts",
-    "path": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine",
+    "path": "/Users/sanjayb/career-automation-insights-engine-fresh",
     "profile": "ai-app",
-    "commit": "8da4adc"
+    "commit": "e4fc6bf"
   },
   "run": {
     "name": "career-automation-insights-commercial-launch-readiness",
     "mode": "fix-safe",
     "research_depth": "deep",
     "worker_mode": "dry-run",
-    "generated_at": "2026-06-08T23:28:23.203Z",
+    "generated_at": "2026-07-17T10:08:31.996Z",
     "branch": "main"
   },
   "launch_decision": "pilot-only",
@@ -197,11 +197,53 @@
       "owner_action": "Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.",
       "owner_prep_command": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
       "blocking_owner_actions": [
-        "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+        "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
         "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy"
       ],
       "next_command": "npm run verify:stripe-test-checkout",
       "fix": "Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.",
+      "status": "open"
+    },
+    {
+      "id": "production_calibration_run",
+      "gate_id": "production_calibration_run",
+      "gap": "Production calibration run",
+      "severity": "P1",
+      "evidence": "docs/commercialization/remediation-completion-audit-latest.json#production_calibration_run",
+      "framework_mapping": [
+        "NIST AI RMF Measure",
+        "Model-card and calibration evidence boundary"
+      ],
+      "needed_evidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+      "buyer_impact": "Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.",
+      "owner_action": "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+      "owner_prep_command": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "blocking_owner_actions": [
+        "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+      ],
+      "next_command": "npm run verify:production-calibration",
+      "fix": "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+      "status": "open"
+    },
+    {
+      "id": "authenticated_live_artifact_e2e",
+      "gate_id": "authenticated_live_artifact_e2e",
+      "gap": "Authenticated live artifact e2e",
+      "severity": "P1",
+      "evidence": "docs/commercialization/remediation-completion-audit-latest.json#authenticated_live_artifact_e2e",
+      "framework_mapping": [
+        "OWASP ASVS authenticated workflow evidence",
+        "Supabase RLS/RPC proof boundary"
+      ],
+      "needed_evidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
+      "buyer_impact": "Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.",
+      "owner_action": "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
+      "owner_prep_command": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+      "blocking_owner_actions": [
+        "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD"
+      ],
+      "next_command": "npm run verify:commercial-live-auth-e2e",
+      "fix": "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
       "status": "open"
     },
     {
@@ -219,7 +261,7 @@
       "owner_action": "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
       "owner_prep_command": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
       "blocking_owner_actions": [
-        "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+        "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
         "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
       ],
       "next_command": "npm run verify:stripe-live-mrr",
@@ -241,7 +283,7 @@
       "owner_action": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held partner proof artifacts, then fill the ignored commercial evidence intake with three permissioned design-partner commitments, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and an owner-held salt; preserve raw names/contracts/proof artifacts outside git.",
       "owner_prep_command": "npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>",
       "blocking_owner_actions": [
-        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
       ],
       "next_command": "COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all",
       "fix": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held partner proof artifacts, then fill the ignored commercial evidence intake with three permissioned design-partner commitments, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and an owner-held salt; preserve raw names/contracts/proof artifacts outside git.",
@@ -262,7 +304,7 @@
       "owner_action": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held outcome proof artifacts, then fill the ignored commercial evidence intake with at least one permissioned documented outcome, including baseline workflow, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and caveats.",
       "owner_prep_command": "npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>",
       "blocking_owner_actions": [
-        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+        "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
       ],
       "next_command": "COMMERCIAL_EVIDENCE_HASH_SALT=\"<owner-held salt>\" npm run compose:commercial-evidence-records -- --write --require-all",
       "fix": "Generate the commercial evidence intake packet, use the partner/outcome matrix to prepare owner-held proof, hash owner-held outcome proof artifacts, then fill the ignored commercial evidence intake with at least one permissioned documented outcome, including baseline workflow, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, non-placeholder proofArtifactHashes, supported proofArtifactTypes, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and caveats.",
@@ -888,14 +930,16 @@
   },
   "fix_report": {
     "files_changed_scope": "Commercial launch-readiness scripts, generated ledgers, Trust Center proof surfaces, Supabase payment functions, and proof-pack docs.",
-    "owner_action_queue_count": 5,
-    "owner_prep_command_count": 5,
-    "owner_prep_action_needed_count": 6,
+    "owner_action_queue_count": 7,
+    "owner_prep_command_count": 7,
+    "owner_prep_action_needed_count": 10,
     "ledger_alignment": {
       "status": "generated_from_current_ledgers",
       "expected_gate_ids": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -903,6 +947,8 @@
       "launch_gap_ids": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -910,6 +956,8 @@
       "launch_gap_gate_ids": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -917,6 +965,8 @@
       "owner_action_gate_ids": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -924,6 +974,8 @@
       "owner_handoff_gate_ids": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -1001,7 +1053,7 @@
     },
     "checks_run": [
       "node scripts/generate-launch-evidence-manifest.mjs --write --validate",
-      "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/Documents/newrepo/career-automation-insights-engine/docs/commercialization/launch-evidence-latest.json --require-repo-exists"
+      "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/career-automation-insights-engine-fresh/docs/commercialization/launch-evidence-latest.json --require-repo-exists"
     ],
     "checks_run_boundary": "checks_run records only the manifest-generation and schema-validation commands represented by this artifact. Default release, browser journey, accessibility, network, typecheck, and diff checks require separate current command output.",
     "release_gate_commands": {
@@ -1018,7 +1070,7 @@
       "default_core": {
         "command": "npm run verify:commercial",
         "includedInThisInvocation": true,
-        "passedInThisInvocation": true
+        "passedInThisInvocation": false
       },
       "browser_journey": {
         "command": "npm run verify:commercial-browser",
@@ -1043,7 +1095,7 @@
       "typecheck": {
         "command": "npx tsc --noEmit",
         "includedInThisInvocation": true,
-        "passedInThisInvocation": true,
+        "passedInThisInvocation": false,
         "boundary": "Included in the default commercial verifier as a repo-local TypeScript contract check."
       },
       "diff_check": {
@@ -1062,6 +1114,8 @@
     "unresolved_blockers": [
       "manual_wcag_evidence",
       "real_stripe_test_checkout",
+      "production_calibration_run",
+      "authenticated_live_artifact_e2e",
       "live_mrr_gt_zero",
       "three_committed_partners",
       "documented_outcomes"
@@ -4228,7 +4282,7 @@
       "minimality_score": 4,
       "evidence": "The generator emits the validator-required implementation_decisions, rejected_variants, and code_optimization_reviews arrays while preserving the existing pilot-only owner-evidence boundary.",
       "tests_or_checks": [
-        "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/Documents/newrepo/career-automation-insights-engine/docs/commercialization/launch-evidence-latest.json --require-repo-exists",
+        "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/career-automation-insights-engine-fresh/docs/commercialization/launch-evidence-latest.json --require-repo-exists",
         "node scripts/generate-launch-evidence-manifest.mjs --write --validate"
       ]
     },
@@ -5630,9 +5684,9 @@
   "progress_updates": [
     {
       "phase": "owner-operational-access-command-checklist-surfacing",
-      "created_at": "2026-06-08T23:28:23.208Z",
+      "created_at": "2026-07-17T10:08:32.119Z",
       "accomplished": [
-        "Default commercial verifier summary status=passed; 68/68 planned repo-side steps passed and 0 failed, followed by post-summary redaction, launch-readiness alignment, and full-local approval-package checks.",
+        "Default commercial verifier summary status=failed; final step counts are written after the launch-evidence generation step, so use docs/commercialization/commercial-verification-summary-latest.json as the authoritative release-gate coverage artifact.",
         "Latest Code Optimization Gate review: Owner operational access command checklist surfacing (pass, minimality 5/5). The owner evidence handoff, completion drill, and Trust Center now expose the exact owner-run GitHub/Supabase access probes plus strict live-closeout verifier commands, while fixture suites fail closed on stale command lists or missing Markdown, the trust sentinel avoids stale failed-summary coupling during release runs, and the pilot-only owner-access boundary is preserved.",
         "Launch evidence manifest validates against the orchestrator schema and remains pilot-only with five owner-evidence gates open.",
         "Plan-only full-local workflow status is executable and remains executionApproved=false."
@@ -5641,29 +5695,29 @@
         {
           "lane": "Repo Map",
           "target_percent": 10,
-          "current_percent": 100,
-          "status": "pass",
+          "current_percent": 45,
+          "status": "running",
           "evidence": [
             "docs/commercialization/commercialization-codebase-index.json",
             "docs/commercialization/commercial-verification-summary-latest.json"
           ],
-          "confidence": 5
+          "confidence": 3
         },
         {
           "lane": "Security",
           "target_percent": 15,
-          "current_percent": 100,
-          "status": "pass",
+          "current_percent": 45,
+          "status": "running",
           "evidence": [
             "npm run verify:commercial",
             "docs/commercialization/commercial-artifact-redaction-latest.json"
           ],
-          "confidence": 5
+          "confidence": 3
         },
         {
           "lane": "Readiness",
           "target_percent": 15,
-          "current_percent": 85,
+          "current_percent": 45,
           "status": "running",
           "evidence": [
             "docs/commercialization/commercial-verification-summary-latest.json",
@@ -5711,14 +5765,14 @@
           "status": "running",
           "evidence": [
             "docs/commercialization/full-local-gate-execution-plan-2026-06-05.md",
-            "commercial-eu-ai-act-high-risk-boundary"
+            "commercial-browser-journey-readback-after-wcag2ict"
           ],
           "confidence": 4
         },
         {
           "lane": "Synthesis + Validation",
           "target_percent": 5,
-          "current_percent": 90,
+          "current_percent": 45,
           "status": "running",
           "evidence": [
             "docs/commercialization/launch-evidence-latest.json",
@@ -5731,13 +5785,15 @@
       "pending": [
         "manual_wcag_evidence: Completed redacted manual WCAG 2.2 A/AA evidence metadata validated by `npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete`, including WCAG-EM product scope, route-sample rationale, sample-selection method, technologies relied upon, complete-process review, accessibility-support baseline combinations, reviewer type and conflict disclosure, review-record archive attestations, ownerEvidenceArchive policy metadata, keyboard/focus, target-size, form error, accessible-authentication, screen-reader, contrast/reflow/text-spacing, and downloadable-artifact review. Use `npm run generate:manual-wcag-review-packet`, `docs/commercialization/manual-wcag-review-packet-latest.md`, and `docs/commercialization/manual-wcag-review-matrix-latest.csv` as the reviewer worksheet before hashing owner-held proof artifacts.",
         "real_stripe_test_checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.",
+        "production_calibration_run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+        "authenticated_live_artifact_e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
         "live_mrr_gt_zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.",
         "three_committed_partners: At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, contact permission, proof artifact hashes/types, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
         "documented_outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-outcomes`, with baseline workflow, artifact reviewed, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, proof artifact hashes/types, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, does-not-prove text, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
         "Explicit approval is still required before optional Browser/Computer, accessibility, browser journey, network/source fetch, npm audit, full-local worker execution, live payment, credential, or outreach gates."
       ],
       "activities_remaining": {
-        "current_phase_actions": 5,
+        "current_phase_actions": 7,
         "next_phase_actions": 1,
         "next_phase": "owner-held evidence closeout or explicitly approved optional full-local gate execution"
       },
@@ -5747,9 +5803,9 @@
   "bottleneck_log": [
     {
       "phase": "owner-evidence-closeout",
-      "task_or_subtask": "manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes",
+      "task_or_subtask": "manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes",
       "elapsed_minutes": 0,
-      "last_update": "2026-06-08T23:28:23.210Z",
+      "last_update": "2026-07-17T10:08:32.121Z",
       "root_cause": "evidence gap",
       "top_unblock_options": [
         "Owner completes manual WCAG review packet, hashes owner-held review artifacts, and validates docs/commercialization/manual-wcag-evidence.local.json with --require-complete.",
@@ -5782,7 +5838,7 @@
     "repoArtifactProofCount": 8,
     "candidateShadowProofCount": 2,
     "roadmapProofCount": 3,
-    "gapCount": 5,
+    "gapCount": 7,
     "painPointCount": 10,
     "targetCustomerCount": 10,
     "competitorSubstituteCount": 5,
@@ -5797,7 +5853,7 @@
     "crmRowCount": 10,
     "fixReportCheckCount": 2,
     "approvalGateCount": 4,
-    "unresolvedBlockerCount": 5,
+    "unresolvedBlockerCount": 7,
     "implementationDecisionCount": 99,
     "rejectedVariantCount": 111,
     "codeOptimizationReviewCount": 99,

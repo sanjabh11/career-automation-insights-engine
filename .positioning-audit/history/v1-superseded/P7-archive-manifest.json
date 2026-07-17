@@ -1,0 +1,9 @@
+{
+  "archived_file": "artifacts/P7-terminal-report.md",
+  "archived_to": "history/v1-superseded/artifacts/P7-terminal-report.md",
+  "superseded_by": "P5-experiment-design.md (v2 repair)",
+  "reason": "P7 prematurely marked audit as TERMINAL with CONDITIONAL_GO. v2 repair identified: evidence misclassified, unsupported claims (PDF, free trial, no competitor), outdated ICF stat, no executed experiments. Regenerated into VALIDATION_PENDING per v8 schema requirements. P5 is the sole current experiment plan.",
+  "original_lifecycle": "P7_TERMINAL",
+  "original_decision": "CONDITIONAL_GO",
+  "archived_at": "2026-07-16T21:30:00Z"
+}

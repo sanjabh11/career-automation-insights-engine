@@ -16,7 +16,22 @@ const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+const configuredStarterPriceId = Deno.env.get('STRIPE_STARTER_PRICE_ID');
+const PILOT_CREDIT_PRICE_IDS: Record<string, string> = configuredStarterPriceId
+  ? { starter: configuredStarterPriceId }
+  : {};
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
 serve(async (req) => {
+  let claimedEventId: string | null = null;
   try {
     const signature = req.headers.get('stripe-signature');
     if (!signature) {
@@ -30,10 +45,43 @@ serve(async (req) => {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+      const message = getErrorMessage(err, 'Invalid webhook signature');
+      return new Response(`Webhook Error: ${message}`, { status: 400 });
     }
 
     console.log(`Processing event: ${event.type}`);
+
+    // Claim before doing any side effects. The database lease allows Stripe to
+    // retry a failed event while preventing concurrent duplicate fulfillment.
+    const payloadHash = await sha256Hex(body);
+    const { data: claim, error: claimError } = await supabase.rpc('claim_stripe_webhook_event', {
+      p_event_id: event.id,
+      p_event_type: event.type,
+      p_payload_hash: payloadHash,
+    });
+
+    if (claimError) {
+      throw new Error(`Webhook event claim failed: ${claimError.message}`);
+    }
+
+    if (!claim?.claimed) {
+      if (claim?.status === 'processed' || claim?.status === 'processing') {
+        console.log(`Event ${event.id} is already ${claim.status} — skipping duplicate delivery`);
+        return new Response(JSON.stringify({ received: true, idempotent: true, status: claim.status }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        });
+      }
+      if (claim?.status === 'payload_conflict') {
+        return new Response(JSON.stringify({ received: false, error: 'Webhook payload conflict' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 400,
+        });
+      }
+      throw new Error(`Webhook event could not be claimed: ${claim?.status || 'unknown'}`);
+    }
+
+    claimedEventId = event.id;
 
     // Handle different event types
     switch (event.type) {
@@ -62,14 +110,38 @@ serve(async (req) => {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
+    const { data: markedProcessed, error: markError } = await supabase.rpc('mark_stripe_webhook_event', {
+      p_event_id: event.id,
+      p_status: 'processed',
+      p_error: null,
+    });
+
+    if (markError || markedProcessed !== true) {
+      throw new Error(`Webhook event completion could not be recorded: ${markError?.message || 'unknown error'}`);
+    }
+
+    claimedEventId = null;
     return new Response(JSON.stringify({ received: true }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
   } catch (error) {
+    const message = getErrorMessage(error, 'Unable to process webhook');
     console.error('Error processing webhook:', error);
+
+    if (claimedEventId) {
+      const { error: markFailedError } = await supabase.rpc('mark_stripe_webhook_event', {
+        p_event_id: claimedEventId,
+        p_status: 'failed',
+        p_error: message.slice(0, 1000),
+      });
+      if (markFailedError) {
+        console.error('Failed to record webhook failure:', markFailedError);
+      }
+    }
+
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -187,9 +259,9 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
     .single();
 
   if (subscription_data) {
-    await supabase
+    const { error: transactionError } = await supabase
       .from('payment_transactions')
-      .insert({
+      .upsert({
         user_id: subscription_data.user_id,
         transaction_type: 'subscription',
         amount,
@@ -203,7 +275,11 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
           period_start: invoice.period_start,
           period_end: invoice.period_end,
         },
-      });
+      }, { onConflict: 'stripe_payment_intent_id' });
+
+    if (transactionError) {
+      throw new Error(`Subscription payment transaction could not be recorded: ${transactionError.message}`);
+    }
 
     console.log(`Payment succeeded for user: ${subscription_data.user_id}, amount: $${amount}`);
   }
@@ -254,14 +330,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   const { error } = await supabase
     .from('subscriptions')
-    .insert({
+    .upsert({
       user_id: clientReferenceId,
       tier,
       status: 'active',
       stripe_subscription_id: subscriptionId,
       stripe_customer_id: customerId,
       metadata: session.metadata || {},
-    });
+    }, { onConflict: 'stripe_subscription_id' });
 
   if (error) {
     console.error('Error creating subscription:', error);
@@ -272,52 +348,65 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 }
 
 async function handleCreditPurchaseCheckout(session: Stripe.Checkout.Session, userId: string) {
-  const credits = Number.parseInt(session.metadata?.credits || '0', 10);
-  const packageId = session.metadata?.packageId || 'unknown';
+  if (session.payment_status !== 'paid') {
+    throw new Error('Credit purchase checkout is not paid');
+  }
+
+  const packageId = session.metadata?.packageId || '';
+  const expectedPriceId = PILOT_CREDIT_PRICE_IDS[packageId];
   const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : null;
   const amount = typeof session.amount_total === 'number' ? session.amount_total / 100 : 0;
 
-  if (!Number.isFinite(credits) || credits <= 0) {
-    console.error('Invalid credit purchase checkout metadata:', session.metadata);
-    return;
+  if (!expectedPriceId || !paymentIntentId) {
+    throw new Error('Credit purchase is missing a supported package or payment intent');
   }
 
-  const { error: creditError } = await supabase.rpc('add_report_credits', {
+  if (session.metadata?.supabase_user_id && session.metadata.supabase_user_id !== userId) {
+    throw new Error('Credit purchase user mismatch');
+  }
+
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+  const purchasedPriceId = lineItems.data[0]?.price?.id;
+  if (purchasedPriceId !== expectedPriceId) {
+    throw new Error('Credit purchase price does not match the published coach package');
+  }
+
+  const { data: creditResult, error: creditError } = await supabase.rpc('fulfill_report_credit_purchase', {
     p_user_id: userId,
-    p_credits: credits,
-    p_stripe_id: paymentIntentId,
+    p_package_id: packageId,
+    p_stripe_payment_intent_id: paymentIntentId,
     p_description: `Stripe ${packageId} report credit purchase`,
   });
 
-  if (creditError) {
-    console.error('Error adding report credits:', creditError);
-    throw creditError;
+  if (creditError || !creditResult?.success) {
+    console.error('Error adding report credits:', creditError || creditResult?.error);
+    throw new Error(creditError?.message || creditResult?.error || 'Credit fulfillment failed');
   }
 
   const { error: transactionError } = await supabase
     .from('payment_transactions')
-    .insert({
+    .upsert({
       user_id: userId,
-      transaction_type: 'credit_purchase',
+      transaction_type: 'one_time',
       amount,
       currency: (session.currency || 'usd').toUpperCase(),
       status: 'succeeded',
       stripe_payment_intent_id: paymentIntentId,
-      description: `${credits} report credits purchased`,
+      description: `${creditResult.credits_added} report credits purchased`,
       metadata: {
         checkout_session_id: session.id,
         package_id: packageId,
-        credits,
+        credits: creditResult.credits_added,
         stripe_customer_id: session.customer,
       },
-    });
+    }, { onConflict: 'stripe_payment_intent_id' });
 
   if (transactionError) {
     console.error('Error recording credit purchase transaction:', transactionError);
     throw transactionError;
   }
 
-  console.log(`Credit purchase completed for user: ${userId}, credits: ${credits}, package: ${packageId}`);
+  console.log(`Credit purchase completed for user: ${userId}, credits: ${creditResult.credits_added}, package: ${packageId}`);
 }
 
 // ============================================================================

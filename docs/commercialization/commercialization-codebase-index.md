@@ -1,6 +1,6 @@
 # Commercialization Codebase Index
 
-Generated: 2026-06-08T23:22:19.406Z
+Generated: 2026-07-17T09:54:01.379Z
 Branch: `main`
 Purpose: Maintain a repo-grounded index of the commercial proof-pack surfaces, persistence boundaries, source registry, and verification gates.
 
@@ -158,6 +158,7 @@ Policies:
 | `smoke:commercial` | `node scripts/smoke-commercial-routes.mjs` |
 | `smoke:skill-adjacency` | `node scripts/verify-skill-adjacency-embedding.mjs` |
 | `verify:claim-boundaries` | `node scripts/verify-claim-boundaries.mjs` |
+| `verify:coach-pilot-contract` | `node scripts/verify-coach-pilot-contract.mjs` |
 | `verify:commercial` | `node scripts/verify-commercial-release.mjs` |
 | `verify:commercial-a11y` | `node scripts/verify-commercial-accessibility.mjs` |
 | `verify:commercial-artifact-redaction` | `node scripts/verify-commercial-artifact-redaction.mjs --write` |

@@ -77,6 +77,17 @@ export const analytics = {
     trackEvent('retention_return_visit', { surface }),
   commercialLeadCaptured: (source: string, buyerSegment: string, persisted: boolean) =>
     trackEvent('commercial_lead_captured', { source, buyer_segment: buyerSegment, persisted }),
+
+  // B2-5: Coach funnel analytics taxonomy (non-PII only)
+  // Never include: email, client label, occupation, report ID, free-form notes
+  coachLandingViewed: () => trackEvent('coach_landing_viewed'),
+  coachSampleViewed: () => trackEvent('coach_sample_viewed'),
+  coachPilotInterestSubmitted: () => trackEvent('coach_pilot_interest_submitted'),
+  coachCheckoutStarted: () => trackEvent('coach_checkout_started'),
+  coachCheckoutCompleted: () => trackEvent('coach_checkout_completed'),
+  coachReportSucceeded: () => trackEvent('coach_report_succeeded'),
+  coachReportRefunded: () => trackEvent('coach_report_refunded'),
+  coachFeedbackSubmitted: () => trackEvent('coach_feedback_submitted'),
 };
 
 export { posthog };

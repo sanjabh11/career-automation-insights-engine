@@ -87,8 +87,53 @@
 - Follow-up proof-boundary cleanup replaced hard-coded `/impact` outcome metrics/testimonials and static `/outcomes` correlation claims with evidence-gate and telemetry-boundary copy. `tests/e2e/proof-boundary-copy.spec.ts` verifies those legacy overclaims do not render.
 - Follow-up Stripe handoff cleanup added `npm run verify:stripe-test-checkout`, which signs in a synthetic Supabase user, calls `create-checkout-session`, retrieves the Stripe Checkout Session, and requires `livemode=false` when owner test credentials are present. Current redacted proof artifact is `skipped_missing_env` because an explicit test-mode Stripe key is still missing.
 - Follow-up live-MRR handoff cleanup added `npm run verify:stripe-live-mrr`, which reads Stripe live active subscriptions and paid invoices, rejects test-mode keys, and writes redacted proof metadata when owner live Stripe credentials are present. Current redacted proof artifact is `failed`; revenue remains unclaimed until a real paid recurring subscription and owner-held live Stripe proof pass.
-- Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. Current redacted proof artifact is `passed` and is accepted in `owner-evidence-closeout-status-latest.json`.
+- Follow-up production calibration handoff cleanup added `npm run verify:production-calibration`, which invokes the deployed `calibrate-ece` function, requires the expert-assessment calibration method, positive matched-pair/expert-row/bin counts, and a bounded ECE when owner Supabase target credentials are present. The current redacted proof artifact is `skipped_missing_env`; no production calibration claim is made without owner Supabase credentials and a live function run.
 - Follow-up commercial evidence cleanup added `npm run verify:commercial-evidence-records`, which validates redacted founder-held design-partner commitments and permissioned documented outcomes without storing names, contacts, contracts, notes, quotes, or customer data. The remediation gate ledger now consumes those records and can mark the partner/outcome gates as externally proven when accepted unique partner/outcome hashes satisfy the gate. The verifier rejects future-dated evidence metadata and record dates later than `asOf`. Current local run is `no_local_evidence`.
 - `npm run verify:remediation-gates` passes as a readiness ledger and writes `docs/commercialization/remediation-external-gates-latest.json` plus `.md`; its current `goalComplete=false` result is intentional because manual WCAG evidence, Stripe test checkout, live MRR, committed partner, and documented outcome gates remain open.
 - `npm run verify:live-gate-evidence` passes for partial redacted evidence with accepted `production_calibration_run` and `authenticated_live_artifact_e2e` metadata; the complete live evidence gate still fails until Stripe test checkout and live MRR proof artifacts pass.
 - Phase E cannot locally satisfy manual WCAG evidence, real Stripe test checkout, live MRR > $0, >=3 committed partners, or documented outcomes; those remain owner-held external/manual acceptance gates.
+
+## Active Continuation - Coach Pilot Gap Closure (2026-07-17)
+
+- [x] R0: Re-baseline current static, Edge, migration, and proof-boundary failures
+- [x] R1: Harden claim-boundary and trust verifiers against false-green paths
+- [x] R2: Repair report credit, pilot terms, lot, refund, webhook, and cleanup migration contracts
+- [x] R3: Repair checkout, enrollment, webhook, report-generation, and frontend retry contracts
+- [x] R4: Replace draft/unsupported pilot terms and add regression coverage for truthful funnel boundaries
+- [x] Gate B: Run focused checks, build/tests, local/staging-capable checks, and refresh evidence without claiming hosted proof
+
+### Gate B Review — 2026-07-17
+
+- [x] Repair stale commercial-trust and proof-visibility sentinels for the current 7-gate / 10-owner-action / 7-row closeout model.
+- [x] Split data-provenance checks across `ResumeAnalyzer`, `UploadSection`, and `RiskScoreCard` so child-owned proof markers are verified at their actual source paths.
+- [x] Make remediation completion-audit Git comparison baseline resolution branch-safe and fail-closed when no local baseline ref is available.
+- [x] Bound live closeout readiness CLI subprocesses and assign long-running fixture/lint steps explicit build-class timeouts.
+
+- Repository source contract is green: `npm run verify:coach-pilot-contract` (37 checks), `npm run verify:report-evidence`, `npm run verify:commercial-trust`, `npm run verify:supabase-function-governance`, `npm run verify:claim-boundaries`, positioning-audit validation, secret hygiene, and worktree hygiene all pass.
+- Latest bounded rerun: direct TypeScript no-emit passed with the pinned nvm Node runtime; focused ESLint over `src` and `supabase/functions` passed with 0 errors / 10 existing Fast Refresh warnings; `git diff --check` passed. Vitest, Vite build, the repository-wide `npm run lint`, and Deno checks did not emit a result before their safety timeouts in this environment (the Deno runner stalls while resolving remote imports). Earlier pre-closeout runs for Vitest/build/Deno were green before the final edge-only patches; no frontend behavior was changed by those patches. No current timeout is treated as a pass.
+- Browser/accessibility evidence exists from the earlier focused run (automated responsive/accessibility and commercial browser journeys passed; this was not a manual WCAG 2.2 conformance review). A fresh accessibility rerun in this environment could not start its Vite server (`fetch failed`), so that older result is not upgraded to a current post-patch proof.
+- The active claim gate is green (`activeOk=true`, `staleOk=true`); diagnostic archive/audit/plan paths report 124 historical findings under `ignoredOk=false` and remain outside the release gate by design.
+- Owner-provided migration evidence reports that the remote database has the four prerequisite migrations through `20260718000000_pilot_governance_and_credit_lots.sql` applied and six pilot tables/four core functions verified. The CLI migration-list probe in this session timed out, so this is recorded as owner-provided evidence, not independently confirmed here.
+- Deployment-packet recheck found a local-link conflict: `supabase/config.toml` targets `kvunnankqgfokeufvsrv`, while the ignored Supabase CLI link file still names `cyjqvqwpdgluivjoxcfl`. The packet generator now uses the config target, records both refs, and fails closed (`linkState=conflict`) until the owner reconciles the CLI link; no local link mutation or remote push was performed.
+- `20260719000000_coach_pilot_contract_v5.sql` and the service-role `cleanup-report-artifacts` worker are source-ready but not reported as deployed/applied. v5 must be dry-run and owner-approved before linked migration application.
+- The latest bounded `node scripts/verify-commercial-release.mjs --continue-on-failure` completed all 68 planned steps and recorded a terminal `status=failed` summary without false-green continuation. Trust, report-evidence, proof-visibility, Phase E, function-governance, O*NET, data provenance, owner-packet alignment, and launch-evidence checks passed. Remaining diagnostic failures are deployment-packet ref conflict, owner-access readiness timeout in the prior bounded run, lint/typecheck/build environment timeouts, and route-smoke Vite startup failure; none are converted to passes. The summary remains `launchDecision=pilot-only`, `remainingGateCount=7`, and no push or deployment occurred.
+- A post-run direct check passed `tsc --noEmit` (pinned Node 20 runtime) and scoped ESLint over `src` plus `supabase/functions` (0 errors / 10 existing Fast Refresh warnings). A standalone Vite build probe did not produce output and was terminated after the bounded wait; build success is not claimed from this environment.
+- The live closeout readiness verifier now bounds each `gh`/Supabase CLI subprocess with `COMMERCIAL_READINESS_COMMAND_TIMEOUT_MS` (default 10 seconds), producing a redacted `owner_access_required` artifact instead of hanging when the local CLI context cannot respond.
+- Owner-evidence handoff and completion-drill artifacts were regenerated from the current ledger (7 gates / 7 rows / 10 owner-prep actions), and the commercial-trust verifier expectations were repaired so these generated counts cannot create a stale false-red. The fresh trust run passes.
+- `.env` is now explicitly ignored and the local owner-evidence safety artifact reports `ok=true` with all 10 protected paths ignored; no owner-held evidence values or credentials were read.
+- Remaining external gates stay open: v5 migration application/DB lint, deployed worker scheduling and Storage deletion observation, manual WCAG evidence, real Stripe test checkout, production calibration, authenticated live artifact E2E, live MRR, three committed design partners, and documented outcomes. The owner-reported four prerequisite migrations are not independently re-verified because the local CLI probe timed out.
+
+### Success Criteria
+
+- No Deno type errors in the coach-pilot Edge functions.
+- Report-evidence and commercial-trust verifiers pass without excluding stale or generated proof paths.
+- Migration files are internally consistent, idempotent, fail-closed, and validated by a local/staging-capable SQL path when available.
+- Checkout derives identity and price/credit terms server-side; webhook fulfillment is signature-verified and replay-safe.
+- Enrollment stores an approved terms version/hash; report delivery is stable across retries and records the actual O*NET release identifier.
+- Pilot-facing copy contains no draft placeholders, unsupported compliance/ROI/purge claims, or recurring-revenue claims for a one-time pack.
+- External gates remain explicitly blocked until owner-held credentials, manual review, or real customer evidence exists.
+
+### Code Optimization Gate
+
+- Chosen approach: minimal, existing-pattern patches and additive corrective migrations; no new dependencies or broad refactors.
+- Rejected: production deployment, linked migration application, live Stripe checkout, subscription reintroduction, mass copy rewrite, and customer outreach because they require owner authority or external evidence.

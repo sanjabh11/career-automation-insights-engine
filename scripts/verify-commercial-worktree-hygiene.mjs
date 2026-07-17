@@ -30,6 +30,51 @@ const allowedUntrackedPathPatterns = [
     id: 'phase-loop-trace-artifact',
     pattern: /^\.phase-loop\/trace-spans\.jsonl$/,
   },
+  {
+    id: 'positioning-audit-artifact',
+    pattern: /^\.positioning-audit\/(?:(?:artifacts|history)\/.+|competitor-matrix\.json)$/,
+  },
+  {
+    id: 'windsurf-plan',
+    pattern: /^\.windsurf\/plans\/[^/]+\.md$/,
+  },
+  {
+    id: 'project-instruction',
+    pattern: /^AGENTS\.md$/,
+  },
+  {
+    id: 'legal-document',
+    pattern: /^docs\/legal\/[^/]+\.md$/,
+  },
+  {
+    id: 'positioning-audit-validator',
+    pattern: /^scripts\/validate-positioning-audit\.mjs$/,
+  },
+  {
+    id: 'pilot-client-library',
+    pattern: /^src\/lib\/pilotEnrollment\.ts$/,
+  },
+  {
+    id: 'pilot-ui',
+    pattern: /^src\/pages\/PilotTermsPage\.tsx$/,
+  },
+  {
+    id: 'pilot-edge-function',
+    pattern: /^supabase\/functions\/enroll-coach-pilot\/index\.ts$/,
+  },
+  {
+    id: 'pilot-test-fixture',
+    pattern: /^supabase\/functions\/generate-counselor-report\/test\.ts$/,
+  },
+  {
+    id: 'pilot-cleanup-worker',
+    pattern: /^supabase\/functions\/cleanup-report-artifacts\/index\.ts$/,
+  },
+  {
+    id: 'coach-pilot-migration',
+    pattern:
+      /^supabase\/migrations\/2026(?:0118_report_credit_ledger|0716220000_report_credit_ledger_v2|0717000000_report_credit_contract_v3|0718000000_pilot_governance_and_credit_lots|0719000000_coach_pilot_contract_v5)\.sql$/,
+  },
 ];
 
 const sensitiveUntrackedPathPatterns = [

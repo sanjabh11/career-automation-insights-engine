@@ -1,10 +1,10 @@
 # Commercial Verification Summary
 
-Status: `passed`
-Generated: `2026-06-08T23:28:23.540Z`
-Started: `2026-06-08T23:22:18.982Z`
-Ended: `2026-06-08T23:28:23.540Z`
-Invocation: `node scripts/verify-commercial-release.mjs`
+Status: `failed`
+Generated: `2026-07-17T10:04:19.715Z`
+Started: `2026-07-17T09:54:01.087Z`
+Ended: `2026-07-17T10:04:19.710Z`
+Invocation: `node scripts/verify-commercial-release.mjs --continue-on-failure`
 
 ## Counts
 
@@ -13,10 +13,10 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | Planned steps | 68 |
 | Step result rows | 68 |
 | Completed steps | 68 |
-| Passed steps | 68 |
-| Failed steps | 0 |
-| Failed step IDs | 0 |
-| Timed-out steps | 0 |
+| Passed steps | 62 |
+| Failed steps | 6 |
+| Failed step IDs | 6 |
+| Timed-out steps | 5 |
 | Does-not-prove boundaries | 3 |
 
 ## Commercial Readiness State
@@ -37,31 +37,31 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | Release gate source trace rows | 7 |
 | Goal complete | `no` |
 | Owner gate status | `owner_evidence_required` |
-| Remaining owner/live gate count | 5 |
-| Remaining owner/live gate source trace rows | 5 |
-| Accepted live gates | `production_calibration_run`, `authenticated_live_artifact_e2e` |
-| Owner action needed count | 6 |
+| Remaining owner/live gate count | 7 |
+| Remaining owner/live gate source trace rows | 7 |
+| Accepted live gates | `none` |
+| Owner action needed count | 10 |
 | Owner handoff command count | 21 |
-| Owner completion-drill matrix rows | 5 |
-| Owner action queue detail rows | 5 |
-| Owner action next commands | 5 |
-| Owner action raw-evidence policies | 5 |
+| Owner completion-drill matrix rows | 7 |
+| Owner action queue detail rows | 7 |
+| Owner action next commands | 7 |
+| Owner action raw-evidence policies | 7 |
 | Launch source-audit sources | 24 |
 | Launch source-audit failed sources | 0 |
 | Live proof packet source-audit references | 6 |
 | Live proof packet source-audit failed references | 0 |
 | Live closeout readiness status | `owner_access_required` |
 | Live closeout readiness failed checks | 2 |
-| Post-summary redaction status | `post_summary_scan_required` |
-| Post-summary redaction included | `yes` |
+| Post-summary redaction status | `not_included_until_summary_passes` |
+| Post-summary redaction included | `no` |
 | Post-summary redaction artifacts | 2 |
 | Post-summary redaction does-not-prove boundaries | 3 |
-| Post-summary launch-readiness alignment status | `included_after_post_summary_redaction_alignment` |
-| Post-summary launch-readiness alignment included | `yes` |
+| Post-summary launch-readiness alignment status | `pending_final_summary_alignment` |
+| Post-summary launch-readiness alignment included | `no` |
 | Post-summary launch-readiness alignment fixture | `node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs` |
 | Post-summary launch-readiness alignment does-not-prove boundaries | 4 |
-| Post-summary launch evidence refresh status | `included_after_initial_passed_summary` |
-| Post-summary launch evidence refresh included | `yes` |
+| Post-summary launch evidence refresh status | `pending_initial_passed_summary` |
+| Post-summary launch evidence refresh included | `no` |
 | Post-summary launch evidence refresh artifacts | 2 |
 | Post-summary launch evidence refresh does-not-prove boundaries | 4 |
 | Full-local approval status | `approval_required_plan_only` |
@@ -77,9 +77,9 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | Launch proof-bucket item count | 18 |
 | Launch roadmap proof-bucket items | 3 |
 | Launch proof-bucket source trace rows | 18 |
-| Remediation remaining external gate count | 5 |
+| Remediation remaining external gate count | 7 |
 | Launch evidence overall score | 3 |
-| Launch evidence gap count | 5 |
+| Launch evidence gap count | 7 |
 | Launch evidence pain point count | 10 |
 | Launch evidence target customer count | 10 |
 | Launch evidence summary source trace rows | 5 |
@@ -88,8 +88,8 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | Implementation decision count | 99 |
 | Rejected variant count | 111 |
 | Code optimization review count | 99 |
-| Remediation completion source trace rows | 5 |
-| Remediation external gate source trace rows | 5 |
+| Remediation completion source trace rows | 7 |
+| Remediation external gate source trace rows | 7 |
 
 ### Remaining Owner/Live Gates
 
@@ -97,6 +97,8 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | --- | --- | --- |
 | manual_wcag_evidence | open | owner/live evidence required |
 | real_stripe_test_checkout | open | owner/live evidence required |
+| production_calibration_run | open | owner/live evidence required |
+| authenticated_live_artifact_e2e | open | owner/live evidence required |
 | live_mrr_gt_zero | open | owner/live evidence required |
 | three_committed_partners | open | owner/live evidence required |
 | documented_outcomes | open | owner/live evidence required |
@@ -107,7 +109,9 @@ Invocation: `node scripts/verify-commercial-release.mjs`
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | manual_wcag_evidence | blocked_missing_manual_wcag_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.manual_wcag_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.manual_wcag_evidence | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.manual_wcag_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.manual_wcag_evidence | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.manual_wcag_evidence | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.manual_wcag_evidence |
 | real_stripe_test_checkout | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.real_stripe_test_checkout | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.real_stripe_test_checkout | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.real_stripe_test_checkout | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.real_stripe_test_checkout | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.real_stripe_test_checkout |
-| live_mrr_gt_zero | ready_for_owner_live_run | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.live_mrr_gt_zero | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.live_mrr_gt_zero |
+| production_calibration_run | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.production_calibration_run | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run |
+| authenticated_live_artifact_e2e | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.authenticated_live_artifact_e2e | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e |
+| live_mrr_gt_zero | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.live_mrr_gt_zero | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.live_mrr_gt_zero |
 | three_committed_partners | blocked_missing_owner_evidence_records | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.three_committed_partners | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.three_committed_partners | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.three_committed_partners | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.three_committed_partners | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.three_committed_partners | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.three_committed_partners |
 | documented_outcomes | blocked_missing_owner_evidence_records | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.documented_outcomes | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.documented_outcomes | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.documented_outcomes | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.documented_outcomes | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.documented_outcomes | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.documented_outcomes |
 
@@ -119,7 +123,9 @@ This owner-gate scoreboard source trace identifies repo-generated anchors for ea
 | --- | --- | --- |
 | manual_wcag_evidence | blocked_missing_manual_wcag_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.manual_wcag_evidence |
 | real_stripe_test_checkout | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.real_stripe_test_checkout |
-| live_mrr_gt_zero | ready_for_owner_live_run | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero |
+| production_calibration_run | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run |
+| authenticated_live_artifact_e2e | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e |
+| live_mrr_gt_zero | blocked_missing_owner_secret_or_live_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero |
 | three_committed_partners | blocked_missing_owner_evidence_records | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.three_committed_partners |
 | documented_outcomes | blocked_missing_owner_evidence_records | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.documented_outcomes |
 
@@ -133,7 +139,9 @@ This remediation-completion summary mirrors repo-generated remaining external ga
 | --- | --- | --- | --- |
 | manual_wcag_evidence | blocked_missing_manual_wcag_evidence | owner-held manual accessibility review | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.manual_wcag_evidence |
 | real_stripe_test_checkout | blocked_missing_owner_secret_or_live_evidence | owner credential gate | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout |
-| live_mrr_gt_zero | ready_for_owner_live_run | owner live Stripe credential gate | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero |
+| production_calibration_run | blocked_missing_owner_secret_or_live_evidence | owner credential and deployment-precondition gate | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run |
+| authenticated_live_artifact_e2e | blocked_missing_owner_secret_or_live_evidence | owner credential gate | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e |
+| live_mrr_gt_zero | blocked_missing_owner_secret_or_live_evidence | owner live Stripe credential gate | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero |
 | three_committed_partners | blocked_missing_owner_evidence_records | owner redacted commercial-evidence records | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.three_committed_partners |
 | documented_outcomes | blocked_missing_owner_evidence_records | owner redacted commercial-evidence records | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.documented_outcomes |
 
@@ -150,7 +158,7 @@ This remediation external-gates summary mirrors repo-generated owner-action queu
 | Gate count | 7 |
 | Included gates | default_core, typecheck, diff_check |
 | Not included gates | browser_journey, accessibility_smoke, network_and_audit, full_local_gate |
-| Passed gates | default_core, typecheck, diff_check |
+| Passed gates | diff_check |
 | Separate proof required gates | browser_journey, accessibility_smoke, network_and_audit, full_local_gate |
 | Optional gates not included | browser_journey, accessibility_smoke, network_and_audit, full_local_gate |
 | Release gate state does-not-prove boundaries | 3 |
@@ -159,24 +167,24 @@ This remediation external-gates summary mirrors repo-generated owner-action queu
 
 | Gate | Command | Included in this invocation | Passed in this invocation | Boundary |
 | --- | --- | --- | --- | --- |
-| default_core | `npm run verify:commercial` | `yes` | `yes` |  |
+| default_core | `npm run verify:commercial` | `yes` | `no` |  |
 | browser_journey | `npm run verify:commercial-browser` | `no` | `not included` |  |
 | accessibility_smoke | `npm run verify:commercial-a11y` | `no` | `not included` |  |
 | network_and_audit | `npm run verify:commercial-network` | `no` | `not included` |  |
 | full_local_gate | `npm run verify:commercial-full` | `no` | `not included` |  |
-| typecheck | `npx tsc --noEmit` | `yes` | `yes` | Included in the default commercial verifier as a repo-local TypeScript contract check. |
+| typecheck | `npx tsc --noEmit` | `yes` | `no` | Included in the default commercial verifier as a repo-local TypeScript contract check. |
 | diff_check | `git diff --check` | `yes` | `yes` | Included in the default commercial verifier for tracked diff whitespace hygiene; the worktree-hygiene step separately checks untracked path policy. |
 
 #### Release Gate Coverage Source Trace
 
 | Gate | Command | Included | Passed | Optional | Separate proof required | Source artifact | Boundary |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| default_core | `npm run verify:commercial` | `yes` | `yes` | `no` | `no` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.default_core |  |
+| default_core | `npm run verify:commercial` | `yes` | `no` | `no` | `no` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.default_core |  |
 | browser_journey | `npm run verify:commercial-browser` | `no` | `not included` | `yes` | `yes` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.browser_journey |  |
 | accessibility_smoke | `npm run verify:commercial-a11y` | `no` | `not included` | `yes` | `yes` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.accessibility_smoke |  |
 | network_and_audit | `npm run verify:commercial-network` | `no` | `not included` | `yes` | `yes` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.network_and_audit |  |
 | full_local_gate | `npm run verify:commercial-full` | `no` | `not included` | `yes` | `yes` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.full_local_gate |  |
-| typecheck | `npx tsc --noEmit` | `yes` | `yes` | `no` | `no` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.typecheck | Included in the default commercial verifier as a repo-local TypeScript contract check. |
+| typecheck | `npx tsc --noEmit` | `yes` | `no` | `no` | `no` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.typecheck | Included in the default commercial verifier as a repo-local TypeScript contract check. |
 | diff_check | `git diff --check` | `yes` | `yes` | `no` | `no` | docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.diff_check | Included in the default commercial verifier for tracked diff whitespace hygiene; the worktree-hygiene step separately checks untracked path policy. |
 
 This release-gate source trace identifies repo-generated releaseGateCoverage anchors for each configured gate in the current verifier invocation. It does not execute optional Browser/Computer, accessibility, network, full-local, live, payment, credential, outreach, or owner-held evidence gates.
@@ -220,10 +228,10 @@ This state summarizes current repo-generated launch and owner-evidence ledgers o
 | Field | Value |
 | --- | --- |
 | Source artifact | `docs/commercialization/commercial-verification-summary-latest.json#postSummaryArtifactRedaction` |
-| Status | `post_summary_scan_required` |
+| Status | `not_included_until_summary_passes` |
 | Command | `node scripts/verify-commercial-artifact-redaction.mjs --write` |
 | Execution order | `after final commercial verification summary write` |
-| Included in this invocation | `yes` |
+| Included in this invocation | `no` |
 | Result JSON | `docs/commercialization/commercial-artifact-redaction-latest.json` |
 | Result Markdown | `docs/commercialization/commercial-artifact-redaction-latest.md` |
 | Alignment verifier | `node scripts/verify-commercial-summary-redaction-alignment.mjs` |
@@ -260,10 +268,10 @@ This release-level summary mirrors the post-summary artifact-redaction contract.
 | Field | Value |
 | --- | --- |
 | Source artifact | `docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchReadinessAlignment` |
-| Status | `included_after_post_summary_redaction_alignment` |
+| Status | `pending_final_summary_alignment` |
 | Command | `node scripts/verify-commercial-summary-launch-readiness-alignment.mjs` |
 | Execution order | `after post-summary redaction alignment verifier` |
-| Included in this invocation | `yes` |
+| Included in this invocation | `no` |
 | Fixture verifier | `node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs` |
 | Fixture execution order | `after post-summary launch-readiness alignment verifier` |
 | Source trace rows | 3 |
@@ -301,10 +309,10 @@ This fixture verifier copies summary and launch-readiness source artifacts into 
 | Field | Value |
 | --- | --- |
 | Source artifact | `docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchEvidenceRefresh` |
-| Status | `included_after_initial_passed_summary` |
+| Status | `pending_initial_passed_summary` |
 | Command | `node scripts/generate-launch-evidence-manifest.mjs --write --validate` |
 | Execution order | `after initial passed summary write and before final summary rewrite` |
-| Included in this invocation | `yes` |
+| Included in this invocation | `no` |
 | Result JSON | `docs/commercialization/launch-evidence-latest.json` |
 | Result Markdown | `docs/commercialization/launch-evidence-latest.md` |
 | Final summary rewrite required | `yes` |
@@ -389,7 +397,7 @@ This release-level summary mirrors the plan-only full-local approval package. It
 
 | Output | Count |
 | --- | ---: |
-| Gaps | 5 |
+| Gaps | 7 |
 | Pain points | 10 |
 | Target customers | 10 |
 | Competitor/substitutes | 5 |
@@ -399,7 +407,7 @@ This release-level summary mirrors the plan-only full-local approval package. It
 | Progress updates | 1 |
 | Bottleneck log entries | 1 |
 | Launch evidence summary source trace rows | 5 |
-| Launch blocker source trace rows | 5 |
+| Launch blocker source trace rows | 7 |
 
 #### Required Output Table Counts
 
@@ -412,7 +420,7 @@ This release-level summary mirrors the plan-only full-local approval package. It
 | repoArtifactProofCount | 8 |
 | candidateShadowProofCount | 2 |
 | roadmapProofCount | 3 |
-| gapCount | 5 |
+| gapCount | 7 |
 | painPointCount | 10 |
 | targetCustomerCount | 10 |
 | competitorSubstituteCount | 5 |
@@ -427,7 +435,7 @@ This release-level summary mirrors the plan-only full-local approval package. It
 | crmRowCount | 10 |
 | fixReportCheckCount | 2 |
 | approvalGateCount | 4 |
-| unresolvedBlockerCount | 5 |
+| unresolvedBlockerCount | 7 |
 | implementationDecisionCount | 99 |
 | rejectedVariantCount | 111 |
 | codeOptimizationReviewCount | 99 |
@@ -458,7 +466,7 @@ This release-level summary mirrors the plan-only full-local approval package. It
 | CRM rows | 10 |
 | CRM JSON | `docs/commercialization/launch-outreach-crm-latest.json` |
 | CRM CSV | `docs/commercialization/launch-outreach-crm-latest.csv` |
-| Unresolved blockers | 5 |
+| Unresolved blockers | 7 |
 | Approval gates | 4 |
 | Source audit status | `passed` |
 | Source audit sources | 24 |
@@ -483,6 +491,8 @@ This launch-evidence summary source trace identifies repo-generated launch manif
 | --- | --- | --- | --- | --- | --- | --- |
 | manual_wcag_evidence | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.manual_wcag_evidence | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.manual_wcag_evidence | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.manual_wcag_evidence | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.manual_wcag_evidence |
 | real_stripe_test_checkout | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.real_stripe_test_checkout | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.real_stripe_test_checkout | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.real_stripe_test_checkout | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout |
+| production_calibration_run | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.production_calibration_run | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.production_calibration_run | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run |
+| authenticated_live_artifact_e2e | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.authenticated_live_artifact_e2e | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.authenticated_live_artifact_e2e | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e |
 | live_mrr_gt_zero | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.live_mrr_gt_zero | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.live_mrr_gt_zero | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero |
 | three_committed_partners | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.three_committed_partners | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.three_committed_partners | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.three_committed_partners | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.three_committed_partners |
 | documented_outcomes | open | P1 | docs/commercialization/launch-evidence-latest.json#gaps.documented_outcomes | docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.documented_outcomes | docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.documented_outcomes | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.documented_outcomes |
@@ -856,15 +866,15 @@ This audit proves only that the owner-evidence completion drill official referen
 | --- | --- |
 | Execution status | `owner_evidence_required` |
 | Goal complete | `no` |
-| Remaining gates | 5 |
-| Owner action queue count | 5 |
-| Owner action rows | 5 |
-| Owner action needed count | 6 |
-| Owner prep actions needed | 6 |
-| Owner prep by-gate entries | 5 |
-| Gate-scoped owner prep actions | 7 |
-| Unique owner prep actions | 6 |
-| Shared owner prep actions | 1 |
+| Remaining gates | 7 |
+| Owner action queue count | 7 |
+| Owner action rows | 7 |
+| Owner action needed count | 10 |
+| Owner prep actions needed | 10 |
+| Owner prep by-gate entries | 7 |
+| Gate-scoped owner prep actions | 9 |
+| Unique owner prep actions | 10 |
+| Shared owner prep actions | 0 |
 | Operational access prerequisites | 1 |
 | Operational access blocking checks | 2 |
 | Operational access source trace rows | 1 |
@@ -891,15 +901,15 @@ This audit proves only that the owner-evidence completion drill official referen
 | Completion-drill command source trace rows | 22 |
 | Completion-drill packets | 3 |
 | Completion-drill official reference URLs | 17 |
-| Completion-drill matrix rows | 5 |
+| Completion-drill matrix rows | 7 |
 
 #### Owner Evidence Gate Trace
 
 | Source | Gate IDs |
 | --- | --- |
-| Remaining gates | manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
-| Handoff remaining gates | manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
-| Completion-drill required gates | manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
+| Remaining gates | manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
+| Handoff remaining gates | manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
+| Completion-drill required gates | manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes |
 
 #### Owner Prep By-Gate Trace
 
@@ -907,6 +917,8 @@ This audit proves only that the owner-evidence completion drill official referen
 | --- | ---: | --- |
 | manual_wcag_evidence | 1 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.manual_wcag_evidence |
 | real_stripe_test_checkout | 2 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.real_stripe_test_checkout |
+| production_calibration_run | 1 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.production_calibration_run |
+| authenticated_live_artifact_e2e | 1 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.authenticated_live_artifact_e2e |
 | live_mrr_gt_zero | 2 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.live_mrr_gt_zero |
 | three_committed_partners | 1 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.three_committed_partners |
 | documented_outcomes | 1 | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.documented_outcomes |
@@ -1052,20 +1064,20 @@ This compact summary mirrors owner-evidence execution coverage and counts only. 
 
 | Field | Value |
 | --- | ---: |
-| Queue rows | 5 |
-| Closeout rows | 5 |
-| Handoff rows | 5 |
-| Completion-drill rows | 5 |
+| Queue rows | 7 |
+| Closeout rows | 7 |
+| Handoff rows | 7 |
+| Completion-drill rows | 7 |
 | Primary source artifact | `docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue` |
 | Source artifacts | 4 |
-| Row source artifacts | 20 |
-| Owner action source trace rows | 5 |
-| Owner prep commands | 5 |
-| Next commands | 5 |
-| Raw-evidence policies | 5 |
-| Repo limitation notes | 5 |
-| Blocking owner-action notes | 7 |
-| Closeout failure details | 14 |
+| Row source artifacts | 28 |
+| Owner action source trace rows | 7 |
+| Owner prep commands | 7 |
+| Next commands | 7 |
+| Raw-evidence policies | 7 |
+| Repo limitation notes | 7 |
+| Blocking owner-action notes | 9 |
+| Closeout failure details | 20 |
 
 #### Owner Action Command Trace
 
@@ -1073,7 +1085,9 @@ This compact summary mirrors owner-evidence execution coverage and counts only. 
 | --- | --- | --- | --- | --- | --- | --- | ---: | ---: |
 | manual_wcag_evidence | blocked_missing_manual_wcag_evidence | accessibility | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.manual_wcag_evidence | owner-held manual accessibility review | npm run generate:manual-wcag-review-packet && npm run hash:owner-evidence-artifacts -- <local WCAG review proof files> | npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete | 1 | 2 |
 | real_stripe_test_checkout | blocked_missing_owner_secret_or_live_evidence | payments | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout | owner credential gate | npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a | npm run verify:stripe-test-checkout | 2 | 3 |
-| live_mrr_gt_zero | ready_for_owner_live_run | payments | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero | owner live Stripe credential gate | npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a | npm run verify:stripe-live-mrr | 2 | 3 |
+| production_calibration_run | blocked_missing_owner_secret_or_live_evidence | live-runtime | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run | owner credential and deployment-precondition gate | npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a | npm run verify:production-calibration | 1 | 3 |
+| authenticated_live_artifact_e2e | blocked_missing_owner_secret_or_live_evidence | live-runtime | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e | owner credential gate | npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a | npm run verify:commercial-live-auth-e2e | 1 | 3 |
+| live_mrr_gt_zero | blocked_missing_owner_secret_or_live_evidence | payments | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero | owner live Stripe credential gate | npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a | npm run verify:stripe-live-mrr | 2 | 3 |
 | three_committed_partners | blocked_missing_owner_evidence_records | commercial-validation | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.three_committed_partners | owner redacted commercial-evidence records | npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files> | COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all | 1 | 3 |
 | documented_outcomes | blocked_missing_owner_evidence_records | commercial-validation | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.documented_outcomes | owner redacted commercial-evidence records | npm run generate:commercial-evidence-intake-packet && npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files> | COMMERCIAL_EVIDENCE_HASH_SALT="<owner-held salt>" npm run compose:commercial-evidence-records -- --write --require-all | 1 | 3 |
 
@@ -1083,6 +1097,8 @@ This compact summary mirrors owner-evidence execution coverage and counts only. 
 | --- | --- | --- |
 | manual_wcag_evidence | The product can keep automated accessibility smoke evidence, but it must not claim WCAG conformance or procurement-ready accessibility evidence. | WCAG conformance statement<br>legal compliance<br>institutional procurement approval<br>future accessibility after code changes |
 | real_stripe_test_checkout | Checkout remains source-ready only; no real Stripe test-mode session can be cited in buyer or launch evidence. | Live revenue<br>MRR<br>payment fulfillment in live mode |
+| production_calibration_run | Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven. | Scientific validation before live labels exist<br>Migrations or deployments were applied by this verifier |
+| authenticated_live_artifact_e2e | Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project. | Payment proof<br>malware scanning<br>legal compliance |
 | live_mrr_gt_zero | Revenue must stay unclaimed; test checkout, configured prices, and UI conversion events do not prove live MRR. | Retention<br>Product-market fit<br>Future revenue<br>Accounting-recognized revenue |
 | three_committed_partners | Pilot traction remains a worksheet or lead-ops capability, not committed partner evidence. | Revenue<br>Successful outcomes<br>Market-wide demand<br>Legal compliance<br>Testimonial compliance |
 | documented_outcomes | Outcome claims must remain absent or anecdote-bounded; no case-study evidence can be cited as launch proof. | Guaranteed career outcomes<br>Causal impact<br>Generalizable demand<br>Legal compliance<br>Testimonial compliance |
@@ -1093,6 +1109,8 @@ This compact summary mirrors owner-evidence execution coverage and counts only. 
 | --- | --- | --- | --- | --- |
 | manual_wcag_evidence | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.manual_wcag_evidence | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.manual_wcag_evidence | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.manual_wcag_evidence | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.manual_wcag_evidence |
 | real_stripe_test_checkout | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.real_stripe_test_checkout | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.real_stripe_test_checkout | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.real_stripe_test_checkout |
+| production_calibration_run | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run |
+| authenticated_live_artifact_e2e | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e |
 | live_mrr_gt_zero | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.live_mrr_gt_zero | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.live_mrr_gt_zero | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.live_mrr_gt_zero |
 | three_committed_partners | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.three_committed_partners | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.three_committed_partners | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.three_committed_partners | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.three_committed_partners |
 | documented_outcomes | docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.documented_outcomes | docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.documented_outcomes | docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.documented_outcomes | docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.documented_outcomes |
@@ -1105,13 +1123,13 @@ This compact summary mirrors owner-action queue and handoff instructions only. I
 
 | Phase | Accomplished items | Target matrix rows | Pending items | Current phase actions | Bottleneck |
 | --- | ---: | ---: | ---: | ---: | --- |
-| owner-operational-access-command-checklist-surfacing | 4 | 8 | 6 | 5 | Owner-held evidence gates are the current launch-readiness bottleneck; repo-side checks can stay green without proving live checkout, live MRR, partner commitments, documented outcomes, or manual WCAG conformance. |
+| owner-operational-access-command-checklist-surfacing | 4 | 8 | 8 | 7 | Owner-held evidence gates are the current launch-readiness bottleneck; repo-side checks can stay green without proving live checkout, live MRR, partner commitments, documented outcomes, or manual WCAG conformance. |
 
 ### Bottleneck Log
 
 | Phase | Task/subtask | Root cause | Top unblock options |
 | --- | --- | --- | ---: |
-| owner-evidence-closeout | manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes | evidence gap | 3 |
+| owner-evidence-closeout | manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes | evidence gap | 3 |
 
 ### Implementation Decisions
 
@@ -1337,7 +1355,7 @@ This compact summary mirrors owner-action queue and handoff instructions only. I
 
 | Target task | Policy | Verdict | Minimality score | Checks |
 | --- | --- | --- | ---: | --- |
-| Launch evidence manifest schema alignment | strict | pass | 4/5 | python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/Documents/newrepo/career-automation-insights-engine/docs/commercialization/launch-evidence-latest.json --require-repo-exists<br>node scripts/generate-launch-evidence-manifest.mjs --write --validate |
+| Launch evidence manifest schema alignment | strict | pass | 4/5 | python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/career-automation-insights-engine-fresh/docs/commercialization/launch-evidence-latest.json --require-repo-exists<br>node scripts/generate-launch-evidence-manifest.mjs --write --validate |
 | Commercial readiness claim boundary | safe | pass | 5/5 | node scripts/verify-launch-evidence-alignment.mjs<br>node scripts/verify-commercial-trust-boundaries.mjs |
 | Launch evidence progress-reporting completeness | strict | pass | 4/5 | node scripts/generate-launch-evidence-manifest.mjs --write --validate<br>node scripts/verify-launch-evidence-alignment.mjs<br>node scripts/verify-launch-evidence-alignment-fixtures.mjs |
 | Direct launch evidence progress-digest contract coverage | strict | pass | 5/5 | npm run verify:launch-evidence-alignment-fixtures<br>npm run verify:launch-evidence-alignment<br>npm run verify:commercial-trust |
@@ -1445,12 +1463,12 @@ Alignment errors:
 
 | Gate | Command | Included in this invocation | Passed in this invocation | Boundary |
 | --- | --- | --- | --- | --- |
-| default_core | `npm run verify:commercial` | `yes` | `yes` |  |
+| default_core | `npm run verify:commercial` | `yes` | `no` |  |
 | browser_journey | `npm run verify:commercial-browser` | `no` | `not included` |  |
 | accessibility_smoke | `npm run verify:commercial-a11y` | `no` | `not included` |  |
 | network_and_audit | `npm run verify:commercial-network` | `no` | `not included` |  |
 | full_local_gate | `npm run verify:commercial-full` | `no` | `not included` |  |
-| typecheck | `npx tsc --noEmit` | `yes` | `yes` | Included in the default commercial verifier as a repo-local TypeScript contract check. |
+| typecheck | `npx tsc --noEmit` | `yes` | `no` | Included in the default commercial verifier as a repo-local TypeScript contract check. |
 | diff_check | `git diff --check` | `yes` | `yes` | Included in the default commercial verifier for tracked diff whitespace hygiene; the worktree-hygiene step separately checks untracked path policy. |
 
 Release-gate coverage records only the steps included in this exact verifier invocation. Null means the gate was not included and needs separate current command output.
@@ -1459,7 +1477,7 @@ Release-gate coverage records only the steps included in this exact verifier inv
 
 Command: `node scripts/verify-commercial-artifact-redaction.mjs --write`
 Execution order: `after final commercial verification summary write`
-Included in this invocation: `yes`
+Included in this invocation: `no`
 Result artifacts: `docs/commercialization/commercial-artifact-redaction-latest.json`, `docs/commercialization/commercial-artifact-redaction-latest.md`
 Alignment verifier: `node scripts/verify-commercial-summary-redaction-alignment.mjs`
 Fixture verifier: `node scripts/verify-commercial-summary-redaction-alignment-fixtures.mjs`
@@ -1474,10 +1492,10 @@ This fixture verifier copies the summary and redaction artifacts into temporary 
 
 Check: Verify final summary launch-readiness state aligns with owner/remediation ledgers
 Source artifact: `docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchReadinessAlignment`
-Status: `included_after_post_summary_redaction_alignment`
+Status: `pending_final_summary_alignment`
 Command: `node scripts/verify-commercial-summary-launch-readiness-alignment.mjs`
 Execution order: `after post-summary redaction alignment verifier`
-Included in this invocation: `yes`
+Included in this invocation: `no`
 Fixture verifier: `node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs`
 Source trace rows: 3
 Does-not-prove boundaries: 4
@@ -1509,7 +1527,7 @@ This fixture verifier copies summary and launch-readiness source artifacts into 
 
 Command: `node scripts/generate-launch-evidence-manifest.mjs --write --validate`
 Execution order: `after initial passed summary write and before final summary rewrite`
-Included in this invocation: `yes`
+Included in this invocation: `no`
 Artifacts: `docs/commercialization/launch-evidence-latest.json`, `docs/commercialization/launch-evidence-latest.md`
 
 The runner first writes a passed summary, refreshes launch evidence from that passed summary, then rewrites the final summary so progress updates and Code Optimization Gate rows remain in parity before redaction and launch-readiness alignment checks. This does not execute optional live, network, browser, accessibility, payment, credential, outreach, or owner-held evidence gates.
@@ -1518,7 +1536,7 @@ The runner first writes a passed summary, refreshes launch evidence from that pa
 
 Command: `node scripts/verify-commercial-full-local-approval-package.mjs`
 Execution order: `after post-summary redaction and launch-readiness alignment fixtures`
-Included in this invocation: `yes`
+Included in this invocation: `no`
 Condition: Runs only for the default commercial verifier invocation where optional accessibility, browser journey, network/audit, and live gates are not included. Full-local and other optional invocations are expected to update releaseGateCoverage instead of preserving the plan-only approval package state.
 Fixture verifier: `node scripts/verify-commercial-full-local-approval-package-fixtures.mjs`
 
@@ -1530,74 +1548,74 @@ This fixture verifier builds temporary approval-package artifacts, mutates those
 
 | Step | Status | Command | Duration seconds | Exit code |
 | --- | --- | --- | ---: | ---: |
-| index | passed | `node scripts/generate-commercialization-index.mjs` | 0.4 | 0 |
-| worktree-hygiene | passed | `node scripts/verify-commercial-worktree-hygiene.mjs --write` | 0.9 | 0 |
-| worktree-hygiene-fixtures | passed | `node scripts/verify-commercial-worktree-hygiene-fixtures.mjs` | 8.8 | 0 |
-| full-local-approval-package-fixtures | passed | `node scripts/verify-commercial-full-local-approval-package-fixtures.mjs` | 23.1 | 0 |
-| commercial-artifact-redaction | passed | `node scripts/verify-commercial-artifact-redaction.mjs --write` | 1.0 | 0 |
-| trust | passed | `node scripts/verify-commercial-trust-boundaries.mjs` | 1.5 | 0 |
-| report-evidence | passed | `node scripts/verify-report-evidence.mjs` | 0.6 | 0 |
-| proof-visibility-ui | passed | `node scripts/verify-proof-visibility-ui.mjs` | 0.8 | 0 |
-| phase-e-commercial-validation | passed | `node scripts/verify-phase-e-commercial-validation.mjs` | 0.3 | 0 |
-| supabase-function-governance | passed | `node scripts/verify-supabase-function-governance.mjs` | 0.2 | 0 |
-| onet-task-ratings | passed | `node scripts/verify-onet-task-ratings-ingest.mjs` | 0.4 | 0 |
-| deployment-packet | passed | `node scripts/generate-commercial-supabase-deployment-packet.mjs` | 0.5 | 0 |
-| live-closeout-readiness-status | passed | `node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write` | 10.9 | 0 |
-| live-closeout-access-sources-fixtures | passed | `node scripts/verify-live-closeout-access-sources-fixtures.mjs` | 2.3 | 0 |
+| index | passed | `node scripts/generate-commercialization-index.mjs` | 0.2 | 0 |
+| worktree-hygiene | passed | `node scripts/verify-commercial-worktree-hygiene.mjs --write` | 0.2 | 0 |
+| worktree-hygiene-fixtures | passed | `node scripts/verify-commercial-worktree-hygiene-fixtures.mjs` | 4.8 | 0 |
+| full-local-approval-package-fixtures | passed | `node scripts/verify-commercial-full-local-approval-package-fixtures.mjs` | 14.0 | 0 |
+| commercial-artifact-redaction | passed | `node scripts/verify-commercial-artifact-redaction.mjs --write` | 0.4 | 0 |
+| trust | passed | `node scripts/verify-commercial-trust-boundaries.mjs` | 0.5 | 0 |
+| report-evidence | passed | `node scripts/verify-report-evidence.mjs` | 0.1 | 0 |
+| proof-visibility-ui | passed | `node scripts/verify-proof-visibility-ui.mjs` | 0.2 | 0 |
+| phase-e-commercial-validation | passed | `node scripts/verify-phase-e-commercial-validation.mjs` | 0.1 | 0 |
+| supabase-function-governance | passed | `node scripts/verify-supabase-function-governance.mjs` | 0.1 | 0 |
+| onet-task-ratings | passed | `node scripts/verify-onet-task-ratings-ingest.mjs` | 0.2 | 0 |
+| deployment-packet | failed | `node scripts/generate-commercial-supabase-deployment-packet.mjs` | 0.2 | 1 |
+| live-closeout-readiness-status | timed_out | `node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write` | 10.0 | 124 |
+| live-closeout-access-sources-fixtures | passed | `node scripts/verify-live-closeout-access-sources-fixtures.mjs` | 1.4 | 0 |
 | data-provenance | passed | `node scripts/verify-commercial-data-provenance.mjs --write --require-source-verification` | 0.9 | 0 |
-| live-gate-evidence | passed | `node scripts/verify-live-gate-evidence.mjs` | 0.4 | 0 |
-| live-proof-run-packet | passed | `node scripts/generate-live-proof-run-packet.mjs --write` | 0.9 | 0 |
-| live-proof-run-packet-alignment | passed | `node scripts/verify-live-proof-run-packet-alignment.mjs` | 0.8 | 0 |
-| live-proof-run-packet-alignment-fixtures | passed | `node scripts/verify-live-proof-run-packet-alignment-fixtures.mjs` | 10.1 | 0 |
-| commercial-evidence-records | passed | `node scripts/verify-commercial-evidence-records.mjs --write` | 0.8 | 0 |
-| commercial-evidence-records-fixtures | passed | `node scripts/verify-commercial-evidence-records-fixtures.mjs` | 0.5 | 0 |
-| commercial-evidence-intake-packet | passed | `node scripts/generate-commercial-evidence-intake-packet.mjs --write` | 0.4 | 0 |
-| commercial-evidence-intake-packet-alignment | passed | `node scripts/verify-commercial-evidence-intake-packet-alignment.mjs` | 0.3 | 0 |
-| commercial-evidence-intake-packet-alignment-fixtures | passed | `node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs` | 9.5 | 0 |
-| manual-wcag-evidence | passed | `node scripts/verify-manual-wcag-evidence.mjs --write` | 0.4 | 0 |
-| manual-wcag-evidence-fixtures | passed | `node scripts/verify-manual-wcag-evidence-fixtures.mjs` | 0.5 | 0 |
-| manual-wcag-review-packet | passed | `node scripts/generate-manual-wcag-review-packet.mjs --write` | 0.5 | 0 |
-| manual-wcag-review-packet-alignment | passed | `node scripts/verify-manual-wcag-review-packet-alignment.mjs` | 0.3 | 0 |
-| manual-wcag-review-packet-alignment-fixtures | passed | `node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs` | 13.2 | 0 |
-| owner-evidence-prep | passed | `node scripts/prepare-owner-evidence-workspace.mjs` | 0.8 | 0 |
-| owner-evidence-local-safety | passed | `node scripts/verify-owner-evidence-local-safety.mjs --write` | 2.1 | 0 |
-| owner-evidence-local-safety-fixtures | passed | `node scripts/verify-owner-evidence-local-safety-fixtures.mjs` | 33.0 | 0 |
-| owner-evidence-artifact-hasher-fixtures | passed | `node scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs` | 5.5 | 0 |
-| owner-evidence-closeout-status | passed | `node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status` | 6.6 | 0 |
-| owner-evidence-prep-alignment | passed | `node scripts/verify-owner-evidence-prep-readiness-alignment.mjs` | 1.9 | 0 |
-| owner-evidence-prep-alignment-fixtures | passed | `node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs` | 17.2 | 0 |
-| owner-evidence-fixtures | passed | `node scripts/verify-owner-evidence-fixture-path.mjs` | 5.7 | 0 |
-| remediation-gates | passed | `node scripts/verify-remediation-external-gates.mjs --write` | 1.1 | 0 |
-| owner-action-queue | passed | `node scripts/verify-owner-action-queue-alignment.mjs` | 1.1 | 0 |
-| owner-action-queue-fixtures | passed | `node scripts/verify-owner-action-queue-alignment-fixtures.mjs` | 7.1 | 0 |
-| owner-evidence-handoff | passed | `node scripts/generate-owner-evidence-handoff.mjs --write` | 0.3 | 0 |
-| owner-evidence-completion-drill | passed | `node scripts/generate-owner-evidence-completion-drill.mjs --write` | 0.3 | 0 |
-| owner-evidence-completion-drill-alignment | passed | `node scripts/verify-owner-evidence-completion-drill-alignment.mjs` | 1.3 | 0 |
-| owner-evidence-completion-drill-alignment-fixtures | passed | `node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs` | 58.6 | 0 |
-| owner-evidence-handoff-alignment | passed | `node scripts/verify-owner-evidence-handoff-alignment.mjs` | 0.4 | 0 |
-| owner-evidence-handoff-alignment-fixtures | passed | `node scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs` | 14.8 | 0 |
-| live-proof-closeout-command-alignment | passed | `node scripts/verify-live-proof-closeout-command-alignment.mjs` | 1.5 | 0 |
-| live-proof-closeout-command-alignment-fixtures | passed | `node scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs` | 8.4 | 0 |
-| owner-evidence-command-checklist-alignment | passed | `node scripts/verify-owner-evidence-command-checklist-alignment.mjs` | 1.5 | 0 |
-| owner-evidence-command-checklist-alignment-fixtures | passed | `node scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs` | 12.1 | 0 |
-| owner-evidence-runbook-alignment | passed | `node scripts/verify-owner-evidence-runbook-alignment.mjs` | 0.5 | 0 |
-| owner-evidence-runbook-alignment-fixtures | passed | `node scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs` | 1.8 | 0 |
-| remediation-completion-audit | passed | `node scripts/verify-remediation-completion-audit.mjs --write` | 0.4 | 0 |
+| live-gate-evidence | passed | `node scripts/verify-live-gate-evidence.mjs` | 0.3 | 0 |
+| live-proof-run-packet | passed | `node scripts/generate-live-proof-run-packet.mjs --write` | 0.3 | 0 |
+| live-proof-run-packet-alignment | passed | `node scripts/verify-live-proof-run-packet-alignment.mjs` | 0.1 | 0 |
+| live-proof-run-packet-alignment-fixtures | passed | `node scripts/verify-live-proof-run-packet-alignment-fixtures.mjs` | 6.5 | 0 |
+| commercial-evidence-records | passed | `node scripts/verify-commercial-evidence-records.mjs --write` | 0.3 | 0 |
+| commercial-evidence-records-fixtures | passed | `node scripts/verify-commercial-evidence-records-fixtures.mjs` | 0.4 | 0 |
+| commercial-evidence-intake-packet | passed | `node scripts/generate-commercial-evidence-intake-packet.mjs --write` | 0.3 | 0 |
+| commercial-evidence-intake-packet-alignment | passed | `node scripts/verify-commercial-evidence-intake-packet-alignment.mjs` | 0.2 | 0 |
+| commercial-evidence-intake-packet-alignment-fixtures | passed | `node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs` | 7.4 | 0 |
+| manual-wcag-evidence | passed | `node scripts/verify-manual-wcag-evidence.mjs --write` | 0.2 | 0 |
+| manual-wcag-evidence-fixtures | passed | `node scripts/verify-manual-wcag-evidence-fixtures.mjs` | 0.6 | 0 |
+| manual-wcag-review-packet | passed | `node scripts/generate-manual-wcag-review-packet.mjs --write` | 0.3 | 0 |
+| manual-wcag-review-packet-alignment | passed | `node scripts/verify-manual-wcag-review-packet-alignment.mjs` | 0.4 | 0 |
+| manual-wcag-review-packet-alignment-fixtures | passed | `node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs` | 6.8 | 0 |
+| owner-evidence-prep | passed | `node scripts/prepare-owner-evidence-workspace.mjs` | 0.3 | 0 |
+| owner-evidence-local-safety | passed | `node scripts/verify-owner-evidence-local-safety.mjs --write` | 1.4 | 0 |
+| owner-evidence-local-safety-fixtures | passed | `node scripts/verify-owner-evidence-local-safety-fixtures.mjs` | 15.7 | 0 |
+| owner-evidence-artifact-hasher-fixtures | passed | `node scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs` | 1.9 | 0 |
+| owner-evidence-closeout-status | passed | `node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status` | 2.0 | 0 |
+| owner-evidence-prep-alignment | passed | `node scripts/verify-owner-evidence-prep-readiness-alignment.mjs` | 2.6 | 0 |
+| owner-evidence-prep-alignment-fixtures | passed | `node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs` | 17.7 | 0 |
+| owner-evidence-fixtures | passed | `node scripts/verify-owner-evidence-fixture-path.mjs` | 1.6 | 0 |
+| remediation-gates | passed | `node scripts/verify-remediation-external-gates.mjs --write` | 0.2 | 0 |
+| owner-action-queue | passed | `node scripts/verify-owner-action-queue-alignment.mjs` | 1.3 | 0 |
+| owner-action-queue-fixtures | passed | `node scripts/verify-owner-action-queue-alignment-fixtures.mjs` | 13.9 | 0 |
+| owner-evidence-handoff | passed | `node scripts/generate-owner-evidence-handoff.mjs --write` | 0.2 | 0 |
+| owner-evidence-completion-drill | passed | `node scripts/generate-owner-evidence-completion-drill.mjs --write` | 0.2 | 0 |
+| owner-evidence-completion-drill-alignment | passed | `node scripts/verify-owner-evidence-completion-drill-alignment.mjs` | 1.7 | 0 |
+| owner-evidence-completion-drill-alignment-fixtures | passed | `node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs` | 66.6 | 0 |
+| owner-evidence-handoff-alignment | passed | `node scripts/verify-owner-evidence-handoff-alignment.mjs` | 0.3 | 0 |
+| owner-evidence-handoff-alignment-fixtures | passed | `node scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs` | 14.9 | 0 |
+| live-proof-closeout-command-alignment | passed | `node scripts/verify-live-proof-closeout-command-alignment.mjs` | 4.3 | 0 |
+| live-proof-closeout-command-alignment-fixtures | passed | `node scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs` | 8.7 | 0 |
+| owner-evidence-command-checklist-alignment | passed | `node scripts/verify-owner-evidence-command-checklist-alignment.mjs` | 1.4 | 0 |
+| owner-evidence-command-checklist-alignment-fixtures | passed | `node scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs` | 8.7 | 0 |
+| owner-evidence-runbook-alignment | passed | `node scripts/verify-owner-evidence-runbook-alignment.mjs` | 0.1 | 0 |
+| owner-evidence-runbook-alignment-fixtures | passed | `node scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs` | 0.9 | 0 |
+| remediation-completion-audit | passed | `node scripts/verify-remediation-completion-audit.mjs --write` | 0.3 | 0 |
 | launch-evidence | passed | `node scripts/generate-launch-evidence-manifest.mjs --write --validate` | 0.6 | 0 |
-| launch-evidence-alignment | passed | `node scripts/verify-launch-evidence-alignment.mjs` | 0.2 | 0 |
-| launch-evidence-alignment-fixtures | passed | `node scripts/verify-launch-evidence-alignment-fixtures.mjs` | 15.2 | 0 |
-| launch-evidence-sources-fixtures | passed | `node scripts/verify-launch-evidence-sources-fixtures.mjs` | 2.3 | 0 |
-| commercial-evidence-intake-sources-fixtures | passed | `node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs` | 1.6 | 0 |
-| live-proof-run-packet-sources-fixtures | passed | `node scripts/verify-live-proof-run-packet-sources-fixtures.mjs` | 1.5 | 0 |
-| manual-wcag-review-packet-sources-fixtures | passed | `node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs` | 1.6 | 0 |
-| owner-evidence-completion-drill-sources-fixtures | passed | `node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs` | 2.7 | 0 |
-| lint-commercial | passed | `node scripts/lint-commercial-scope.mjs` | 10.1 | 0 |
-| secret-hygiene | passed | `node scripts/verify-secret-hygiene.mjs` | 8.1 | 0 |
-| repo-presentation | passed | `node scripts/verify-repo-presentation.mjs` | 0.4 | 0 |
-| typecheck | passed | `npx tsc --noEmit` | 2.0 | 0 |
-| diff-hygiene | passed | `git diff --check` | 0.6 | 0 |
-| build | passed | `npm run build` | 32.7 | 0 |
-| route-smoke | passed | `node scripts/smoke-commercial-routes.mjs` | 8.5 | 0 |
+| launch-evidence-alignment | passed | `node scripts/verify-launch-evidence-alignment.mjs` | 0.4 | 0 |
+| launch-evidence-alignment-fixtures | passed | `node scripts/verify-launch-evidence-alignment-fixtures.mjs` | 14.8 | 0 |
+| launch-evidence-sources-fixtures | passed | `node scripts/verify-launch-evidence-sources-fixtures.mjs` | 1.4 | 0 |
+| commercial-evidence-intake-sources-fixtures | passed | `node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs` | 0.9 | 0 |
+| live-proof-run-packet-sources-fixtures | passed | `node scripts/verify-live-proof-run-packet-sources-fixtures.mjs` | 0.7 | 0 |
+| manual-wcag-review-packet-sources-fixtures | passed | `node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs` | 0.9 | 0 |
+| owner-evidence-completion-drill-sources-fixtures | passed | `node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs` | 1.1 | 0 |
+| lint-commercial | timed_out | `node scripts/lint-commercial-scope.mjs` | 60.0 | 124 |
+| secret-hygiene | passed | `node scripts/verify-secret-hygiene.mjs` | 6.8 | 0 |
+| repo-presentation | passed | `node scripts/verify-repo-presentation.mjs` | 0.1 | 0 |
+| typecheck | timed_out | `npx tsc --noEmit` | 120.0 | 124 |
+| diff-hygiene | passed | `git diff --check` | 0.4 | 0 |
+| build | timed_out | `npm run build` | 125.5 | 124 |
+| route-smoke | timed_out | `node scripts/smoke-commercial-routes.mjs` | 60.1 | 124 |
 
 ## Evidence Boundary
 

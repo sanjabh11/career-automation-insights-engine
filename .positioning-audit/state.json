@@ -1,59 +1,16 @@
 {
   "schema_version": "v8",
   "audit_id": "caie-niche-positioning-2026-07-16",
-  "audit_title": "Career Automation Insights Engine — Full Positioning Audit",
-  "created_at": "2026-07-16T10:55:00Z",
-  "updated_at": "2026-07-16T12:30:00Z",
+  "product_context": "career-automation-insights-engine",
+  "product": "Career Automation Insights Engine (APO Dashboard)",
   "scope": "deep",
-  "current_phase": "P7_TERMINAL",
-  "lifecycle_status": "VALIDATION_PENDING",
+  "started_at": "2026-07-16T10:55:00Z",
+  "current_phase": "VALIDATION_PENDING",
   "market_validation_status": "validation_pending",
+  "experiments_designed": 6,
+  "experiments_executed": 0,
   "evidence_limited_mode": true,
-  "evidence_limited_reason": "No paying customers. Some free-tier signups but no first-party commercial evidence (no revenue, no customer quotes, no support tickets, no sales data). First-party condition not met.",
-  "product_context": {
-    "product_name": "Career Automation Insights Engine (APO Dashboard)",
-    "product_description": "Decision-support tool estimating automation exposure and transition options from O*NET-centered occupation data, LLM-assisted task analysis, and commercial proof-pack workflows.",
-    "geography": "US + global English (UK/Canada/Australia scaffolding)",
-    "business_model": "SaaS subscription (Free/$29 Defender/$149 Coach Pro) + PAYG ($49-$299 credit packs)",
-    "stack": "Vite, React, TypeScript, Supabase, Stripe/Whop, Gemini, pgvector",
-    "repository": "career-automation-insights-engine"
-  },
-  "decision": {
-    "decision_statement": "Which niche should this product target first, and how should it be positioned to win?",
-    "decision_owner": "Founder/solo operator",
-    "auditor": "Cascade (AI agent)",
-    "success_threshold": "Identify a beachhead segment with evidence-backed product-market fit potential and a clear positioning statement",
-    "risks": [
-      "B2C AI job risk calculator space is saturated with 12+ free competitors",
-      "Enterprise workforce audit is crowded with 8+ well-funded competitors",
-      "Product breadth without focus is a positioning weakness",
-      "No first-party customer evidence to validate any hypothesis",
-      "Bootstrap budget limits distribution options"
-    ],
-    "conflicts_of_interest": [
-      "Founder is decision owner — self-interest bias toward positive outcomes",
-      "Auditor is AI agent — lacks human market intuition, may miss qualitative signals"
-    ]
-  },
-  "candidate_segments": [
-    "B2C mid-career knowledge workers (28-45)",
-    "B2B career coaches/resume writers",
-    "B2B enterprise HR/CHROs",
-    "B2C/B2G veterans/transitioning service members",
-    "B2B bootcamps/training providers"
-  ],
-  "recommended_beachhead": "B2B Career Coaches",
-  "recommended_positioning": "The white-label automation defense report generator for career coaches. Grounded in O*NET 30.3 government data. Branded with your logo. Ready in minutes — not hours of manual research.",
-  "evidence_types": [
-    "product_promise",
-    "customer_outcome",
-    "competitor_intel",
-    "pricing_signal",
-    "analytics_data",
-    "codebase_evidence",
-    "stakeholder_input"
-  ],
-  "confidence": {
+  "decision_confidence": {
     "composite": 68,
     "quality": 22,
     "coverage": 18,
@@ -61,42 +18,65 @@
     "counter": 12,
     "validation": 0
   },
-  "gates": {
-    "P0": "CONDITIONAL_GO",
-    "P1": "CONDITIONAL_GO",
-    "P2": "CONDITIONAL_GO",
-    "P3": "CONDITIONAL_GO",
-    "P4": "CONDITIONAL_GO",
-    "P5": "CONDITIONAL_GO",
-    "P6": "CONDITIONAL_GO",
-    "P7": "CONDITIONAL_GO"
-  },
-  "completed_phases": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7"],
-  "experiment_count": 4,
-  "hypothesis_count": 4,
-  "limitations": [
+  "hypotheses": [
+    {"id": "H001", "text": "Global-English independent career-transition coaches may pay for a source-labeled, human-reviewed, U.S.-basis automation-transition planning artifact.", "status": "unresolved"},
+    {"id": "H002", "text": "O*NET data grounding is a defensible differentiator that career coaches value.", "status": "unresolved"},
+    {"id": "H003", "text": "Bridge role pathfinding may be a capability that coaches value for showing clients actionable transition paths.", "status": "unresolved"},
+    {"id": "H004", "text": "SEO occupation pages will drive organic traffic that converts to free-tier signups funneling to coach outreach.", "status": "unresolved"},
+    {"id": "H005", "text": "Coaches will pay $49 for 5 report credits without a free trial.", "status": "unresolved"}
+  ],
+  "experiments": [
+    {"experiment_id": "EXP-001", "hypothesis_id": "H001", "status": "designed"},
+    {"experiment_id": "EXP-002", "hypothesis_id": "H001", "status": "designed"},
+    {"experiment_id": "EXP-003", "hypothesis_id": "H002", "status": "designed"},
+    {"experiment_id": "EXP-004", "hypothesis_id": "H004", "status": "designed"},
+    {"experiment_id": "EXP-005", "hypothesis_id": "H005", "status": "designed"},
+    {"experiment_id": "EXP-006", "hypothesis_id": "H001", "status": "designed"}
+  ],
+  "evidence_types_present": [
+    "product_promise",
+    "codebase_evidence",
+    "competitor_intel",
+    "pricing_signal",
+    "analytics_data",
+    "stakeholder_input"
+  ],
+  "evidence_types_missing": [
+    "customer_outcome",
+    "user_quote",
+    "behavioral_observation",
+    "support_ticket",
+    "sales_data"
+  ],
+  "evidence_limitations": [
     "Evidence-limited mode: no first-party commercial evidence — all gates capped at CONDITIONAL_GO",
     "No executed experiments — validation confidence is 0",
     "Web research may have recency/availability bias",
-    "AI auditor lacks human market intuition"
+    "AI auditor lacks human market intuition",
+    "Competitor matrix is dated — requires refresh before scaling outreach"
   ],
-  "unknowns": [
-    "Actual user count and signup numbers",
-    "Conversion rate from free to paid",
-    "User behavior patterns and feature usage",
-    "Customer feedback and support tickets",
-    "Competitor revenue and traction data",
-    "SEO ranking and organic traffic data"
+  "phases_completed": ["phase-0", "phase-1", "phase-2", "phase-3", "phase-4", "phase-5"],
+  "gates_passed": [
+    {"gate": "P0", "decision": "CONDITIONAL_GO", "timestamp": "2026-07-16T11:00:00Z"},
+    {"gate": "P1", "decision": "CONDITIONAL_GO", "timestamp": "2026-07-16T14:00:00Z"},
+    {"gate": "P2", "decision": "CONDITIONAL_GO", "timestamp": "2026-07-16T17:00:00Z"},
+    {"gate": "P3", "decision": "CONDITIONAL_GO", "timestamp": "2026-07-16T19:00:00Z"},
+    {"gate": "P4", "decision": "CONDITIONAL_GO", "timestamp": "2026-07-16T21:00:00Z"},
+    {"gate": "P5", "decision": "RECYCLE", "timestamp": "2026-07-16T22:00:00Z"}
   ],
-  "top_gaps": [
-    "G-001: Distribution gap — no marketing to coaches",
-    "G-002: Proof gap — no testimonials or demos",
-    "G-003: Adoption gap — no coach-specific trial"
-  ],
-  "experiment_queue": [
-    "EXP-001: Coach cold outreach (20 coaches, 2 weeks)",
-    "EXP-002: LinkedIn demo video (1 week)",
-    "EXP-003: O*NET vs AI A/B test (2 weeks)",
-    "EXP-004: SEO organic traffic baseline (30 days)"
-  ]
+  "gaps": {"critical": 2, "major": 3, "minor": 1, "total": 6},
+  "beachhead": "B2B Career Coaches",
+  "beachhead_score": null,
+  "remediation_completed": null,
+  "next_audit": null,
+  "audit_version": null,
+  "previous_audit": null,
+  "stack_detected": "Vite, React, TypeScript, Supabase, Stripe/Whop, Gemini, pgvector",
+  "domain_detected": "career-transition coaching tools",
+  "advisor_used": false,
+  "extensions_loaded": [],
+  "research_log": [],
+  "tool_health": {},
+  "drift_status": "not_assessed",
+  "last_updated": "2026-07-17T04:09:00Z"
 }

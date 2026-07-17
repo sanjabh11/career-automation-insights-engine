@@ -28,10 +28,30 @@ function exists(relativePath) {
 
 function runGit(args, fallback = 'unknown') {
   try {
-    return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim() || fallback;
+    return execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim() || fallback;
   } catch {
     return fallback;
   }
+}
+
+function resolveComparisonBase() {
+  const candidates = [
+    process.env.REMEDIATION_BASE_REF,
+    'phase-d-global-english-localization',
+    'origin/main',
+    'main',
+  ].filter(Boolean);
+
+  for (const ref of candidates) {
+    const resolved = runGit(['rev-parse', '--verify', `${ref}^{commit}`], '');
+    if (resolved) return ref;
+  }
+
+  return null;
 }
 
 function statusFor(gatesById, id) {
@@ -107,9 +127,12 @@ function buildAudit() {
   const playbook = read('docs/commercialization/phase-e-commercial-validation-playbook.md');
   const branch = runGit(['branch', '--show-current']);
   const head = runGit(['rev-parse', '--short', 'HEAD']);
-  const changedSinceBase = runGit(['diff', '--name-only', 'phase-d-global-english-localization...HEAD'], '')
-    .split(/\r?\n/)
-    .filter(Boolean);
+  const comparisonBaseRef = resolveComparisonBase();
+  const changedSinceBase = comparisonBaseRef
+    ? runGit(['diff', '--name-only', `${comparisonBaseRef}...HEAD`], '')
+        .split(/\r?\n/)
+        .filter(Boolean)
+    : [];
 
   const phaseDeliverables = [
     {
@@ -235,6 +258,11 @@ function buildAudit() {
     ],
     currentBranchFilesChangedCount: changedSinceBase.length,
     currentBranchFilesChangedSample: changedSinceBase.slice(0, 40),
+    comparisonBaseRef,
+    comparisonBaseStatus: comparisonBaseRef ? 'verified' : 'unavailable',
+    comparisonBoundary: comparisonBaseRef
+      ? `Changed-file sample compares ${comparisonBaseRef}...HEAD.`
+      : 'No known remediation baseline ref is available locally; changed-since-baseline counts are omitted rather than inferred from an unrelated branch or remote.',
     errors,
   };
 }

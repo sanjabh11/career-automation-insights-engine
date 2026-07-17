@@ -1,11 +1,11 @@
 {
   "schemaVersion": "2026-06-05.apo-commercial-verification-summary.v1",
-  "generatedAt": "2026-06-08T23:28:23.540Z",
-  "startedAt": "2026-06-08T23:22:18.982Z",
-  "endedAt": "2026-06-08T23:28:23.540Z",
-  "status": "passed",
+  "generatedAt": "2026-07-17T10:04:19.715Z",
+  "startedAt": "2026-07-17T09:54:01.087Z",
+  "endedAt": "2026-07-17T10:04:19.710Z",
+  "status": "failed",
   "invocation": {
-    "command": "node scripts/verify-commercial-release.mjs",
+    "command": "node scripts/verify-commercial-release.mjs --continue-on-failure",
     "npmScripts": {
       "defaultCore": "npm run verify:commercial",
       "fullLocalGate": "npm run verify:commercial-full"
@@ -16,22 +16,30 @@
       "includeLiveOnet": false,
       "includeLiveResumeParser": false,
       "includeA11y": false,
-      "includeJourney": false
+      "includeJourney": false,
+      "continueOnFailure": true
     },
-    "cwd": "/Users/sanjayb/Documents/newrepo/career-automation-insights-engine"
+    "cwd": "/Users/sanjayb/career-automation-insights-engine-fresh"
   },
   "plannedStepCount": 68,
   "stepCount": 68,
   "completedStepCount": 68,
-  "passedStepCount": 68,
-  "failedStepCount": 0,
-  "timedOutStepCount": 0,
-  "failedSteps": [],
+  "passedStepCount": 62,
+  "failedStepCount": 6,
+  "timedOutStepCount": 5,
+  "failedSteps": [
+    "deployment-packet",
+    "live-closeout-readiness-status",
+    "lint-commercial",
+    "typecheck",
+    "build",
+    "route-smoke"
+  ],
   "releaseGateCoverage": {
     "default_core": {
       "command": "npm run verify:commercial",
       "includedInThisInvocation": true,
-      "passedInThisInvocation": true
+      "passedInThisInvocation": false
     },
     "browser_journey": {
       "command": "npm run verify:commercial-browser",
@@ -56,7 +64,7 @@
     "typecheck": {
       "command": "npx tsc --noEmit",
       "includedInThisInvocation": true,
-      "passedInThisInvocation": true,
+      "passedInThisInvocation": false,
       "boundary": "Included in the default commercial verifier as a repo-local TypeScript contract check."
     },
     "diff_check": {
@@ -106,15 +114,17 @@
       "sourceArtifactCount": 6,
       "status": "owner_evidence_required",
       "goalComplete": false,
-      "remainingGateCount": 5,
+      "remainingGateCount": 7,
       "remainingGateIds": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
       ],
-      "sourceTraceCount": 5,
+      "sourceTraceCount": 7,
       "sourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -145,8 +155,36 @@
           "sourceArtifactCount": 6
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.production_calibration_run",
+          "sourceArtifacts": {
+            "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.production_calibration_run",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run"
+          },
+          "sourceArtifactCount": 6
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.authenticated_live_artifact_e2e",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e"
+          },
+          "sourceArtifactCount": 6
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero",
           "sourceArtifacts": {
             "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero",
@@ -187,7 +225,7 @@
           "sourceArtifactCount": 6
         }
       ],
-      "remainingGateSourceTraceCount": 5,
+      "remainingGateSourceTraceCount": 7,
       "remainingGateSourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -218,8 +256,36 @@
           "sourceArtifactCount": 6
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.production_calibration_run",
+          "sourceArtifacts": {
+            "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.production_calibration_run",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run"
+          },
+          "sourceArtifactCount": 6
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.authenticated_live_artifact_e2e",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e"
+          },
+          "sourceArtifactCount": 6
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero",
           "sourceArtifacts": {
             "scoreboard": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerGateScoreboard.remainingGateIds.live_mrr_gt_zero",
@@ -262,11 +328,8 @@
       ],
       "sourceTraceBoundary": "This owner-gate scoreboard source trace identifies repo-generated anchors for each remaining owner/live gate across closeout, remediation, handoff, and completion-drill artifacts. It does not execute owner commands, collect owner-held evidence, run live checks, or upgrade commercial readiness.",
       "evidenceBoundary": "This scoreboard is a machine-readable owner-evidence closeout summary only. It does not prove live checkout, live MRR, partner commitments, documented outcomes, manual WCAG conformance, legal compliance, procurement approval, or commercial readiness.",
-      "acceptedLiveGateIds": [
-        "production_calibration_run",
-        "authenticated_live_artifact_e2e"
-      ],
-      "ownerActionNeededCount": 6,
+      "acceptedLiveGateIds": [],
+      "ownerActionNeededCount": 10,
       "failedStepIds": [
         "compose-live-evidence",
         "compose-commercial-records",
@@ -280,15 +343,17 @@
       "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates",
       "sourceArtifactCount": 1,
       "goalComplete": false,
-      "remainingExternalGateCount": 5,
+      "remainingExternalGateCount": 7,
       "remainingExternalGateIds": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
       ],
-      "sourceTraceCount": 5,
+      "sourceTraceCount": 7,
       "sourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -303,8 +368,20 @@
           "sourceArtifactCount": 1
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+          "sourceArtifactCount": 1
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+          "sourceArtifactCount": 1
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero",
           "sourceArtifactCount": 1
         },
@@ -321,7 +398,7 @@
           "sourceArtifactCount": 1
         }
       ],
-      "remainingExternalGateSourceTraceCount": 5,
+      "remainingExternalGateSourceTraceCount": 7,
       "remainingExternalGateSourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -336,8 +413,20 @@
           "sourceArtifactCount": 1
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+          "sourceArtifactCount": 1
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+          "sourceArtifactCount": 1
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceArtifact": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.live_mrr_gt_zero",
           "sourceArtifactCount": 1
         },
@@ -369,6 +458,8 @@
       "gapGateIds": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -376,12 +467,14 @@
       "unresolvedBlockers": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
       ],
       "scoreOverall": 3,
-      "sourceTraceCount": 5,
+      "sourceTraceCount": 7,
       "sourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -406,6 +499,32 @@
             "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.real_stripe_test_checkout",
             "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.real_stripe_test_checkout",
             "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout"
+          },
+          "sourceArtifactCount": 4
+        },
+        {
+          "gateId": "production_calibration_run",
+          "status": "open",
+          "severity": "P1",
+          "sourceArtifact": "docs/commercialization/launch-evidence-latest.json#gaps.production_calibration_run",
+          "sourceArtifacts": {
+            "launchGap": "docs/commercialization/launch-evidence-latest.json#gaps.production_calibration_run",
+            "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.production_calibration_run",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run"
+          },
+          "sourceArtifactCount": 4
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "open",
+          "severity": "P1",
+          "sourceArtifact": "docs/commercialization/launch-evidence-latest.json#gaps.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "launchGap": "docs/commercialization/launch-evidence-latest.json#gaps.authenticated_live_artifact_e2e",
+            "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.authenticated_live_artifact_e2e",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e"
           },
           "sourceArtifactCount": 4
         },
@@ -449,7 +568,7 @@
           "sourceArtifactCount": 4
         }
       ],
-      "blockerSourceTraceCount": 5,
+      "blockerSourceTraceCount": 7,
       "blockerSourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -474,6 +593,32 @@
             "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.real_stripe_test_checkout",
             "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.real_stripe_test_checkout",
             "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.real_stripe_test_checkout"
+          },
+          "sourceArtifactCount": 4
+        },
+        {
+          "gateId": "production_calibration_run",
+          "status": "open",
+          "severity": "P1",
+          "sourceArtifact": "docs/commercialization/launch-evidence-latest.json#gaps.production_calibration_run",
+          "sourceArtifacts": {
+            "launchGap": "docs/commercialization/launch-evidence-latest.json#gaps.production_calibration_run",
+            "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.production_calibration_run",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.production_calibration_run",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run"
+          },
+          "sourceArtifactCount": 4
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "open",
+          "severity": "P1",
+          "sourceArtifact": "docs/commercialization/launch-evidence-latest.json#gaps.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "launchGap": "docs/commercialization/launch-evidence-latest.json#gaps.authenticated_live_artifact_e2e",
+            "unresolvedBlocker": "docs/commercialization/launch-evidence-latest.json#fix_report.unresolved_blockers.authenticated_live_artifact_e2e",
+            "remediationCompletion": "docs/commercialization/remediation-completion-audit-latest.json#remainingExternalGates.authenticated_live_artifact_e2e",
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e"
           },
           "sourceArtifactCount": 4
         },
@@ -541,7 +686,7 @@
         "overall": 3
       },
       "deliverableCounts": {
-        "gapCount": 5,
+        "gapCount": 7,
         "painPointCount": 10,
         "targetCustomerCount": 10,
         "competitorSubstituteCount": 5,
@@ -559,7 +704,7 @@
         "repoArtifactProofCount": 8,
         "candidateShadowProofCount": 2,
         "roadmapProofCount": 3,
-        "gapCount": 5,
+        "gapCount": 7,
         "painPointCount": 10,
         "targetCustomerCount": 10,
         "competitorSubstituteCount": 5,
@@ -574,7 +719,7 @@
         "crmRowCount": 10,
         "fixReportCheckCount": 2,
         "approvalGateCount": 4,
-        "unresolvedBlockerCount": 5,
+        "unresolvedBlockerCount": 7,
         "implementationDecisionCount": 99,
         "rejectedVariantCount": 111,
         "codeOptimizationReviewCount": 99,
@@ -601,13 +746,15 @@
         }
       },
       "fixReportCoverage": {
-        "ownerActionQueueCount": 5,
-        "ownerPrepCommandCount": 5,
-        "ownerPrepActionNeededCount": 6,
-        "unresolvedBlockerCount": 5,
+        "ownerActionQueueCount": 7,
+        "ownerPrepCommandCount": 7,
+        "ownerPrepActionNeededCount": 10,
+        "unresolvedBlockerCount": 7,
         "unresolvedBlockers": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -1104,7 +1251,7 @@
       "gateCount": 7,
       "includedGateCount": 3,
       "notIncludedGateCount": 4,
-      "passedGateCount": 3,
+      "passedGateCount": 1,
       "includedGateIds": [
         "default_core",
         "typecheck",
@@ -1117,8 +1264,6 @@
         "full_local_gate"
       ],
       "passedGateIds": [
-        "default_core",
-        "typecheck",
         "diff_check"
       ],
       "requiredSeparateProofGateIds": [
@@ -1144,7 +1289,7 @@
         "default_core": {
           "command": "npm run verify:commercial",
           "includedInThisInvocation": true,
-          "passedInThisInvocation": true
+          "passedInThisInvocation": false
         },
         "browser_journey": {
           "command": "npm run verify:commercial-browser",
@@ -1169,7 +1314,7 @@
         "typecheck": {
           "command": "npx tsc --noEmit",
           "includedInThisInvocation": true,
-          "passedInThisInvocation": true,
+          "passedInThisInvocation": false,
           "boundary": "Included in the default commercial verifier as a repo-local TypeScript contract check."
         },
         "diff_check": {
@@ -1185,7 +1330,7 @@
           "gateId": "default_core",
           "command": "npm run verify:commercial",
           "includedInThisInvocation": true,
-          "passedInThisInvocation": true,
+          "passedInThisInvocation": false,
           "optional": false,
           "separateProofRequired": false,
           "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.default_core",
@@ -1235,7 +1380,7 @@
           "gateId": "typecheck",
           "command": "npx tsc --noEmit",
           "includedInThisInvocation": true,
-          "passedInThisInvocation": true,
+          "passedInThisInvocation": false,
           "optional": false,
           "separateProofRequired": false,
           "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#releaseGateCoverage.typecheck",
@@ -2021,10 +2166,10 @@
     },
     "postSummaryArtifactRedactionSummary": {
       "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryArtifactRedaction",
-      "status": "post_summary_scan_required",
+      "status": "not_included_until_summary_passes",
       "command": "node scripts/verify-commercial-artifact-redaction.mjs --write",
       "executionOrder": "after final commercial verification summary write",
-      "includedInThisInvocation": true,
+      "includedInThisInvocation": false,
       "resultArtifacts": {
         "json": "docs/commercialization/commercial-artifact-redaction-latest.json",
         "markdown": "docs/commercialization/commercial-artifact-redaction-latest.md"
@@ -2083,10 +2228,10 @@
     },
     "postSummaryLaunchReadinessAlignmentSummary": {
       "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchReadinessAlignment",
-      "status": "included_after_post_summary_redaction_alignment",
+      "status": "pending_final_summary_alignment",
       "command": "node scripts/verify-commercial-summary-launch-readiness-alignment.mjs",
       "executionOrder": "after post-summary redaction alignment verifier",
-      "includedInThisInvocation": true,
+      "includedInThisInvocation": false,
       "fixtureVerifier": {
         "command": "node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs",
         "executionOrder": "after post-summary launch-readiness alignment verifier",
@@ -2125,10 +2270,10 @@
     },
     "postSummaryLaunchEvidenceRefreshSummary": {
       "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchEvidenceRefresh",
-      "status": "included_after_initial_passed_summary",
+      "status": "pending_initial_passed_summary",
       "command": "node scripts/generate-launch-evidence-manifest.mjs --write --validate",
       "executionOrder": "after initial passed summary write and before final summary rewrite",
-      "includedInThisInvocation": true,
+      "includedInThisInvocation": false,
       "resultArtifacts": {
         "json": "docs/commercialization/launch-evidence-latest.json",
         "markdown": "docs/commercialization/launch-evidence-latest.md"
@@ -2581,6 +2726,8 @@
         "remaining": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -2588,6 +2735,8 @@
         "handoffRemaining": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -2595,6 +2744,8 @@
         "completionRequired": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -2603,10 +2754,10 @@
       "ownerPrepActionNeededByGateSourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate",
       "ownerPrepActionNeededByGateBoundary": "This per-gate summary mirrors ownerEvidencePrep.ownerActionNeededByGate for remaining owner gates only. Gate-scoped counts can exceed unique owner actions when one owner-held artifact unblocks multiple gates. It does not expose owner-held evidence values or prove any external launch gate.",
       "ownerPrepActionNeededByGateCoverage": {
-        "ownerPrepActionNeededGateCount": 5,
-        "gateScopedOwnerPrepActionCount": 7,
-        "uniqueOwnerPrepActionNeededCount": 6,
-        "sharedOwnerPrepActionCount": 1
+        "ownerPrepActionNeededGateCount": 7,
+        "gateScopedOwnerPrepActionCount": 9,
+        "uniqueOwnerPrepActionNeededCount": 10,
+        "sharedOwnerPrepActionCount": 0
       },
       "ownerPrepActionNeededByGate": {
         "manual_wcag_evidence": {
@@ -2621,16 +2772,32 @@
           "gateId": "real_stripe_test_checkout",
           "ownerActionNeededCount": 2,
           "ownerActionNeeded": [
-            "stripe_test_checkout: provide STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY and load SUPABASE_URL, SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD, STRIPE_TEST_PRICE_ID",
+            "stripe_test_checkout: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD; STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY; STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID",
             "docs/commercialization/stripe-test-checkout-proof-latest.json: run owner proof command until status=passed with test-mode subscription Checkout metadata and owner-held Checkout Session/function-invocation archive policy"
           ],
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.real_stripe_test_checkout"
+        },
+        "production_calibration_run": {
+          "gateId": "production_calibration_run",
+          "ownerActionNeededCount": 1,
+          "ownerActionNeeded": [
+            "production_calibration: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY"
+          ],
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.production_calibration_run"
+        },
+        "authenticated_live_artifact_e2e": {
+          "gateId": "authenticated_live_artifact_e2e",
+          "ownerActionNeededCount": 1,
+          "ownerActionNeeded": [
+            "authenticated_live_artifact_e2e: provide SUPABASE_URL or VITE_SUPABASE_URL; SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY; LIVE_SUPABASE_TEST_USER_EMAIL; LIVE_SUPABASE_TEST_USER_PASSWORD"
+          ],
+          "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.authenticated_live_artifact_e2e"
         },
         "live_mrr_gt_zero": {
           "gateId": "live_mrr_gt_zero",
           "ownerActionNeededCount": 2,
           "ownerActionNeeded": [
-            "live_mrr_gt_zero: load STRIPE_SECRET_KEY",
+            "live_mrr_gt_zero: provide STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY",
             "docs/commercialization/stripe-live-mrr-proof-latest.json: run owner proof command until status=passed with active subscription, paid invoice, redacted MRR metadata, and owner-held subscription/invoice archive policy"
           ],
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.live_mrr_gt_zero"
@@ -2639,7 +2806,7 @@
           "gateId": "three_committed_partners",
           "ownerActionNeededCount": 1,
           "ownerActionNeeded": [
-            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
           ],
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.three_committed_partners"
         },
@@ -2647,7 +2814,7 @@
           "gateId": "documented_outcomes",
           "ownerActionNeededCount": 1,
           "ownerActionNeeded": [
-            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; run npm run hash:owner-evidence-artifacts -- <local partner/outcome proof files>, then replace placeholder partner/outcome refs, proof artifact hashes/types, integrity attestations, ownerEvidenceArchive policy metadata, measured-outcome scope fields, rawEvidenceOwnerHeld attestation, and hash salt"
+            "docs/commercialization/commercial-evidence-intake.local.json: run npm run generate:commercial-evidence-intake-packet and use docs/commercialization/commercial-evidence-intake-packet-latest.md plus docs/commercialization/commercial-evidence-intake-matrix-latest.csv as the owner-held partner/outcome worksheet before hashing proof artifacts; create from docs/commercialization/commercial-evidence-intake-template.json"
           ],
           "sourceArtifact": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerEvidencePrep.ownerActionNeededByGate.documented_outcomes"
         }
@@ -2812,9 +2979,9 @@
         "boundary": "This release-level summary mirrors repo-local owner-evidence local-safety artifact status and confirms the handoff/completion-drill copied status stays aligned. It does not inspect owner-held local evidence contents, prove live gates, or upgrade commercial readiness."
       },
       "closeoutCoverage": {
-        "ownerActionQueueCount": 5,
-        "ownerActionNeededCount": 6,
-        "ownerPrepActionNeededCount": 6,
+        "ownerActionQueueCount": 7,
+        "ownerActionNeededCount": 10,
+        "ownerPrepActionNeededCount": 10,
         "failedStepCount": 6,
         "failedStepIds": [
           "compose-live-evidence",
@@ -3263,11 +3430,13 @@
         "nextCommandSourceTraceBoundary": "This closeout next-command source trace identifies repo-generated owner closeout command-map anchors and status-artifact anchors. It does not execute owner commands, load credentials, collect owner-held evidence, write owner-local files, or upgrade launch readiness."
       },
       "handoffCoverage": {
-        "ownerActionQueueCount": 5,
-        "ownerActionRowCount": 5,
+        "ownerActionQueueCount": 7,
+        "ownerActionRowCount": 7,
         "ownerActionGateIds": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -3521,10 +3690,10 @@
       },
       "completionDrillCoverage": {
         "status": "owner_evidence_required",
-        "requiredGateCount": 5,
-        "blockedGateCount": 5,
-        "ownerActionQueueCount": 5,
-        "ownerActionNeededCount": 6,
+        "requiredGateCount": 7,
+        "blockedGateCount": 7,
+        "ownerActionQueueCount": 7,
+        "ownerActionNeededCount": 10,
         "packetCount": 3,
         "packetTypes": [
           "live_proof_run",
@@ -3556,10 +3725,12 @@
           "commercial_evidence_intake": 4,
           "manual_wcag_review": 7
         },
-        "matrixRowCount": 5,
+        "matrixRowCount": 7,
         "completionRowGateIds": [
           "manual_wcag_evidence",
           "real_stripe_test_checkout",
+          "production_calibration_run",
+          "authenticated_live_artifact_e2e",
           "live_mrr_gt_zero",
           "three_committed_partners",
           "documented_outcomes"
@@ -3826,13 +3997,15 @@
     },
     "ownerActionQueueSummary": {
       "status": "owner_action_required",
-      "queueCount": 5,
-      "closeoutQueueCount": 5,
-      "handoffRowCount": 5,
-      "completionDrillRowCount": 5,
+      "queueCount": 7,
+      "closeoutQueueCount": 7,
+      "handoffRowCount": 7,
+      "completionDrillRowCount": 7,
       "gateIds": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
@@ -3845,8 +4018,8 @@
         "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows"
       },
       "sourceArtifactCount": 4,
-      "rowSourceArtifactCount": 20,
-      "sourceTraceCount": 5,
+      "rowSourceArtifactCount": 28,
+      "sourceTraceCount": 7,
       "sourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -3885,8 +4058,44 @@
           "closeoutFailureDetailCount": 3
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "track": "live-runtime",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+          "sourceArtifacts": {
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run"
+          },
+          "sourceArtifactCount": 4,
+          "sourceBoundary": "owner credential and deployment-precondition gate",
+          "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+          "nextCommand": "npm run verify:production-calibration",
+          "blockingOwnerActionCount": 1,
+          "closeoutFailureDetailCount": 3
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "track": "live-runtime",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e"
+          },
+          "sourceArtifactCount": 4,
+          "sourceBoundary": "owner credential gate",
+          "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+          "nextCommand": "npm run verify:commercial-live-auth-e2e",
+          "blockingOwnerActionCount": 1,
+          "closeoutFailureDetailCount": 3
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "track": "payments",
           "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero",
           "sourceArtifacts": {
@@ -3940,22 +4149,26 @@
         }
       ],
       "handoffOnlyGateIds": [],
-      "ownerPrepCommandCount": 5,
-      "nextCommandCount": 5,
-      "rawEvidencePolicyCount": 5,
-      "repoDoesNotDoCount": 5,
-      "blockingOwnerActionCount": 7,
-      "closeoutFailureDetailCount": 14,
+      "ownerPrepCommandCount": 7,
+      "nextCommandCount": 7,
+      "rawEvidencePolicyCount": 7,
+      "repoDoesNotDoCount": 7,
+      "blockingOwnerActionCount": 9,
+      "closeoutFailureDetailCount": 20,
       "statusesByGate": {
         "manual_wcag_evidence": "blocked_missing_manual_wcag_evidence",
         "real_stripe_test_checkout": "blocked_missing_owner_secret_or_live_evidence",
-        "live_mrr_gt_zero": "ready_for_owner_live_run",
+        "production_calibration_run": "blocked_missing_owner_secret_or_live_evidence",
+        "authenticated_live_artifact_e2e": "blocked_missing_owner_secret_or_live_evidence",
+        "live_mrr_gt_zero": "blocked_missing_owner_secret_or_live_evidence",
         "three_committed_partners": "blocked_missing_owner_evidence_records",
         "documented_outcomes": "blocked_missing_owner_evidence_records"
       },
       "tracksByGate": {
         "manual_wcag_evidence": "accessibility",
         "real_stripe_test_checkout": "payments",
+        "production_calibration_run": "live-runtime",
+        "authenticated_live_artifact_e2e": "live-runtime",
         "live_mrr_gt_zero": "payments",
         "three_committed_partners": "commercial-validation",
         "documented_outcomes": "commercial-validation"
@@ -4013,7 +4226,7 @@
           },
           "sourceArtifactCount": 4,
           "sourceBoundary": "owner credential gate",
-          "currentEvidence": "Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY.",
+          "currentEvidence": "Local checkout code and owner-run verifier are ready, but required secret/env names are absent: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID, SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD.",
           "neededEvidence": "Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.",
           "ownerAction": "Load owner-held Supabase synthetic-user credentials, a Stripe test-mode key, and a matching test Price ID, then run the checkout verifier against the deployed or staging function; keep raw Checkout Session payloads, function invocation metadata, screenshots, and Stripe dashboard records outside git.",
           "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
@@ -4037,10 +4250,83 @@
         },
         {
           "order": 3,
+          "gateId": "production_calibration_run",
+          "label": "Production calibration run",
+          "track": "live-runtime",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+          "sourceArtifacts": {
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.production_calibration_run",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.production_calibration_run",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.production_calibration_run"
+          },
+          "sourceArtifactCount": 4,
+          "sourceBoundary": "owner credential and deployment-precondition gate",
+          "currentEvidence": "Calibration code/artifacts and the owner-run verifier are ready, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
+          "neededEvidence": "Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+          "ownerAction": "Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.",
+          "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+          "nextCommand": "npm run verify:production-calibration",
+          "riskIfSkipped": "Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.",
+          "closeoutStepIds": [
+            "compose-live-evidence",
+            "verify-live-evidence",
+            "verify-remediation-gates"
+          ],
+          "closeoutFailureDetailCount": 3,
+          "blockingOwnerActionCount": 1,
+          "doesNotProve": [
+            "Scientific validation before live labels exist",
+            "Migrations or deployments were applied by this verifier"
+          ],
+          "doesNotProveCount": 2,
+          "rawEvidencePolicy": "Keep Supabase secrets, synthetic-user credentials, logs with user identifiers, and service-role data outside git; commit only redacted verifier artifacts.",
+          "repoDoesNotDo": "The repo cannot prove production calibration unless the owner target has migrations, deployed functions, logs, and expert labels."
+        },
+        {
+          "order": 4,
+          "gateId": "authenticated_live_artifact_e2e",
+          "label": "Authenticated live artifact e2e",
+          "track": "live-runtime",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+          "sourceArtifacts": {
+            "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "closeoutStatus": "docs/commercialization/owner-evidence-closeout-status-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+            "handoff": "docs/commercialization/owner-evidence-handoff-latest.json#ownerActionRows.authenticated_live_artifact_e2e",
+            "completionDrill": "docs/commercialization/owner-evidence-completion-drill-latest.json#completionRows.authenticated_live_artifact_e2e"
+          },
+          "sourceArtifactCount": 4,
+          "sourceBoundary": "owner credential gate",
+          "currentEvidence": "Verifier exists, but required secret/env names are absent: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD.",
+          "neededEvidence": "Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
+          "ownerAction": "Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.",
+          "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
+          "nextCommand": "npm run verify:commercial-live-auth-e2e",
+          "riskIfSkipped": "Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.",
+          "closeoutStepIds": [
+            "compose-live-evidence",
+            "verify-live-evidence",
+            "verify-remediation-gates"
+          ],
+          "closeoutFailureDetailCount": 3,
+          "blockingOwnerActionCount": 1,
+          "doesNotProve": [
+            "Payment proof",
+            "malware scanning",
+            "legal compliance"
+          ],
+          "doesNotProveCount": 3,
+          "rawEvidencePolicy": "Keep Supabase secrets, synthetic-user credentials, logs with user identifiers, and service-role data outside git; commit only redacted verifier artifacts.",
+          "repoDoesNotDo": "The repo cannot prove live authenticated artifact persistence without owner-held target credentials and a synthetic user."
+        },
+        {
+          "order": 5,
           "gateId": "live_mrr_gt_zero",
           "label": "Live MRR greater than zero",
           "track": "payments",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero",
           "sourceArtifacts": {
             "remediationExternalGates": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero",
@@ -4050,7 +4336,7 @@
           },
           "sourceArtifactCount": 4,
           "sourceBoundary": "owner live Stripe credential gate",
-          "currentEvidence": "Required secret/env names are present; run `npm run verify:stripe-live-mrr` with a live-mode read-only Stripe key to check active subscriptions and paid invoices without printing secrets.",
+          "currentEvidence": "Stripe live-MRR owner-run verifier is ready, but required secret/env names are absent: STRIPE_LIVE_SECRET_KEY or STRIPE_LIVE_RESTRICTED_KEY or STRIPE_SECRET_KEY.",
           "neededEvidence": "Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.",
           "ownerAction": "Provide a live-mode read-only Stripe key after a real paid recurring subscription exists, then run the live-MRR verifier without exposing customer or invoice details; keep raw subscription exports, invoice exports, dashboard screenshots, and customer-level evidence outside git.",
           "ownerPrepCommand": "npm run generate:live-proof-run-packet && npm run prepare:owner-evidence -- --write && set -a; source .env.local; set +a",
@@ -4074,7 +4360,7 @@
           "repoDoesNotDo": "The repo cannot prove revenue before a real paid subscription exists and a live-mode read-only Stripe key is supplied."
         },
         {
-          "order": 4,
+          "order": 6,
           "gateId": "three_committed_partners",
           "label": "Three committed design partners",
           "track": "commercial-validation",
@@ -4113,7 +4399,7 @@
           "repoDoesNotDo": "The repo cannot invent partner commitments or permission to cite them."
         },
         {
-          "order": 5,
+          "order": 7,
           "gateId": "documented_outcomes",
           "label": "Permissioned documented outcomes",
           "track": "commercial-validation",
@@ -4158,9 +4444,9 @@
     "progressUpdates": [
       {
         "phase": "owner-operational-access-command-checklist-surfacing",
-        "created_at": "2026-06-08T23:28:23.208Z",
+        "created_at": "2026-07-17T09:57:46.096Z",
         "accomplished": [
-          "Default commercial verifier summary status=passed; 68/68 planned repo-side steps passed and 0 failed, followed by post-summary redaction, launch-readiness alignment, and full-local approval-package checks.",
+          "Default commercial verifier summary status=running; final step counts are written after the launch-evidence generation step, so use docs/commercialization/commercial-verification-summary-latest.json as the authoritative release-gate coverage artifact.",
           "Latest Code Optimization Gate review: Owner operational access command checklist surfacing (pass, minimality 5/5). The owner evidence handoff, completion drill, and Trust Center now expose the exact owner-run GitHub/Supabase access probes plus strict live-closeout verifier commands, while fixture suites fail closed on stale command lists or missing Markdown, the trust sentinel avoids stale failed-summary coupling during release runs, and the pilot-only owner-access boundary is preserved.",
           "Launch evidence manifest validates against the orchestrator schema and remains pilot-only with five owner-evidence gates open.",
           "Plan-only full-local workflow status is executable and remains executionApproved=false."
@@ -4169,29 +4455,29 @@
           {
             "lane": "Repo Map",
             "target_percent": 10,
-            "current_percent": 100,
-            "status": "pass",
+            "current_percent": 45,
+            "status": "running",
             "evidence": [
               "docs/commercialization/commercialization-codebase-index.json",
               "docs/commercialization/commercial-verification-summary-latest.json"
             ],
-            "confidence": 5
+            "confidence": 3
           },
           {
             "lane": "Security",
             "target_percent": 15,
-            "current_percent": 100,
-            "status": "pass",
+            "current_percent": 45,
+            "status": "running",
             "evidence": [
               "npm run verify:commercial",
               "docs/commercialization/commercial-artifact-redaction-latest.json"
             ],
-            "confidence": 5
+            "confidence": 3
           },
           {
             "lane": "Readiness",
             "target_percent": 15,
-            "current_percent": 85,
+            "current_percent": 45,
             "status": "running",
             "evidence": [
               "docs/commercialization/commercial-verification-summary-latest.json",
@@ -4239,14 +4525,14 @@
             "status": "running",
             "evidence": [
               "docs/commercialization/full-local-gate-execution-plan-2026-06-05.md",
-              "commercial-eu-ai-act-high-risk-boundary"
+              "commercial-browser-journey-readback-after-wcag2ict"
             ],
             "confidence": 4
           },
           {
             "lane": "Synthesis + Validation",
             "target_percent": 5,
-            "current_percent": 90,
+            "current_percent": 45,
             "status": "running",
             "evidence": [
               "docs/commercialization/launch-evidence-latest.json",
@@ -4259,13 +4545,15 @@
         "pending": [
           "manual_wcag_evidence: Completed redacted manual WCAG 2.2 A/AA evidence metadata validated by `npm run verify:manual-wcag-evidence -- --evidence docs/commercialization/manual-wcag-evidence.local.json --require-complete`, including WCAG-EM product scope, route-sample rationale, sample-selection method, technologies relied upon, complete-process review, accessibility-support baseline combinations, reviewer type and conflict disclosure, review-record archive attestations, ownerEvidenceArchive policy metadata, keyboard/focus, target-size, form error, accessible-authentication, screen-reader, contrast/reflow/text-spacing, and downloadable-artifact review. Use `npm run generate:manual-wcag-review-packet`, `docs/commercialization/manual-wcag-review-packet-latest.md`, and `docs/commercialization/manual-wcag-review-matrix-latest.csv` as the reviewer worksheet before hashing owner-held proof artifacts.",
           "real_stripe_test_checkout: Owner-provided Stripe/Supabase test credentials, `STRIPE_TEST_PRICE_ID`, and a successful `npm run verify:stripe-test-checkout` artifact with test-mode subscription Checkout metadata, payment status, and owner-held archive policy.",
+          "production_calibration_run: Owner-provided Supabase target URL/anon key, approved deployed calibration function with service-role secret configured in Supabase, live expert-label rows, APO logs, and a successful `npm run verify:production-calibration` artifact.",
+          "authenticated_live_artifact_e2e: Passing live authenticated synthetic user run for artifact save/delete and deletion receipts.",
           "live_mrr_gt_zero: Owner-provided live-mode Stripe restricted/secret key and a successful `npm run verify:stripe-live-mrr` artifact showing active subscriptions, paid invoices, redacted `total_mrr > 0` evidence, and owner-held subscription/invoice archive policy.",
           "three_committed_partners: At least three unique permissioned partner records validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-partners`, with pilot scope, planning-only use, artifact reviewed, next step, contact permission, proof artifact hashes/types, marketing/testimonial integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
           "documented_outcomes: At least one permissioned outcome record validated by `npm run verify:commercial-evidence-records -- --evidence docs/commercialization/commercial-evidence-records.local.json --require-outcomes`, with baseline workflow, artifact reviewed, measured change, measured-change unit, measurement window, outcome claim scope, typicality boundary, quote approval, proof artifact hashes/types, marketing/testimonial and outcome integrity attestations, rawEvidenceOwnerHeld=true, ownerEvidenceArchive policy metadata, does-not-prove text, and owner worksheet coverage from `npm run generate:commercial-evidence-intake-packet`.",
           "Explicit approval is still required before optional Browser/Computer, accessibility, browser journey, network/source fetch, npm audit, full-local worker execution, live payment, credential, or outreach gates."
         ],
         "activities_remaining": {
-          "current_phase_actions": 5,
+          "current_phase_actions": 7,
           "next_phase_actions": 1,
           "next_phase": "owner-held evidence closeout or explicitly approved optional full-local gate execution"
         },
@@ -4275,9 +4563,9 @@
     "bottleneckLog": [
       {
         "phase": "owner-evidence-closeout",
-        "task_or_subtask": "manual_wcag_evidence, real_stripe_test_checkout, live_mrr_gt_zero, three_committed_partners, documented_outcomes",
+        "task_or_subtask": "manual_wcag_evidence, real_stripe_test_checkout, production_calibration_run, authenticated_live_artifact_e2e, live_mrr_gt_zero, three_committed_partners, documented_outcomes",
         "elapsed_minutes": 0,
-        "last_update": "2026-06-08T23:28:23.210Z",
+        "last_update": "2026-07-17T09:57:46.097Z",
         "root_cause": "evidence gap",
         "top_unblock_options": [
           "Owner completes manual WCAG review packet, hashes owner-held review artifacts, and validates docs/commercialization/manual-wcag-evidence.local.json with --require-complete.",
@@ -7441,7 +7729,7 @@
         "minimality_score": 4,
         "evidence": "The generator emits the validator-required implementation_decisions, rejected_variants, and code_optimization_reviews arrays while preserving the existing pilot-only owner-evidence boundary.",
         "tests_or_checks": [
-          "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/Documents/newrepo/career-automation-insights-engine/docs/commercialization/launch-evidence-latest.json --require-repo-exists",
+          "python3 /Users/sanjayb/.codex/skills/commercial-launch-readiness-orchestrator/scripts/validate_launch_evidence.py /Users/sanjayb/career-automation-insights-engine-fresh/docs/commercialization/launch-evidence-latest.json --require-repo-exists",
           "node scripts/generate-launch-evidence-manifest.mjs --write --validate"
         ]
       },
@@ -8827,15 +9115,17 @@
       "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue",
       "sourceArtifactCount": 1,
       "goalComplete": false,
-      "ownerActionQueueCount": 5,
+      "ownerActionQueueCount": 7,
       "ownerActionGateIds": [
         "manual_wcag_evidence",
         "real_stripe_test_checkout",
+        "production_calibration_run",
+        "authenticated_live_artifact_e2e",
         "live_mrr_gt_zero",
         "three_committed_partners",
         "documented_outcomes"
       ],
-      "sourceTraceCount": 5,
+      "sourceTraceCount": 7,
       "sourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -8852,8 +9142,22 @@
           "sourceArtifactCount": 1
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceBoundary": "owner credential and deployment-precondition gate",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+          "sourceArtifactCount": 1
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceBoundary": "owner credential gate",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+          "sourceArtifactCount": 1
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceBoundary": "owner live Stripe credential gate",
           "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero",
           "sourceArtifactCount": 1
@@ -8873,7 +9177,7 @@
           "sourceArtifactCount": 1
         }
       ],
-      "ownerActionGateSourceTraceCount": 5,
+      "ownerActionGateSourceTraceCount": 7,
       "ownerActionGateSourceTrace": [
         {
           "gateId": "manual_wcag_evidence",
@@ -8890,8 +9194,22 @@
           "sourceArtifactCount": 1
         },
         {
+          "gateId": "production_calibration_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceBoundary": "owner credential and deployment-precondition gate",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.production_calibration_run",
+          "sourceArtifactCount": 1
+        },
+        {
+          "gateId": "authenticated_live_artifact_e2e",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
+          "sourceBoundary": "owner credential gate",
+          "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.authenticated_live_artifact_e2e",
+          "sourceArtifactCount": 1
+        },
+        {
           "gateId": "live_mrr_gt_zero",
-          "status": "ready_for_owner_live_run",
+          "status": "blocked_missing_owner_secret_or_live_evidence",
           "sourceBoundary": "owner live Stripe credential gate",
           "sourceArtifact": "docs/commercialization/remediation-external-gates-latest.json#ownerActionQueue.live_mrr_gt_zero",
           "sourceArtifactCount": 1
@@ -8924,10 +9242,10 @@
   },
   "postSummaryArtifactRedaction": {
     "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryArtifactRedaction",
-    "status": "post_summary_scan_required",
+    "status": "not_included_until_summary_passes",
     "command": "node scripts/verify-commercial-artifact-redaction.mjs --write",
     "executionOrder": "after final commercial verification summary write",
-    "includedInThisInvocation": true,
+    "includedInThisInvocation": false,
     "resultArtifacts": {
       "json": "docs/commercialization/commercial-artifact-redaction-latest.json",
       "markdown": "docs/commercialization/commercial-artifact-redaction-latest.md"
@@ -8986,10 +9304,10 @@
   },
   "postSummaryLaunchReadinessAlignment": {
     "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchReadinessAlignment",
-    "status": "included_after_post_summary_redaction_alignment",
+    "status": "pending_final_summary_alignment",
     "command": "node scripts/verify-commercial-summary-launch-readiness-alignment.mjs",
     "executionOrder": "after post-summary redaction alignment verifier",
-    "includedInThisInvocation": true,
+    "includedInThisInvocation": false,
     "fixtureVerifier": {
       "command": "node scripts/verify-commercial-summary-launch-readiness-alignment-fixtures.mjs",
       "executionOrder": "after post-summary launch-readiness alignment verifier",
@@ -9028,10 +9346,10 @@
   },
   "postSummaryLaunchEvidenceRefresh": {
     "sourceArtifact": "docs/commercialization/commercial-verification-summary-latest.json#postSummaryLaunchEvidenceRefresh",
-    "status": "included_after_initial_passed_summary",
+    "status": "pending_initial_passed_summary",
     "command": "node scripts/generate-launch-evidence-manifest.mjs --write --validate",
     "executionOrder": "after initial passed summary write and before final summary rewrite",
-    "includedInThisInvocation": true,
+    "includedInThisInvocation": false,
     "resultArtifacts": {
       "json": "docs/commercialization/launch-evidence-latest.json",
       "markdown": "docs/commercialization/launch-evidence-latest.md"
@@ -9082,7 +9400,7 @@
     "status": "approval_required_plan_only",
     "command": "node scripts/verify-commercial-full-local-approval-package.mjs",
     "executionOrder": "after post-summary redaction and launch-readiness alignment fixtures",
-    "includedInThisInvocation": true,
+    "includedInThisInvocation": false,
     "condition": "Runs only for the default commercial verifier invocation where optional accessibility, browser journey, network/audit, and live gates are not included. Full-local and other optional invocations are expected to update releaseGateCoverage instead of preserving the plan-only approval package state.",
     "executionApproved": false,
     "approvalRequiredBefore": [
@@ -9152,106 +9470,7 @@
       "id": "index",
       "label": "Regenerate commercial codebase index",
       "command": "node scripts/generate-commercialization-index.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.4"
-    },
-    {
-      "id": "worktree-hygiene",
-      "label": "Verify commercial worktree untracked-path hygiene",
-      "command": "node scripts/verify-commercial-worktree-hygiene.mjs --write",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.9"
-    },
-    {
-      "id": "worktree-hygiene-fixtures",
-      "label": "Verify commercial worktree hygiene failure fixtures",
-      "command": "node scripts/verify-commercial-worktree-hygiene-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "8.8"
-    },
-    {
-      "id": "full-local-approval-package-fixtures",
-      "label": "Verify full-local approval-package failure fixtures",
-      "command": "node scripts/verify-commercial-full-local-approval-package-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "23.1"
-    },
-    {
-      "id": "commercial-artifact-redaction",
-      "label": "Verify generated commercial artifacts do not expose secrets or owner-local metadata",
-      "command": "node scripts/verify-commercial-artifact-redaction.mjs --write",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.0"
-    },
-    {
-      "id": "trust",
-      "label": "Verify commercial trust boundaries",
-      "command": "node scripts/verify-commercial-trust-boundaries.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.5"
-    },
-    {
-      "id": "report-evidence",
-      "label": "Verify report evidence cards and proof-pack coverage",
-      "command": "node scripts/verify-report-evidence.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.6"
-    },
-    {
-      "id": "proof-visibility-ui",
-      "label": "Verify proof visibility UI surfaces",
-      "command": "node scripts/verify-proof-visibility-ui.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.8"
-    },
-    {
-      "id": "phase-e-commercial-validation",
-      "label": "Verify Phase E commercial validation instrumentation and owner-evidence gates",
-      "command": "node scripts/verify-phase-e-commercial-validation.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.3"
-    },
-    {
-      "id": "supabase-function-governance",
-      "label": "Verify Supabase function governance and launch readiness",
-      "command": "node scripts/verify-supabase-function-governance.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9259,10 +9478,43 @@
       "durationSeconds": "0.2"
     },
     {
-      "id": "onet-task-ratings",
-      "label": "Verify O*NET Task Ratings ingest boundary",
-      "command": "node scripts/verify-onet-task-ratings-ingest.mjs",
-      "timeoutMs": 300000,
+      "id": "worktree-hygiene",
+      "label": "Verify commercial worktree untracked-path hygiene",
+      "command": "node scripts/verify-commercial-worktree-hygiene.mjs --write",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "worktree-hygiene-fixtures",
+      "label": "Verify commercial worktree hygiene failure fixtures",
+      "command": "node scripts/verify-commercial-worktree-hygiene-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "4.8"
+    },
+    {
+      "id": "full-local-approval-package-fixtures",
+      "label": "Verify full-local approval-package failure fixtures",
+      "command": "node scripts/verify-commercial-full-local-approval-package-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "14.0"
+    },
+    {
+      "id": "commercial-artifact-redaction",
+      "label": "Verify generated commercial artifacts do not expose secrets or owner-local metadata",
+      "command": "node scripts/verify-commercial-artifact-redaction.mjs --write",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9270,10 +9522,10 @@
       "durationSeconds": "0.4"
     },
     {
-      "id": "deployment-packet",
-      "label": "Generate live Supabase deployment proof packet",
-      "command": "node scripts/generate-commercial-supabase-deployment-packet.mjs",
-      "timeoutMs": 300000,
+      "id": "trust",
+      "label": "Verify commercial trust boundaries",
+      "command": "node scripts/verify-commercial-trust-boundaries.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9281,32 +9533,98 @@
       "durationSeconds": "0.5"
     },
     {
-      "id": "live-closeout-readiness-status",
-      "label": "Write redacted live closeout readiness status",
-      "command": "node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write",
-      "timeoutMs": 300000,
+      "id": "report-evidence",
+      "label": "Verify report evidence cards and proof-pack coverage",
+      "command": "node scripts/verify-report-evidence.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "10.9"
+      "durationSeconds": "0.1"
+    },
+    {
+      "id": "proof-visibility-ui",
+      "label": "Verify proof visibility UI surfaces",
+      "command": "node scripts/verify-proof-visibility-ui.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "phase-e-commercial-validation",
+      "label": "Verify Phase E commercial validation instrumentation and owner-evidence gates",
+      "command": "node scripts/verify-phase-e-commercial-validation.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.1"
+    },
+    {
+      "id": "supabase-function-governance",
+      "label": "Verify Supabase function governance and launch readiness",
+      "command": "node scripts/verify-supabase-function-governance.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.1"
+    },
+    {
+      "id": "onet-task-ratings",
+      "label": "Verify O*NET Task Ratings ingest boundary",
+      "command": "node scripts/verify-onet-task-ratings-ingest.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "deployment-packet",
+      "label": "Generate live Supabase deployment proof packet",
+      "command": "node scripts/generate-commercial-supabase-deployment-packet.mjs",
+      "timeoutMs": 60000,
+      "status": "failed",
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "live-closeout-readiness-status",
+      "label": "Write redacted live closeout readiness status",
+      "command": "node scripts/verify-live-closeout-readiness.mjs --allow-incomplete --write",
+      "timeoutMs": 10000,
+      "status": "timed_out",
+      "exitCode": 124,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "durationSeconds": "10.0"
     },
     {
       "id": "live-closeout-access-sources-fixtures",
       "label": "Verify live closeout access source-audit failure fixtures",
       "command": "node scripts/verify-live-closeout-access-sources-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "2.3"
+      "durationSeconds": "1.4"
     },
     {
       "id": "data-provenance",
       "label": "Verify local data provenance checksums",
       "command": "node scripts/verify-commercial-data-provenance.mjs --write --require-source-verification",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9317,84 +9635,128 @@
       "id": "live-gate-evidence",
       "label": "Validate redacted live-gate evidence intake",
       "command": "node scripts/verify-live-gate-evidence.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.4"
+      "durationSeconds": "0.3"
     },
     {
       "id": "live-proof-run-packet",
       "label": "Generate owner live-proof run packet",
       "command": "node scripts/generate-live-proof-run-packet.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.9"
+      "durationSeconds": "0.3"
     },
     {
       "id": "live-proof-run-packet-alignment",
       "label": "Verify owner live-proof run packet aligns with source proof artifacts",
       "command": "node scripts/verify-live-proof-run-packet-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.8"
+      "durationSeconds": "0.1"
     },
     {
       "id": "live-proof-run-packet-alignment-fixtures",
       "label": "Verify live-proof run packet alignment failure fixtures",
       "command": "node scripts/verify-live-proof-run-packet-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "10.1"
+      "durationSeconds": "6.5"
     },
     {
       "id": "commercial-evidence-records",
       "label": "Validate redacted commercial partner/outcome evidence records",
       "command": "node scripts/verify-commercial-evidence-records.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.8"
+      "durationSeconds": "0.3"
     },
     {
       "id": "commercial-evidence-records-fixtures",
       "label": "Verify commercial partner/outcome evidence records failure fixtures",
       "command": "node scripts/verify-commercial-evidence-records-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.5"
+      "durationSeconds": "0.4"
     },
     {
       "id": "commercial-evidence-intake-packet",
       "label": "Generate commercial partner/outcome owner intake packet",
       "command": "node scripts/generate-commercial-evidence-intake-packet.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.4"
+      "durationSeconds": "0.3"
     },
     {
       "id": "commercial-evidence-intake-packet-alignment",
       "label": "Verify commercial evidence intake packet aligns with canonical records and closeout status",
       "command": "node scripts/verify-commercial-evidence-intake-packet-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "commercial-evidence-intake-packet-alignment-fixtures",
+      "label": "Verify commercial evidence intake packet alignment failure fixtures",
+      "command": "node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "7.4"
+    },
+    {
+      "id": "manual-wcag-evidence",
+      "label": "Validate redacted manual WCAG evidence metadata",
+      "command": "node scripts/verify-manual-wcag-evidence.mjs --write",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "manual-wcag-evidence-fixtures",
+      "label": "Verify manual WCAG evidence failure fixtures",
+      "command": "node scripts/verify-manual-wcag-evidence-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.6"
+    },
+    {
+      "id": "manual-wcag-review-packet",
+      "label": "Generate manual WCAG owner review packet",
+      "command": "node scripts/generate-manual-wcag-review-packet.mjs --write",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9402,21 +9764,10 @@
       "durationSeconds": "0.3"
     },
     {
-      "id": "commercial-evidence-intake-packet-alignment-fixtures",
-      "label": "Verify commercial evidence intake packet alignment failure fixtures",
-      "command": "node scripts/verify-commercial-evidence-intake-packet-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "9.5"
-    },
-    {
-      "id": "manual-wcag-evidence",
-      "label": "Validate redacted manual WCAG evidence metadata",
-      "command": "node scripts/verify-manual-wcag-evidence.mjs --write",
-      "timeoutMs": 300000,
+      "id": "manual-wcag-review-packet-alignment",
+      "label": "Verify manual WCAG review packet aligns with canonical verifier and closeout status",
+      "command": "node scripts/verify-manual-wcag-review-packet-alignment.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9424,32 +9775,21 @@
       "durationSeconds": "0.4"
     },
     {
-      "id": "manual-wcag-evidence-fixtures",
-      "label": "Verify manual WCAG evidence failure fixtures",
-      "command": "node scripts/verify-manual-wcag-evidence-fixtures.mjs",
-      "timeoutMs": 300000,
+      "id": "manual-wcag-review-packet-alignment-fixtures",
+      "label": "Verify manual WCAG review packet alignment failure fixtures",
+      "command": "node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.5"
+      "durationSeconds": "6.8"
     },
     {
-      "id": "manual-wcag-review-packet",
-      "label": "Generate manual WCAG owner review packet",
-      "command": "node scripts/generate-manual-wcag-review-packet.mjs --write",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.5"
-    },
-    {
-      "id": "manual-wcag-review-packet-alignment",
-      "label": "Verify manual WCAG review packet aligns with canonical verifier and closeout status",
-      "command": "node scripts/verify-manual-wcag-review-packet-alignment.mjs",
-      "timeoutMs": 300000,
+      "id": "owner-evidence-prep",
+      "label": "Inspect owner-evidence local prep status",
+      "command": "node scripts/prepare-owner-evidence-workspace.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9457,76 +9797,32 @@
       "durationSeconds": "0.3"
     },
     {
-      "id": "manual-wcag-review-packet-alignment-fixtures",
-      "label": "Verify manual WCAG review packet alignment failure fixtures",
-      "command": "node scripts/verify-manual-wcag-review-packet-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "13.2"
-    },
-    {
-      "id": "owner-evidence-prep",
-      "label": "Inspect owner-evidence local prep status",
-      "command": "node scripts/prepare-owner-evidence-workspace.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.8"
-    },
-    {
       "id": "owner-evidence-local-safety",
       "label": "Verify owner-evidence local files are ignored and untracked",
       "command": "node scripts/verify-owner-evidence-local-safety.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "2.1"
+      "durationSeconds": "1.4"
     },
     {
       "id": "owner-evidence-local-safety-fixtures",
       "label": "Verify owner-evidence local-safety failure fixtures",
       "command": "node scripts/verify-owner-evidence-local-safety-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "33.0"
+      "durationSeconds": "15.7"
     },
     {
       "id": "owner-evidence-artifact-hasher-fixtures",
       "label": "Verify owner-evidence artifact hasher failure fixtures",
       "command": "node scripts/verify-owner-evidence-artifact-hasher-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "5.5"
-    },
-    {
-      "id": "owner-evidence-closeout-status",
-      "label": "Write owner-evidence closeout status artifact",
-      "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "6.6"
-    },
-    {
-      "id": "owner-evidence-prep-alignment",
-      "label": "Verify owner-evidence prep readiness aligns with closeout status",
-      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9534,87 +9830,65 @@
       "durationSeconds": "1.9"
     },
     {
-      "id": "owner-evidence-prep-alignment-fixtures",
-      "label": "Verify owner-evidence prep-readiness alignment failure fixtures",
-      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "id": "owner-evidence-closeout-status",
+      "label": "Write owner-evidence closeout status artifact",
+      "command": "node scripts/closeout-owner-evidence.mjs --allow-incomplete --write-status",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "17.2"
+      "durationSeconds": "2.0"
+    },
+    {
+      "id": "owner-evidence-prep-alignment",
+      "label": "Verify owner-evidence prep readiness aligns with closeout status",
+      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "2.6"
+    },
+    {
+      "id": "owner-evidence-prep-alignment-fixtures",
+      "label": "Verify owner-evidence prep-readiness alignment failure fixtures",
+      "command": "node scripts/verify-owner-evidence-prep-readiness-alignment-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "17.7"
     },
     {
       "id": "owner-evidence-fixtures",
       "label": "Verify redacted owner-evidence fixture completion and failure paths",
       "command": "node scripts/verify-owner-evidence-fixture-path.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "5.7"
+      "durationSeconds": "1.6"
     },
     {
       "id": "remediation-gates",
       "label": "Write APO remediation external gate ledger",
       "command": "node scripts/verify-remediation-external-gates.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "1.1"
+      "durationSeconds": "0.2"
     },
     {
       "id": "owner-action-queue",
       "label": "Verify Trust Center owner-action queue matches remediation ledger",
       "command": "node scripts/verify-owner-action-queue-alignment.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.1"
-    },
-    {
-      "id": "owner-action-queue-fixtures",
-      "label": "Verify Trust Center owner-action queue alignment failure fixtures",
-      "command": "node scripts/verify-owner-action-queue-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "7.1"
-    },
-    {
-      "id": "owner-evidence-handoff",
-      "label": "Generate owner-evidence handoff packet",
-      "command": "node scripts/generate-owner-evidence-handoff.mjs --write",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.3"
-    },
-    {
-      "id": "owner-evidence-completion-drill",
-      "label": "Generate owner-evidence completion drill",
-      "command": "node scripts/generate-owner-evidence-completion-drill.mjs --write",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.3"
-    },
-    {
-      "id": "owner-evidence-completion-drill-alignment",
-      "label": "Verify Trust Center completion drill aligns with generated artifact",
-      "command": "node scripts/verify-owner-evidence-completion-drill-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9622,120 +9896,164 @@
       "durationSeconds": "1.3"
     },
     {
-      "id": "owner-evidence-completion-drill-alignment-fixtures",
-      "label": "Verify Trust Center completion drill alignment failure fixtures",
-      "command": "node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "id": "owner-action-queue-fixtures",
+      "label": "Verify Trust Center owner-action queue alignment failure fixtures",
+      "command": "node scripts/verify-owner-action-queue-alignment-fixtures.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "58.6"
+      "durationSeconds": "13.9"
+    },
+    {
+      "id": "owner-evidence-handoff",
+      "label": "Generate owner-evidence handoff packet",
+      "command": "node scripts/generate-owner-evidence-handoff.mjs --write",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "owner-evidence-completion-drill",
+      "label": "Generate owner-evidence completion drill",
+      "command": "node scripts/generate-owner-evidence-completion-drill.mjs --write",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.2"
+    },
+    {
+      "id": "owner-evidence-completion-drill-alignment",
+      "label": "Verify Trust Center completion drill aligns with generated artifact",
+      "command": "node scripts/verify-owner-evidence-completion-drill-alignment.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "1.7"
+    },
+    {
+      "id": "owner-evidence-completion-drill-alignment-fixtures",
+      "label": "Verify Trust Center completion drill alignment failure fixtures",
+      "command": "node scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs",
+      "timeoutMs": 120000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "66.6"
     },
     {
       "id": "owner-evidence-handoff-alignment",
       "label": "Verify owner-evidence handoff aligns with canonical ledgers",
       "command": "node scripts/verify-owner-evidence-handoff-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.4"
+      "durationSeconds": "0.3"
     },
     {
       "id": "owner-evidence-handoff-alignment-fixtures",
       "label": "Verify owner-evidence handoff alignment failure fixtures",
       "command": "node scripts/verify-owner-evidence-handoff-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "14.8"
+      "durationSeconds": "14.9"
     },
     {
       "id": "live-proof-closeout-command-alignment",
       "label": "Verify live-proof owner commands align across closeout surfaces",
       "command": "node scripts/verify-live-proof-closeout-command-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "1.5"
+      "durationSeconds": "4.3"
     },
     {
       "id": "live-proof-closeout-command-alignment-fixtures",
       "label": "Verify live-proof owner command alignment failure fixtures",
       "command": "node scripts/verify-live-proof-closeout-command-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "8.4"
+      "durationSeconds": "8.7"
     },
     {
       "id": "owner-evidence-command-checklist-alignment",
       "label": "Verify Trust Center owner closeout command checklist aligns with handoff",
       "command": "node scripts/verify-owner-evidence-command-checklist-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "1.5"
+      "durationSeconds": "1.4"
     },
     {
       "id": "owner-evidence-command-checklist-alignment-fixtures",
       "label": "Verify Trust Center owner command checklist failure fixtures",
       "command": "node scripts/verify-owner-evidence-command-checklist-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "12.1"
+      "durationSeconds": "8.7"
     },
     {
       "id": "owner-evidence-runbook-alignment",
       "label": "Verify owner-facing runbooks align with handoff",
       "command": "node scripts/verify-owner-evidence-runbook-alignment.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.5"
+      "durationSeconds": "0.1"
     },
     {
       "id": "owner-evidence-runbook-alignment-fixtures",
       "label": "Verify owner-facing runbook alignment failure fixtures",
       "command": "node scripts/verify-owner-evidence-runbook-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "1.8"
+      "durationSeconds": "0.9"
     },
     {
       "id": "remediation-completion-audit",
       "label": "Write APO remediation completion audit",
       "command": "node scripts/verify-remediation-completion-audit.mjs --write",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.4"
+      "durationSeconds": "0.3"
     },
     {
       "id": "launch-evidence",
       "label": "Generate and validate commercial launch evidence manifest",
       "command": "node scripts/generate-launch-evidence-manifest.mjs --write --validate",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9746,106 +10064,7 @@
       "id": "launch-evidence-alignment",
       "label": "Verify launch evidence manifest aligns with owner/remediation ledgers",
       "command": "node scripts/verify-launch-evidence-alignment.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "0.2"
-    },
-    {
-      "id": "launch-evidence-alignment-fixtures",
-      "label": "Verify launch evidence alignment failure fixtures",
-      "command": "node scripts/verify-launch-evidence-alignment-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "15.2"
-    },
-    {
-      "id": "launch-evidence-sources-fixtures",
-      "label": "Verify launch evidence source-audit failure fixtures",
-      "command": "node scripts/verify-launch-evidence-sources-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "2.3"
-    },
-    {
-      "id": "commercial-evidence-intake-sources-fixtures",
-      "label": "Verify commercial evidence intake source-audit failure fixtures",
-      "command": "node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.6"
-    },
-    {
-      "id": "live-proof-run-packet-sources-fixtures",
-      "label": "Verify live-proof run packet source-audit failure fixtures",
-      "command": "node scripts/verify-live-proof-run-packet-sources-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.5"
-    },
-    {
-      "id": "manual-wcag-review-packet-sources-fixtures",
-      "label": "Verify manual WCAG review packet source-audit failure fixtures",
-      "command": "node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "1.6"
-    },
-    {
-      "id": "owner-evidence-completion-drill-sources-fixtures",
-      "label": "Verify owner-evidence completion-drill source-audit failure fixtures",
-      "command": "node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "2.7"
-    },
-    {
-      "id": "lint-commercial",
-      "label": "Lint commercial proof-pack files",
-      "command": "node scripts/lint-commercial-scope.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "10.1"
-    },
-    {
-      "id": "secret-hygiene",
-      "label": "Verify tracked and untracked non-ignored files do not contain high-confidence secrets",
-      "command": "node scripts/verify-secret-hygiene.mjs",
-      "timeoutMs": 300000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "8.1"
-    },
-    {
-      "id": "repo-presentation",
-      "label": "Verify repository presentation, license, and adoption-claim boundaries",
-      "command": "node scripts/verify-repo-presentation.mjs",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
@@ -9853,48 +10072,147 @@
       "durationSeconds": "0.4"
     },
     {
-      "id": "typecheck",
-      "label": "Run TypeScript no-emit check",
-      "command": "npx tsc --noEmit",
-      "timeoutMs": 600000,
+      "id": "launch-evidence-alignment-fixtures",
+      "label": "Verify launch evidence alignment failure fixtures",
+      "command": "node scripts/verify-launch-evidence-alignment-fixtures.mjs",
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "2.0"
+      "durationSeconds": "14.8"
+    },
+    {
+      "id": "launch-evidence-sources-fixtures",
+      "label": "Verify launch evidence source-audit failure fixtures",
+      "command": "node scripts/verify-launch-evidence-sources-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "1.4"
+    },
+    {
+      "id": "commercial-evidence-intake-sources-fixtures",
+      "label": "Verify commercial evidence intake source-audit failure fixtures",
+      "command": "node scripts/verify-commercial-evidence-intake-sources-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.9"
+    },
+    {
+      "id": "live-proof-run-packet-sources-fixtures",
+      "label": "Verify live-proof run packet source-audit failure fixtures",
+      "command": "node scripts/verify-live-proof-run-packet-sources-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.7"
+    },
+    {
+      "id": "manual-wcag-review-packet-sources-fixtures",
+      "label": "Verify manual WCAG review packet source-audit failure fixtures",
+      "command": "node scripts/verify-manual-wcag-review-packet-sources-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.9"
+    },
+    {
+      "id": "owner-evidence-completion-drill-sources-fixtures",
+      "label": "Verify owner-evidence completion-drill source-audit failure fixtures",
+      "command": "node scripts/verify-owner-evidence-completion-drill-sources-fixtures.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "1.1"
+    },
+    {
+      "id": "lint-commercial",
+      "label": "Lint commercial proof-pack files",
+      "command": "node scripts/lint-commercial-scope.mjs",
+      "timeoutMs": 60000,
+      "status": "timed_out",
+      "exitCode": 124,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "durationSeconds": "60.0"
+    },
+    {
+      "id": "secret-hygiene",
+      "label": "Verify tracked and untracked non-ignored files do not contain high-confidence secrets",
+      "command": "node scripts/verify-secret-hygiene.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "6.8"
+    },
+    {
+      "id": "repo-presentation",
+      "label": "Verify repository presentation, license, and adoption-claim boundaries",
+      "command": "node scripts/verify-repo-presentation.mjs",
+      "timeoutMs": 60000,
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationSeconds": "0.1"
+    },
+    {
+      "id": "typecheck",
+      "label": "Run TypeScript no-emit check",
+      "command": "npx tsc --noEmit",
+      "timeoutMs": 120000,
+      "status": "timed_out",
+      "exitCode": 124,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "durationSeconds": "120.0"
     },
     {
       "id": "diff-hygiene",
       "label": "Check tracked diff whitespace hygiene",
       "command": "git diff --check",
-      "timeoutMs": 300000,
+      "timeoutMs": 60000,
       "status": "passed",
       "exitCode": 0,
       "signal": null,
       "timedOut": false,
-      "durationSeconds": "0.6"
+      "durationSeconds": "0.4"
     },
     {
       "id": "build",
       "label": "Build production bundle",
       "command": "npm run build",
-      "timeoutMs": 600000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "32.7"
+      "timeoutMs": 120000,
+      "status": "timed_out",
+      "exitCode": 124,
+      "signal": "SIGKILL",
+      "timedOut": true,
+      "durationSeconds": "125.5"
     },
     {
       "id": "route-smoke",
       "label": "Smoke commercial route registration and app shell",
       "command": "node scripts/smoke-commercial-routes.mjs",
-      "timeoutMs": 720000,
-      "status": "passed",
-      "exitCode": 0,
-      "signal": null,
-      "timedOut": false,
-      "durationSeconds": "8.5"
+      "timeoutMs": 60000,
+      "status": "timed_out",
+      "exitCode": 124,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "durationSeconds": "60.1"
     }
   ],
   "evidenceBoundary": "This summary records the repo-local commercial verification command invocation only. It does not prove owner-held evidence, live revenue, partner commitments, customer outcomes, legal compliance, WCAG conformance, production uptime, ignored-file hygiene, untracked file content safety beyond included secret/redaction scanners, or optional live/network/accessibility/browser-journey gates that were not included in this invocation.",

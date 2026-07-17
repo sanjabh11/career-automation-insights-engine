@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T23:23:36.520Z",
+  "generatedAt": "2026-07-17T09:54:51.569Z",
   "schemaVersion": "2026-06-04.apo-manual-wcag-review-packet.v1",
   "status": "owner_manual_review_required",
   "manualEvidenceSchemaVersion": "2026-06-04.apo-manual-wcag-evidence.v1",
@@ -197,8 +197,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "targetSizeReview": [
         "no obvious non-inline target below 24px"
       ],
@@ -261,7 +261,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "targetSizeReview": [
         "no obvious non-inline target below 24px"
       ],
@@ -1439,8 +1439,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "evaluation scope notes",
         "route sample rationale",
@@ -1478,8 +1478,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "keyboard traversal notes",
         "focus screenshots or recordings",
@@ -1512,8 +1512,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "target measurements",
         "exception rationale",
@@ -1548,8 +1548,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "form error screenshots",
         "label/instruction notes",
@@ -1582,8 +1582,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "auth flow notes",
         "payment/account screenshots with private data redacted",
@@ -1618,8 +1618,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "screen-reader transcript notes",
         "name/role/value defect log",
@@ -1654,8 +1654,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "contrast measurements",
         "text-spacing screenshots",
@@ -1694,8 +1694,8 @@
         "tablet",
         "desktop"
       ],
-      "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 16,
+      "keyboardTabStopsChecked": 26,
+      "interactiveCountMax": 15,
       "ownerHeldArtifacts": [
         "downloaded artifact list",
         "artifact screenshots",
@@ -2319,7 +2319,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "evaluation scope notes",
         "route sample rationale",
@@ -2358,7 +2358,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "keyboard traversal notes",
         "focus screenshots or recordings",
@@ -2392,7 +2392,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "target measurements",
         "exception rationale",
@@ -2428,7 +2428,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "form error screenshots",
         "label/instruction notes",
@@ -2462,7 +2462,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "auth flow notes",
         "payment/account screenshots with private data redacted",
@@ -2498,7 +2498,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "screen-reader transcript notes",
         "name/role/value defect log",
@@ -2534,7 +2534,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "contrast measurements",
         "text-spacing screenshots",
@@ -2574,7 +2574,7 @@
         "desktop"
       ],
       "keyboardTabStopsChecked": 30,
-      "interactiveCountMax": 25,
+      "interactiveCountMax": 26,
       "ownerHeldArtifacts": [
         "downloaded artifact list",
         "artifact screenshots",

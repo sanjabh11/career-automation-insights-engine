@@ -418,6 +418,7 @@ const DEFAULT_STEPS = [
     id: 'owner-evidence-completion-drill-alignment-fixtures',
     label: 'Verify Trust Center completion drill alignment failure fixtures',
     command: ['node', 'scripts/verify-owner-evidence-completion-drill-alignment-fixtures.mjs'],
+    timeoutMs: BUILD_STEP_TIMEOUT_MS,
   },
   {
     id: 'owner-evidence-handoff-alignment',
@@ -508,6 +509,7 @@ const DEFAULT_STEPS = [
     id: 'lint-commercial',
     label: 'Lint commercial proof-pack files',
     command: ['node', 'scripts/lint-commercial-scope.mjs'],
+    timeoutMs: BUILD_STEP_TIMEOUT_MS,
   },
   {
     id: 'secret-hygiene',
@@ -4251,6 +4253,8 @@ Options:
                    Also run live parse-resume Edge Function receipt proof using SUPABASE_URL and SUPABASE_ANON_KEY.
   --with-a11y      Also run the Playwright responsive/accessibility smoke gate.
   --with-journey   Also run the full Playwright lead/report/workforce browser journey.
+  --continue-on-failure
+                   Continue independent verification steps after a failure while preserving a failed summary and exit status.
 
 Timeouts:
   Each child step is bounded to avoid inconclusive aggregate release runs. Override with:
@@ -4281,6 +4285,7 @@ async function main() {
   const includeLiveResumeParser = hasFlag('--with-live-resume-parser');
   const includeA11y = hasFlag('--with-a11y');
   const includeJourney = hasFlag('--with-journey');
+  const continueOnFailure = hasFlag('--continue-on-failure');
   const options = {
     includeNetwork,
     includeLiveSupabase,
@@ -4288,6 +4293,7 @@ async function main() {
     includeLiveResumeParser,
     includeA11y,
     includeJourney,
+    continueOnFailure,
   };
 
   const defaultSteps = DEFAULT_STEPS.flatMap((step) =>
@@ -4332,7 +4338,10 @@ async function main() {
         `\nCommercial verification stopped at '${step.id}' after ${durationSeconds}s${timeoutText} with exit code ${result.code}${signalText}.`,
       );
       process.exitCode = result.code;
-      break;
+      if (!continueOnFailure) break;
+      console.error(
+        `Continuing after '${step.id}' because --continue-on-failure was requested; the final summary will remain failed.`,
+      );
     }
   }
 

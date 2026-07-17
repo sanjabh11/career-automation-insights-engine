@@ -8,8 +8,8 @@ import { REPORT_TRUST_NOTICES } from '@/lib/reportProvenance';
 import type { ResumeServerParserReceipt } from '@/components/resume-ui';
 
 export interface UploadSectionProps {
-  getRootProps: any;
-  getInputProps: any;
+  getRootProps: (props?: Record<string, unknown>) => Record<string, unknown>;
+  getInputProps: (props?: Record<string, unknown>) => Record<string, unknown>;
   isDragActive: boolean;
   uploading: boolean;
   analyzing: boolean;

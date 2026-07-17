@@ -1,33 +1,86 @@
 import React, { useState } from "react";
-import { ArrowRight, Shield, Clock, Palette, Users, CreditCard, CheckCircle2, Star, DollarSign, Database, BarChart3, Play, TrendingUp, Zap } from "lucide-react";
+import { ArrowRight, Shield, Clock, Palette, Users, CheckCircle2, Database, BarChart3, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import NavigationPremium from "@/components/NavigationPremium";
-import { redirectToCreditCheckout, CREDIT_PACKAGES } from "@/lib/stripe";
+import { redirectToCreditCheckout } from "@/lib/stripe";
 import { useSession } from "@/hooks/useSession";
 import { useToast } from "@/hooks/use-toast";
 import { CoachAuditWorkspacePanel } from "@/components/proof/ProofVisibilityPanels";
+import { analytics } from "@/lib/posthog";
+import { checkPilotEnrollment } from "@/lib/pilotEnrollment";
+
+// Enrollment stays closed until the owner publishes and approves a terms hash
+// in pilot_terms_versions. This prevents a draft checkbox from becoming access.
+const PILOT_ENROLLMENT_OPEN = false;
 
 /**
  * ForCoachesPage - B2B Landing Page for Career Coaches
- * 
- * Value Proposition: "Generate Source-Labeled Automation Defense Audits"
+ *
+ * Value Proposition: "Generate Source-Labeled Automation Transition Planning Artifacts"
  * Target: Career counselors, executive coaches, resume writers
- * Pricing Push: $149/mo Coach tier or $20/report PAYG
+ * Pricing: $49/5-credit pack (pilot). Coach Pro subscription deferred until pilot validates.
  */
 export default function ForCoachesPage() {
     const navigate = useNavigate();
     const { session } = useSession();
     const { toast } = useToast();
     const [buyingCredits, setBuyingCredits] = useState(false);
+    const [pilotEnrolled, setPilotEnrolled] = useState(false);
+    const [enrolling, setEnrolling] = useState(false);
+    const [showEnrollForm, setShowEnrollForm] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<'US' | 'CA'>('US');
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
-    const handleBuyCredits = async () => {
+    React.useEffect(() => {
+        analytics.coachLandingViewed();
+        if (session?.user) {
+            checkPilotEnrollment(session.user.id).then(setPilotEnrolled).catch(() => {});
+        }
+    }, [session?.user]);
+
+    const handleEnrollInPilot = async () => {
+        if (!PILOT_ENROLLMENT_OPEN) {
+            toast({ title: 'Pilot enrollment is not open', description: 'Approved pilot terms will be published before enrollment opens.', variant: 'destructive' });
+            return;
+        }
         if (!session?.user) {
             navigate('/auth');
             return;
         }
+        if (!termsAccepted) {
+            toast({ title: 'Terms Required', description: 'Please accept the pilot terms to continue.', variant: 'destructive' });
+            return;
+        }
+        setEnrolling(true);
+        try {
+            // The inactive branch is retained as an owner-operated activation
+            // seam; it cannot run while the published terms are still draft.
+            throw new Error('Pilot enrollment is not open');
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to enroll';
+            toast({ title: 'Error', description: message, variant: 'destructive' });
+        } finally {
+            setEnrolling(false);
+        }
+    };
+
+    const handleBuyCredits = async () => {
+        if (!PILOT_ENROLLMENT_OPEN) {
+            toast({ title: 'Pilot enrollment is not open', description: 'View the sample report while the owner/legal terms review is pending.', variant: 'destructive' });
+            return;
+        }
+        if (!session?.user) {
+            navigate('/auth');
+            return;
+        }
+        if (!pilotEnrolled) {
+            setShowEnrollForm(true);
+            return;
+        }
         setBuyingCredits(true);
+        analytics.coachCheckoutStarted();
         try {
             await redirectToCreditCheckout('starter', session.user.id);
         } catch (err: unknown) {
@@ -46,13 +99,13 @@ export default function ForCoachesPage() {
         },
         {
             icon: Palette,
-            title: "White Label",
+            title: "Coach-Branded",
             description: "Your logo, colors, and review notes on a planning artifact that stays inside your coaching workflow."
         },
         {
             icon: Shield,
             title: "O*NET-Grounded Analysis",
-            description: "Source-labeled task assessments grounded in the O*NET 30.3 release boundary, with caveats your clients cannot get from a generic chat answer."
+            description: "Source-labeled task assessments grounded in U.S. Department of Labor O*NET data, with caveats your clients cannot get from a generic chat answer."
         },
         {
             icon: Users,
@@ -63,40 +116,22 @@ export default function ForCoachesPage() {
 
     const pricingTiers = [
         {
-            name: "Pay-As-You-Go",
-            price: "$20",
-            unit: "per report",
+            name: "Credit Pack",
+            price: "$49",
+            unit: "for 5 report credits",
             features: [
-                "White-label PDF reports",
+                "Print-ready HTML reports",
                 "Custom branding",
-                "No commitment",
-                "Perfect for 1-5 clients/month"
+                "No subscription required",
+                "Credits valid for 30 days (pilot)"
             ],
-            cta: "Buy Credits",
-            highlighted: false
-        },
-        {
-            name: "Coach Pro",
-            price: "$149",
-            unit: "per month",
-            features: [
-                "15 reports included ($10/report value)",
-                "Client management dashboard",
-                "Priority support",
-                "Unlimited occupation searches",
-                "Perfect for 5-20 clients/month"
-            ],
-            cta: "Start Free Trial",
-            highlighted: true,
-            badge: "Most Popular"
+            cta: "Enroll in Pilot",
+            highlighted: true
         }
     ];
 
-    const testimonialData = {
-        quote: "The useful part is having a structured, source-labeled planning artifact I can review before a client session.",
-        author: "Career Coach",
-        role: "Executive Career Services"
-    };
+    // No testimonials displayed until first-party evidence is collected from paying coaches.
+    // Testimonials require explicit permission after genuine use + proof boundary.
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-[#0F172A]">
@@ -128,17 +163,21 @@ export default function ForCoachesPage() {
                         </h1>
 
                         <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
-                            Differentiate your coaching practice with white-labeled, source-labeled
-                            decision-support audits, uncertainty notes, and reskilling roadmaps for review.
+                            Differentiate your coaching practice with source-labeled,
+                            human-reviewed automation transition planning artifacts, uncertainty notes,
+                            and reskilling roadmaps grounded in U.S. Department of Labor O*NET data.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button
                                 size="lg"
-                                onClick={() => navigate("/tools/counselor-reports")}
+                                onClick={() => {
+                                    analytics.coachSampleViewed();
+                                    navigate("/sample-report");
+                                }}
                                 className="w-full whitespace-normal bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-6 text-base font-semibold text-white shadow-lg hover:from-emerald-400 hover:to-teal-400 sm:w-auto sm:px-8 sm:text-lg"
                             >
-                                Get Your Free Sample Report
+                                View Sample Report
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
                             <Button
@@ -209,29 +248,29 @@ export default function ForCoachesPage() {
                     <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-slate-400 text-sm">
                         <div className="flex items-center gap-2">
                             <Database className="h-4 w-4 text-emerald-400" />
-                            <span><strong className="text-white">1,016</strong> O*NET Occupations</span>
+                            <span><strong className="text-white">O*NET</strong> Occupation Database</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <BarChart3 className="h-4 w-4 text-emerald-400" />
-                            <span><strong className="text-white">19,000+</strong> Task-Level Analyses</span>
+                            <span>Task-level <strong className="text-white">AI-assisted</strong> analysis</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Shield className="h-4 w-4 text-emerald-400" />
-                            <span>Source-verified <strong className="text-white">O*NET 30.3</strong> boundary + <strong className="text-white">AI-assisted</strong> analysis</span>
+                            <span>Source-verified <strong className="text-white">U.S. Dept. of Labor</strong> data boundary</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Users className="h-4 w-4 text-emerald-400" />
-                            <span><strong className="text-white">109,200+</strong> Coaches Worldwide (ICF 2023)</span>
+                            <span><strong className="text-white">122,974</strong> ICF Coach Practitioners Worldwide (ICF 2025)</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* ROI Calculator Section */}
+            {/* Value Summary Section */}
             <section className="py-16 bg-slate-900/50">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-white text-center mb-4">
-                        The Math is Simple
+                        How Coaches Use These Artifacts
                     </h2>
                     <p className="text-slate-400 text-center mb-10 max-w-2xl mx-auto">
                         Package a reviewed planning artifact with clear source and limitation boundaries.
@@ -239,28 +278,25 @@ export default function ForCoachesPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div className="bg-slate-800/60 rounded-xl p-6 text-center border border-slate-700/50">
-                            <DollarSign className="h-8 w-8 text-red-400 mx-auto mb-3" />
-                            <div className="text-3xl font-bold text-white mb-1">$10</div>
-                            <div className="text-slate-400 text-sm">Your cost per report</div>
-                            <div className="text-slate-500 text-xs mt-1">($149/mo &#247; 15 reports)</div>
+                            <Clock className="h-8 w-8 text-emerald-400 mx-auto mb-3" />
+                            <div className="text-lg font-bold text-white mb-1">Draft in Minutes</div>
+                            <div className="text-slate-400 text-sm">Generate a structured draft grounded in O*NET data</div>
                         </div>
                         <div className="bg-slate-800/60 rounded-xl p-6 text-center border border-slate-700/50">
-                            <TrendingUp className="h-8 w-8 text-emerald-400 mx-auto mb-3" />
-                            <div className="text-3xl font-bold text-white mb-1">$150-$300</div>
-                            <div className="text-slate-400 text-sm">What you charge clients</div>
-                            <div className="text-slate-500 text-xs mt-1">Industry standard for career audits</div>
+                            <Shield className="h-8 w-8 text-emerald-400 mx-auto mb-3" />
+                            <div className="text-lg font-bold text-white mb-1">Review Before Delivery</div>
+                            <div className="text-slate-400 text-sm">Coach-approved, with source labels and caveats intact</div>
                         </div>
                         <div className="bg-gradient-to-b from-emerald-900/40 to-slate-800/60 rounded-xl p-6 text-center border-2 border-emerald-500/40">
-                            <Zap className="h-8 w-8 text-amber-400 mx-auto mb-3" />
-                            <div className="text-3xl font-bold text-emerald-400 mb-1">Review Loop</div>
-                            <div className="text-slate-400 text-sm">Coach-approved before delivery</div>
-                            <div className="text-slate-500 text-xs mt-1">Revenue proof remains owner-held until live evidence is attached</div>
+                            <Palette className="h-8 w-8 text-amber-400 mx-auto mb-3" />
+                            <div className="text-lg font-bold text-emerald-400 mb-1">Your Brand</div>
+                            <div className="text-slate-400 text-sm">Logo, colors, and footer for your coaching practice</div>
                         </div>
                     </div>
 
                     <div className="text-center">
                         <p className="text-slate-300 text-lg">
-                            Use your own engagement model and client permissions before making pricing, ROI, or outcome claims.
+                            You set your own client pricing and engagement terms. No revenue or ROI claims are made here.
                         </p>
                     </div>
                 </div>
@@ -278,17 +314,17 @@ export default function ForCoachesPage() {
                             {
                                 step: "1",
                                 title: "Enter Client's Occupation",
-                                description: "Search from 1,016 O*NET occupations. Our AI analyzes tasks, skills, abilities, and technologies."
+                                description: "Search O*NET occupations. Our AI analyzes tasks, skills, abilities, and technologies."
                             },
                             {
                                 step: "2",
                                 title: "Customize & Brand",
-                                description: "Upload your logo, choose colors, add footer text. The report looks 100% like it came from your firm."
+                                description: "Upload your logo, choose colors, add footer text. The report carries your coaching brand."
                             },
                             {
                                 step: "3",
-                                title: "Deliver & Charge",
-                                description: "Download the reviewed PDF report. Share with your client as a planning artifact, with caveats and source dates intact."
+                                title: "Review & Deliver",
+                                description: "Review the print-ready HTML report. Print to PDF for client delivery, with source labels, caveats, and proof boundary intact."
                             }
                         ].map((item) => (
                             <motion.div
@@ -314,10 +350,10 @@ export default function ForCoachesPage() {
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div
                         className="relative bg-slate-800/60 rounded-2xl border border-slate-700/50 overflow-hidden cursor-pointer group"
-                        onClick={() => navigate("/tools/counselor-reports")}
+                        onClick={() => navigate("/sample-report")}
                         role="button"
                         tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && navigate("/tools/counselor-reports")}
+                        onKeyDown={(e) => e.key === 'Enter' && navigate("/sample-report")}
                     >
                         <div className="aspect-video flex items-center justify-center">
                             <div className="text-center">
@@ -325,7 +361,7 @@ export default function ForCoachesPage() {
                                     <Play className="h-10 w-10 text-emerald-400 ml-1" />
                                 </div>
                                 <h3 className="text-xl font-semibold text-white mb-2">See It In Action</h3>
-                                <p className="text-slate-400">Try the report generator yourself — no signup required</p>
+                                <p className="text-slate-400">View a static sample report with pseudonymous data</p>
                             </div>
                         </div>
                     </div>
@@ -374,7 +410,7 @@ export default function ForCoachesPage() {
                         Pricing is transparent; client billing and ROI claims must be supported by your own engagement evidence.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
                         {pricingTiers.map((tier) => (
                             <div
                                 key={tier.name}
@@ -383,9 +419,39 @@ export default function ForCoachesPage() {
                                         : 'bg-slate-800/50 border border-slate-700/50'
                                     }`}
                             >
-                                {tier.badge && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                                        {tier.badge}
+                                {showEnrollForm && !pilotEnrolled && (
+                                    <div className="mb-4 p-4 rounded-lg bg-slate-800 border border-emerald-500/30">
+                                        <h4 className="text-white font-semibold mb-3">Pilot Enrollment</h4>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="text-slate-300 text-sm block mb-1">Country (US/CA only)</label>
+                                                <select
+                                                    value={selectedCountry}
+                                                    onChange={(e) => setSelectedCountry(e.target.value as 'US' | 'CA')}
+                                                    className="w-full p-2 rounded bg-slate-700 text-white border border-slate-600"
+                                                >
+                                                    <option value="US">United States</option>
+                                                    <option value="CA">Canada</option>
+                                                </select>
+                                            </div>
+                                            <label className="flex items-start gap-2 text-slate-300 text-sm">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={termsAccepted}
+                                                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                                                    disabled={!PILOT_ENROLLMENT_OPEN}
+                                                    className="mt-1"
+                                                />
+                                                <span>I acknowledge that the <a href="/pilot-terms" className="text-emerald-400 underline" target="_blank" rel="noopener noreferrer">pilot terms are still a draft</a>; enrollment is closed until an approved version is published.</span>
+                                            </label>
+                                            <Button
+                                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-white"
+                                                onClick={handleEnrollInPilot}
+                                                disabled={!PILOT_ENROLLMENT_OPEN || enrolling || !termsAccepted}
+                                            >
+                                                {enrolling ? 'Enrolling...' : 'Enrollment Closed Pending Approval'}
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -405,61 +471,51 @@ export default function ForCoachesPage() {
                                 </ul>
 
                                 <Button
-                                    className={`w-full py-6 text-lg ${tier.highlighted
-                                            ? 'bg-emerald-500 hover:bg-emerald-400 text-white'
-                                            : 'bg-slate-700 hover:bg-slate-600 text-white'
-                                        }`}
-                                    onClick={() => tier.highlighted ? navigate("/pricing") : handleBuyCredits()}
-                                    disabled={!tier.highlighted && buyingCredits}
+                                    className="w-full py-6 text-lg bg-emerald-500 hover:bg-emerald-400 text-white"
+                                    onClick={() => handleBuyCredits()}
+                                    disabled={buyingCredits || enrolling || !PILOT_ENROLLMENT_OPEN}
                                 >
-                                    {!tier.highlighted && buyingCredits ? 'Redirecting...' : tier.cta}
+                                    {buyingCredits ? 'Redirecting...' : pilotEnrolled ? 'Buy Credits' : 'Pilot Enrollment Pending'}
                                 </Button>
+                                {pilotEnrolled && (
+                                    <p className="text-center text-sm text-emerald-400 mt-2">Pilot enrollment confirmed</p>
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Social Proof — Data-as-Testimonials */}
+            {/* Data Authority — No Testimonials Until First-Party Evidence */}
             <section className="py-16 bg-slate-900/50">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-white text-center mb-12">
-                        Why Coaches Trust Our Data
+                        Data Sources & Methodology
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
-                            <div className="text-4xl font-bold text-emerald-400 mb-2">O*NET 30.3</div>
+                            <div className="text-4xl font-bold text-emerald-400 mb-2">O*NET</div>
                             <div className="text-slate-300 font-medium mb-1">U.S. Dept. of Labor Data</div>
                             <div className="text-slate-500 text-sm">Source-verified occupation and task-rating boundary. Not generic chat guesses.</div>
                         </div>
                         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
                             <div className="text-4xl font-bold text-emerald-400 mb-2">Gemini AI</div>
-                            <div className="text-slate-300 font-medium mb-1">Enterprise-Grade Analysis</div>
-                            <div className="text-slate-500 text-sm">Multi-factor scoring across tasks, skills, abilities, knowledge, and technologies.</div>
+                            <div className="text-slate-300 font-medium mb-1">Multi-Factor Analysis</div>
+                            <div className="text-slate-500 text-sm">Scoring across tasks, skills, abilities, knowledge, and technologies.</div>
                         </div>
                         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
                             <div className="text-4xl font-bold text-emerald-400 mb-2">A* Pathfinding</div>
                             <div className="text-slate-300 font-medium mb-1">Bridge Role Discovery</div>
-                            <div className="text-slate-500 text-sm">Algorithm finds realistic career transitions via skill overlap — not "unrealistic leaps."</div>
+                            <div className="text-slate-500 text-sm">Algorithm finds realistic career transitions via skill overlap.</div>
                         </div>
                     </div>
 
-                    {/* Testimonial */}
-                    <div className="max-w-3xl mx-auto text-center">
-                        <div className="flex justify-center gap-1 mb-6">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="h-6 w-6 text-amber-400 fill-amber-400" />
-                            ))}
-                        </div>
-                        <blockquote className="text-2xl text-white font-light italic mb-6">
-                            "{testimonialData.quote}"
-                        </blockquote>
-                        <div className="text-slate-400">
-                            <span className="font-medium text-slate-300">{testimonialData.author}</span>
-                            <span className="mx-2">·</span>
-                            <span>{testimonialData.role}</span>
-                        </div>
+                    <div className="max-w-3xl mx-auto text-center mt-12">
+                        <p className="text-slate-400 text-sm">
+                            No testimonials are displayed because we have not yet collected first-party evidence from paying coaches.
+                            Testimonials will require explicit permission after genuine use.
+                        </p>
                     </div>
                 </div>
             </section>
@@ -471,14 +527,17 @@ export default function ForCoachesPage() {
                         Ready to Elevate Your Practice?
                     </h2>
                     <p className="text-slate-400 mb-8">
-                        Join career professionals who are using AI to deliver more value to their clients.
+                        Generate source-labeled, human-reviewed planning artifacts for your coaching practice.
                     </p>
                     <Button
                         size="lg"
-                        onClick={() => navigate("/tools/counselor-reports")}
+                        onClick={() => {
+                            analytics.coachSampleViewed();
+                            navigate("/sample-report");
+                        }}
                         className="w-full whitespace-normal bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-6 text-base font-semibold text-white hover:from-emerald-400 hover:to-teal-400 sm:w-auto sm:px-10 sm:text-lg"
                     >
-                        Generate Your First Report Free
+                        View Sample Report
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>

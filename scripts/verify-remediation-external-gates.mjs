@@ -730,6 +730,7 @@ function main() {
       {
         sourceBoundary: 'owner credential and deployment-precondition gate',
         ownerAction: 'Confirm the target Supabase project has approved migrations, deployed `calibrate-ece`, configured function secrets, APO logs, and expert labels before running the calibration verifier.',
+        ownerPrepCommand: LIVE_PROOF_OWNER_PREP_COMMAND,
         nextCommand: 'npm run verify:production-calibration',
         riskIfSkipped: 'Calibration remains public-artifact and local-code evidence only; production calibration and scientific validity remain unproven.',
         doesNotProve: ['Scientific validation before live labels exist', 'Migrations or deployments were applied by this verifier'],
@@ -748,6 +749,7 @@ function main() {
       {
         sourceBoundary: 'owner credential gate',
         ownerAction: 'Load target Supabase URL/anon key plus the dedicated synthetic test-user email/password, then run the authenticated live artifact save/delete verifier.',
+        ownerPrepCommand: LIVE_PROOF_OWNER_PREP_COMMAND,
         nextCommand: 'npm run verify:commercial-live-auth-e2e',
         riskIfSkipped: 'Authenticated artifact persistence and deletion receipts remain locally wired but not proven against the target live project.',
         doesNotProve: ['Payment proof', 'malware scanning', 'legal compliance'],

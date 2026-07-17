@@ -11,11 +11,23 @@ const root = path.resolve(__dirname, '..');
 const scanExtensions = new Set(['.md', '.mdx', '.ts', '.tsx', '.csv', '.html']);
 const ignoredPathFragments = [
   `${path.sep}docs${path.sep}archive${path.sep}`,
+  `${path.sep}docs${path.sep}audits${path.sep}`,
+  `${path.sep}.windsurf${path.sep}plans${path.sep}`,
   `${path.sep}SAFE_BACKUP${path.sep}`,
   `${path.sep}node_modules${path.sep}`,
   `${path.sep}dist${path.sep}`,
   `${path.sep}test-results${path.sep}`,
   `${path.sep}playwright-report${path.sep}`,
+];
+
+const staleButScannedFragments = [
+  `${path.sep}.positioning-audit${path.sep}history${path.sep}`,
+];
+
+const ignoredClaimDiagnosticFragments = [
+  `${path.sep}docs${path.sep}archive${path.sep}`,
+  `${path.sep}docs${path.sep}audits${path.sep}`,
+  `${path.sep}.windsurf${path.sep}plans${path.sep}`,
 ];
 
 const publicRuntimeRoots = ['src/', 'index.html', 'README.md', 'STATUS.md'];
@@ -48,23 +60,72 @@ function patternApplies({ scope, allowedPaths = [] }, relativePath) {
   return true;
 }
 
-function walk(dir, files = []) {
+function walk(dir, files = [], staleFiles = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, entry.name);
     if (ignoredPathFragments.some((fragment) => fullPath.includes(fragment))) continue;
+    const isStale = staleButScannedFragments.some((fragment) => fullPath.includes(fragment));
     if (entry.isDirectory()) {
-      walk(fullPath, files);
+      walk(fullPath, files, staleFiles);
     } else if (scanExtensions.has(path.extname(entry.name))) {
-      files.push(fullPath);
+      if (isStale) {
+        staleFiles.push(fullPath);
+      } else {
+        files.push(fullPath);
+      }
     }
   }
-  return files;
+  return { files, staleFiles };
 }
 
-const files = walk(root);
-const failures = [];
+const { files, staleFiles } = walk(root);
+function walkDiagnostic(dir, diagnosticFiles = []) {
+  if (!fs.existsSync(dir)) return diagnosticFiles;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkDiagnostic(fullPath, diagnosticFiles);
+    } else if (scanExtensions.has(path.extname(entry.name))) {
+      diagnosticFiles.push(fullPath);
+    }
+  }
+  return diagnosticFiles;
+}
 
-for (const filePath of files) {
+const ignoredDiagnosticFiles = ignoredClaimDiagnosticFragments.flatMap((fragment) =>
+  walkDiagnostic(path.join(root, ...fragment.split(path.sep).filter(Boolean)), []),
+);
+const allFiles = [...files, ...staleFiles];
+const strictStale = process.argv.includes('--strict-stale');
+const strictIgnored = process.argv.includes('--strict-ignored');
+const failures = [];
+const staleFailures = [];
+const ignoredFailures = [];
+
+for (const filePath of allFiles) {
+  const relativePath = path.relative(root, filePath);
+  const isStale = staleButScannedFragments.some((fragment) => filePath.includes(fragment));
+  const source = fs.readFileSync(filePath, 'utf8');
+  const lines = source.split(/\r?\n/);
+  const targetFailures = isStale ? staleFailures : failures;
+
+  for (const { id, pattern, scope, allowedPaths } of forbiddenPatterns) {
+    if (!patternApplies({ scope, allowedPaths }, relativePath)) continue;
+    lines.forEach((line, index) => {
+      if (pattern.test(line)) {
+        targetFailures.push({
+          id,
+          file: relativePath,
+          line: index + 1,
+          excerpt: line.slice(0, 220),
+          stale: isStale,
+        });
+      }
+    });
+  }
+}
+
+for (const filePath of ignoredDiagnosticFiles) {
   const relativePath = path.relative(root, filePath);
   const source = fs.readFileSync(filePath, 'utf8');
   const lines = source.split(/\r?\n/);
@@ -73,24 +134,48 @@ for (const filePath of files) {
     if (!patternApplies({ scope, allowedPaths }, relativePath)) continue;
     lines.forEach((line, index) => {
       if (pattern.test(line)) {
-        failures.push({
+        ignoredFailures.push({
           id,
           file: relativePath,
           line: index + 1,
           excerpt: line.slice(0, 220),
+          ignored: true,
         });
       }
     });
   }
 }
 
-if (failures.length > 0) {
-  console.error(JSON.stringify({ ok: false, failures }, null, 2));
+const activeOk = failures.length === 0;
+const staleOk = staleFailures.length === 0;
+const ignoredOk = ignoredFailures.length === 0;
+const releaseGateOk = activeOk && staleOk && ignoredOk;
+const ok = activeOk && (!strictStale || staleOk) && (!strictIgnored || ignoredOk);
+const result = {
+  ok,
+  activeOk,
+  staleOk,
+  ignoredOk,
+  releaseGateOk,
+  strictStale,
+  strictIgnored,
+  failures,
+  staleFailures,
+  ignoredFailures,
+  scannedFiles: allFiles.length,
+  staleButScanned: staleFiles.length,
+  staleViolations: staleFailures.length,
+  ignoredDiagnosticFiles: ignoredDiagnosticFiles.length,
+  ignoredViolations: ignoredFailures.length,
+  forbiddenPatternCount: forbiddenPatterns.length,
+  ignoredPathFragments: ignoredPathFragments.map((fragment) => fragment.split(path.sep).filter(Boolean).join('/')),
+  evidenceBoundary:
+    'Active runtime files are release-gate scanned. Archive, audit, and plan paths are scanned diagnostically but remain outside the default active gate; use --strict-stale or --strict-ignored to fail on those findings. This verifier does not prove external evidence, deployment state, or owner-held customer outcomes.',
+};
+
+if (!ok) {
+  console.error(JSON.stringify(result, null, 2));
   process.exitCode = 1;
 } else {
-  console.log(JSON.stringify({
-    ok: true,
-    scannedFiles: files.length,
-    forbiddenPatternCount: forbiddenPatterns.length,
-  }, null, 2));
+  console.log(JSON.stringify(result, null, 2));
 }

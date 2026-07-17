@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-07T13:13:49.745Z",
-  "target": "https://kvunnankqgfokeufvsrv.supabase.co",
+  "generatedAt": "2026-07-17T07:10:49.855Z",
+  "target": null,
   "status": "skipped_missing_env",
   "confidence": "bounded_stripe_test_checkout",
   "caveat": "This verifier creates a Stripe test-mode Checkout Session through the deployed create-checkout-session Supabase Edge Function and retrieves the session from Stripe to confirm livemode=false. It does not complete payment, prove live revenue, prove webhook fulfillment, or prove MRR.",
@@ -26,10 +26,15 @@
       "id": "stripe-test-checkout-env",
       "label": "Stripe test checkout credentials are configured",
       "passed": false,
-      "message": "Missing: STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY"
+      "message": "Missing: SUPABASE_URL or VITE_SUPABASE_URL, SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY, LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL, LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD, STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY, STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
     }
   ],
   "missingEnv": [
-    "STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY"
+    "SUPABASE_URL or VITE_SUPABASE_URL",
+    "SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY",
+    "LIVE_SUPABASE_TEST_USER_EMAIL or STRIPE_TEST_USER_EMAIL",
+    "LIVE_SUPABASE_TEST_USER_PASSWORD or STRIPE_TEST_USER_PASSWORD",
+    "STRIPE_TEST_SECRET_KEY or STRIPE_TEST_RESTRICTED_KEY",
+    "STRIPE_TEST_PRICE_ID or APO_STRIPE_TEST_PRICE_ID"
   ]
 }

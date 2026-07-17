@@ -1,7 +1,11 @@
 {
-  "generatedAt": "2026-06-08T23:22:57.318Z",
+  "generatedAt": "2026-07-17T09:54:22.295Z",
   "targetProjectRef": "kvunnankqgfokeufvsrv",
-  "allPassed": true,
+  "configuredProjectRef": "kvunnankqgfokeufvsrv",
+  "linkedProjectRef": "cyjqvqwpdgluivjoxcfl",
+  "linkState": "conflict",
+  "projectRefConflict": true,
+  "allPassed": false,
   "versionsAreSorted": true,
   "requiredEnvironment": [
     {
@@ -244,6 +248,7 @@
   ],
   "acceptanceCriteria": [
     "Migration list shows the commercial proof-pack migrations applied to the linked project.",
+    "The Supabase CLI link and `supabase/config.toml` project refs agree before any linked migration push.",
     "`npm run verify:commercial-live-supabase` passes against the linked project.",
     "`record-outcome` is deployed after the `revealed_transition_events` and `partner_artifact_reviews` objects exist remotely.",
     "`npm run verify:resume-parser-live` passes after `parse-resume` is deployed to the target project.",

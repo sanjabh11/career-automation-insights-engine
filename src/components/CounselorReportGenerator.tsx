@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import DOMPurify from 'dompurify';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from '@/hooks/useSession';
 import { CreditBalance } from '@/components/monetization/CreditBalance';
+import { analytics } from '@/lib/posthog';
 import {
     buildCareerCenterCohortCsv,
     buildCareerCenterCohortProofPack,
@@ -50,8 +50,14 @@ interface SearchOccupationsResponse {
 
 interface CounselorReportResponse {
     success?: boolean;
-    html?: string;
+    delivery_url?: string;
     report_id?: string;
+    ledger_id?: string;
+    idempotent?: boolean;
+    metadata?: {
+        remaining_credits?: number;
+        [key: string]: unknown;
+    };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -100,7 +106,7 @@ export default function CounselorReportGenerator() {
         secondary_color: '#8b5cf6',
         include_apo_branding: true
     });
-    const [clientName, setClientName] = useState('');
+    const [clientLabel, setClientLabel] = useState('');
     const [clientOccupationCode, setClientOccupationCode] = useState('');
     const [clientOccupationTitle, setClientOccupationTitle] = useState('');
     const [occupationQuery, setOccupationQuery] = useState('');
@@ -108,9 +114,10 @@ export default function CounselorReportGenerator() {
     const [searchingOccupation, setSearchingOccupation] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [reportHtml, setReportHtml] = useState<string | null>(null);
-    const [reportId, setReportId] = useState<string | null>(null);
+    const [deliveryUrl, setDeliveryUrl] = useState<string | null>(null);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
+    const [humanReviewAcknowledged, setHumanReviewAcknowledged] = useState(false);
+    const reportRequestKeyRef = useRef<string | null>(null);
     const { toast } = useToast();
     const { session } = useSession();
 
@@ -195,8 +202,8 @@ export default function CounselorReportGenerator() {
         setClientOccupationTitle(occupation.title);
         setOccupationQuery(occupation.title);
         setOccupationResults([]);
-        setReportHtml(null);
-        setReportId(null);
+        setDeliveryUrl(null);
+        reportRequestKeyRef.current = null;
     };
 
     const saveWhiteLabelConfig = async () => {
@@ -234,10 +241,10 @@ export default function CounselorReportGenerator() {
     };
 
     const generateReport = async () => {
-        if (!clientName || !clientOccupationCode) {
+        if (!clientLabel || !clientOccupationCode) {
             toast({
                 title: 'Missing Information',
-                description: 'Please provide client name and occupation code',
+                description: 'Please provide a client label and occupation code',
                 variant: 'destructive'
             });
             return;
@@ -252,72 +259,57 @@ export default function CounselorReportGenerator() {
             return;
         }
 
+        if (!humanReviewAcknowledged) {
+            toast({
+                title: 'Acknowledgement Required',
+                description: 'You must acknowledge the human-review requirement before generating a report.',
+                variant: 'destructive'
+            });
+            return;
+        }
+
         setGenerating(true);
-        setStatusMessage('Checking report credit and generating client report...');
+        setStatusMessage('Reserving credit and generating client report...');
 
         try {
-            // Deduct credit before generating report
-            const { data: creditResult, error: creditError } = await supabase.rpc('deduct_report_credit', {
-                p_user_id: session.user.id,
-                p_report_type: 'counselor_report',
-                p_occupation_code: clientOccupationCode
-            });
+            // Keep one key for this form request so a network retry cannot
+            // reserve a second credit. A successful request clears the key.
+            const idempotencyKey = reportRequestKeyRef.current || crypto.randomUUID();
+            reportRequestKeyRef.current = idempotencyKey;
 
-            if (creditError) {
-                console.error('Credit deduction error:', creditError);
-                toast({
-                    title: 'Credit Error',
-                    description: 'Unable to verify credits. Please try again.',
-                    variant: 'destructive'
-                });
-                setGenerating(false);
-                return;
-            }
-
-            if (!creditResult) {
-                toast({
-                    title: 'Insufficient Credits',
-                    description: 'You need report credits to generate reports. Please purchase more credits.',
-                    variant: 'destructive'
-                });
-                setGenerating(false);
-                return;
-            }
-
-            // Credit deducted successfully, now generate report
+            // Server-side credit reservation + report generation (single call)
             const { data, error } = await supabase.functions.invoke('generate-counselor-report', {
                 body: {
-                    client_name: clientName,
-                    client_occupation_code: clientOccupationCode,
-                    counselor_id: session.user.id
+                    client_label: clientLabel,
+                    occupation_code: clientOccupationCode,
+                    idempotency_key: idempotencyKey,
+                    human_review_acknowledgement: true
                 }
             });
 
             if (error) throw error;
 
             const reportData = data as CounselorReportResponse | null;
-            if (reportData?.success && typeof reportData.html === 'string') {
-                setReportHtml(reportData.html);
-                setReportId(reportData.report_id || null);
-                setStatusMessage('Report generated. Use preview and print/save as PDF before sending to a client.');
+            if (reportData?.success) {
+                analytics.coachReportSucceeded();
+                if (reportData.delivery_url) {
+                    setDeliveryUrl(reportData.delivery_url);
+                    setStatusMessage('Report generated. Open the short-lived private delivery link after review.');
+                    reportRequestKeyRef.current = null;
+                } else {
+                    throw new Error('Report generated without a private delivery URL');
+                }
 
                 toast({
                     title: 'Report Generated',
-                    description: 'Your client report is ready to download'
+                    description: reportData.metadata?.remaining_credits !== undefined
+                        ? `Your client report is ready. ${reportData.metadata.remaining_credits} credits remaining.`
+                        : 'Your client report is ready to download'
                 });
-
-                // Auto-download or open in new window
-                const blob = new Blob([reportData.html], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${clientName.replace(/\s+/g, '_')}_Career_Report.html`;
-                link.click();
-                URL.revokeObjectURL(url);
             }
         } catch (error: unknown) {
             console.error('Error generating report:', error);
-            setStatusMessage('Report generation failed. If credit was deducted, verify the credit ledger before retrying.');
+            setStatusMessage('Report generation failed. Retry this same request to preserve idempotency; a terminal conflict requires changing the inputs.');
             toast({
                 title: 'Generation Error',
                 description: getErrorMessage(error, 'Failed to generate report'),
@@ -325,20 +317,6 @@ export default function CounselorReportGenerator() {
             });
         } finally {
             setGenerating(false);
-        }
-    };
-
-    const printReport = () => {
-        if (!reportHtml) return;
-
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-            printWindow.document.write(reportHtml);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => {
-                printWindow.print();
-            }, 500);
         }
     };
 
@@ -377,7 +355,7 @@ export default function CounselorReportGenerator() {
             <Alert>
                 <ShieldCheck className="h-4 w-4" />
                 <AlertDescription>
-                    Status: report generation is source-implemented but remains partially usable until auth, report credits, and the print-to-PDF handoff are smoke-tested. Use the sample report for buyer demos before relying on live client credits.
+                    Reports are delivered as private, signed print-ready HTML links. Review every report before client delivery; checkout, hosted storage, and live credit evidence remain owner-gated until smoke-tested.
                 </AlertDescription>
             </Alert>
 
@@ -587,13 +565,18 @@ export default function CounselorReportGenerator() {
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="clientName">Client Name</Label>
+                            <Label htmlFor="clientLabel">Client Label (pseudonymous)</Label>
                             <Input
-                                id="clientName"
-                                value={clientName}
-                                onChange={(e) => setClientName(e.target.value)}
-                                placeholder="John Doe"
+                                id="clientLabel"
+                                value={clientLabel}
+                                onChange={(e) => {
+                                    setClientLabel(e.target.value);
+                                    setDeliveryUrl(null);
+                                    reportRequestKeyRef.current = null;
+                                }}
+                                placeholder="Client A, Transitioning Professional, etc."
                             />
+                            <p className="text-xs text-muted-foreground">Use a pseudonymous label, not a real client name.</p>
                         </div>
 
                         <div className="space-y-2">
@@ -669,10 +652,24 @@ export default function CounselorReportGenerator() {
                             onChange={(e) => {
                                 setClientOccupationCode(e.target.value);
                                 setClientOccupationTitle(e.target.value);
-                                setReportHtml(null);
-                                setReportId(null);
+                                setDeliveryUrl(null);
+                                reportRequestKeyRef.current = null;
                             }}
                             placeholder="15-1252.00"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="space-y-0.5">
+                            <Label htmlFor="humanReview">Human Review Acknowledgement</Label>
+                            <p className="text-sm text-muted-foreground">
+                                I understand this is a planning artifact for human review, not for employment decisions.
+                            </p>
+                        </div>
+                        <Switch
+                            id="humanReview"
+                            checked={humanReviewAcknowledged}
+                            onCheckedChange={setHumanReviewAcknowledged}
                         />
                     </div>
 
@@ -683,7 +680,7 @@ export default function CounselorReportGenerator() {
                     <div className="flex gap-3">
                         <Button
                             onClick={generateReport}
-                            disabled={generating || !session?.user?.id || !clientOccupationCode || !clientName}
+                            disabled={generating || !session?.user?.id || !clientOccupationCode || !clientLabel || !humanReviewAcknowledged}
                             className="flex-1"
                         >
                             {generating ? (
@@ -699,38 +696,20 @@ export default function CounselorReportGenerator() {
                             )}
                         </Button>
 
-                        {reportHtml && (
-                            <Button
-                                onClick={printReport}
-                                variant="outline"
-                            >
-                                <Download className="mr-2 h-4 w-4" />
-                                Print/Save as PDF
-                            </Button>
-                        )}
                     </div>
+                    {deliveryUrl && (
+                        <Alert>
+                            <ExternalLink className="h-4 w-4" />
+                            <AlertDescription>
+                                <a className="underline" href={deliveryUrl} target="_blank" rel="noopener noreferrer">
+                                    Open private report delivery link
+                                </a>
+                                <span className="ml-2 text-xs text-muted-foreground">The link expires after 60 seconds.</span>
+                            </AlertDescription>
+                        </Alert>
+                    )}
                 </CardContent>
             </Card>
-
-            {/* Preview (if report generated) */}
-            {reportHtml && (
-                <Card>
-                    <CardHeader>
-                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                            <CardTitle>Report Preview</CardTitle>
-                            {reportId && <Badge variant="outline">Report ID: {reportId}</Badge>}
-                        </div>
-                        <CardDescription>
-                            Review before sharing with client
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="border rounded-lg p-4 bg-[var(--bg-tertiary)] max-h-96 overflow-auto">
-                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(reportHtml) }} />
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
         </main>
     );
 }
